@@ -1,7 +1,10 @@
+import UserRegistrationForm from "./components/UserRegistrationForm";
+
+
 export default function Home() {
   return (
     <div>
-      Arbetdesk
+      <UserRegistrationForm />
     </div>
   );
 }
