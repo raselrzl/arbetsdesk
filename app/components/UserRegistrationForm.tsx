@@ -1,14 +1,32 @@
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { createUserAction } from '../actions'
+"use client";
 
-export default async function UserRegistrationForm() {
+import { useFormState } from "react-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { createUserAction } from "../actions";
+import React from "react";
+import SubmitButton from "./SubmitButton";
+
+const initialState = { success: false, message: "" };
+
+export default function UserRegistrationForm() {
+  const [state, formAction] = React.useActionState(
+    createUserAction,
+    initialState
+  );
+
   return (
-    <form action={createUserAction} className="space-y-4 max-w-md mx-auto">
+    <form action={formAction} className="space-y-4 max-w-md mx-auto">
+      {state.message && (
+        <p className={state.success ? "text-green-600" : "text-red-600"}>
+          {state.message}
+        </p>
+      )}
+
       <div>
         <Label>Name</Label>
-        <Input name="name" required /> 
+        <Input name="name" required />
       </div>
 
       <div>
@@ -31,7 +49,7 @@ export default async function UserRegistrationForm() {
         <Input name="address" required />
       </div>
 
-      <Button type="submit">Register User</Button>
+      <SubmitButton />
     </form>
-  )
+  );
 }
