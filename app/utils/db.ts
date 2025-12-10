@@ -1,6 +1,8 @@
+// app/utils/prisma.ts
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import pg from 'pg'
-import { PrismaClient } from '../generated/prisma'
+import { PrismaClient } from '../generated/prisma/client'
 
 const { Pool } = pg
 
