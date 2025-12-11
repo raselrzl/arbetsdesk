@@ -82,10 +82,10 @@ export async function loginEmployeeAction(input: z.infer<typeof loginSchema>) {
 
   switch (user.role) {
     case "EMPLOYEE":
-      redirectPath = `/employee/${user.id}`;
+      redirectPath = "/employee";
       break;
     case "COMPANY":
-      redirectPath = `/company/${user.id}`;
+      redirectPath = "/company";
       break;
     case "ADMIN":
       redirectPath = "/admin";
