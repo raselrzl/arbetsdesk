@@ -13,6 +13,8 @@ export async function createUserAction(prevState: any, formData: FormData) {
       phoneNumber: data.phoneNumber,
       personalNumber: data.personalNumber,
       address: data.address,
+      pinNumber: data.pinNumber, // <-- added pinNumber in schema
+      role: data.role,           // <-- optional
     });
 
     const existing = await prisma.user.findUnique({
@@ -26,11 +28,11 @@ export async function createUserAction(prevState: any, formData: FormData) {
     await prisma.user.create({ data: parsed });
 
     return { success: true, message: "User registered successfully!" };
-
   } catch (err: any) {
     return { success: false, message: err.message };
   }
 }
+
 
 
 
