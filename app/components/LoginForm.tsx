@@ -83,7 +83,7 @@ export default function LoginForm() {
   const showPinError = (touched.pinNumber || submitted) && !!errors.pinNumber;
 
   return (
-<div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+<div className="min-h-screen flex items-center justify-center px-4">
   <div className="w-full max-w-md bg-gray-700 p-8 shadow-md rounded-md">
     <h1 className="text-4xl font-extrabold uppercase mb-8 text-center text-white">Login</h1>
 

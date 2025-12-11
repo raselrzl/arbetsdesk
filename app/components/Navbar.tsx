@@ -1,97 +1,134 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"; // shadcn/ui
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false); // mobile menu
-  const [dropdownOpen, setDropdownOpen] = useState(false); // desktop dropdown
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown if click outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-900 text-white shadow-md px-4 py-3 ">
+    <nav className="w-full bg-white shadow-sm px-4 py-3 fixed top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Brand / Logo */}
+        {/* Brand */}
         <div className="text-xl font-bold uppercase">
           <Link href="/">Arbets-desk</Link>
         </div>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-4">
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-1 px-3 py-2 hover:bg-gray-700 rounded"
-            >
-             <Menu className="w-6 h-6" />
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-gray-800 border border-gray-700 rounded shadow-lg z-50">
-                <Link
-                  href="/admin/createuser"
-                  className="block px-4 py-2 hover:bg-gray-700"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  Register
-                </Link>
-                <Link
-                  href="/logout"
-                  className="block px-4 py-2 hover:bg-gray-700"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  Logout
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Burger Button */}
-        <div className="md:hidden flex items-center">
-          <button onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden mt-2 space-y-2">
-          <Link
-            href="/admin/createuser"
-            className="block px-4 py-2 hover:bg-gray-700 rounded"
-            onClick={() => setIsOpen(false)}
-          >
+        <div className="hidden md:flex items-center gap-6">
+          <Link href="/features" className="hover:text-gray-700">
+            Features
+          </Link>
+          <Link href="/industries" className="hover:text-gray-700">
+            Industries
+          </Link>
+          <Link href="/integrations" className="hover:text-gray-700">
+            Integrations
+          </Link>
+          <Link href="/pricing" className="hover:text-gray-700">
+            Pricing
+          </Link>
+          <Link href="/analytics" className="hover:text-gray-700">
+            Analytics+
+          </Link>
+          <Link href="/contact" className="hover:text-gray-700">
+            Contact
+          </Link>
+          <Link href="/company" className="hover:text-gray-700">
+            Company
+          </Link>
+          <Link href="/employee" className="hover:text-gray-700">
+            Employee
+          </Link>
+          <Link href="/register" className="hover:text-gray-700">
             Register
           </Link>
           <Link
-            href="/logout"
-            className="block px-4 py-2 hover:bg-gray-700 rounded"
-            onClick={() => setIsOpen(false)}
+            href="/login"
+            className="hover:text-gray-700 bg-gray-600 text-white font-bold px-2 py-1 rounded-2xl"
           >
-            Logout
+            Login
           </Link>
         </div>
-      )}
+
+        {/* Mobile Menu (shadcn/ui dropdown) */}
+
+        <div className="md:hidden flex items-center">
+          <Link
+            href="/login"
+            className="hover:text-gray-700 bg-gray-600 text-white font-bold px-4 py-1 rounded-2xl"
+          >
+            Login
+          </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button>
+                {isOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-48 mt-2">
+              <DropdownMenuItem>
+                <Link href="/features">Features</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/industries">Industries</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/integrations">Integrations</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/pricing">Pricing</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/analytics">Analytics+</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/contact">Contact</Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Link href="/employee" className="hover:text-gray-700">
+                  Employee
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Link href="/company" className="hover:text-gray-700">
+                  Company
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Link href="/register">Register</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href="/login"
+                  className="hover:text-gray-700 bg-gray-600 text-white font-bold px-4 py-1 rounded-2xl"
+                >
+                  Login
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/logout">Logout</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
     </nav>
   );
 }

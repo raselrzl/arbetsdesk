@@ -1,10 +1,7 @@
-import { Suspense } from "react";
-import LoginForm from "./components/LoginForm";
-
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </Suspense>
+    <div className="text-center items-center mt-10">
+      Home Page
+    </div>
   );
 }
