@@ -1,6 +1,8 @@
-"use client"; // <<< add this at the top
+import dynamic from "next/dynamic";
 
-import LoginForm from "./components/LoginForm";
+const LoginForm = dynamic(() => import("./components/LoginForm"), {
+  ssr: false, // render only on client
+});
 
 export default function Home() {
   return (
