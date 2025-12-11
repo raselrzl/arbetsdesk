@@ -129,6 +129,7 @@ export default function Navbar() {
           </DropdownMenu>
         </div>
       </div>
+      
     </nav>
   );
 }
