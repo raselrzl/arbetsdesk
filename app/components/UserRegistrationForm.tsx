@@ -21,7 +21,7 @@ export default function UserRegistrationForm() {
   const pinRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(0),
+    useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
   ];
   const confirmPinRefs = [
