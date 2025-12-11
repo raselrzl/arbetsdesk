@@ -41,7 +41,9 @@ export default function UserRegistrationForm() {
     setPinDigits(newDigits);
     if (value && index < 3) pinRefs[index + 1].current?.focus();
     if (!value && index > 0) pinRefs[index - 1].current?.focus();
-    setShowPinError(confirmPinValue !== "" && confirmPinValue !== newDigits.join(""));
+    setShowPinError(
+      confirmPinValue !== "" && confirmPinValue !== newDigits.join("")
+    );
   };
 
   const handleConfirmPinChange = (index: number, value: string) => {
