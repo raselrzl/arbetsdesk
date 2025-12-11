@@ -10,7 +10,7 @@ import { loginEmployeeAction } from "../actions";
 
 type Errors = { personalNumber?: string; pinNumber?: string };
 
-export default function EmployeeLoginForm() {
+export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [personalNumber, setPersonalNumber] = useState("");
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);

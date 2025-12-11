@@ -1,6 +1,8 @@
-"use client"; // <<< add this at the top
-
+"use client";
 import LoginForm from "./components/LoginForm";
+
+ // <<< add this at the top
+
 
 export default function Home() {
   return (
