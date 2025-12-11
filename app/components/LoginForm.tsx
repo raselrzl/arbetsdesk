@@ -13,6 +13,7 @@ type Errors = { personalNumber?: string; pinNumber?: string };
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [personalNumber, setPersonalNumber] = useState("");
+  
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
