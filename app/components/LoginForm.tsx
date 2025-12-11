@@ -6,14 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { loginEmployeeAction } from "../actions";
+import { loginAction } from "../actions";
 
 type Errors = { personalNumber?: string; pinNumber?: string };
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [personalNumber, setPersonalNumber] = useState("");
-  
+
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -73,7 +73,7 @@ export default function LoginForm() {
 
     setLoading(true);
     try {
-      await loginEmployeeAction({ personalNumber, pinNumber });
+      await loginAction({ personalNumber, pinNumber });
     } finally {
       setLoading(false);
     }

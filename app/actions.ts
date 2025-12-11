@@ -44,7 +44,7 @@ const loginSchema = z.object({
 
 const SESSION_TTL_SECONDS = 60 * 20; // 20 min session
 
-export async function loginEmployeeAction(input: z.infer<typeof loginSchema>) {
+export async function loginAction(input: z.infer<typeof loginSchema>) {
   const { personalNumber, pinNumber } = loginSchema.parse(input);
 
   const user = await prisma.user.findUnique({
