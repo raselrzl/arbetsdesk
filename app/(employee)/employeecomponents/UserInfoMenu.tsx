@@ -19,7 +19,7 @@ export default function UserMenu({
         <Menu className="w-7 h-7 text-white" />
       </SheetTrigger>
 
-      <SheetContent side="left" className="w-72">
+      <SheetContent side="right" className="w-72">
         <SheetHeader>
           <SheetTitle>User Information</SheetTitle>
         </SheetHeader>
