@@ -46,6 +46,7 @@ const loginSchema = z.object({
 
 const SESSION_TTL_SECONDS = 60 * 20; // 20 min session
 
+
 export async function loginAction(input: z.infer<typeof loginSchema>) {
   const { personalNumber, pinNumber } = loginSchema.parse(input);
 
@@ -59,15 +60,8 @@ export async function loginAction(input: z.infer<typeof loginSchema>) {
     },
   });
 
-  // User not found
-  if (!user) {
-    redirect("/login?error=notfound");
-  }
-
-  // PIN mismatch
-  if (user.pinNumber !== pinNumber) {
-    redirect("/login?error=invalid");
-  }
+  if (!user) return { error: "notfound" };
+  if (user.pinNumber !== pinNumber) return { error: "invalid" };
 
   // Create session cookie
   const jar = await cookies();
@@ -83,25 +77,22 @@ export async function loginAction(input: z.infer<typeof loginSchema>) {
   let redirectPath = "/";
 
   switch (user.role) {
-    case "EMPLOYEE":
-      redirectPath = "/employee";
-      break;
-    case "COMPANY":
-      redirectPath = "/company";
-      break;
-    case "ADMIN":
-      redirectPath = "/admin";
-      break;
-    case "SUPERADMIN":
-      redirectPath = "/super-admin";
-      break;
-
-    case "USER":
-      redirectPath = "/profile";
-      break;
-    default:
-      redirectPath = "/thank-you";
+    case "EMPLOYEE": redirectPath = "/employee"; break;
+    case "COMPANY": redirectPath = "/company"; break;
+    case "ADMIN": redirectPath = "/admin"; break;
+    case "SUPERADMIN": redirectPath = "/super-admin"; break;
+    case "USER": redirectPath = "/profile"; break;
+    default: redirectPath = "/thank-you";
   }
 
-  redirect(redirectPath);
+  return {
+    success: true,
+    redirectPath,
+    user: {
+      id: user.id,
+      role: user.role,
+      personalNumber: user.personalNumber,
+    },
+  };
 }
+
