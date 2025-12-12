@@ -96,7 +96,7 @@ export async function loginAction(input: z.infer<typeof loginSchema>) {
       redirectPath = "/super-admin";
       break;
     default:
-      redirectPath = "/dashboard";
+      redirectPath = "/profile";
   }
 
   redirect(redirectPath);
