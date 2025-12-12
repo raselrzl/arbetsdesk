@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "./utils/db";
 import { createUserSchema } from "./utils/schemas";
 
+import { cookies } from "next/headers";
+import { z } from "zod";
+
 export async function createUserAction(prevState: any, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
 
@@ -36,34 +39,28 @@ export async function createUserAction(prevState: any, formData: FormData) {
 
 
 
-import { cookies } from "next/headers";
-import { z } from "zod";
+
 
 const loginSchema = z.object({
   personalNumber: z.string().min(6, "Enter personal number"),
   pinNumber: z.string().min(4).max(4, "PIN must be 4 digits"),
 });
 
-const SESSION_TTL_SECONDS = 60 * 20; // 20 min session
+const SESSION_TTL_SECONDS = 60 * 20;
 
-
-export async function loginAction(input: z.infer<typeof loginSchema>) {
-  const { personalNumber, pinNumber } = loginSchema.parse(input);
+// Wrap loginUserAction to accept FormData
+export async function loginUserAction(formData: FormData) {
+  const data = Object.fromEntries(formData.entries()) as { personalNumber: string; pinNumber: string };
+  const { personalNumber, pinNumber } = loginSchema.parse(data);
 
   const user = await prisma.user.findUnique({
     where: { personalNumber },
-    select: {
-      id: true,
-      personalNumber: true,
-      pinNumber: true,
-      role: true,
-    },
+    select: { id: true, personalNumber: true, pinNumber: true, role: true },
   });
 
-  if (!user) return { error: "notfound" };
-  if (user.pinNumber !== pinNumber) return { error: "invalid" };
+  if (!user) redirect("/login?error=notfound");
+  if (user.pinNumber !== pinNumber) redirect("/login?error=invalid");
 
-  // Create session cookie
   const jar = await cookies();
   jar.set("user_session", user.id, {
     path: "/",
@@ -73,26 +70,23 @@ export async function loginAction(input: z.infer<typeof loginSchema>) {
     maxAge: SESSION_TTL_SECONDS,
   });
 
-  // Redirect by role
-  let redirectPath = "/";
-
   switch (user.role) {
-    case "EMPLOYEE": redirectPath = "/employee"; break;
-    case "COMPANY": redirectPath = "/company"; break;
-    case "ADMIN": redirectPath = "/admin"; break;
-    case "SUPERADMIN": redirectPath = "/super-admin"; break;
-    case "USER": redirectPath = "/profile"; break;
-    default: redirectPath = "/thank-you";
+    case "EMPLOYEE": redirect("/employee");
+    case "COMPANY": redirect("/company");
+    case "ADMIN": redirect("/admin");
+    case "SUPERADMIN": redirect("/super-admin");
+    default: redirect("/");
   }
-
-  return {
-    success: true,
-    redirectPath,
-    user: {
-      id: user.id,
-      role: user.role,
-      personalNumber: user.personalNumber,
-    },
-  };
 }
+
+export async function logoutUserAction() {
+  const jar = await cookies();
+  jar.delete({
+    name: "user_session",
+    path: "/",
+  });
+  redirect("/login");
+}
+
+
 

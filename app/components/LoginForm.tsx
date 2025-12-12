@@ -1,20 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { loginAction } from "../actions";
+import { loginUserAction } from "../actions";
 
 type Errors = { personalNumber?: string; pinNumber?: string };
 
 export default function LoginForm() {
-  const router = useRouter();
   const search = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
   const [personalNumber, setPersonalNumber] = useState("");
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);
   const [errors, setErrors] = useState<Errors>({});
@@ -29,17 +27,6 @@ export default function LoginForm() {
   ];
 
   const pinNumber = pinDigits.join("");
-
-  // Redirect if already logged in
-  useEffect(() => {
-    const savedUser = localStorage.getItem("arbeits_user");
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      if (user?.redirectPath) {
-        router.push(user.redirectPath);
-      }
-    }
-  }, [router]);
 
   // Handle server errors from query
   useEffect(() => {
@@ -76,30 +63,6 @@ export default function LoginForm() {
     if (!value && index > 0) pinRefs[index - 1].current?.focus();
   };
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitted(true);
-    const next = validate();
-    setErrors(next);
-    if (Object.keys(next).length > 0) return;
-
-    setLoading(true);
-    try {
-      // Call server action
-      const result = await loginAction({ personalNumber, pinNumber });
-
-      // Save to localStorage
-      localStorage.setItem("arbeits_user", JSON.stringify(result));
-
-      // Redirect safely
-      router.push(result.redirectPath ?? "/");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const showPersonalError = (touched.personalNumber || submitted) && !!errors.personalNumber;
   const showPinError = (touched.pinNumber || submitted) && !!errors.pinNumber;
 
@@ -108,7 +71,8 @@ export default function LoginForm() {
       <div className="w-full max-w-md bg-gray-700 p-8 shadow-md rounded-md">
         <h1 className="text-4xl font-extrabold uppercase mb-8 text-center text-white">Login</h1>
 
-        <form onSubmit={onSubmit} className="grid gap-6" noValidate>
+        {/* Form submits directly to server action */}
+        <form action={loginUserAction} className="grid gap-6" noValidate>
           {/* Personal Number */}
           <div className="grid gap-1.5">
             <Label className={`${showPersonalError ? "text-red-600" : "text-white"}`}>
@@ -125,7 +89,6 @@ export default function LoginForm() {
               className={`h-10 border rounded px-2 text-black bg-white placeholder-gray-400 ${
                 showPersonalError ? "border-red-600" : "border-white"
               }`}
-              disabled={loading}
               placeholder="000000000000"
             />
             {showPersonalError && <p className="text-sm text-red-600">{errors.personalNumber}</p>}
@@ -150,29 +113,19 @@ export default function LoginForm() {
                   className={`w-12 h-12 text-center text-xl text-black bg-white border rounded ${
                     showPinError ? "border-red-600" : "border-white"
                   }`}
-                  disabled={loading}
                 />
               ))}
             </div>
             {showPinError && <p className="text-sm text-red-600 text-center">{errors.pinNumber}</p>}
           </div>
 
+          {/* Hidden input to combine PIN digits */}
+          <input type="hidden" name="pinNumber" value={pinNumber} />
+
           {/* Submit */}
           <div className="flex justify-center mt-6">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-36 rounded-xs inline-flex items-center justify-center bg-gray-800 cursor-pointer"
-            >
-              {loading ? (
-                <>
-                  Login <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  Login <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
+            <Button type="submit" className="w-36 rounded-xs inline-flex items-center justify-center bg-gray-800 cursor-pointer">
+              Login <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </form>
