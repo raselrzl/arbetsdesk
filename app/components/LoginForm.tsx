@@ -68,7 +68,7 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-gray-700 p-8 shadow-md rounded-md">
+      <div className="w-full max-w-md bg-teal-700 p-8 shadow-md rounded-md">
         <h1 className="text-4xl font-extrabold uppercase mb-8 text-center text-white">Login</h1>
 
         {/* Form submits directly to server action */}
@@ -124,7 +124,7 @@ export default function LoginForm() {
 
           {/* Submit */}
           <div className="flex justify-center mt-6">
-            <Button type="submit" className="w-36 rounded-xs inline-flex items-center justify-center bg-gray-800 cursor-pointer">
+            <Button type="submit" className="w-36 rounded-xs inline-flex items-center justify-center bg-teal-900 cursor-pointer">
               Login <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
