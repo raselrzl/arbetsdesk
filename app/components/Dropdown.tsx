@@ -5,10 +5,11 @@ import { ChevronDown } from "lucide-react";
 
 interface DropdownProps {
   label: string;
+  href?: string; // optional main link
   items: [string, string][];
 }
 
-export default function Dropdown({ label, items }: DropdownProps) {
+export default function Dropdown({ label, href, items }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -23,24 +24,38 @@ export default function Dropdown({ label, items }: DropdownProps) {
   }, []);
 
   return (
-    <div
-      className="relative flex items-center gap-1"
-      ref={ref}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        className="hover:text-gray-700 flex items-center gap-1"
-        onClick={() => setOpen(!open)}
-      >
-        {label} <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
+    <div className="relative flex items-center gap-1" ref={ref}>
+      <div className="flex items-center gap-1">
+        {href ? (
+          <Link
+            href={href}
+            className="hover:text-gray-700 flex items-center gap-1"
+          >
+            {label}
+          </Link>
+        ) : (
+          <span className="hover:text-gray-700 flex items-center gap-1">{label}</span>
+        )}
+
+        {/* Dropdown toggle */}
+        <button
+          className="flex items-center"
+          onClick={() => setOpen(!open)}
+        >
+          <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+      </div>
 
       {open && (
         <div className="absolute top-full left-0 mt-2 bg-white shadow-md rounded-md w-48 z-50">
-          {items.map(([label, href]) => (
-            <Link key={href} href={href} className="block px-4 py-2 hover:bg-gray-100">
-              {label}
+          {items.map(([itemLabel, itemHref]) => (
+            <Link
+              key={itemHref}
+              href={itemHref}
+              className="block px-4 py-2 hover:bg-gray-100"
+              onClick={() => setOpen(false)}
+            >
+              {itemLabel}
             </Link>
           ))}
         </div>

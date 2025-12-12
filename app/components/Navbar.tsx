@@ -30,28 +30,32 @@ if (userId) {
         {/* DESKTOP NAV */}
         <div className="hidden md:flex items-center gap-6">
           <Dropdown
-            label="Features"
-            items={[
-              ["Time Clock", "/features/time-clock"],
-              ["Schedule", "/features/schedule"],
-              ["Hours", "/features/hours"],
-              ["Payroll", "/features/payroll"],
-              ["Analytics", "/features/analytics"],
-              ["Tips", "/features/tips"],
-              ["Staff", "/features/staff"],
-            ]}
-          />
+  label="Features"
+  href="/features" // main link
+  items={[
+    ["Time Clock", "/features/time-clock"],
+    ["Schedule", "/features/schedule"],
+    ["Hours", "/features/hours"],
+    ["Payroll", "/features/payroll"],
+    ["Analytics", "/features/analytics"],
+    ["Tips", "/features/tips"],
+    ["Staff", "/features/staff"],
+  ]}
+/>
+
 
           <Dropdown
-            label="Industries"
-            items={[
-              ["Hotels", "/industries/hotel"],
-              ["Restaurants", "/industries/restaurant"],
-              ["Fast Food / Café", "/industries/fastfood-cafe"],
-              ["Retail", "/industries/retail"],
-              ["Accounting Firms", "/industries/accounting"],
-            ]}
-          />
+  label="Industries"
+  href="/industries" // main link for Industries
+  items={[
+    ["Hotels", "/industries/hotel"],
+    ["Restaurants", "/industries/restaurant"],
+    ["Fast Food / Café", "/industries/fastfood-cafe"],
+    ["Retail", "/industries/retail"],
+    ["Accounting Firms", "/industries/accounting"],
+  ]}
+/>
+
 
           {/* Other Links */}
           <Link href="/integrations" className="hover:text-gray-700">Integrations</Link>
