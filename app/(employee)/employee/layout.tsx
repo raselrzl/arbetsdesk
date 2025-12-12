@@ -1,7 +1,14 @@
-export default function EmployeeLayout({
+import EmployeeNavbar from "../employeecomponents/EmployeeNavbar";
+
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="bg-red-700">{children}</div>;
+  return (
+    <div className="">
+      <EmployeeNavbar />
+      {children}
+    </div>
+  );
 }
