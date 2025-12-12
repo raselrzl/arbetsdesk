@@ -161,7 +161,8 @@ export default function LoginForm() {
         >
           support@arbetsdesk.se
         </a>{" "}
-       or  <span className="font-bold text-teal-800">010-150 00 00 </span> and we’ll help you!
+        or <span className="font-bold text-teal-800">010-150 00 00 </span> and
+        we’ll help you!
       </div>
     </div>
   );
