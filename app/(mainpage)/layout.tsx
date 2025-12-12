@@ -24,15 +24,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="mb-20">
-          <Navbar />
-        </div>
-        <div>{children}</div>
-      </body>
-    </html>
+    <div>
+      <div className="mb-20">
+        <Navbar />
+      </div>
+      <div>{children}</div>
+    </div>
   );
 }
