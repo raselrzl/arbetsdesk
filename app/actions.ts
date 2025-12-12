@@ -95,8 +95,12 @@ export async function loginAction(input: z.infer<typeof loginSchema>) {
     case "SUPERADMIN":
       redirectPath = "/super-admin";
       break;
-    default:
+
+    case "USER":
       redirectPath = "/profile";
+      break;
+    default:
+      redirectPath = "/thank-you";
   }
 
   redirect(redirectPath);
