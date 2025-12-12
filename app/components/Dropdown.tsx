@@ -34,15 +34,18 @@ export default function Dropdown({ label, href, items }: DropdownProps) {
             {label}
           </Link>
         ) : (
-          <span className="hover:text-gray-700 flex items-center gap-1">{label}</span>
+          <span className="hover:text-gray-700 flex items-center gap-1">
+            {label}
+          </span>
         )}
 
         {/* Dropdown toggle */}
-        <button
-          className="flex items-center"
-          onClick={() => setOpen(!open)}
-        >
-          <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        <button className="flex items-center" onClick={() => setOpen(!open)}>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
         </button>
       </div>
 

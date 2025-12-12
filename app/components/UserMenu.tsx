@@ -7,7 +7,7 @@ export default function UserMenu({ user }: { user: { personalNumber: string } | 
     return (
       <Link
         href="/login"
-        className="hover:text-white bg-gray-600 text-white font-bold px-4 py-1 rounded-2xl"
+        className="hover:text-white bg-teal-600 text-white font-bold px-4 py-1 rounded-xs"
       >
         Login
       </Link>
