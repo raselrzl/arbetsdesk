@@ -3,6 +3,7 @@
 
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import CompanySelect from "./CompanySelect";
 
 export default function UserMenu({
   user,
@@ -37,12 +38,7 @@ export default function UserMenu({
 
           {/* COMPANY DROPDOWN MOBILE ONLY */}
           <div className="md:hidden pt-4 border-t">
-            <label className="text-sm font-semibold block mb-1">Company</label>
-            <select className="w-full border rounded-md px-2 py-2 bg-white">
-              {companies.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
+            <CompanySelect companies={companies} />
           </div>
         </div>
       </SheetContent>
