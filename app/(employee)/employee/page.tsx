@@ -88,9 +88,9 @@ export default function EmployeeDashboard() {
           {/* Hours Worked Card */}
           <button
             onClick={() => setShowHoursModal(true)}
-            className="md:w-88 h-20 grid grid-cols-2 items-center bg-white p-1 rounded-md hover:bg-teal-50 transition-shadow duration-200 shadow-[0_4px_6px_-1px_rgba(20,83,45,0.4),0_2px_4px_-1px_rgba(20,83,45,0.06)]"
+            className="md:w-88 h-16 grid grid-cols-2 items-center bg-white p-1 rounded-md hover:bg-teal-50 transition-shadow duration-200 shadow-[0_4px_6px_-1px_rgba(20,83,45,0.4),0_2px_4px_-1px_rgba(20,83,45,0.06)]"
           >
-            <span className="font-medium text-gray-700 text-sm">
+            <span className="font-medium text-gray-700 text-xs">
               Hours Worked This Month
             </span>
             <div className="flex items-center justify-end gap-1 text-teal-600 font-semibold">
