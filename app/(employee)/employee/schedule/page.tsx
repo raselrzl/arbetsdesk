@@ -7,8 +7,8 @@ import { Calendar, Clock } from "lucide-react";
 type DailySchedule = {
   date: string;
   startTime?: string; // "09:00"
-  endTime?: string;   // "17:00"
-  hours: number;      // total hours worked
+  endTime?: string; // "17:00"
+  hours: number; // total hours worked
 };
 
 export default function MySchedulePage() {
@@ -16,7 +16,11 @@ export default function MySchedulePage() {
 
   // Random schedule for demonstration
   const scheduleData: DailySchedule[] = useMemo(() => {
-    const daysInMonth = new Date(Number(month.split("-")[0]), Number(month.split("-")[1]), 0).getDate();
+    const daysInMonth = new Date(
+      Number(month.split("-")[0]),
+      Number(month.split("-")[1]),
+      0
+    ).getDate();
     const data: DailySchedule[] = [];
     for (let i = 1; i <= daysInMonth; i++) {
       const day = i.toString().padStart(2, "0");
@@ -40,15 +44,23 @@ export default function MySchedulePage() {
     return data;
   }, [month]);
 
-  const totalHours = useMemo(() => scheduleData.reduce((acc, d) => acc + d.hours, 0), [scheduleData]);
+  const totalHours = useMemo(
+    () => scheduleData.reduce((acc, d) => acc + d.hours, 0),
+    [scheduleData]
+  );
 
-  const daysInMonth = new Date(Number(month.split("-")[0]), Number(month.split("-")[1]), 0).getDate();
+  const daysInMonth = new Date(
+    Number(month.split("-")[0]),
+    Number(month.split("-")[1]),
+    0
+  ).getDate();
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">My Schedule</h1>
       <p className="text-gray-600 mb-4">
-        View your schedule for the selected month. Start and end times are displayed for each shift.
+        View your schedule for the selected month. Start and end times are
+        displayed for each shift.
       </p>
 
       {/* Month Selector */}
@@ -68,7 +80,9 @@ export default function MySchedulePage() {
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: daysInMonth }, (_, i) => {
             const day = (i + 1).toString().padStart(2, "0");
-            const dayData = scheduleData.find(d => d.date.endsWith(`-${day}`));
+            const dayData = scheduleData.find((d) =>
+              d.date.endsWith(`-${day}`)
+            );
             return (
               <div
                 key={i}
@@ -79,7 +93,13 @@ export default function MySchedulePage() {
                 {dayData?.hours ? (
                   <>
                     <span className="text-sm text-teal-700">
-                      {dayData.startTime} - {dayData.endTime}
+                      {dayData ? (
+                        <span className="text-sm text-teal-700">
+                          {dayData.startTime} - {dayData.endTime}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-sm">Off</span>
+                      )}
                     </span>
                     <span className="flex items-center gap-1 text-teal-700">
                       <Clock className="w-4 h-4" /> {dayData.hours}h
@@ -97,7 +117,9 @@ export default function MySchedulePage() {
       {/* Total Hours */}
       <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
         <Clock className="w-5 h-5 text-teal-600" />
-        <span className="font-semibold">Total Hours This Month: {totalHours}h</span>
+        <span className="font-semibold">
+          Total Hours This Month: {totalHours}h
+        </span>
       </div>
     </div>
   );
