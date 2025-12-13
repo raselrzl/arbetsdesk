@@ -37,13 +37,13 @@ export default async function EmployeeNavbar() {
           {/* LEFT SIDE */}
           <div className="flex items-center gap-8">
             <div className="text-2xl font-bold tracking-wide">
-              <Link href="/">Arbetsdesk</Link>
+              <Link href="/employee">Arbetsdesk</Link>
             </div>
 
             {/* Desktop only links */}
             <div className="hidden md:flex items-center gap-6 font-medium">
               <Link
-                href="/employee/start"
+                href="/employee"
                 className="hover:text-gray-200 flex items-center gap-2"
               >
                 <Home className="w-4 h-4" /> Start
