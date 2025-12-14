@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -18,7 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, Clock, Wallet, TrendingUp } from "lucide-react";
 
 // ------------------
-// Mock constants
+// MOCK DATA
 // ------------------
 const employees = [
   "Anna Karlsson",
@@ -60,7 +58,7 @@ export default function CompanyAnalysisPage() {
   useEffect(() => {
     const daysInMonth = 30;
 
-    // DAILY DATA (time + tips)
+    // DAILY TIME & TIPS
     const generatedDailyData: DailyRecord[] = Array.from(
       { length: daysInMonth },
       (_, i) => ({
@@ -72,11 +70,10 @@ export default function CompanyAnalysisPage() {
 
     setDailyData(generatedDailyData);
 
-    // SALARY PER EMPLOYEE (derived from time)
+    // SALARY PER EMPLOYEE
     setSalaryData(
       employees.map((name) => {
-        const hours =
-          120 + Math.floor(Math.random() * 40); // simulate per-employee hours
+        const hours = 120 + Math.floor(Math.random() * 40);
         return {
           name,
           hours,
@@ -87,7 +84,7 @@ export default function CompanyAnalysisPage() {
   }, [selectedMonth]);
 
   // ------------------
-  // CALCULATIONS
+  // TOTALS
   // ------------------
   const totalHours = useMemo(
     () => dailyData.reduce((sum, d) => sum + d.hours, 0),
@@ -109,9 +106,9 @@ export default function CompanyAnalysisPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Analysis Dashboard</h1>
+          <h1 className="text-3xl font-bold">Company Analysis</h1>
           <p className="text-gray-500">
-            Daily-based time, salary & tips analysis
+            Daily-based time, salary & tips overview
           </p>
         </div>
 
@@ -119,7 +116,7 @@ export default function CompanyAnalysisPage() {
         <select
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="border rounded px-3 py-2 w-fit"
+          className="border rounded px-3 py-2"
         >
           {months.map((m) => (
             <option key={m.value} value={m.value}>
@@ -129,10 +126,10 @@ export default function CompanyAnalysisPage() {
         </select>
       </div>
 
-      {/* KPIs */}
+      {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <KPI icon={Users} label="Employees" value={employees.length} />
-        <KPI icon={Clock} label="Total Worked Hours" value={`${totalHours}h`} />
+        <KPI icon={Clock} label="Worked Hours" value={`${totalHours}h`} />
         <KPI icon={Wallet} label="Salary Cost" value={`${totalSalary} SEK`} />
         <KPI icon={TrendingUp} label="Total Tips" value={`${totalTips} SEK`} />
       </div>
@@ -140,7 +137,7 @@ export default function CompanyAnalysisPage() {
       {/* TABS */}
       <Tabs defaultValue="hours">
         <TabsList>
-          <TabsTrigger value="hours">Hours</TabsTrigger>
+          <TabsTrigger value="hours">Worked Hours</TabsTrigger>
           <TabsTrigger value="salary">Salary</TabsTrigger>
           <TabsTrigger value="tips">Tips</TabsTrigger>
         </TabsList>
@@ -149,27 +146,27 @@ export default function CompanyAnalysisPage() {
         <TabsContent value="hours">
           <Card>
             <CardHeader>
-              <CardTitle>Daily Worked Hours ({selectedMonth})</CardTitle>
+              <CardTitle>Daily Worked Hours</CardTitle>
             </CardHeader>
             <CardContent className="h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dailyData}>
+                <BarChart data={dailyData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />
-                  <Line dataKey="hours" stroke="#0d9488" strokeWidth={2} />
-                </LineChart>
+                  <Bar dataKey="hours" fill="#0d9488" />
+                </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* SALARY */}
+        {/* SALARY PER EMPLOYEE */}
         <TabsContent value="salary">
           <Card>
             <CardHeader>
-              <CardTitle>Salary Per Employee</CardTitle>
+              <CardTitle>Salary per Employee</CardTitle>
             </CardHeader>
             <CardContent className="h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -189,7 +186,7 @@ export default function CompanyAnalysisPage() {
         <TabsContent value="tips">
           <Card>
             <CardHeader>
-              <CardTitle>Daily Tips ({selectedMonth})</CardTitle>
+              <CardTitle>Daily Tips</CardTitle>
             </CardHeader>
             <CardContent className="h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
