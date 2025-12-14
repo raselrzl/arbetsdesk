@@ -71,29 +71,6 @@ export async function loginUserAction(formData: FormData) {
 
   switch (user.role) {
 
-    case "EMPLOYEE":
-      return redirect("/employee");
-
-    case "COMPANY": {
-      const company = await prisma.company.findFirst({
-        where: { adminId: user.id },
-        select: { id: true },
-      });
-
-      if (!company) redirect("/login?error=nocompany");
-
-      // Add company session ALSO
-      jar.set("company_session", company.id, {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: SESSION_TTL_SECONDS,
-      });
-
-      return redirect("/company");
-    }
-
     case "ADMIN":
       return redirect("/admin");
 
@@ -247,7 +224,7 @@ export async function createEmployeeAction(
   try {
     const user = await getLoggedInUser();
 
-    if (!user || user.role !== "COMPANY") {
+    if (!user) {
       return { success: false, message: "Unauthorized" };
     }
 
