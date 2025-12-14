@@ -148,7 +148,7 @@ export default function CompanyAnalysisPage() {
             <CardHeader>
               <CardTitle>Daily Worked Hours</CardTitle>
             </CardHeader>
-            <CardContent className="h-[320px]">
+            <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -168,7 +168,7 @@ export default function CompanyAnalysisPage() {
             <CardHeader>
               <CardTitle>Salary per Employee</CardTitle>
             </CardHeader>
-            <CardContent className="h-[320px]">
+            <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={salaryData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -188,7 +188,7 @@ export default function CompanyAnalysisPage() {
             <CardHeader>
               <CardTitle>Daily Tips</CardTitle>
             </CardHeader>
-            <CardContent className="h-[320px]">
+            <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyData}>
                   <CartesianGrid strokeDasharray="3 3" />

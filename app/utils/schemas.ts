@@ -8,3 +8,14 @@ export const createUserSchema = z.object({
   address: z.string().min(1),
   pinNumber: z.string().min(4),
 })
+
+
+export const companyRegisterSchema = z.object({
+  companyName: z.string().min(2),
+  companyEmail: z.string().email(),
+  organizationNo: z.string().min(6),
+  loginCode: z.string().min(4),
+  price: z.number(),
+});
+
+

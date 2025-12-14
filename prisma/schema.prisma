@@ -30,7 +30,7 @@ model User {
 
 enum Role {
   USER        
-  ADMIN         
+  ADMIN       
   COMPANY     
   EMPLOYEE    
   SUPERADMIN
@@ -46,8 +46,8 @@ enum UserStatus {
 
 model Company {
   id               String        @id @default(cuid())
-  ownerId          String
-  user             User          @relation(fields: [ownerId], references: [id])
+  adminId          String
+  user             User          @relation(fields: [adminId], references: [id])
   name             String
   email            String
   organizationNo   String        @unique

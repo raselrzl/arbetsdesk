@@ -1,7 +1,7 @@
 "use server"
 import { redirect } from "next/navigation";
 import { prisma } from "./utils/db";
-import { createUserSchema } from "./utils/schemas";
+import { companyRegisterSchema, createUserSchema } from "./utils/schemas";
 
 import { cookies } from "next/headers";
 import { z } from "zod";
@@ -82,7 +82,7 @@ export async function loginUserAction(formData: FormData) {
 
     case "COMPANY": {
       const company = await prisma.company.findFirst({
-        where: { ownerId: user.id },
+        where: { adminId: user.id },
         select: { id: true },
       });
 
@@ -123,3 +123,67 @@ export async function logoutUserAction() {
 
 
 
+export async function registerCompanyAction(
+  prevState: { success: boolean; message: string },
+  formData: FormData
+) {
+  try {
+    // ✅ MUST await cookies()
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("user_session")?.value;
+
+    if (!userId) redirect("/login");
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || user.role !== "ADMIN") {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    const raw = Object.fromEntries(formData.entries());
+
+    const data = companyRegisterSchema.parse({
+      companyName: raw.companyName,
+      companyEmail: raw.companyEmail,
+      organizationNo: raw.organizationNo,
+      loginCode: raw.loginCode,
+      price: Number(raw.price),
+    });
+
+    await prisma.company.create({
+      data: {
+        adminId: user.id,
+        name: data.companyName,
+        email: data.companyEmail,
+        organizationNo: data.organizationNo,
+        loginCode: data.loginCode,
+        price: data.price,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Company created successfully",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.message || "Something went wrong",
+    };
+  }
+}
+
+
+
+export async function getLoggedInUser() {
+  const jar = await cookies();
+  const userId = jar.get("user_session")?.value;
+
+  if (!userId) return null;
+
+  return prisma.user.findUnique({
+    where: { id: userId },
+  });
+}
