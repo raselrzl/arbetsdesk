@@ -30,7 +30,7 @@ export default async function CompanyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200 px-6 py-10">
+    <div className="min-h-screen max-w-7xl mx-auto px-6 py-10 mt-14">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow">
         <h1 className="text-3xl font-bold mb-4">
           Welcome, {company.name}

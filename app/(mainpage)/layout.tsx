@@ -24,7 +24,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="bg-teal-50">
       <div className="mb-20">
         <Navbar />
       </div>

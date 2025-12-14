@@ -6,7 +6,7 @@ export default function CompanyLayout({
   children: React.ReactNode;
 }>) {
   return (
-     <div className="">
+     <div className="bg-teal-50">
        <CompanyNavbar />
        {children}
      </div>

@@ -1,8 +1,7 @@
 "use server"
 import { redirect } from "next/navigation";
 import { prisma } from "./utils/db";
-import { companyRegisterSchema, createUserSchema } from "./utils/schemas";
-
+import { companyRegisterSchema, createEmployeeSchema, createUserSchema } from "./utils/schemas";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
@@ -35,11 +34,6 @@ export async function createUserAction(prevState: any, formData: FormData) {
     return { success: false, message: err.message };
   }
 }
-
-
-
-
-
 
 const loginSchema = z.object({
   personalNumber: z.string().min(6, "Enter personal number"),
@@ -112,6 +106,68 @@ export async function loginUserAction(formData: FormData) {
 }
 
 
+const TTL = 60 * 60 * 24;
+
+export async function loginCompanyAction(formData: FormData) {
+  const organizationNo = formData.get("organizationNo") as string;
+  const loginCode = formData.get("loginCode") as string;
+
+  if (!organizationNo || !loginCode) {
+    redirect("/login?error=missing");
+  }
+
+  const company = await prisma.company.findUnique({
+    where: { organizationNo },
+    select: { id: true, loginCode: true },
+  });
+
+  if (!company) redirect("/login?error=notfound");
+  if (company.loginCode !== loginCode)
+    redirect("/login?error=invalid");
+
+  const jar = await cookies();
+
+  jar.set("company_session", company.id, {
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    maxAge: TTL,
+  });
+
+  redirect("/company");
+}
+
+
+export async function loginEmployeeAction(formData: FormData) {
+  const personalNumber = formData.get("personalNumber") as string;
+  const pinCode = formData.get("pinCode") as string;
+
+  if (!personalNumber || !pinCode) {
+    redirect("/login?error=missing");
+  }
+
+  const employee = await prisma.employee.findFirst({
+    where: { personalNumber },
+    select: { id: true, pinCode: true },
+  });
+
+  if (!employee) redirect("/login?error=notfound");
+  if (employee.pinCode !== pinCode)
+    redirect("/login?error=invalid");
+
+  const jar = await cookies();
+
+  jar.set("employee_session", employee.id, {
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    maxAge: TTL,
+  });
+
+  redirect("/employee/profile");
+}
+
+  
 export async function logoutUserAction() {
   const jar = await cookies();
   jar.delete({
@@ -120,8 +176,6 @@ export async function logoutUserAction() {
   });
   redirect("/login");
 }
-
-
 
 export async function registerCompanyAction(
   prevState: { success: boolean; message: string },
@@ -175,8 +229,6 @@ export async function registerCompanyAction(
   }
 }
 
-
-
 export async function getLoggedInUser() {
   const jar = await cookies();
   const userId = jar.get("user_session")?.value;
@@ -186,4 +238,53 @@ export async function getLoggedInUser() {
   return prisma.user.findUnique({
     where: { id: userId },
   });
+}
+
+export async function createEmployeeAction(
+  prevState: any,
+  formData: FormData
+) {
+  try {
+    const user = await getLoggedInUser();
+
+    if (!user || user.role !== "COMPANY") {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    // ✅ Find company owned by this user
+    const company = await prisma.company.findFirst({
+      where: {
+        adminId: user.id,
+      },
+    });
+
+    if (!company) {
+      return { success: false, message: "Company not found" };
+    }
+
+    const data = createEmployeeSchema.parse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      personalNumber: formData.get("personalNumber"),
+      pinCode: formData.get("pinCode"),
+      contractType: formData.get("contractType"),
+      hourlyRate: formData.get("hourlyRate"),
+      monthlySalary: formData.get("monthlySalary"),
+    });
+
+    await prisma.employee.create({
+      data: {
+        ...data,
+        companyId: company.id,
+      },
+    });
+
+    return { success: true, message: "Employee created successfully" };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.errors?.[0]?.message || "Something went wrong",
+    };
+  }
 }
