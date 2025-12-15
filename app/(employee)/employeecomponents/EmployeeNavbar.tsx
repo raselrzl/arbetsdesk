@@ -1,83 +1,75 @@
-// app/components/EmployeeNavbar.tsx
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { prisma } from "@/app/utils/db";
-import UserMenu from "./UserInfoMenu";
 import { Calendar, Clock, Home } from "lucide-react";
-import MobileBottomNav from "./MobileBottomNav ";
+import UserMenu from "./UserInfoMenu";
 import CompanySelect from "./CompanySelect";
+import MobileBottomNav from "./MobileBottomNav ";
 
-export default async function EmployeeNavbar() {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("user_session")?.value;
+type Employee = {
+  id: string;
+  name: string;
+  email: string | null;
+  company: {
+    name: string;
+  };
+};
 
-  let user: { personalNumber: string; role: string } | null = null;
-
-  if (userId) {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { personalNumber: true, role: true },
-    });
-    if (dbUser) user = dbUser;
-  }
-
-  const companies = [
-    "Nordic Service AB",
-    "BluePeak Solutions",
-    "ArcticWorks Group",
-    "Greenline Retail",
-    "FjordTech Systems",
-  ];
+export default function EmployeeNavbar({
+  employee,
+}: {
+  employee: Employee;
+}) {
+  const companies = [employee.company.name];
 
   return (
     <>
       {/* TOP NAV */}
       <nav className="w-full bg-teal-600 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* LEFT SIDE */}
+          {/* LEFT */}
           <div className="flex items-center gap-8">
             <div className="text-2xl font-bold tracking-wide">
               <Link href="/employee">Arbetsdesk</Link>
             </div>
 
-            {/* Desktop only links */}
             <div className="hidden md:flex items-center gap-6 font-medium">
-              <Link
-                href="/employee"
-                className="hover:text-gray-200 flex items-center gap-2"
-              >
+              <Link href="/employee" className="flex items-center gap-2">
                 <Home className="w-4 h-4" /> Start
               </Link>
 
               <Link
                 href="/employee/schedule"
-                className="hover:text-gray-200 flex items-center gap-2"
+                className="flex items-center gap-2"
               >
                 <Calendar className="w-4 h-4" /> My Schedule
               </Link>
 
               <Link
                 href="/employee/salary-hours"
-                className="hover:text-gray-200 flex items-center gap-2"
+                className="flex items-center gap-2"
               >
-                <Clock className="w-4 h-4" /> Salary & Hours Worked
+                <Clock className="w-4 h-4" /> Salary & Hours
               </Link>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT */}
           <div className="flex items-center gap-4">
             <div className="hidden md:block">
               <CompanySelect companies={companies} />
             </div>
 
-            {/* Drawer trigger */}
-            <UserMenu user={user} companies={companies} />
+            <UserMenu
+              user={{
+                name: employee.name,
+                email: employee.email,
+                role: "EMPLOYEE",
+              }}
+              companies={companies}
+            />
           </div>
         </div>
       </nav>
 
-      {/* MOBILE BOTTOM NAV */}
       <MobileBottomNav />
     </>
   );
