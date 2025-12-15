@@ -222,17 +222,15 @@ export async function createEmployeeAction(
   formData: FormData
 ) {
   try {
-    const user = await getLoggedInUser();
+    const jar = await cookies();
+    const companyId = jar.get("company_session")?.value;
 
-    if (!user) {
+    if (!companyId) {
       return { success: false, message: "Unauthorized" };
     }
 
-    // ✅ Find company owned by this user
-    const company = await prisma.company.findFirst({
-      where: {
-        adminId: user.id,
-      },
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
     });
 
     if (!company) {
