@@ -385,3 +385,48 @@ export async function logoutCompanyAction() {
 
   redirect("/login");
 }
+
+
+
+export async function getCompanyEmployees() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) {
+    throw new Error("Unauthorized");
+  }
+
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      contractType: true,
+      timeLogs: {
+        orderBy: { logDate: "desc" },
+        take: 1,
+      },
+    },
+  });
+
+  // map status from timelog
+  return employees.map((emp) => {
+    const log = emp.timeLogs[0];
+
+    let status: "Working" | "Off" | "On Break" = "Off";
+
+    if (log?.loginTime && !log.logoutTime) status = "Working";
+    if (log?.loginTime && log.logoutTime) status = "Off";
+
+    return {
+      id: emp.id,
+      name: emp.name,
+      email: emp.email,
+      phone: emp.phone,
+      role: emp.contractType,
+      status,
+    };
+  });
+}
