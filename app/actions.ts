@@ -263,3 +263,66 @@ export async function createEmployeeAction(
     };
   }
 }
+
+export async function loginEmployeeToday(employeeId: string) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let log = await prisma.timeLog.findFirst({
+    where: { employeeId, logDate: today },
+  });
+
+  if (!log) {
+    // Create new log for today
+    log = await prisma.timeLog.create({
+      data: {
+        employeeId,
+        logDate: today,
+        loginTime: new Date(),
+      },
+    });
+  } else if (!log.loginTime) {
+    // Update existing log
+    log = await prisma.timeLog.update({
+      where: { id: log.id },
+      data: { loginTime: new Date() },
+    });
+  }
+
+  return log;
+}
+
+export async function logoutEmployeeToday(employeeId: string) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const log = await prisma.timeLog.findFirst({
+    where: { employeeId, logDate: today },
+  });
+
+  if (!log) throw new Error("Employee has not logged in today");
+
+  const loginTime = log.loginTime ?? new Date();
+  const logoutTime = new Date();
+  const totalMinutes = Math.floor((logoutTime.getTime() - loginTime.getTime()) / 60000);
+
+  return await prisma.timeLog.update({
+    where: { id: log.id },
+    data: { logoutTime, totalMinutes },
+  });
+}
+
+export async function getEmployeeStatus(companyId: string) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return prisma.employee.findMany({
+    where: { companyId },
+    include: {
+      timeLogs: {
+        where: { logDate: today },
+      },
+    },
+  });
+}
+
