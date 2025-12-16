@@ -31,6 +31,5 @@ export async function POST(
     where: { id: log.id },
     data: { logoutTime, totalMinutes },
   });
-
-  return NextResponse.json({ success: true });
+  return NextResponse.redirect("/company");
 }
