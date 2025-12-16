@@ -326,3 +326,48 @@ export async function getEmployeeStatus(companyId: string) {
   });
 }
 
+
+
+
+// ------------------- LOGIN -------------------
+export async function loginEmployee(employeeId: string) {
+  "use server";
+
+  const now = new Date();
+
+  // Always create a new log
+  const log = await prisma.timeLog.create({
+    data: {
+      employeeId,
+      loginTime: now,
+      logoutTime: null,
+      logDate: now,
+    },
+  });
+
+  return log;
+}
+
+// ------------------- LOGOUT -------------------
+export async function logoutEmployee(employeeId: string) {
+  "use server";
+
+  // Find the latest open log
+  const log = await prisma.timeLog.findFirst({
+    where: { employeeId, logoutTime: null },
+    orderBy: { loginTime: "desc" },
+  });
+
+  if (!log) throw new Error("Employee is not logged in");
+
+  const logoutTime = new Date();
+  const loginTime = log.loginTime!;
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - loginTime.getTime()) / 60000
+  );
+
+  return await prisma.timeLog.update({
+    where: { id: log.id },
+    data: { logoutTime, totalMinutes },
+  });
+}

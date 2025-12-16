@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import RealTimeClock from "./RealTimeClock";
+import { loginEmployee, logoutEmployee } from "@/app/actions";
 
 /* ---------------- helpers ---------------- */
 
@@ -21,6 +23,7 @@ function startOfToday() {
 /* ---------------- component ---------------- */
 
 export default function CompanyPageClient({ companyData }: any) {
+  const router = useRouter();
   const [company, setCompany] = useState(companyData);
   const [mounted, setMounted] = useState(false);
 
@@ -46,22 +49,8 @@ export default function CompanyPageClient({ companyData }: any) {
     if (!selectedEmployee) return;
 
     try {
-      const res = await fetch(
-        `/company/employee/${selectedEmployee.id}/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ personalNumber, pinCode }),
-        }
-      );
+      const log = await loginEmployee(selectedEmployee.id);
 
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || "Login failed");
-        return;
-      }
-
-      /* optimistic update */
       setCompany((prev: any) => {
         const updated = { ...prev };
         const idx = updated.employees.findIndex(
@@ -71,14 +60,7 @@ export default function CompanyPageClient({ companyData }: any) {
         if (idx !== -1) {
           updated.employees[idx] = {
             ...updated.employees[idx],
-            timeLogs: [
-              ...(updated.employees[idx].timeLogs || []),
-              {
-                loginTime: new Date().toISOString(),
-                logoutTime: null,
-                logDate: new Date().toISOString(),
-              },
-            ],
+            timeLogs: [...(updated.employees[idx].timeLogs || []), log],
           };
         }
 
@@ -88,8 +70,38 @@ export default function CompanyPageClient({ companyData }: any) {
       setShowLoginModal(false);
       setPersonalNumber("");
       setPinCode("");
-    } catch {
-      alert("Something went wrong");
+    } catch (err: any) {
+      alert(err.message || "Login failed");
+    }
+  };
+
+  /* ---------------- logout ---------------- */
+
+  const submitLogout = async (emp: any) => {
+    try {
+      const log = await logoutEmployee(emp.id);
+
+      setCompany((prev: any) => {
+        const updated = { ...prev };
+        const idx = updated.employees.findIndex((e: any) => e.id === emp.id);
+
+        if (idx !== -1) {
+          const logs = updated.employees[idx].timeLogs || [];
+          for (let i = logs.length - 1; i >= 0; i--) {
+            if (!logs[i].logoutTime) {
+              logs[i] = log;
+              break;
+            }
+          }
+        }
+
+        return updated;
+      });
+
+      // redirect to company page
+      router.push("/company");
+    } catch (err: any) {
+      alert(err.message || "Logout failed");
     }
   };
 
@@ -149,7 +161,6 @@ export default function CompanyPageClient({ companyData }: any) {
                     {todayLogs.length === 0 && (
                       <span className="text-gray-400">—</span>
                     )}
-
                     {todayLogs.map((log: any, idx: number) => (
                       <div key={idx} suppressHydrationWarning>
                         In: {safeTime(log.loginTime, mounted)}
@@ -170,17 +181,12 @@ export default function CompanyPageClient({ companyData }: any) {
                         Login
                       </button>
                     ) : (
-                      <form
-                        action={`/company/employee/${emp.id}/logout`}
-                        method="post"
+                      <button
+                        onClick={() => submitLogout(emp)}
+                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                       >
-                        <button
-                          type="submit"
-                          className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                        >
-                          Logout
-                        </button>
-                      </form>
+                        Logout
+                      </button>
                     )}
                   </td>
                 </tr>
