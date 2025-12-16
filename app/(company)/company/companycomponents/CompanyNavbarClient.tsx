@@ -15,8 +15,18 @@ import {
 import CompanyUserMenu from "./CompanyUserMenu";
 import MobileBottomNavCompany from "./MobileBottomNavCompany";
 
+type CompanySession = {
+  name: string;
+  email: string;
+  organizationNo: string;
+  paymentStatus: "PAID" | "PENDING" | "OVERDUE";
+  adminName: string;
+  employeesCount: number;
+};
+
+
 interface CompanyNavbarClientProps {
-  company: { name: string } | null;
+  company: CompanySession | null;
 }
 
 export default function CompanyNavbarClient({ company }: CompanyNavbarClientProps) {

@@ -18,15 +18,16 @@ export default function MobileBottomNavCompany() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/company/start", label: "Start", icon: Home },
-    { href: "/company/schema", label: "Schema", icon: Calendar },
-    { href: "/company/time", label: "Time", icon: Clock },
-    { href: "/company/salary", label: "Salary", icon: Wallet },
-    { href: "/company/tips", label: "Tips", icon: Wallet },
-    { href: "/company/analysis", label: "Analysis", icon: BarChart },
-    { href: "/company/employee", label: "Employee", icon: Users },
-    { href: "/company/message", label: "Message", icon: MessageSquare },
-  ];
+  { href: "/company", label: "Start", icon: Home },
+  { href: "/company/schedule", label: "Schedule", icon: Calendar },
+  { href: "/company/time", label: "Time", icon: Clock },
+  { href: "/company/salary", label: "Salary", icon: Wallet },
+  { href: "/company/tips", label: "Tips", icon: Wallet },
+  { href: "/company/analysis", label: "Analysis", icon: BarChart },
+  { href: "/company/employee", label: "Employee", icon: Users },
+  { href: "/company/message", label: "Message", icon: MessageSquare },
+];
+
 
   return (
     <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md md:hidden overflow-x-auto">

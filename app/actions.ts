@@ -371,3 +371,17 @@ export async function logoutEmployee(employeeId: string) {
     data: { logoutTime, totalMinutes },
   });
 }
+
+
+export async function logoutCompanyAction() {
+  "use server";
+
+  const jar = await cookies();
+
+  jar.delete({
+    name: "company_session",
+    path: "/",
+  });
+
+  redirect("/login");
+}
