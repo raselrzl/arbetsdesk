@@ -6,21 +6,18 @@ export async function POST(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params; // ✅ FIX
+  const { id } = await context.params;
   const body = await req.json();
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   // optional: validate PIN here
 
-  await prisma.timeLog.create({
+  const log = await prisma.timeLog.create({
     data: {
       employeeId: id,
       loginTime: new Date(),
-      logDate: today,
+      logDate: new Date(), // store full date, not just 0:00
     },
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, log });
 }

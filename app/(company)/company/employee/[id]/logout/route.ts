@@ -6,17 +6,11 @@ export async function POST(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params; // ✅ FIX
+  const { id } = await context.params;
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
+  // find the latest open log (logoutTime = null)
   const log = await prisma.timeLog.findFirst({
-    where: {
-      employeeId: id,
-      logDate: today,
-      logoutTime: null, // ✅ only open session
-    },
+    where: { employeeId: id, logoutTime: null },
     orderBy: { loginTime: "desc" },
   });
 
@@ -27,11 +21,15 @@ export async function POST(
     );
   }
 
+  const logoutTime = new Date();
+  const loginTime = log.loginTime!;
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - loginTime.getTime()) / 60000
+  );
+
   await prisma.timeLog.update({
     where: { id: log.id },
-    data: {
-      logoutTime: new Date(),
-    },
+    data: { logoutTime, totalMinutes },
   });
 
   return NextResponse.json({ success: true });
