@@ -66,12 +66,6 @@ export default async function Navbar() {
           <Link href="/contact" className="hover:text-teal-700">
             Contact
           </Link>
-          <Link href="/company" className="hover:text-teal-700">
-            Company
-          </Link>
-          <Link href="/employee" className="hover:text-teal-700">
-            Employee
-          </Link>
           <Link href="/admin/createuser" className="hover:text-teal-700">
             Register
           </Link>

@@ -25,7 +25,7 @@ export default function MainLayout({
 }>) {
   return (
     <div className="bg-teal-50">
-      <div className="mb-20">
+      <div className="mb-13">
         <Navbar />
       </div>
       <div>{children}</div>

@@ -75,21 +75,6 @@ export default function MobileMenu({ user }: { user: any }) {
           >
             Contact
           </Link>
-          <Link
-            href="/company"
-            className="py-2 border-b"
-            onClick={handleLinkClick}
-          >
-            Company
-          </Link>
-          <Link
-            href="/employee"
-            className="py-2 border-b"
-            onClick={handleLinkClick}
-          >
-            Employee
-          </Link>
-
            <Link
             href="/admin/createuser"
             className="py-2 border-b"
