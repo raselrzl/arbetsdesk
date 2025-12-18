@@ -129,3 +129,59 @@ export async function getEmployeeMonthlySchedule(month: string) {
   });
 }
 
+
+
+
+export type DailyWork = {
+  date: string;
+  loginTime: Date | null;
+  logoutTime: Date | null;
+  totalMinutes: number;
+};
+
+export type Employee = {
+  id: string;
+  name: string;
+  contractType: "HOURLY" | "MONTHLY";
+  hourlyRate?: number | null;
+  monthlySalary?: number | null;
+};
+
+export async function getEmployeeMonthlyData(month: string): Promise<{ employee: Employee; dailyWork: DailyWork[] }> {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+  if (!employeeId) throw new Error("Unauthorized");
+
+  const emp = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: {
+      id: true,
+      name: true,
+      contractType: true,
+      hourlyRate: true,
+      monthlySalary: true,
+    },
+  });
+  if (!emp) throw new Error("Employee not found");
+
+  const [year, monthNum] = month.split("-").map(Number);
+  const start = new Date(year, monthNum - 1, 1);
+  const end = new Date(year, monthNum, 1);
+
+  const logs = await prisma.timeLog.findMany({
+    where: { employeeId: emp.id, logDate: { gte: start, lt: end } },
+  });
+
+  const daily: DailyWork[] = logs.map((log) => ({
+    date: log.logDate.toISOString().slice(0, 10),
+    loginTime: log.loginTime,
+    logoutTime: log.logoutTime,
+    totalMinutes:
+      log.totalMinutes ??
+      (log.loginTime && log.logoutTime
+        ? Math.floor((log.logoutTime.getTime() - log.loginTime.getTime()) / 60000)
+        : 0),
+  }));
+
+  return { employee: emp, dailyWork: daily };
+}
