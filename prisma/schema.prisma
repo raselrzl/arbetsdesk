@@ -150,9 +150,17 @@ model SalarySlip {
   totalHours Float
   totalPay   Float
   pdfUrl     String?
+  status     SalaryStatus @default(PENDING)
   createdAt  DateTime @default(now())
   totalTips  Float?   @default(0)
 }
+
+enum SalaryStatus {
+  PENDING 
+  PAID
+  REJECTED
+}
+
 
 model DailyTip {
   id        String  @id @default(cuid())

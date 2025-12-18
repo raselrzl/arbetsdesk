@@ -4,6 +4,7 @@ import { prisma } from "./utils/db";
 import { companyRegisterSchema, createEmployeeSchema, createUserSchema } from "./utils/schemas";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { SalaryStatus } from "@prisma/client";
 
 export async function createUserAction(prevState: any, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
@@ -557,58 +558,105 @@ export async function getCompanyTimeReports() {
 export type SalaryRow = {
   employeeId: string;
   name: string;
+  contractType: "HOURLY" | "MONTHLY";
   totalMinutes: number;
-  monthlySalary: number;
-  month: string; // "2025-01"
-  status: "Pending" | "Paid";
+  hourlyRate?: number | null;
+  monthlySalary?: number | null;
+  salary: number;
+  status: "PENDING" | "PAID" | "REJECTED";
 };
 
-export async function getCompanySalaries(): Promise<SalaryRow[]> {
-  const jar =await cookies();
+export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[]> {
+  const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
-
   if (!companyId) throw new Error("Unauthorized");
 
-  // Fetch all employees for this company
+  const [year, monthNum] = month.split("-").map(Number);
+
+  // 1️⃣ Fetch employees
   const employees = await prisma.employee.findMany({
     where: { companyId },
     select: {
       id: true,
       name: true,
+      contractType: true,
+      hourlyRate: true,
       monthlySalary: true,
     },
   });
 
-  // Fetch all time logs for these employees
+  // 2️⃣ Fetch time logs for this month
   const timeLogs = await prisma.timeLog.findMany({
-    where: { companyId },
-    include: { employee: true },
-    orderBy: { logDate: "asc" },
+    where: {
+      companyId,
+      logDate: {
+        gte: new Date(year, monthNum - 1, 1),
+        lt: new Date(year, monthNum, 1),
+      },
+    },
+    select: {
+      employeeId: true,
+      loginTime: true,
+      logoutTime: true,
+      totalMinutes: true,
+    },
   });
 
-  // Aggregate total minutes per employee per month
-  const salaryMap: Record<string, SalaryRow> = {};
+  // 3️⃣ Aggregate total minutes with fallback
+  const minutesMap: Record<string, number> = {};
+  const now = new Date();
 
   timeLogs.forEach((log) => {
-    if (!log.employee) return;
-    const month = log.logDate.toISOString().slice(0, 7); // YYYY-MM
-    const key = `${log.employee.id}-${month}`;
+    if (!minutesMap[log.employeeId]) minutesMap[log.employeeId] = 0;
 
-    if (!salaryMap[key]) {
-      salaryMap[key] = {
-        employeeId: log.employee.id,
-        name: log.employee.name,
-        totalMinutes: 0,
-        monthlySalary: log.employee.monthlySalary || 0,
-        month,
-        status: "Pending",
-      };
+    // Use stored totalMinutes if exists
+    if (log.totalMinutes != null) {
+      minutesMap[log.employeeId] += log.totalMinutes;
+    } 
+    // Calculate from login/logout
+    else if (log.loginTime && log.logoutTime) {
+      const diff = Math.floor((log.logoutTime.getTime() - log.loginTime.getTime()) / 60000);
+      minutesMap[log.employeeId] += diff;
+    } 
+    // Live calculation if still logged in
+    else if (log.loginTime && !log.logoutTime) {
+      const diff = Math.floor((now.getTime() - log.loginTime.getTime()) / 60000);
+      minutesMap[log.employeeId] += diff;
     }
-
-    salaryMap[key].totalMinutes += log.totalMinutes ?? 0;
   });
 
-  return Object.values(salaryMap).sort(
-    (a, b) => a.name.localeCompare(b.name) || a.month.localeCompare(b.month)
-  );
+  // 4️⃣ Fetch salary slips
+  const salarySlips = await prisma.salarySlip.findMany({
+    where: { companyId, month: monthNum, year },
+    select: { employeeId: true, status: true },
+  });
+
+  const statusMap: Record<string, SalaryStatus> = {};
+  salarySlips.forEach((s) => {
+    statusMap[s.employeeId] = s.status;
+  });
+
+  // 5️⃣ Build final rows
+  const rows: SalaryRow[] = employees.map((e) => {
+    const totalMinutes = minutesMap[e.id] || 0;
+    let salary = 0;
+
+    if (e.contractType === "HOURLY") salary = (totalMinutes / 60) * (e.hourlyRate || 0);
+    else salary = e.monthlySalary || 0;
+
+    return {
+      employeeId: e.id,
+      name: e.name,
+      contractType: e.contractType,
+      totalMinutes,
+      hourlyRate: e.hourlyRate,
+      monthlySalary: e.monthlySalary,
+      salary: Math.round(salary),
+      status: statusMap[e.id] || "PENDING",
+    };
+  });
+
+  return rows.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+
