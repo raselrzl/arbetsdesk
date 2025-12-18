@@ -9,13 +9,21 @@ export async function POST(
   const { id } = await context.params;
   const body = await req.json();
 
-  // optional: validate PIN here
+  // Find the employee first to get companyId
+  const employee = await prisma.employee.findUnique({
+    where: { id },
+  });
+
+  if (!employee) {
+    return NextResponse.json({ success: false, message: "Employee not found" }, { status: 404 });
+  }
 
   const log = await prisma.timeLog.create({
     data: {
       employeeId: id,
+      companyId: employee.companyId, // ✅ required
       loginTime: new Date(),
-      logDate: new Date(), // store full date, not just 0:00
+      logDate: new Date(), // store full date
     },
   });
 
