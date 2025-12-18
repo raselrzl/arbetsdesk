@@ -552,3 +552,63 @@ export async function getCompanyTimeReports() {
     employees,
   }));
 }
+
+
+export type SalaryRow = {
+  employeeId: string;
+  name: string;
+  totalMinutes: number;
+  monthlySalary: number;
+  month: string; // "2025-01"
+  status: "Pending" | "Paid";
+};
+
+export async function getCompanySalaries(): Promise<SalaryRow[]> {
+  const jar =await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) throw new Error("Unauthorized");
+
+  // Fetch all employees for this company
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    select: {
+      id: true,
+      name: true,
+      monthlySalary: true,
+    },
+  });
+
+  // Fetch all time logs for these employees
+  const timeLogs = await prisma.timeLog.findMany({
+    where: { companyId },
+    include: { employee: true },
+    orderBy: { logDate: "asc" },
+  });
+
+  // Aggregate total minutes per employee per month
+  const salaryMap: Record<string, SalaryRow> = {};
+
+  timeLogs.forEach((log) => {
+    if (!log.employee) return;
+    const month = log.logDate.toISOString().slice(0, 7); // YYYY-MM
+    const key = `${log.employee.id}-${month}`;
+
+    if (!salaryMap[key]) {
+      salaryMap[key] = {
+        employeeId: log.employee.id,
+        name: log.employee.name,
+        totalMinutes: 0,
+        monthlySalary: log.employee.monthlySalary || 0,
+        month,
+        status: "Pending",
+      };
+    }
+
+    salaryMap[key].totalMinutes += log.totalMinutes ?? 0;
+  });
+
+  return Object.values(salaryMap).sort(
+    (a, b) => a.name.localeCompare(b.name) || a.month.localeCompare(b.month)
+  );
+}

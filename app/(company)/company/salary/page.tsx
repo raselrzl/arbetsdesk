@@ -1,67 +1,49 @@
 "use client";
 
 import { Wallet, User, Clock, Calendar } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { getCompanySalaries, type SalaryRow } from "@/app/actions";
 
-type SalaryRow = {
-  employeeId: string;
-  name: string;
-  totalMinutes: number;
-  monthlySalary: number;
-  month: string; // e.g., "2025-01"
+// ---------------- Helper ----------------
+const formatMinutes = (min: number) => {
+  const hours = Math.floor(min / 60);
+  const minutes = min % 60;
+  return `${hours}h ${minutes}m`;
 };
 
-// Employee names
-const employeeNames = [
-  "Anna Karlsson",
-  "Erik Svensson",
-  "Johan Nilsson",
-  "Maria Andersson",
-  "Sara Johansson",
-];
-
-// Helper to format minutes
-const formatMinutes = (min: number) =>
-  `${Math.floor(min / 60)}h ${min % 60}m`;
-
-// Generate mock data for 10 months
-const generateSalaryData = (): SalaryRow[] => {
-  const data: SalaryRow[] = [];
-  for (let m = 1; m <= 10; m++) {
-    const monthStr = `2025-${String(m).padStart(2, "0")}`;
-    employeeNames.forEach((name, i) => {
-      const hoursWorked = 140 + Math.floor(Math.random() * 41); // 140-180h
-      const minutesWorked = hoursWorked * 60;
-      const monthlySalary = 25000 + Math.floor(Math.random() * 10001); // 25000-35000 SEK
-      data.push({
-        employeeId: `${i + 1}-${m}`,
-        name,
-        totalMinutes: minutesWorked,
-        monthlySalary,
-        month: monthStr,
-      });
-    });
-  }
-  return data;
-};
-
-const allSalaryData = generateSalaryData();
-
+// ---------------- Component ----------------
 export default function CompanySalaryPage() {
-  const [month, setMonth] = useState("2025-01");
+  // Get current month in "YYYY-MM" format
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const [month, setMonth] = useState(currentMonth);
 
-  // Filter data for selected month
+  const [salaryData, setSalaryData] = useState<SalaryRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    getCompanySalaries()
+      .then(setSalaryData)
+      .finally(() => setLoading(false));
+  }, []);
+
   const filteredData = useMemo(
-    () => allSalaryData.filter((row) => row.month === month),
-    [month]
+    () => salaryData.filter((row) => row.month === month),
+    [salaryData, month]
   );
+
+  if (loading)
+    return (
+      <div className="p-6 mt-20 text-center text-gray-500">
+        Loading salary data...
+      </div>
+    );
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Salary Overview</h1>
-      <p className="text-gray-600">
-        Calculated from reported working time.
-      </p>
+      <p className="text-gray-600">Calculated from reported working time.</p>
 
       {/* Month selector */}
       <div className="bg-white p-4 rounded shadow flex items-center gap-3">
@@ -71,8 +53,6 @@ export default function CompanySalaryPage() {
           value={month}
           onChange={(e) => setMonth(e.target.value)}
           className="border p-2 rounded"
-          min="2025-01"
-          max="2025-10"
         />
       </div>
 
@@ -104,7 +84,7 @@ export default function CompanySalaryPage() {
                 </td>
                 <td className="p-3">
                   <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700">
-                    Pending
+                    {row.status}
                   </span>
                 </td>
               </tr>
