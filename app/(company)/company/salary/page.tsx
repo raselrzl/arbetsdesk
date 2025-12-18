@@ -1,4 +1,5 @@
 "use client";
+
 import { Wallet, User, Clock, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getCompanyMonthlySalary } from "@/app/actions";
@@ -33,10 +34,9 @@ const statusColors: Record<SalaryStatus, string> = {
   REJECTED: "bg-red-100 text-red-700",
 };
 
-/* ---------------- PAGE ---------------- */
+/* ---------------- COMPONENT ---------------- */
 
 export default function CompanySalaryPage() {
-  // Get current year-month in "YYYY-MM" format
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [month, setMonth] = useState(currentMonth);
   const [rows, setRows] = useState<SalaryRow[]>([]);
@@ -48,6 +48,13 @@ export default function CompanySalaryPage() {
       .then(setRows)
       .finally(() => setLoading(false));
   }, [month]);
+
+  // Totals
+  const totalMinutes = rows.reduce(
+    (acc, row) => acc + (row.totalMinutes || 0),
+    0
+  );
+  const totalSalary = rows.reduce((acc, row) => acc + (row.salary || 0), 0);
 
   if (loading) {
     return (
@@ -77,45 +84,60 @@ export default function CompanySalaryPage() {
 
       {/* Salary Table */}
       <div className="bg-white rounded-lg shadow p-4 overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed border-collapse">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3 text-left">Employee</th>
-              <th className="p-3 text-left">Worked Time</th>
-              <th className="p-3 text-left">Salary</th>
-              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-left w-1/5">Employee Name</th>
+              <th className="p-3 text-left w-1/5">Worked Hours</th>
+              <th className="p-3 text-left w-1/5">Salary</th>
+              <th className="p-3 text-left w-1/5">Contract Type</th>
+              <th className="p-3 text-left w-1/5">Status</th>
             </tr>
           </thead>
 
           <tbody>
             {rows.map((row) => {
-              const totalHours = row.totalMinutes / 60;
+              const hours = row.totalMinutes / 60;
               return (
                 <tr key={row.employeeId} className="border-t hover:bg-gray-50">
-                  <td className="px-3 py-2 flex items-center gap-2">
-                    <User className="w-4 h-4 text-teal-600" />
-                    {row.name}
-                  </td>
-                  <td className="px-3 py-2 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-teal-600" />
-                    {formatMinutes(row.totalMinutes)}
-                  </td>
-                  <td className="px-3 py-2 font-semibold flex flex-col">
+                  {/* Employee Name */}
+                  <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <Wallet className="w-4 h-4 text-teal-600" />
-                      {row.salary.toFixed(2)} SEK
+                      <User className="w-4 h-4 text-teal-600" />
+                      <span>{row.name}</span>
                     </div>
-                    {row.contractType === "HOURLY" && (
-                      <span className="text-xs text-gray-500 ml-6">
-                        {totalHours.toFixed(2)}h × {row.hourlyRate} SEK
-                      </span>
+                  </td>
+
+                  {/* Worked Hours */}
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-teal-600" />
+                      <span>{formatMinutes(row.totalMinutes)}</span>
+                    </div>
+                  </td>
+
+                  {/* Salary */}
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2 font-semibold">
+                      <Wallet className="w-4 h-4 text-teal-600" />
+                      <span>{row.salary.toFixed(2)} SEK</span>
+                    </div>
+                    {row.contractType === "HOURLY" && row.hourlyRate && (
+                      <div className="text-xs text-gray-500 ml-6">
+                        {hours.toFixed(2)}h × {row.hourlyRate} SEK
+                      </div>
                     )}
                     {row.contractType === "MONTHLY" && (
-                      <span className="text-xs text-gray-500 ml-6">
-                        Monthly salary
-                      </span>
+                      <div className="text-xs text-gray-500 ml-6">
+                        Monthly Salary
+                      </div>
                     )}
                   </td>
+
+                  {/* Contract Type */}
+                  <td className="px-3 py-2">{row.contractType}</td>
+
+                  {/* Status */}
                   <td className="px-3 py-2">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -128,17 +150,9 @@ export default function CompanySalaryPage() {
                 </tr>
               );
             })}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={4} className="p-6 text-center text-gray-500">
-                  No salary data for selected month
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
-
