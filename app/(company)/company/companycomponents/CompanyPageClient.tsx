@@ -11,13 +11,42 @@ function safeTime(value?: string | Date | null, mounted?: boolean) {
   if (!mounted || !value) return "--:--";
   const d = value instanceof Date ? value : new Date(value);
   if (isNaN(d.getTime())) return "--:--";
-  return d.toLocaleTimeString("en-GB"); // fixed format → no hydration issue
+  return d.toLocaleTimeString("en-GB");
 }
 
 function startOfToday() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d.getTime();
+}
+
+function formatDuration(ms: number) {
+  const totalMinutes = Math.floor(ms / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
+
+  return `${hours} hour${hours > 1 ? "s" : ""} ${minutes} min`;
+}
+
+function calculateWorkedTime(logs: any[]) {
+  let totalMs = 0;
+  const now = new Date();
+
+  logs.forEach((log) => {
+    if (!log.loginTime) return;
+
+    const login = new Date(log.loginTime);
+    const logout = log.logoutTime ? new Date(log.logoutTime) : now;
+
+    if (!isNaN(login.getTime()) && !isNaN(logout.getTime())) {
+      totalMs += logout.getTime() - login.getTime();
+    }
+  });
+
+  return totalMs > 0 ? formatDuration(totalMs) : "—";
 }
 
 /* ---------------- component ---------------- */
@@ -98,7 +127,6 @@ export default function CompanyPageClient({ companyData }: any) {
         return updated;
       });
 
-      // redirect to company page
       router.push("/company");
     } catch (err: any) {
       alert(err.message || "Logout failed");
@@ -131,6 +159,7 @@ export default function CompanyPageClient({ companyData }: any) {
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Logs</th>
+              <th className="px-4 py-2">Worked Time</th>
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
@@ -151,6 +180,8 @@ export default function CompanyPageClient({ companyData }: any) {
                 status = last.logoutTime ? "Logged Out" : "Logged In";
               }
 
+              const workedToday = calculateWorkedTime(todayLogs);
+
               return (
                 <tr key={emp.id} className="border-b">
                   <td className="px-4 py-2 font-medium">{emp.name}</td>
@@ -169,6 +200,10 @@ export default function CompanyPageClient({ companyData }: any) {
                         )}
                       </div>
                     ))}
+                  </td>
+
+                  <td className="px-4 py-2 font-medium">
+                    {workedToday}
                   </td>
 
                   <td className="px-4 py-2">

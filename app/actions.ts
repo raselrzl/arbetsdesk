@@ -268,29 +268,46 @@ export async function loginEmployeeToday(employeeId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // 1️⃣ Fetch employee (to get companyId)
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { companyId: true },
+  });
+
+  if (!employee) {
+    throw new Error("Employee not found");
+  }
+
   let log = await prisma.timeLog.findFirst({
-    where: { employeeId, logDate: today },
+    where: {
+      employeeId,
+      logDate: today,
+    },
   });
 
   if (!log) {
-    // Create new log for today
+    // 2️⃣ Create new log
     log = await prisma.timeLog.create({
       data: {
         employeeId,
+        companyId: employee.companyId, // ✅ REQUIRED
         logDate: today,
         loginTime: new Date(),
       },
     });
   } else if (!log.loginTime) {
-    // Update existing log
+    // 3️⃣ Update existing log
     log = await prisma.timeLog.update({
       where: { id: log.id },
-      data: { loginTime: new Date() },
+      data: {
+        loginTime: new Date(),
+      },
     });
   }
 
   return log;
 }
+
 
 export async function logoutEmployeeToday(employeeId: string) {
   const today = new Date();
@@ -335,10 +352,21 @@ export async function loginEmployee(employeeId: string) {
 
   const now = new Date();
 
-  // Always create a new log
+  // 1️⃣ Get employee to know which company they belong to
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { companyId: true },
+  });
+
+  if (!employee) {
+    throw new Error("Employee not found");
+  }
+
+  // 2️⃣ Create the time log
   const log = await prisma.timeLog.create({
     data: {
       employeeId,
+      companyId: employee.companyId, // ✅ REQUIRED
       loginTime: now,
       logoutTime: null,
       logDate: now,
@@ -347,6 +375,7 @@ export async function loginEmployee(employeeId: string) {
 
   return log;
 }
+
 
 // ------------------- LOGOUT -------------------
 export async function logoutEmployee(employeeId: string) {
@@ -404,6 +433,7 @@ export async function getCompanyEmployees() {
       email: true,
       phone: true,
       contractType: true,
+      companyId: true, // ✅ include companyId
       timeLogs: {
         orderBy: { logDate: "desc" },
         take: 1,
@@ -411,10 +441,8 @@ export async function getCompanyEmployees() {
     },
   });
 
-  // map status from timelog
   return employees.map((emp) => {
     const log = emp.timeLogs[0];
-
     let status: "Working" | "Off" | "On Break" = "Off";
 
     if (log?.loginTime && !log.logoutTime) status = "Working";
@@ -426,7 +454,57 @@ export async function getCompanyEmployees() {
       email: emp.email,
       phone: emp.phone,
       role: emp.contractType,
+      companyId: emp.companyId, // ✅ include companyId here too
       status,
     };
   });
+}
+
+
+
+export async function addDailyTip({ date, amount }: { date: string | Date; amount: number }) {
+  // ✅ Get company id from cookie
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) throw new Error("Unauthorized: No company session");
+
+  const parsedDate = new Date(date);
+
+  return prisma.dailyTip.upsert({
+    where: {
+      companyId_date: {
+        companyId,
+        date: parsedDate,
+      },
+    },
+    update: { amount },
+    create: { companyId, date: parsedDate, amount },
+  });
+}
+
+
+export async function getMonthlyTips(companyId: string, month: string) {
+  const start = new Date(`${month}-01`);
+  const end = new Date(start);
+  end.setMonth(end.getMonth() + 1);
+
+  const tips = await prisma.dailyTip.findMany({
+    where: {
+      companyId,
+      date: { gte: start, lt: end },
+    },
+  });
+
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      employee: { companyId },
+      logDate: { gte: start, lt: end },
+    },
+    include: {
+      employee: true,
+    },
+  });
+
+  return { tips, timeLogs };
 }
