@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Clock } from "lucide-react";
+import { getCompanyTimeReports } from "@/app/actions";
 
 /* ---------------- TYPES ---------------- */
 
@@ -11,6 +12,7 @@ type EmployeeTime = {
   startTime: string;
   endTime: string;
   costCenter: string;
+  totalMinutes: number;
 };
 
 type DayReport = {
@@ -20,28 +22,16 @@ type DayReport = {
 
 /* ---------------- HELPERS ---------------- */
 
-function minutesBetween(start: string, end: string) {
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  return Math.max(0, eh * 60 + em - (sh * 60 + sm));
-}
-
 function formatMinutes(min: number) {
   return `${Math.floor(min / 60)}h ${min % 60}m`;
 }
-
-const names = [
-  "Anna Karlsson",
-  "Erik Svensson",
-  "Johan Nilsson",
-  "Maria Andersson",
-  "Sara Johansson",
-];
 
 /* ---------------- PAGE ---------------- */
 
 export default function CompanyTimePage() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [reports, setReports] = useState<DayReport[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [nameFilter, setNameFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -51,35 +41,20 @@ export default function CompanyTimePage() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  /* REAL-TIME CLOCK (same approach as schedule page) */
+  /* REAL-TIME CLOCK */
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  /* MOCK DATA */
-  const reports: DayReport[] = useMemo(
-    () =>
-      Array.from({ length: 30 }).map((_, i) => ({
-        date: new Date(Date.now() - i * 86400000).toISOString().slice(0, 10),
-        employees: names.map((name, idx) => {
-          const working = Math.random() > 0.25;
-          const start = 8 + Math.floor(Math.random() * 2);
-          const end = start + 7 + Math.floor(Math.random() * 2);
+  /* FETCH REAL DATA */
+  useEffect(() => {
+    getCompanyTimeReports()
+      .then(setReports)
+      .finally(() => setLoading(false));
+  }, []);
 
-          return {
-            name,
-            status: working ? "Working" : "Not working",
-            startTime: `${start}:00`,
-            endTime: `${end}:00`,
-            costCenter: `CC-${200 + idx}`,
-          };
-        }),
-      })),
-    []
-  );
-
-  /* FILTERS */
+  /* FILTERED REPORTS */
   const filteredReports = useMemo(() => {
     return reports
       .filter((d) => {
@@ -109,9 +84,8 @@ export default function CompanyTimePage() {
 
     filteredReports.forEach((day) =>
       day.employees.forEach((e) => {
-        if (e.status !== "Working") return;
-        const min = minutesBetween(e.startTime, e.endTime);
-        map[e.name] = (map[e.name] || 0) + min;
+        if (e.status !== "Working" && e.totalMinutes === 0) return;
+        map[e.name] = (map[e.name] || 0) + (e.totalMinutes ?? 0);
       })
     );
 
@@ -126,13 +100,21 @@ export default function CompanyTimePage() {
     setToDate("");
   };
 
+  /* LOADING */
+  if (loading) {
+    return (
+      <div className="p-6 mt-20 text-center text-gray-500">
+        Loading time reports...
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
       {/* Header + Clock */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <h1 className="text-2xl font-semibold">Rapportererad tid</h1>
 
-        {/* REAL-TIME CLOCK */}
         <div className="flex items-center gap-2 text-teal-600 font-semibold">
           <Clock className="w-5 h-5" />
           <span>
@@ -229,10 +211,8 @@ export default function CompanyTimePage() {
                   <td className="p-3">{e.startTime}</td>
                   <td className="p-3">{e.endTime}</td>
                   <td className="p-3">
-                    {e.status === "Working"
-                      ? formatMinutes(
-                          minutesBetween(e.startTime, e.endTime)
-                        )
+                    {e.totalMinutes > 0
+                      ? formatMinutes(e.totalMinutes)
                       : "—"}
                   </td>
                   <td className="p-3">{e.costCenter}</td>

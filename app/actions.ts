@@ -508,3 +508,47 @@ export async function getMonthlyTips(companyId: string, month: string) {
 
   return { tips, timeLogs };
 }
+
+
+
+export async function getCompanyTimeReports() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) throw new Error("Unauthorized");
+
+  const logs = await prisma.timeLog.findMany({
+    where: { companyId },
+    include: {
+      employee: true,
+    },
+    orderBy: { logDate: "desc" },
+  });
+
+  // Group by date
+  const map: Record<string, any[]> = {};
+
+  logs.forEach((log) => {
+    const date = log.logDate.toISOString().slice(0, 10);
+
+    if (!map[date]) map[date] = [];
+
+    map[date].push({
+      name: log.employee.name,
+      status: log.loginTime && !log.logoutTime ? "Working" : "Not working",
+      startTime: log.loginTime
+        ? log.loginTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+        : "—",
+      endTime: log.logoutTime
+        ? log.logoutTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+        : "—",
+      costCenter: `CC-${log.employee.id.slice(0, 4)}`,
+      totalMinutes: log.totalMinutes ?? 0,
+    });
+  });
+
+  return Object.entries(map).map(([date, employees]) => ({
+    date,
+    employees,
+  }));
+}
