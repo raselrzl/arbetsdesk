@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import RealTimeClock from "./RealTimeClock";
 import { loginEmployee, logoutEmployee } from "@/app/actions";
+import Link from "next/link";
 
 /* ---------------- helpers ---------------- */
 
@@ -146,6 +147,9 @@ export default function CompanyPageClient({ companyData }: any) {
           Owner: {company.user.name} ({company.user.email})
         </p>
         <RealTimeClock />
+      </div>
+      <div className="mb-4">
+        <Link href="/company/createemployee" className="p-2 bg-teal-400 rounded mb-10">Add an Employee</Link>
       </div>
 
       {/* Employees */}
