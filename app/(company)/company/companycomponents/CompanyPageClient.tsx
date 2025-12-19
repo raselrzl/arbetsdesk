@@ -137,33 +137,31 @@ export default function CompanyPageClient({ companyData }: any) {
   /* ---------------- render ---------------- */
 
   return (
-    <div className="min-h-screen max-w-7xl mx-auto px-6 py-10 mt-14">
+    <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 ">
       {/* Header */}
-      <div className="bg-white p-8 rounded-lg shadow mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome, {company.user.name}
-        </h1>
-        <p className="text-gray-600 mb-3">
-          Owner: {company.user.name} ({company.user.email})
+      <div className="bg-teal-100 p-8 rounded-xs shadow mb-8">
+        <h1 className="text-3xl font-bold mb-2 uppercase">{company.name} AB</h1>
+        <p className="text-gray-600 mb-3 font-bold">
+          Org No:{company.organizationNo} Email: {company.email}
         </p>
         <RealTimeClock />
       </div>
-      <div className="mb-4">
+      {/*       <div className="mb-4">
         <Link href="/company/createemployee" className="p-2 bg-teal-400 rounded mb-10">Add an Employee</Link>
-      </div>
+      </div> */}
 
       {/* Employees */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4">Today's Employees</h2>
+      <div className="bg-teal-50 p-4 rounded-xs shadow">
+        <h2 className="text-2xl font-bold mb-4">Today's Innovators</h2>
 
         <table className="w-full border text-left">
-          <thead className="bg-gray-50">
+          <thead className="bg-teal-100">
             <tr>
               <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Email</th>
+              {/* <th className="px-4 py-2">Email</th> */}
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Logs</th>
-              <th className="px-4 py-2">Worked Time</th>
+              {/* <th className="px-4 py-2">Time</th> */}
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
@@ -178,51 +176,59 @@ export default function CompanyPageClient({ companyData }: any) {
                   );
                 }) || [];
 
-              let status = "Not Logged In";
+              let status = "Out & About";
               if (todayLogs.length) {
                 const last = todayLogs[todayLogs.length - 1];
-                status = last.logoutTime ? "Logged Out" : "Logged In";
+                status = last.logoutTime ? "Away for Now" : "Active";
               }
 
               const workedToday = calculateWorkedTime(todayLogs);
 
               return (
                 <tr key={emp.id} className="border-b">
-                  <td className="px-4 py-2 font-medium">{emp.name}</td>
-                  <td className="px-4 py-2">{emp.email || "-"}</td>
-                  <td className="px-4 py-2">{status}</td>
+                  <td className="px-2 py-2 font-medium">{emp.name}</td>
+                  {/* <td className="px-4 py-2">{emp.email || "-"}</td> */}
+                  <td className="px-4 py-2 text-sm">{status}</td>
 
-                  <td className="px-4 py-2 text-sm">
+                  <td className="px-4 py-2 text-sm flex">
                     {todayLogs.length === 0 && (
                       <span className="text-gray-400">—</span>
                     )}
                     {todayLogs.map((log: any, idx: number) => (
-                      <div key={idx} suppressHydrationWarning>
-                        In: {safeTime(log.loginTime, mounted)}
+                      <div
+                        key={idx}
+                        suppressHydrationWarning
+                        className="text-xs font-bold"
+                      >
+                        <div className="bg-green-600 p-1 rounded-xs flex">
+                          In: {safeTime(log.loginTime, mounted)}
+                        </div>
                         {log.logoutTime && (
-                          <> | Out: {safeTime(log.logoutTime, mounted)}</>
+                          <div className="bg-amber-300 p-1 rounded-xs">
+                            Out: {safeTime(log.logoutTime, mounted)}
+                          </div>
                         )}
                       </div>
                     ))}
                   </td>
 
-                  <td className="px-4 py-2 font-medium">
+                  {/*   <td className="px-4 py-2 font-medium">
                     {workedToday}
-                  </td>
+                  </td> */}
 
                   <td className="px-4 py-2">
                     {todayLogs.length === 0 ||
                     todayLogs[todayLogs.length - 1]?.logoutTime ? (
                       <button
                         onClick={() => openLogin(emp)}
-                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                        className="px-2 py-1 bg-teal-600 text-white rounded-xs hover:bg-teal-700 cursor-pointer"
                       >
                         Login
                       </button>
                     ) : (
                       <button
                         onClick={() => submitLogout(emp)}
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                        className="px-2 py-1 bg-red-600 text-white rounded-xs hover:bg-red-700 cursor-pointer"
                       >
                         Logout
                       </button>
@@ -238,36 +244,57 @@ export default function CompanyPageClient({ companyData }: any) {
       {/* Login Modal */}
       {showLoginModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow w-96">
+          <div className="bg-white py-2 px-4 rounded-xs shadow w-96">
             <h3 className="text-xl font-bold mb-4">
               Login – {selectedEmployee.name}
             </h3>
 
             <input
-              className="w-full mb-3 border px-3 py-2 rounded"
+              className="w-full mb-3 border px-3 py-2 rounded-xs"
               placeholder="Personal Number"
               value={personalNumber}
               onChange={(e) => setPersonalNumber(e.target.value)}
             />
 
-            <input
-              type="password"
-              className="w-full mb-4 border px-3 py-2 rounded"
-              placeholder="PIN"
-              value={pinCode}
-              onChange={(e) => setPinCode(e.target.value)}
-            />
+            {/* PIN Code - 4 boxes */}
+            <div className="flex justify-center gap-2 mb-4">
+              {[0, 1, 2, 3].map((i) => (
+                <input
+                  key={i}
+                  id={`pin-${i}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={pinCode[i] || ""}
+                  placeholder="."
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, ""); // Only numbers
+                    if (!val) return;
+                    const newPin = pinCode.split("");
+                    newPin[i] = val;
+                    setPinCode(newPin.join(""));
+
+                    // Move focus to next input safely
+                    if (i < 3) {
+                      const nextInput = document.getElementById(`pin-${i + 1}`);
+                      if (nextInput) nextInput.focus();
+                    }
+                  }}
+                  className="w-12 h-12 text-center border rounded-xs text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              ))}
+            </div>
 
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowLoginModal(false)}
-                className="px-3 py-1 bg-gray-200 rounded"
+                className="px-2 py-1 bg-red-400 rounded-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={submitLogin}
-                className="px-3 py-1 bg-green-600 text-white rounded"
+                className="px-3 py-1 bg-teal-600 text-white rounded-xs"
               >
                 Login
               </button>
