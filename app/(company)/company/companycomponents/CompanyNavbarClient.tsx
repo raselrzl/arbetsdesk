@@ -40,7 +40,7 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
 
           <div className="flex items-center gap-8 h-full">
-            <div className="text-2xl font-bold tracking-wide">
+            <div className="text-2xl font-bold tracking-wide uppercase">
               <Link href="/company">Arbetsdesk</Link>
             </div>
 

@@ -30,7 +30,7 @@ export default function MobileBottomNavCompany() {
 
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md md:hidden overflow-x-auto">
+    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-t-teal-600/20 shadow-md md:hidden overflow-x-auto">
       <div className="flex justify-between min-w-max px-2">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;

@@ -142,9 +142,9 @@ export default function CompanyPageClient({ companyData }: any) {
       <div className="bg-teal-100 p-8 rounded-xs shadow mb-8">
         <h1 className="text-3xl font-bold mb-2 uppercase">{company.name} AB</h1>
         <p className="text-gray-600 mb-3 font-bold">
-          Org No:{company.organizationNo} Email: {company.email}
+          Org No:{company.organizationNo} <br/>Email: {company.email}
         </p>
-        <RealTimeClock />
+       
       </div>
       {/*       <div className="mb-4">
         <Link href="/company/createemployee" className="p-2 bg-teal-400 rounded mb-10">Add an Employee</Link>
@@ -152,7 +152,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
       {/* Employees */}
       <div className="bg-teal-50 p-4 rounded-xs shadow">
-        <h2 className="text-2xl font-bold mb-4">Today's Innovators</h2>
+        <div className="md:flex md:gap-4 mb-2"><h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>  <RealTimeClock /></div>
 
         <table className="w-full border text-left">
           <thead className="bg-teal-100">
