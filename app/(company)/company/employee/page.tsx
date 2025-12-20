@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User } from "lucide-react";
+import { User, MoreHorizontal } from "lucide-react";
 import { getCompanyEmployees } from "@/app/actions";
 import Link from "next/link";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 type Employee = {
   id: string;
@@ -50,22 +57,22 @@ export default function CompanyEmployeePage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 overflow-x-hidden">
-      <h1 className="text-3xl font-bold text-teal-200">Employee Management</h1>
+      <h1 className="text-3xl font-bold text-teal-200">
+        Employee Management
+      </h1>
 
       <div className="flex justify-start md:justify-end">
         <Link
           href="/company/createemployee"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium
-               text-teal-700 bg-teal-50 border border-teal-200
-               rounded-xs hover:bg-teal-100 hover:text-teal-800
-               transition"
+                     text-teal-700 bg-teal-50 border border-teal-200
+                     rounded-xs hover:bg-teal-100 transition"
         >
           + Add Employee
         </Link>
       </div>
 
       <div className="bg-white rounded-xs border border-teal-100 shadow shadow-teal-100">
-        {/* table-only horizontal scroll */}
         <div className="overflow-x-auto">
           <table className="min-w-max w-full text-sm">
             <thead className="bg-teal-50">
@@ -75,9 +82,10 @@ export default function CompanyEmployeePage() {
                 <th className="p-3 text-left">Phone</th>
                 <th className="p-3 text-left">Role</th>
                 <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left">Actions</th>
+                <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {employees.map((emp) => (
                 <tr
@@ -100,16 +108,49 @@ export default function CompanyEmployeePage() {
                       {emp.status}
                     </span>
                   </td>
-                  <td className="p-3 flex gap-2">
-                    <button className="px-3 py-1 bg-teal-600 text-white rounded-xs">
-                      View
-                    </button>
-                    <button className="px-3 py-1 bg-yellow-400 text-white rounded-xs">
-                      Edit
-                    </button>
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-xs">
-                      Remove
-                    </button>
+
+                  {/* Actions */}
+                  <td className="p-3 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className="p-2 rounded-xs hover:bg-teal-100"
+                          aria-label="Open actions"
+                        >
+                          <MoreHorizontal className="w-4 h-4 text-teal-600" />
+                        </button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent
+                        align="end"
+                        className="rounded-xs border-teal-100"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => {
+                            console.log("View", emp.id);
+                          }}
+                        >
+                          View Details
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          onClick={() => {
+                            console.log("Edit", emp.id);
+                          }}
+                        >
+                          Edit Employee
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          className="text-red-600 focus:text-red-600"
+                          onClick={() => {
+                            console.log("Delete", emp.id);
+                          }}
+                        >
+                          Delete Employee
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}
