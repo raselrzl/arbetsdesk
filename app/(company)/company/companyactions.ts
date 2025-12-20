@@ -76,23 +76,23 @@ export async function logoutEmployee(employeeId: string) {
 export async function loginEmployeeWithPin(
   employeeId: string,
   personalNumber: string,
-  pin: string
+ /*  pin: string */
 ) {
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
   });
 
   if (!employee) {
-    throw new Error("Employee not found");
+    throw new Error("Innovators not found");
   }
 
   if (employee.personalNumber !== personalNumber) {
-    throw new Error("Incorrect personal number");
+    throw new Error("Incorrect personal ID");
   }
 
-  if (employee.pinCode !== pin) {
+ /*  if (employee.pinCode !== pin) {
     throw new Error("Incorrect PIN code");
-  }
+  } */
 
   // ✅ credentials valid → start time
   return await loginEmployee(employeeId);

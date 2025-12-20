@@ -82,25 +82,25 @@ export default function CompanyPageClient({ companyData }: any) {
     try {
       const log = await loginEmployeeWithPin(
         selectedEmployee.id,
-        personalNumber,
-        pinCode
+        personalNumber
+        /* pinCode */
       );
 
       setCompany((prev: any) => {
-        const updated = { ...prev };
-        const idx = updated.employees.findIndex(
-          (e: any) => e.id === selectedEmployee.id
-        );
+  const updated = { ...prev };
+  updated.employees = [...updated.employees]; // clone array
 
-        if (idx !== -1) {
-          updated.employees[idx] = {
-            ...updated.employees[idx],
-            timeLogs: [...(updated.employees[idx].timeLogs || []), log],
-          };
-        }
+  const idx = updated.employees.findIndex((e: any) => e.id === selectedEmployee.id);
+  if (idx !== -1) {
+    updated.employees[idx] = {
+      ...updated.employees[idx],
+      timeLogs: [...(updated.employees[idx].timeLogs || []), log],
+    };
+  }
 
-        return updated;
-      });
+  return updated;
+});
+
 
       setShowLoginModal(false);
       setPersonalNumber("");
@@ -252,23 +252,97 @@ export default function CompanyPageClient({ companyData }: any) {
         </table>
       </div>
 
-      {/* Login Modal */}
       {showLoginModal && selectedEmployee && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-2">
+          <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
+            {/* Close Button Top-Right */}
+            <button
+              onClick={() => setShowLoginModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg font-bold"
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            {/* Header */}
+            <h3 className="text-lg font-bold mb-3 text-center">
+              Welcome – {selectedEmployee.name}
+            </h3>
+
+            {/* Personal Number Display */}
+            <input
+              className="w-full mb-3 border border-gray-300 px-2 py-1 rounded-xs h-12 text-center text-base font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
+              placeholder="Enter Personal ID"
+              value={personalNumber}
+              readOnly
+            />
+
+            {/* Keypad */}
+            <div className="grid grid-cols-3 gap-2 w-full max-w-[250px]">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => {
+                    if (personalNumber.length < 12)
+                      setPersonalNumber(personalNumber + num);
+                  }}
+                  className="aspect-square w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
+                >
+                  {num}
+                </button>
+              ))}
+
+              {/* Clear */}
+              <button
+                onClick={() => setPersonalNumber("")}
+                className="aspect-square w-full bg-red-400 rounded-md text-lg font-semibold text-white hover:bg-red-500 transition flex items-center justify-center"
+              >
+                C
+              </button>
+
+              {/* Zero */}
+              <button
+                onClick={() => {
+                  if (personalNumber.length < 12)
+                    setPersonalNumber(personalNumber + "0");
+                }}
+                className="aspect-square w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
+              >
+                0
+              </button>
+
+              {/* Backspace */}
+              <button
+                onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
+                className="aspect-square w-full bg-yellow-400 rounded-md text-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Enter Button */}
+            <button
+              onClick={submitLogin}
+              className="mt-3 bg-teal-600 py-3 rounded-lg text-white text-lg font-bold hover:bg-teal-700 transition w-full max-w-[250px] cursor-pointer"
+            >
+              Enter
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Login Modal */}
+      {/*   {showLoginModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 md:px-0">
           <div className="bg-white py-2 px-4 rounded-xs shadow w-96">
             <h3 className="text-xl font-bold mb-4">
               Login – {selectedEmployee.name}
-            </h3>
+            </h3> */}
 
-            <input
-              className="w-full mb-3 border px-3 py-2 rounded-xs"
-              placeholder="Personal Number"
-              value={personalNumber}
-              onChange={(e) => setPersonalNumber(e.target.value)}
-            />
+      {/* Fullscreen Login Modal - Smaller Responsive Keypad */}
 
-            {/* PIN Code - 4 boxes */}
-            <div className="flex justify-center gap-2 mb-4">
+      {/* PIN Code - 4 boxes */}
+      {/*  <div className="flex justify-center gap-2 mb-4">
               {[0, 1, 2, 3].map((i) => (
                 <input
                   key={i}
@@ -294,11 +368,11 @@ export default function CompanyPageClient({ companyData }: any) {
                   className="w-12 h-12 text-center border rounded-xs text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               ))}
-            </div>
+            </div> */}
 
-            <div className="flex flex-col items-center mb-4">
-              {/* PIN Inputs */}
-              {/* <div className="flex justify-center gap-2 mb-4">
+      {/* <div className="flex flex-col items-center mb-4"> */}
+      {/* PIN Inputs */}
+      {/* <div className="flex justify-center gap-2 mb-4">
     {[0, 1, 2, 3].map((i) => (
       <input
         key={i}
@@ -313,7 +387,7 @@ export default function CompanyPageClient({ companyData }: any) {
       />
     ))}
   </div> */}
-              {/*  <div className="grid grid-cols-3 gap-2">
+      {/*  <div className="grid grid-cols-3 gap-2">
     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
       <button
         key={num}
@@ -350,15 +424,15 @@ export default function CompanyPageClient({ companyData }: any) {
     </button>
   </div> */}
 
-              {/*   <button
+      {/*   <button
     onClick={submitLogin}
     className="mt-3 w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700"
   >
     Enter
   </button> */}
-            </div>
+      {/*   </div> */}
 
-            <div className="flex justify-end gap-2">
+      {/*  <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowLoginModal(false)}
                 className="px-2 py-1 bg-red-400 rounded-xs cursor-pointer"
@@ -371,10 +445,10 @@ export default function CompanyPageClient({ companyData }: any) {
               >
                 Login
               </button>
-            </div>
-          </div>
+            </div> */}
+      {/*      </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
