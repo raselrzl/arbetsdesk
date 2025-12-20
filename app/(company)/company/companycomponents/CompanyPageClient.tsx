@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import RealTimeClock from "./RealTimeClock";
 import { loginEmployee, logoutEmployee } from "@/app/actions";
-import Link from "next/link";
+import { ClipboardClock, TimerOff } from "lucide-react";
 
 /* ---------------- helpers ---------------- */
 
@@ -142,26 +142,30 @@ export default function CompanyPageClient({ companyData }: any) {
       <div className="bg-teal-100 p-8 rounded-xs shadow mb-8">
         <h1 className="text-3xl font-bold mb-2 uppercase">{company.name} AB</h1>
         <p className="text-gray-600 mb-3 font-bold">
-          Org No:{company.organizationNo} <br/>Email: {company.email}
+          Org No:{company.organizationNo} <br />
+          Email: {company.email}
         </p>
-       
       </div>
       {/*       <div className="mb-4">
         <Link href="/company/createemployee" className="p-2 bg-teal-400 rounded mb-10">Add an Employee</Link>
       </div> */}
 
       {/* Employees */}
-      <div className="bg-teal-50 p-4 rounded-xs shadow">
-        <div className="md:flex md:gap-4 mb-2"><h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>  <RealTimeClock /></div>
+      <div className="bg-teal-50 p-2 md:p-4 rounded-xs shadow">
+        <div className="md:flex md:gap-4 mb-2">
+          <h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>{" "}
+          <RealTimeClock />
+        </div>
 
         <table className="w-full border text-left">
           <thead className="bg-teal-100">
             <tr>
               <th className="px-4 py-2">Name</th>
               {/* <th className="px-4 py-2">Email</th> */}
-              <th className="px-4 py-2">Status</th>
+              {/* <th className="px-4 py-2">Status</th> */}
               <th className="px-4 py-2">Logs</th>
-              {/* <th className="px-4 py-2">Time</th> */}
+              <th className="px-4 py-2">Time</th>
+
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
@@ -188,7 +192,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 <tr key={emp.id} className="border-b">
                   <td className="px-2 py-2 font-medium">{emp.name}</td>
                   {/* <td className="px-4 py-2">{emp.email || "-"}</td> */}
-                  <td className="px-4 py-2 text-sm">{status}</td>
+                  {/* <td className="px-4 py-2 text-xs md:sm">{status}</td> */}
 
                   <td className="px-4 py-2 text-sm flex">
                     {todayLogs.length === 0 && (
@@ -200,35 +204,37 @@ export default function CompanyPageClient({ companyData }: any) {
                         suppressHydrationWarning
                         className="text-xs font-bold"
                       >
-                        <div className="bg-green-600 p-1 rounded-xs flex">
-                          In: {safeTime(log.loginTime, mounted)}
+                        <div className="bg-green-600 p-1 rounded-xs flex justify-center items-center">
+                          <ClipboardClock className="h-4 w-4 mr-1" />
+                          {safeTime(log.loginTime, mounted)}
                         </div>
                         {log.logoutTime && (
-                          <div className="bg-amber-300 p-1 rounded-xs">
-                            Out: {safeTime(log.logoutTime, mounted)}
+                          <div className="bg-amber-300 p-1 rounded-xs flex justify-center items-center">
+                            <TimerOff className="h-4 w-4 mr-1" />
+                            {safeTime(log.logoutTime, mounted)}
                           </div>
                         )}
                       </div>
                     ))}
                   </td>
 
-                  {/*   <td className="px-4 py-2 font-medium">
+                  <td className="px-4 py-2 font-medium text-xs md:text-md">
                     {workedToday}
-                  </td> */}
+                  </td>
 
-                  <td className="px-4 py-2">
+                  <td className="md:px-2 py-2">
                     {todayLogs.length === 0 ||
                     todayLogs[todayLogs.length - 1]?.logoutTime ? (
                       <button
                         onClick={() => openLogin(emp)}
-                        className="px-2 py-1 bg-teal-600 text-white rounded-xs hover:bg-teal-700 cursor-pointer"
+                        className="px-2 py-1 w-16 bg-teal-600 text-white rounded-xs hover:bg-teal-700 cursor-pointer"
                       >
                         Login
                       </button>
                     ) : (
                       <button
                         onClick={() => submitLogout(emp)}
-                        className="px-2 py-1 bg-red-600 text-white rounded-xs hover:bg-red-700 cursor-pointer"
+                        className="px-2 py-1 w-16 bg-red-600 text-white rounded-xs hover:bg-red-700 cursor-pointer"
                       >
                         Logout
                       </button>
@@ -243,7 +249,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
       {/* Login Modal */}
       {showLoginModal && selectedEmployee && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 md:px-0">
           <div className="bg-white py-2 px-4 rounded-xs shadow w-96">
             <h3 className="text-xl font-bold mb-4">
               Login – {selectedEmployee.name}
