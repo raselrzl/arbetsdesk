@@ -163,7 +163,7 @@ export default function CompanyPageClient({ companyData }: any) {
           <RealTimeClock />
         </div>
 
-        <table className="w-full border text-left">
+        <table className="w-full border border-teal-100 text-left">
           <thead className="bg-teal-100">
             <tr>
               <th className="px-4 py-2">Name</th>
@@ -195,7 +195,7 @@ export default function CompanyPageClient({ companyData }: any) {
               const workedToday = calculateWorkedTime(todayLogs);
 
               return (
-                <tr key={emp.id} className="border-b">
+                <tr key={emp.id} className="border-b border-teal-100">
                   <td className="px-2 py-2 font-medium">{emp.name}</td>
                   {/* <td className="px-4 py-2">{emp.email || "-"}</td> */}
                   {/* <td className="px-4 py-2 text-xs md:sm">{status}</td> */}
