@@ -361,13 +361,13 @@ export default function CompanyPageClient({ companyData }: any) {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowLoginModal(false)}
-                className="px-2 py-1 bg-red-400 rounded-xs"
+                className="px-2 py-1 bg-red-400 rounded-xs cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={submitLogin}
-                className="px-3 py-1 bg-teal-600 text-white rounded-xs"
+                className="px-3 py-1 bg-teal-600 text-white rounded-xs cursor-pointer"
               >
                 Login
               </button>
