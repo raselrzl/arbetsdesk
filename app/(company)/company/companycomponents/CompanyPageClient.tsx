@@ -87,20 +87,21 @@ export default function CompanyPageClient({ companyData }: any) {
       );
 
       setCompany((prev: any) => {
-  const updated = { ...prev };
-  updated.employees = [...updated.employees]; // clone array
+        const updated = { ...prev };
+        updated.employees = [...updated.employees]; // clone array
 
-  const idx = updated.employees.findIndex((e: any) => e.id === selectedEmployee.id);
-  if (idx !== -1) {
-    updated.employees[idx] = {
-      ...updated.employees[idx],
-      timeLogs: [...(updated.employees[idx].timeLogs || []), log],
-    };
-  }
+        const idx = updated.employees.findIndex(
+          (e: any) => e.id === selectedEmployee.id
+        );
+        if (idx !== -1) {
+          updated.employees[idx] = {
+            ...updated.employees[idx],
+            timeLogs: [...(updated.employees[idx].timeLogs || []), log],
+          };
+        }
 
-  return updated;
-});
-
+        return updated;
+      });
 
       setShowLoginModal(false);
       setPersonalNumber("");
@@ -254,7 +255,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
       {showLoginModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-30 p-2">
-   <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
+          <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
             {/* Close Button Top-Right */}
             <button
               onClick={() => setShowLoginModal(false)}
