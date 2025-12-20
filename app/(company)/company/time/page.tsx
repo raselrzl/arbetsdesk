@@ -113,7 +113,7 @@ export default function CompanyTimePage() {
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
       {/* Header + Clock */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <h1 className="text-2xl font-semibold">Rapportererad tid</h1>
+        <h1 className="text-2xl font-semibold uppercase">Recorded Hours</h1>
 
         <div className="flex items-center gap-2 text-teal-600 font-semibold">
           <Clock className="w-5 h-5" />
@@ -125,16 +125,16 @@ export default function CompanyTimePage() {
       </div>
 
       {/* FILTERS */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-3 bg-white p-4 rounded shadow">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-3 bg-white p-4 rounded-xs shadow border border-teal-100">
         <input
           placeholder="Search employee"
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
           value={nameFilter}
           onChange={(e) => setNameFilter(e.target.value)}
         />
 
         <select
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as any)}
         >
@@ -145,28 +145,28 @@ export default function CompanyTimePage() {
 
         <input
           type="date"
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
           value={singleDate}
           onChange={(e) => setSingleDate(e.target.value)}
         />
 
         <input
           type="date"
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
           value={fromDate}
           onChange={(e) => setFromDate(e.target.value)}
         />
 
         <input
           type="date"
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
           value={toDate}
           onChange={(e) => setToDate(e.target.value)}
         />
 
         <button
           onClick={clearFilters}
-          className="bg-gray-100 hover:bg-gray-200 rounded p-2 font-medium"
+          className="bg-teal-100 hover:bg-teal-200 rounded-xs p-2 font-medium cursor-pointer"
         >
           Clear
         </button>
@@ -174,7 +174,7 @@ export default function CompanyTimePage() {
 
       {/* MONTH SUMMARY */}
       {Object.keys(totals).length > 0 && (
-        <div className="bg-teal-50 p-4 rounded shadow text-sm">
+        <div className="bg-teal-100 p-4 rounded-xs shadow text-sm">
           <h3 className="font-semibold mb-2">Monthly time summary</h3>
           {Object.entries(totals).map(([name, minutes]) => (
             <p key={name}>
@@ -189,11 +189,11 @@ export default function CompanyTimePage() {
 
       {/* TABLES */}
       {filteredReports.map((day) => (
-        <div key={day.date} className="bg-white rounded shadow">
-          <div className="px-4 py-3 border-b font-semibold">{day.date}</div>
+        <div key={day.date} className="bg-white rounded-xs shadow border border-teal-100">
+          <div className="px-4 py-3 border-b font-semibold bg-teal-400">{day.date}</div>
 
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-teal-100">
               <tr>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Status</th>
@@ -205,7 +205,7 @@ export default function CompanyTimePage() {
             </thead>
             <tbody>
               {day.employees.map((e, i) => (
-                <tr key={i} className="border-t hover:bg-teal-50">
+                <tr key={i} className="border-t border-teal-100 hover:bg-teal-50">
                   <td className="p-3">{e.name}</td>
                   <td className="p-3">{e.status}</td>
                   <td className="p-3">{e.startTime}</td>
