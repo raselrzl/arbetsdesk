@@ -296,6 +296,68 @@ export default function CompanyPageClient({ companyData }: any) {
               ))}
             </div>
 
+            <div className="flex flex-col items-center mb-4">
+              {/* PIN Inputs */}
+              {/* <div className="flex justify-center gap-2 mb-4">
+    {[0, 1, 2, 3].map((i) => (
+      <input
+        key={i}
+        id={`pin-${i}`}
+        type="text"
+        inputMode="numeric"
+        maxLength={1}
+        value={pinCode[i] || ""}
+        placeholder="."
+        readOnly // make input readonly, we'll use keypad
+        className="w-12 h-12 text-center border rounded-xs text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    ))}
+  </div> */}
+              {/*  <div className="grid grid-cols-3 gap-2">
+    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+      <button
+        key={num}
+        onClick={() => {
+          if (pinCode.length < 4) setPinCode(pinCode + num);
+        }}
+        className="p-3 bg-gray-200 rounded hover:bg-gray-300 text-xl"
+      >
+        {num}
+      </button>
+    ))}
+ 
+    <button
+      onClick={() => setPinCode("")}
+      className="p-3 bg-red-400 rounded hover:bg-red-500 text-xl text-white"
+    >
+      C
+    </button>
+   
+    <button
+      onClick={() => {
+        if (pinCode.length < 4) setPinCode(pinCode + "0");
+      }}
+      className="p-3 bg-gray-200 rounded hover:bg-gray-300 text-xl"
+    >
+      0
+    </button>
+ 
+    <button
+      onClick={() => setPinCode(pinCode.slice(0, -1))}
+      className="p-3 bg-yellow-400 rounded hover:bg-yellow-500 text-xl"
+    >
+      ×
+    </button>
+  </div> */}
+
+              {/*   <button
+    onClick={submitLogin}
+    className="mt-3 w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700"
+  >
+    Enter
+  </button> */}
+            </div>
+
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowLoginModal(false)}
