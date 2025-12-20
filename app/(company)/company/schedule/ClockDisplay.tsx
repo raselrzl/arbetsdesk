@@ -17,7 +17,7 @@ export default function ClockDisplay() {
 
   return (
     <div className="text-teal-600 font-semibold text-lg mb-4">
-      Current Time: {time.toLocaleTimeString("en-US", { hour12: false })} |{" "}
+      Time: {time.toLocaleTimeString("en-US", { hour12: false })} |{" "}
       {time.toLocaleDateString()}
     </div>
   );

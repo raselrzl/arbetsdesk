@@ -60,3 +60,25 @@ export async function getSchedulesForCompany() {
     orderBy: { date: "asc" },
   });
 }
+
+
+// Server Action to update an existing schedule
+export async function updateSchedule(
+  scheduleId: string,
+  {
+    date,
+    startTime,
+    endTime,
+  }: { date?: string; startTime?: string; endTime?: string }
+) {
+  const updateData: any = {};
+
+  if (date) updateData.date = new Date(date);
+  if (startTime) updateData.startTime = new Date(`${date ?? new Date().toISOString().slice(0,10)}T${startTime}`);
+  if (endTime) updateData.endTime = new Date(`${date ?? new Date().toISOString().slice(0,10)}T${endTime}`);
+
+  return prisma.schedule.update({
+    where: { id: scheduleId },
+    data: updateData,
+  });
+}
