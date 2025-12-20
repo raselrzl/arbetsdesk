@@ -233,7 +233,7 @@ export default function CompanyPageClient({ companyData }: any) {
               value={personalNumber}
               readOnly
             />
-            <div className="grid grid-cols-3 gap-2 w-full max-w-[250px]">
+            <div className="grid grid-cols-3 gap-2 w-full">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
@@ -241,14 +241,14 @@ export default function CompanyPageClient({ companyData }: any) {
                     if (personalNumber.length < 12)
                       setPersonalNumber(personalNumber + num);
                   }}
-                  className="aspect-square w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
+                  className="p-4 w-full bg-gray-100 rounded-md text-md font-semibold hover:bg-gray-200 transition flex items-center justify-center"
                 >
                   {num}
                 </button>
               ))}
               <button
                 onClick={() => setPersonalNumber("")}
-                className="aspect-square w-full bg-red-400 rounded-md text-lg font-semibold text-white hover:bg-red-500 transition flex items-center justify-center"
+                className="p-4 w-full bg-red-400 rounded-md text-lg font-semibold text-white hover:bg-red-500 transition flex items-center justify-center"
               >
                 C
               </button>
@@ -257,15 +257,15 @@ export default function CompanyPageClient({ companyData }: any) {
                   if (personalNumber.length < 12)
                     setPersonalNumber(personalNumber + "0");
                 }}
-                className="aspect-square w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
+                className="p-4 w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
               >
                 0
               </button>
               <button
                 onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
-                className="aspect-square w-full bg-yellow-400 rounded-md text-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center"
+                className="p-4 w-full bg-yellow-400 rounded-md text-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center"
               >
-                ×
+                x
               </button>
             </div>
             <button

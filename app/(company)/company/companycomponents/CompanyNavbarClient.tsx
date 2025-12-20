@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import CompanyUserMenu from "./CompanyUserMenu";
 import MobileBottomNavCompany from "./MobileBottomNavCompany";
+import { useState } from "react";
+import PersonnummerLoginModal from "./PersonnummerLoginModal";
 
 type CompanySession = {
   name: string;
@@ -34,15 +36,21 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
 
   const employees = []; // placeholder if needed
 
+  const [showLogin, setShowLogin] = useState(false);
+
   return (
     <>
       <nav className="w-full bg-teal-600 px-4 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
 
           <div className="flex items-center gap-3 h-full">
-            <div className="text-xl font-bold tracking-wide uppercase">
-              <Link href="/company">Arbetsdesk</Link>
+             <div
+              onClick={() => setShowLogin(true)}
+              className="text-xl font-bold tracking-wide uppercase cursor-pointer hover:text-teal-200"
+            >
+              Login
             </div>
+
 
             <div className="hidden lg:flex items-center gap-1 font-medium h-full">
               <NavItem href="/company" label="Start" icon={Home} pathname={pathname} />
@@ -54,6 +62,7 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
               <NavItem href="/company/employee" label="Employee" icon={Users} pathname={pathname} />
               <NavItem href="/company/message" label="Message" icon={MessageSquare} pathname={pathname} />
             </div>
+            
           </div>
 
           <CompanyUserMenu company={company} />
@@ -61,6 +70,10 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
       </nav>
 
       <MobileBottomNavCompany />
+      <PersonnummerLoginModal
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+      />
     </>
   );
 }
