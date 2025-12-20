@@ -2,7 +2,7 @@
 
 import { Wallet, User, Clock, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getCompanyMonthlySalary } from "@/app/actions";
+import { getCompanyMonthlySalary } from "@/app/actions"; 
 
 /* ---------------- TYPES ---------------- */
 
