@@ -110,7 +110,7 @@ export default function CompanyTimePage() {
   }
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* Header + Clock */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <h1 className="text-2xl font-semibold uppercase">Recorded Hours</h1>
@@ -188,40 +188,43 @@ export default function CompanyTimePage() {
       )}
 
       {/* TABLES */}
-      {filteredReports.map((day) => (
-        <div key={day.date} className="bg-white rounded-xs shadow border border-teal-100">
-          <div className="px-4 py-3 border-b font-semibold bg-teal-400">{day.date}</div>
+     {/* TABLES */}
+{filteredReports.map((day) => (
+  <div key={day.date} className="bg-white rounded-xs shadow border border-teal-100">
+    <div className="px-4 py-3 border-b font-semibold bg-teal-400">{day.date}</div>
 
-          <table className="w-full text-sm">
-            <thead className="bg-teal-100">
-              <tr>
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left">Start</th>
-                <th className="p-3 text-left">End</th>
-                <th className="p-3 text-left">Worked time</th>
-                <th className="p-3 text-left">Cost Center</th>
-              </tr>
-            </thead>
-            <tbody>
-              {day.employees.map((e, i) => (
-                <tr key={i} className="border-t border-teal-100 hover:bg-teal-50">
-                  <td className="p-3">{e.name}</td>
-                  <td className="p-3">{e.status}</td>
-                  <td className="p-3">{e.startTime}</td>
-                  <td className="p-3">{e.endTime}</td>
-                  <td className="p-3">
-                    {e.totalMinutes > 0
-                      ? formatMinutes(e.totalMinutes)
-                      : "—"}
-                  </td>
-                  <td className="p-3">{e.costCenter}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+    {/* Responsive wrapper */}
+    <div className="overflow-x-auto w-full">
+      <table className="w-full text-sm min-w-[600px]">
+        <thead className="bg-teal-100">
+          <tr>
+            <th className="p-3 text-left">Name</th>
+            <th className="p-3 text-left">Status</th>
+            <th className="p-3 text-left">Start</th>
+            <th className="p-3 text-left">End</th>
+            <th className="p-3 text-left">Worked time</th>
+            <th className="p-3 text-left">Cost Center</th>
+          </tr>
+        </thead>
+        <tbody>
+          {day.employees.map((e, i) => (
+            <tr key={i} className="border-t border-teal-100 hover:bg-teal-50">
+              <td className="p-3">{e.name}</td>
+              <td className="p-3">{e.status}</td>
+              <td className="p-3">{e.startTime}</td>
+              <td className="p-3">{e.endTime}</td>
+              <td className="p-3">
+                {e.totalMinutes > 0 ? formatMinutes(e.totalMinutes) : "—"}
+              </td>
+              <td className="p-3">{e.costCenter}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+))}
+
     </div>
   );
 }
