@@ -266,13 +266,13 @@ export default function CompanyPageClient({ companyData }: any) {
             </button>
 
             {/* Header */}
-            <h3 className="text-lg font-bold mb-3 text-center">
+            <h3 className="text-lg font-bold mb-3 text-center text-teal-600">
               Welcome – {selectedEmployee.name}
             </h3>
 
             {/* Personal Number Display */}
             <input
-              className="w-full mb-3 border border-gray-300 px-2 py-1 rounded-xs h-12 text-center text-base font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
+              className="w-full mb-3 border border-teal-100 px-2 py-1 rounded-xs h-12 text-center text-base font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
               placeholder="Enter Personal ID"
               value={personalNumber}
               readOnly
@@ -324,7 +324,7 @@ export default function CompanyPageClient({ companyData }: any) {
             {/* Enter Button */}
             <button
               onClick={submitLogin}
-              className="mt-3 bg-teal-600 py-3 rounded-lg text-white text-lg font-bold hover:bg-teal-700 transition w-full max-w-[250px] cursor-pointer"
+              className="mt-3 bg-teal-600 py-3 rounded-sm text-white text-lg font-bold hover:bg-teal-700 transition w-full max-w-[250px] cursor-pointer"
             >
               Enter
             </button>

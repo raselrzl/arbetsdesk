@@ -195,7 +195,7 @@ export default function CompanyTipsPage() {
 
       <AddTipForm newDate={newDate} setNewDate={setNewDate} newAmount={newAmount} setNewAmount={setNewAmount} onAddTip={addTipHandler} />
 
-      <div className="bg-white p-4 rounded shadow shadow-teal-100 border border-teal-100 flex items-center gap-3">
+      <div className="bg-white p-4 rounded-xs shadow shadow-teal-100 border border-teal-100 flex items-center gap-3">
         <Wallet className="w-5 h-5 text-teal-600" />
         <span className="font-semibold">Total Tips This Month: {dailyTipsForMonth.reduce((acc, t) => acc + t.totalTip, 0)} SEK</span>
       </div>
