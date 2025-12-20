@@ -125,22 +125,21 @@ export default function CompanyEmployeePage() {
                         align="end"
                         className="rounded-xs border-teal-100"
                       >
-                        <DropdownMenuItem
-                          onClick={() => {
-                            console.log("View", emp.id);
-                          }}
-                        >
-                          View Details
+                        {/* Navigate to employee details page */}
+                        <DropdownMenuItem asChild>
+                          <Link href={`/company/employee/${emp.id}/employeedetails`}>
+                            View Details
+                          </Link>
                         </DropdownMenuItem>
 
-                        <DropdownMenuItem
-                          onClick={() => {
-                            console.log("Edit", emp.id);
-                          }}
-                        >
-                          Edit Employee
+                        {/* Navigate to edit employee page */}
+                        <DropdownMenuItem asChild>
+                          <Link href={`/company/employee/${emp.id}/editemployee`}>
+                            Edit Employee
+                          </Link>
                         </DropdownMenuItem>
 
+                        {/* Placeholder delete action */}
                         <DropdownMenuItem
                           className="text-red-600 focus:text-red-600"
                           onClick={() => {
