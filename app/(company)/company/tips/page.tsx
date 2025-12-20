@@ -23,9 +23,9 @@ type Employee = {
 // ------------------- Month Selector -------------------
 function MonthSelector({ month, setMonth, months }: { month: string; setMonth: (m: string) => void; months: string[] }) {
   return (
-    <div className="bg-white p-4 rounded shadow flex items-center gap-3 mb-4">
+    <div className="bg-white p-4 rounded-xs shadow flex items-center gap-3 mb-4 border border-teal-100">
       <Calendar className="w-5 h-5 text-teal-600" />
-      <select value={month} onChange={(e) => setMonth(e.target.value)} className="border p-2 rounded">
+      <select value={month} onChange={(e) => setMonth(e.target.value)} className="border p-2 rounded-xs border-teal-100">
         {months.map((m) => (
           <option key={m} value={m}>{m}</option>
         ))}
@@ -37,10 +37,10 @@ function MonthSelector({ month, setMonth, months }: { month: string; setMonth: (
 // ------------------- Add Tip Form -------------------
 function AddTipForm({ newDate, setNewDate, newAmount, setNewAmount, onAddTip }: { newDate: string; setNewDate: (d: string) => void; newAmount: string; setNewAmount: (a: string) => void; onAddTip: () => void }) {
   return (
-    <div className="bg-white p-4 rounded shadow flex flex-wrap gap-2 items-center">
-      <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} className="border p-2 rounded" />
-      <input type="number" placeholder="Tip amount" value={newAmount} onChange={(e) => setNewAmount(e.target.value)} className="border p-2 rounded" />
-      <button onClick={onAddTip} className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Add Tip</button>
+    <div className="bg-white p-4 rounded-xs shadow flex flex-wrap gap-2 items-center border border-teal-100">
+      <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} className="border p-2 rounded-xs border-teal-100" />
+      <input type="number" placeholder="Tip amount" value={newAmount} onChange={(e) => setNewAmount(e.target.value)} className="border p-2 rounded-xs border-teal-100" />
+      <button onClick={onAddTip} className="bg-teal-600 text-white px-4 py-2 rounded-xs hover:bg-teal-700 cursor-pointer">Add Tip</button>
     </div>
   );
 }
@@ -48,14 +48,14 @@ function AddTipForm({ newDate, setNewDate, newAmount, setNewAmount, onAddTip }: 
 // ------------------- Calendar -------------------
 function TipsCalendar({ dailyTipsForMonth, daysInMonth }: { dailyTipsForMonth: DailyTip[]; daysInMonth: number }) {
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="bg-white rounded-xs shadow p-4 shadow-teal-100">
       <h2 className="text-xl font-semibold mb-2">Calendar</h2>
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = (i + 1).toString().padStart(2, "0");
           const tipForDay = dailyTipsForMonth.find((t) => t.date.endsWith(`-${day}`));
           return (
-            <div key={i} className="h-20 border rounded p-2 flex flex-col justify-between bg-yellow-50">
+            <div key={i} className="h-20 border border-teal-100 rounded p-2 flex flex-col justify-between bg-teal-50">
               <span className="font-semibold">{day}</span>
               {tipForDay && (
                 <span className="text-sm flex items-center gap-1">
@@ -195,7 +195,7 @@ export default function CompanyTipsPage() {
 
       <AddTipForm newDate={newDate} setNewDate={setNewDate} newAmount={newAmount} setNewAmount={setNewAmount} onAddTip={addTipHandler} />
 
-      <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+      <div className="bg-white p-4 rounded shadow shadow-teal-100 border border-teal-100 flex items-center gap-3">
         <Wallet className="w-5 h-5 text-teal-600" />
         <span className="font-semibold">Total Tips This Month: {dailyTipsForMonth.reduce((acc, t) => acc + t.totalTip, 0)} SEK</span>
       </div>
