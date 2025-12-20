@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import RealTimeClock from "./RealTimeClock";
 import { loginEmployee, logoutEmployee } from "@/app/actions";
 import { ClipboardClock, TimerOff } from "lucide-react";
+import { loginEmployeeWithPin } from "../companyactions";
 
 /* ---------------- helpers ---------------- */
 
@@ -79,7 +80,11 @@ export default function CompanyPageClient({ companyData }: any) {
     if (!selectedEmployee) return;
 
     try {
-      const log = await loginEmployee(selectedEmployee.id);
+      const log = await loginEmployeeWithPin(
+        selectedEmployee.id,
+        personalNumber,
+        pinCode
+      );
 
       setCompany((prev: any) => {
         const updated = { ...prev };
