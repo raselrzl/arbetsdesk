@@ -97,3 +97,13 @@ export async function loginEmployeeWithPin(
   // ✅ credentials valid → start time
   return await loginEmployee(employeeId);
 }
+
+
+export async function loginEmployeeWithPinByNumber(personalNumber: string) {
+  const employee = await prisma.employee.findFirst({
+    where: { personalNumber },
+  });
+
+  if (!employee) throw new Error("Employee not found");
+  return await loginEmployee(employee.id);
+}

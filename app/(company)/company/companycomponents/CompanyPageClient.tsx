@@ -7,8 +7,6 @@ import { loginEmployee, logoutEmployee } from "@/app/actions";
 import { ClipboardClock, TimerOff } from "lucide-react";
 import { loginEmployeeWithPin } from "../companyactions";
 
-/* ---------------- helpers ---------------- */
-
 function safeTime(value?: string | Date | null, mounted?: boolean) {
   if (!mounted || !value) return "--:--";
   const d = value instanceof Date ? value : new Date(value);
@@ -50,9 +48,6 @@ function calculateWorkedTime(logs: any[]) {
 
   return totalMs > 0 ? formatDuration(totalMs) : "—";
 }
-
-/* ---------------- component ---------------- */
-
 export default function CompanyPageClient({ companyData }: any) {
   const router = useRouter();
   const [company, setCompany] = useState(companyData);
@@ -68,9 +63,6 @@ export default function CompanyPageClient({ companyData }: any) {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  /* ---------------- login ---------------- */
-
   const openLogin = (emp: any) => {
     setSelectedEmployee(emp);
     setShowLoginModal(true);
@@ -88,8 +80,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
       setCompany((prev: any) => {
         const updated = { ...prev };
-        updated.employees = [...updated.employees]; // clone array
-
+        updated.employees = [...updated.employees];
         const idx = updated.employees.findIndex(
           (e: any) => e.id === selectedEmployee.id
         );
@@ -110,8 +101,6 @@ export default function CompanyPageClient({ companyData }: any) {
       alert(err.message || "Login failed");
     }
   };
-
-  /* ---------------- logout ---------------- */
 
   const submitLogout = async (emp: any) => {
     try {
@@ -140,23 +129,8 @@ export default function CompanyPageClient({ companyData }: any) {
     }
   };
 
-  /* ---------------- render ---------------- */
-
   return (
     <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 ">
-      {/* Header */}
-      <div className="bg-teal-100 p-8 rounded-xs shadow mb-8">
-        <h1 className="text-3xl font-bold mb-2 uppercase">{company.name} AB</h1>
-        <p className="text-gray-600 mb-3 font-bold">
-          Org No:{company.organizationNo} <br />
-          Email: {company.email}
-        </p>
-      </div>
-      {/*       <div className="mb-4">
-        <Link href="/company/createemployee" className="p-2 bg-teal-400 rounded mb-10">Add an Employee</Link>
-      </div> */}
-
-      {/* Employees */}
       <div className="bg-teal-50 p-2 md:p-4 rounded-xs shadow">
         <div className="md:flex md:gap-4 mb-2">
           <h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>{" "}
@@ -164,18 +138,6 @@ export default function CompanyPageClient({ companyData }: any) {
         </div>
 
         <table className="w-full border border-teal-100 text-left">
-          <thead className="bg-teal-100 ">
-            <tr>
-              <th className="px-4 py-2">Name</th>
-              {/* <th className="px-4 py-2">Email</th> */}
-              {/* <th className="px-4 py-2">Status</th> */}
-              <th className="px-4 py-2">Logs</th>
-              <th className="px-4 py-2">Time</th>
-
-              <th className="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-
           <tbody>
             {company.employees.map((emp: any) => {
               const todayLogs =
@@ -197,8 +159,7 @@ export default function CompanyPageClient({ companyData }: any) {
               return (
                 <tr key={emp.id} className="border-b border-teal-100">
                   <td className="px-2 py-2 font-medium">{emp.name}</td>
-                  {/* <td className="px-4 py-2">{emp.email || "-"}</td> */}
-                  {/* <td className="px-4 py-2 text-xs md:sm">{status}</td> */}
+                  {/*    <td className="px-4 py-2 text-xs md:sm">{status}</td> */}
 
                   <td className="px-4 py-2 text-sm flex">
                     {todayLogs.length === 0 && (
@@ -256,7 +217,6 @@ export default function CompanyPageClient({ companyData }: any) {
       {showLoginModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-30 p-2">
           <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
-            {/* Close Button Top-Right */}
             <button
               onClick={() => setShowLoginModal(false)}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg font-bold"
@@ -264,21 +224,15 @@ export default function CompanyPageClient({ companyData }: any) {
             >
               ×
             </button>
-
-            {/* Header */}
             <h3 className="text-lg font-bold mb-3 text-center text-teal-600">
               Welcome – {selectedEmployee.name}
             </h3>
-
-            {/* Personal Number Display */}
             <input
               className="w-full mb-3 border border-teal-100 px-2 py-1 rounded-xs h-12 text-center text-base font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="Enter Personal ID"
+              placeholder="YYYYMMDDXXXX"
               value={personalNumber}
               readOnly
             />
-
-            {/* Keypad */}
             <div className="grid grid-cols-3 gap-2 w-full max-w-[250px]">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
@@ -292,16 +246,12 @@ export default function CompanyPageClient({ companyData }: any) {
                   {num}
                 </button>
               ))}
-
-              {/* Clear */}
               <button
                 onClick={() => setPersonalNumber("")}
                 className="aspect-square w-full bg-red-400 rounded-md text-lg font-semibold text-white hover:bg-red-500 transition flex items-center justify-center"
               >
                 C
               </button>
-
-              {/* Zero */}
               <button
                 onClick={() => {
                   if (personalNumber.length < 12)
@@ -311,8 +261,6 @@ export default function CompanyPageClient({ companyData }: any) {
               >
                 0
               </button>
-
-              {/* Backspace */}
               <button
                 onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
                 className="aspect-square w-full bg-yellow-400 rounded-md text-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center"
@@ -320,8 +268,6 @@ export default function CompanyPageClient({ companyData }: any) {
                 ×
               </button>
             </div>
-
-            {/* Enter Button */}
             <button
               onClick={submitLogin}
               className="mt-3 bg-teal-600 py-3 rounded-sm text-white text-lg font-bold hover:bg-teal-700 transition w-full max-w-[250px] cursor-pointer"
@@ -331,125 +277,6 @@ export default function CompanyPageClient({ companyData }: any) {
           </div>
         </div>
       )}
-
-      {/* Login Modal */}
-      {/*   {showLoginModal && selectedEmployee && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 md:px-0">
-          <div className="bg-white py-2 px-4 rounded-xs shadow w-96">
-            <h3 className="text-xl font-bold mb-4">
-              Login – {selectedEmployee.name}
-            </h3> */}
-
-      {/* Fullscreen Login Modal - Smaller Responsive Keypad */}
-
-      {/* PIN Code - 4 boxes */}
-      {/*  <div className="flex justify-center gap-2 mb-4">
-              {[0, 1, 2, 3].map((i) => (
-                <input
-                  key={i}
-                  id={`pin-${i}`}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={pinCode[i] || ""}
-                  placeholder="."
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, ""); // Only numbers
-                    if (!val) return;
-                    const newPin = pinCode.split("");
-                    newPin[i] = val;
-                    setPinCode(newPin.join(""));
-
-                    // Move focus to next input safely
-                    if (i < 3) {
-                      const nextInput = document.getElementById(`pin-${i + 1}`);
-                      if (nextInput) nextInput.focus();
-                    }
-                  }}
-                  className="w-12 h-12 text-center border rounded-xs text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              ))}
-            </div> */}
-
-      {/* <div className="flex flex-col items-center mb-4"> */}
-      {/* PIN Inputs */}
-      {/* <div className="flex justify-center gap-2 mb-4">
-    {[0, 1, 2, 3].map((i) => (
-      <input
-        key={i}
-        id={`pin-${i}`}
-        type="text"
-        inputMode="numeric"
-        maxLength={1}
-        value={pinCode[i] || ""}
-        placeholder="."
-        readOnly // make input readonly, we'll use keypad
-        className="w-12 h-12 text-center border rounded-xs text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    ))}
-  </div> */}
-      {/*  <div className="grid grid-cols-3 gap-2">
-    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-      <button
-        key={num}
-        onClick={() => {
-          if (pinCode.length < 4) setPinCode(pinCode + num);
-        }}
-        className="p-3 bg-gray-200 rounded hover:bg-gray-300 text-xl"
-      >
-        {num}
-      </button>
-    ))}
- 
-    <button
-      onClick={() => setPinCode("")}
-      className="p-3 bg-red-400 rounded hover:bg-red-500 text-xl text-white"
-    >
-      C
-    </button>
-   
-    <button
-      onClick={() => {
-        if (pinCode.length < 4) setPinCode(pinCode + "0");
-      }}
-      className="p-3 bg-gray-200 rounded hover:bg-gray-300 text-xl"
-    >
-      0
-    </button>
- 
-    <button
-      onClick={() => setPinCode(pinCode.slice(0, -1))}
-      className="p-3 bg-yellow-400 rounded hover:bg-yellow-500 text-xl"
-    >
-      ×
-    </button>
-  </div> */}
-
-      {/*   <button
-    onClick={submitLogin}
-    className="mt-3 w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700"
-  >
-    Enter
-  </button> */}
-      {/*   </div> */}
-
-      {/*  <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="px-2 py-1 bg-red-400 rounded-xs cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitLogin}
-                className="px-3 py-1 bg-teal-600 text-white rounded-xs cursor-pointer"
-              >
-                Login
-              </button>
-            </div> */}
-      {/*      </div>
-        </div>
-      )} */}
     </div>
   );
 }
