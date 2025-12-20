@@ -66,32 +66,32 @@ export default function CompanySalaryPage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">Salary Overview</h1>
+      <h1 className="text-3xl font-bold uppercase">Salary Overview</h1>
       <p className="text-gray-600">
-        Salaries calculated from reported working time.
+        View all employee salaries calculated from reported working hours. Track monthly earnings, contract types, and payment status at a glance.
       </p>
 
       {/* Month Selector */}
-      <div className="bg-white p-4 rounded shadow flex items-center gap-3">
+      <div className="bg-white p-4 rounded-xs shadow border border-teal-100 flex items-center gap-3">
         <Calendar className="w-5 h-5 text-teal-600" />
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded-xs border-teal-100"
         />
       </div>
 
       {/* Salary Table */}
-      <div className="bg-white rounded-lg shadow p-4 overflow-x-auto">
-        <table className="w-full text-sm table-fixed border-collapse">
-          <thead className="bg-gray-50">
+      <div className="bg-white rounded-xs shadow border border-teal-100 overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
+          <thead className="bg-teal-100">
             <tr>
-              <th className="p-3 text-left w-1/5">Employee Name</th>
-              <th className="p-3 text-left w-1/5">Worked Hours</th>
-              <th className="p-3 text-left w-1/5">Salary</th>
-              <th className="p-3 text-left w-1/5">Contract Type</th>
-              <th className="p-3 text-left w-1/5">Status</th>
+              <th className="p-3 text-left">Employee Name</th>
+              <th className="p-3 text-left">Worked Hours</th>
+              <th className="p-3 text-left">Salary</th>
+              <th className="p-3 text-left">Contract Type</th>
+              <th className="p-3 text-left">Status</th>
             </tr>
           </thead>
 
@@ -99,9 +99,12 @@ export default function CompanySalaryPage() {
             {rows.map((row) => {
               const hours = row.totalMinutes / 60;
               return (
-                <tr key={row.employeeId} className="border-t hover:bg-gray-50">
+                <tr
+                  key={row.employeeId}
+                  className="border-t border-teal-100 hover:bg-teal-50"
+                >
                   {/* Employee Name */}
-                  <td className="px-3 py-2">
+                  <td className="p-3">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-teal-600" />
                       <span>{row.name}</span>
@@ -109,7 +112,7 @@ export default function CompanySalaryPage() {
                   </td>
 
                   {/* Worked Hours */}
-                  <td className="px-3 py-2">
+                  <td className="p-3">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-teal-600" />
                       <span>{formatMinutes(row.totalMinutes)}</span>
@@ -117,7 +120,7 @@ export default function CompanySalaryPage() {
                   </td>
 
                   {/* Salary */}
-                  <td className="px-3 py-2">
+                  <td className="p-3">
                     <div className="flex items-center gap-2 font-semibold">
                       <Wallet className="w-4 h-4 text-teal-600" />
                       <span>{row.salary.toFixed(2)} SEK</span>
@@ -135,12 +138,12 @@ export default function CompanySalaryPage() {
                   </td>
 
                   {/* Contract Type */}
-                  <td className="px-3 py-2">{row.contractType}</td>
+                  <td className="p-3">{row.contractType}</td>
 
                   {/* Status */}
-                  <td className="px-3 py-2">
+                  <td className="p-3">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2 py-1 rounded-xs text-xs font-medium ${
                         statusColors[row.status]
                       }`}
                     >
