@@ -44,18 +44,15 @@ const features = [
 ];
 
 const roles = [
-  {
-    title: "Users",
-    text: "Access profiles, schedules, and personal data securely.",
+    {
+    title: "Companies",
+    text: "Manage staff, payroll, invoices, and analytics.",
   },
   {
     title: "Employees",
     text: "Clock in, view shifts, and track working hours.",
   },
-  {
-    title: "Companies",
-    text: "Manage staff, payroll, invoices, and analytics.",
-  },
+
 ];
 
 export default function HomePage() {
