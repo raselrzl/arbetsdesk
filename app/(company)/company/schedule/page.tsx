@@ -341,7 +341,7 @@ export default function CompanySchedulePage() {
                 </thead>
                 <tbody>
                   {daySchedules.map((sch) => (
-                    <tr key={sch.id} className="hover:bg-gray-50 border-t">
+                    <tr key={sch.id} className="hover:bg-gray-50 border-t border-teal-100">
                       <td className="p-3">{sch.employee.name}</td>
                       <td className="p-3">
                         {new Date(sch.startTime).toLocaleTimeString([], {
