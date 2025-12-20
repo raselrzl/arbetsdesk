@@ -253,8 +253,8 @@ export default function CompanyPageClient({ companyData }: any) {
       </div>
 
       {showLoginModal && selectedEmployee && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-2">
-          <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-30 p-2">
+   <div className="bg-white w-full max-w-xs p-4 rounded-xs shadow-xl flex flex-col items-center relative">
             {/* Close Button Top-Right */}
             <button
               onClick={() => setShowLoginModal(false)}
