@@ -127,7 +127,7 @@ export default function CompanySchedulePage() {
         .join(", ");
 
       const confirmUpdate = confirm(
-        `The following employee(s) already have a schedule on this date: ${employeeNames}. Do you want to update their schedule?`
+        `The following Innovator(s) already have a schedule on this date: ${employeeNames}. Do you want to update their schedule?`
       );
 
       if (!confirmUpdate) return; // Cancel if user selects "No"
@@ -173,9 +173,9 @@ export default function CompanySchedulePage() {
     // Reset form
     setSelectedEmployees([]);
     setDate("");
-    setStartHour("08");
+    setStartHour("00");
     setStartMinute("00");
-    setEndHour("09");
+    setEndHour("00");
     setEndMinute("00");
   };
 
