@@ -39,12 +39,12 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
       <nav className="w-full bg-teal-600 px-4 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
 
-          <div className="flex items-center gap-8 h-full">
-            <div className="text-2xl font-bold tracking-wide uppercase">
+          <div className="flex items-center gap-3 h-full">
+            <div className="text-xl font-bold tracking-wide uppercase">
               <Link href="/company">Arbetsdesk</Link>
             </div>
 
-            <div className="hidden md:flex items-center gap-6 font-medium h-full">
+            <div className="hidden lg:flex items-center gap-1 font-medium h-full">
               <NavItem href="/company" label="Start" icon={Home} pathname={pathname} />
               <NavItem href="/company/schedule" label="Schedule" icon={Calendar} pathname={pathname} />
               <NavItem href="/company/time" label="Time" icon={Clock} pathname={pathname} />
