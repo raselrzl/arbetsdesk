@@ -164,7 +164,7 @@ export default function CompanyPageClient({ companyData }: any) {
         </div>
 
         <table className="w-full border border-teal-100 text-left">
-          <thead className="bg-teal-100">
+          <thead className="bg-teal-100 ">
             <tr>
               <th className="px-4 py-2">Name</th>
               {/* <th className="px-4 py-2">Email</th> */}
