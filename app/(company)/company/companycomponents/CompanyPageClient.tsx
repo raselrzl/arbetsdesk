@@ -87,27 +87,32 @@ export default function CompanyPageClient({ companyData }: any) {
   };
 
   return (
-    <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12">
-      <div className="bg-teal-50 p-2 md:p-4 rounded-xs shadow">
-        <div className="md:flex md:gap-4 mb-2">
-          <h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>
-          <RealTimeClock />
-        </div>
+    <div className="">
+      <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 orve">
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse text-left">
+            <thead className="bg-teal-700 text-white">
+              <tr>
+                <th className="px-4 py-2 text-left">Employee</th>
+                <th className="px-4 py-2 text-left">Today's Schedule</th>
+                <th className="px-4 py-2 text-left">Time Logs</th>
+                <th className="px-4 py-2 text-left">Worked Today</th>
+                <th className="px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {company.employees.map((emp: any, idx: number) => {
+                const todayLogs =
+                  emp.timeLogs?.filter((log: any) => {
+                    if (!log.logDate) return false;
+                    return (
+                      new Date(log.logDate).setHours(0, 0, 0, 0) === todayTime
+                    );
+                  }) || [];
 
-        <table className="w-full border border-teal-100 text-left">
-          <tbody>
-            {company.employees.map((emp: any) => {
-              const todayLogs =
-                emp.timeLogs?.filter((log: any) => {
-                  if (!log.logDate) return false;
-                  return new Date(log.logDate).setHours(0, 0, 0, 0) === todayTime;
-                }) || [];
+                const workedToday = calculateWorkedTime(todayLogs);
 
-              const workedToday = calculateWorkedTime(todayLogs);
-
-              // Combine multiple schedules for today
-              const todaysSchedule =
-                emp.schedules?.length
+                const todaysSchedule = emp.schedules?.length
                   ? emp.schedules
                       .map(
                         (s: any) =>
@@ -122,54 +127,72 @@ export default function CompanyPageClient({ companyData }: any) {
                       .join(", ")
                   : "—";
 
-              return (
-                <tr key={emp.id} className="border-b border-teal-100">
-                  <td className="px-2 py-2 font-medium">{emp.name}</td>
-                  <td className="px-4 py-2">{todaysSchedule}</td>
+                const rowBg = idx % 2 === 0 ? "bg-teal-100" : "bg-teal-200";
 
-                  <td className="px-4 py-2 text-sm flex">
-                    {todayLogs.length === 0 && <span className="text-gray-400">—</span>}
-                    {todayLogs.map((log: any, idx: number) => (
-                      <div key={idx} suppressHydrationWarning className="text-xs font-bold">
-                        <div className="bg-green-600 p-1 rounded-xs flex justify-center items-center">
-                          <ClipboardClock className="h-4 w-4 mr-1" />
-                          {safeTime(log.loginTime, mounted)}
-                        </div>
-                        {log.logoutTime && (
-                          <div className="bg-amber-300 p-1 rounded-xs flex justify-center items-center">
-                            <TimerOff className="h-4 w-4 mr-1" />
-                            {safeTime(log.logoutTime, mounted)}
+                return (
+                  <tr
+                    key={emp.id}
+                    className={`${rowBg} border-b border-teal-300`}
+                  >
+                    <td className="px-4 py-2 font-medium text-teal-900 whitespace-nowrap">
+                      {emp.name}
+                    </td>
+                    <td className="px-4 py-2 text-teal-800 whitespace-nowrap">
+                      {todaysSchedule}
+                    </td>
+
+                    <td className="px-4 py-2 text-sm flex flex-col gap-1">
+                      {todayLogs.length === 0 && (
+                        <span className="text-gray-500">—</span>
+                      )}
+                      {todayLogs.map((log: any, idx: number) => (
+                        <div
+                          key={idx}
+                          suppressHydrationWarning
+                          className="flex flex-col gap-1"
+                        >
+                          <div className="bg-green-600 text-white p-1 rounded flex justify-center items-center gap-1 text-xs">
+                            <ClipboardClock className="h-4 w-4" />
+                            {safeTime(log.loginTime, mounted)}
                           </div>
-                        )}
-                      </div>
-                    ))}
-                  </td>
+                          {log.logoutTime && (
+                            <div className="bg-amber-300 text-black p-1 rounded flex justify-center items-center gap-1 text-xs">
+                              <TimerOff className="h-4 w-4" />
+                              {safeTime(log.logoutTime, mounted)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </td>
 
-                  <td className="px-4 py-2 font-medium text-xs md:text-md">{workedToday}</td>
+                    <td className="px-4 py-2 font-medium text-teal-900 whitespace-nowrap">
+                      {workedToday}
+                    </td>
 
-                  <td className="md:px-2 py-2">
-                    {todayLogs.length === 0 ||
-                    todayLogs[todayLogs.length - 1]?.logoutTime ? (
-                      <button
-                        onClick={() => openLogin(emp)}
-                        className="px-2 py-1 w-16 bg-teal-600 text-white rounded-xs hover:bg-teal-700 cursor-pointer"
-                      >
-                        Login
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => submitLogout(emp)}
-                        className="px-2 py-1 w-16 bg-red-600 text-white rounded-xs hover:bg-red-700 cursor-pointer"
-                      >
-                        Logout
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {todayLogs.length === 0 ||
+                      todayLogs[todayLogs.length - 1]?.logoutTime ? (
+                        <button
+                          onClick={() => openLogin(emp)}
+                          className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
+                        >
+                          Login
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => submitLogout(emp)}
+                          className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                        >
+                          Logout
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showLoginModal && selectedEmployee && (
@@ -196,7 +219,8 @@ export default function CompanyPageClient({ companyData }: any) {
                 <button
                   key={num}
                   onClick={() => {
-                    if (personalNumber.length < 12) setPersonalNumber(personalNumber + num);
+                    if (personalNumber.length < 12)
+                      setPersonalNumber(personalNumber + num);
                   }}
                   className="p-4 w-full bg-gray-100 rounded-md text-md font-semibold hover:bg-gray-200 transition flex items-center justify-center"
                 >
@@ -211,7 +235,8 @@ export default function CompanyPageClient({ companyData }: any) {
               </button>
               <button
                 onClick={() => {
-                  if (personalNumber.length < 12) setPersonalNumber(personalNumber + "0");
+                  if (personalNumber.length < 12)
+                    setPersonalNumber(personalNumber + "0");
                 }}
                 className="p-4 w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
               >

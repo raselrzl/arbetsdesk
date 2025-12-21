@@ -16,8 +16,8 @@ export default function RealTimeClock() {
   if (!currentTime) return null; // render nothing on server
 
   return (
-    <div className="flex items-center gap-2 text-teal-600 font-semibold">
-      <Clock10 className="w-5 h-5" />
+    <div className="flex items-center gap-2 text-teal-600 font-bold text-3xl">
+      <Clock10 className="w-7 h-7" />
       <span>
         {currentTime.toLocaleTimeString("en-US", { hour12: false })} |{" "}
         {currentTime.toLocaleDateString("en-US")}
