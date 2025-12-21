@@ -14,11 +14,17 @@ export default async function CompanyPageServer() {
     where: { id: companyId },
     include: {
       user: { select: { name: true, email: true } },
-      employees: { include: { timeLogs: { orderBy: { createdAt: "desc" }, take: 1 } } },
+      employees: {
+        include: { timeLogs: { orderBy: { createdAt: "desc" }, take: 1 } },
+      },
     },
   });
 
   if (!company) redirect("/login");
 
-  return <CompanyPageClient companyData={company} />;
+  return (
+    <>
+      <CompanyPageClient companyData={company} />
+    </>
+  );
 }
