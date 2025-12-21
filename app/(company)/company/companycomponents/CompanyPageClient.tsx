@@ -11,7 +11,7 @@ function safeTime(value?: string | Date | null, mounted?: boolean) {
   if (!mounted || !value) return "--:--";
   const d = value instanceof Date ? value : new Date(value);
   if (isNaN(d.getTime())) return "--:--";
-  return d.toLocaleTimeString("en-GB");
+  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
 function startOfToday() {
@@ -37,10 +37,8 @@ function calculateWorkedTime(logs: any[]) {
 
   logs.forEach((log) => {
     if (!log.loginTime) return;
-
     const login = new Date(log.loginTime);
     const logout = log.logoutTime ? new Date(log.logoutTime) : now;
-
     if (!isNaN(login.getTime()) && !isNaN(logout.getTime())) {
       totalMs += logout.getTime() - login.getTime();
     }
@@ -48,61 +46,51 @@ function calculateWorkedTime(logs: any[]) {
 
   return totalMs > 0 ? formatDuration(totalMs) : "—";
 }
+
 export default function CompanyPageClient({ companyData }: any) {
   const router = useRouter();
-  const company = companyData;/* 
-  const [company, setCompany] = useState(companyData); */
+  const company = companyData;
   const [mounted, setMounted] = useState(false);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [personalNumber, setPersonalNumber] = useState("");
-  const [pinCode, setPinCode] = useState("");
 
   const todayTime = startOfToday();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
+
   const openLogin = (emp: any) => {
     setSelectedEmployee(emp);
     setShowLoginModal(true);
   };
 
- const submitLogin = async () => {
-  if (!selectedEmployee) return;
-
-  try {
-    await loginEmployeeWithPin(
-      selectedEmployee.id,
-      personalNumber
-    );
-
-    router.refresh();
-
-    setShowLoginModal(false);
-    setPersonalNumber("");
-  } catch (err: any) {
-    alert(err.message || "Login failed");
-  }
-};
-
+  const submitLogin = async () => {
+    if (!selectedEmployee) return;
+    try {
+      await loginEmployeeWithPin(selectedEmployee.id, personalNumber);
+      router.refresh();
+      setShowLoginModal(false);
+      setPersonalNumber("");
+    } catch (err: any) {
+      alert(err.message || "Login failed");
+    }
+  };
 
   const submitLogout = async (emp: any) => {
-  try {
-    await logoutEmployee(emp.id);
-    router.refresh(); // ✅ server decides state
-  } catch (err: any) {
-    alert(err.message || "Logout failed");
-  }
-};
-
+    try {
+      await logoutEmployee(emp.id);
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Logout failed");
+    }
+  };
 
   return (
-    <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 ">
+    <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12">
       <div className="bg-teal-50 p-2 md:p-4 rounded-xs shadow">
         <div className="md:flex md:gap-4 mb-2">
-          <h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>{" "}
+          <h2 className="text-2xl font-bold mb-2">Today's Innovators</h2>
           <RealTimeClock />
         </div>
 
@@ -112,34 +100,37 @@ export default function CompanyPageClient({ companyData }: any) {
               const todayLogs =
                 emp.timeLogs?.filter((log: any) => {
                   if (!log.logDate) return false;
-                  return (
-                    new Date(log.logDate).setHours(0, 0, 0, 0) === todayTime
-                  );
+                  return new Date(log.logDate).setHours(0, 0, 0, 0) === todayTime;
                 }) || [];
 
-              let status = "Out & About";
-              if (todayLogs.length) {
-                const last = todayLogs[todayLogs.length - 1];
-                status = last.logoutTime ? "Away for Now" : "Active";
-              }
-
               const workedToday = calculateWorkedTime(todayLogs);
+
+              // Combine multiple schedules for today
+              const todaysSchedule =
+                emp.schedules?.length
+                  ? emp.schedules
+                      .map(
+                        (s: any) =>
+                          `${new Date(s.startTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })} - ${new Date(s.endTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}`
+                      )
+                      .join(", ")
+                  : "—";
 
               return (
                 <tr key={emp.id} className="border-b border-teal-100">
                   <td className="px-2 py-2 font-medium">{emp.name}</td>
-                  {/*    <td className="px-4 py-2 text-xs md:sm">{status}</td> */}
+                  <td className="px-4 py-2">{todaysSchedule}</td>
 
                   <td className="px-4 py-2 text-sm flex">
-                    {todayLogs.length === 0 && (
-                      <span className="text-gray-400">—</span>
-                    )}
+                    {todayLogs.length === 0 && <span className="text-gray-400">—</span>}
                     {todayLogs.map((log: any, idx: number) => (
-                      <div
-                        key={idx}
-                        suppressHydrationWarning
-                        className="text-xs font-bold"
-                      >
+                      <div key={idx} suppressHydrationWarning className="text-xs font-bold">
                         <div className="bg-green-600 p-1 rounded-xs flex justify-center items-center">
                           <ClipboardClock className="h-4 w-4 mr-1" />
                           {safeTime(log.loginTime, mounted)}
@@ -154,9 +145,7 @@ export default function CompanyPageClient({ companyData }: any) {
                     ))}
                   </td>
 
-                  <td className="px-4 py-2 font-medium text-xs md:text-md">
-                    {workedToday}
-                  </td>
+                  <td className="px-4 py-2 font-medium text-xs md:text-md">{workedToday}</td>
 
                   <td className="md:px-2 py-2">
                     {todayLogs.length === 0 ||
@@ -207,8 +196,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 <button
                   key={num}
                   onClick={() => {
-                    if (personalNumber.length < 12)
-                      setPersonalNumber(personalNumber + num);
+                    if (personalNumber.length < 12) setPersonalNumber(personalNumber + num);
                   }}
                   className="p-4 w-full bg-gray-100 rounded-md text-md font-semibold hover:bg-gray-200 transition flex items-center justify-center"
                 >
@@ -223,8 +211,7 @@ export default function CompanyPageClient({ companyData }: any) {
               </button>
               <button
                 onClick={() => {
-                  if (personalNumber.length < 12)
-                    setPersonalNumber(personalNumber + "0");
+                  if (personalNumber.length < 12) setPersonalNumber(personalNumber + "0");
                 }}
                 className="p-4 w-full bg-gray-100 rounded-md text-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center"
               >

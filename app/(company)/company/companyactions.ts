@@ -116,3 +116,4 @@ export async function loginEmployeeWithPinByNumber(
 
   return await loginEmployee(employee.id);
 }
+

@@ -10,21 +10,33 @@ export default async function CompanyPageServer() {
 
   if (!companyId) redirect("/login");
 
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = new Date(todayStart);
+  todayEnd.setHours(23, 59, 59, 999);
+
   const company = await prisma.company.findUnique({
     where: { id: companyId },
     include: {
       user: { select: { name: true, email: true } },
       employees: {
-        include: { timeLogs: { orderBy: { createdAt: "desc" }, take: 1 } },
+        include: {
+          timeLogs: { orderBy: { createdAt: "desc" }, take: 1 },
+          schedules: {
+            where: {
+              date: {
+                gte: todayStart,
+                lte: todayEnd,
+              },
+            },
+          },
+        },
       },
     },
   });
 
   if (!company) redirect("/login");
 
-  return (
-    <>
-      <CompanyPageClient companyData={company} />
-    </>
-  );
+  return <CompanyPageClient companyData={company} />;
 }
