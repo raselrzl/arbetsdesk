@@ -62,13 +62,13 @@ export default async function WeekComparisonCard() {
   const diffSign = diffHours > "0" ? "+" : diffHours < "0" ? "-" : "";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-2">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 px-2">
       <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-xl shadow-lg border shadow-teal-100 border-teal-200 w-full max-w-md mx-auto">
         <div className="flex items-center mb-6">
           <div className="bg-teal-50 p-4 rounded-full flex items-center justify-center mr-4">
-            <Clock className="w-10 h-10 text-black" />
+            <Clock className="w-10 h-10 text-teal-900" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Worked Hours {(thisWeekMinutes / 60).toFixed(2)} h</h2>
+          <h2 className="text-2xl font-extrabold text-gray-800 dark:text-gray-100"><span className="text-gray-400 font-semibold text-lg">Worked Hours</span> <br/>{(thisWeekMinutes / 60).toFixed(2)} H</h2>
         </div>
 
         <div className="flex flex-col text-gray-600 dark:text-gray-300 mb-4">
