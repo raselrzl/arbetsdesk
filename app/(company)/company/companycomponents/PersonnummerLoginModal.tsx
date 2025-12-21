@@ -42,20 +42,18 @@ export default function PersonnummerLoginModal({
   const submitLogin = async () => {
     if (loading || personalNumber.length < 12) return;
 
+    if (!company) {
+      alert("No company available");
+      return;
+    }
+
     try {
       setLoading(true);
-      const employee = await loginEmployeeWithPinByNumber(personalNumber);
-
-      // Check company restriction
-      if (employee.companyId !== company?.id) {
-        alert("You are not authorized for this company.");
-        return;
-      }
+      await loginEmployeeWithPinByNumber(personalNumber, company.id);
 
       setPersonalNumber("");
       alert("Login successful");
       router.refresh();
-
     } catch (err: any) {
       alert(err.message || "Login failed");
     } finally {

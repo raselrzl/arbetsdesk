@@ -99,11 +99,20 @@ export async function loginEmployeeWithPin(
 }
 
 
-export async function loginEmployeeWithPinByNumber(personalNumber: string) {
+export async function loginEmployeeWithPinByNumber(
+  personalNumber: string,
+  companyId: string
+) {
   const employee = await prisma.employee.findFirst({
-    where: { personalNumber },
+    where: {
+      personalNumber,
+      companyId,
+    },
   });
 
-  if (!employee) throw new Error("Employee not found");
+  if (!employee) {
+    throw new Error("Not authorized for this company");
+  }
+
   return await loginEmployee(employee.id);
 }
