@@ -1,140 +1,166 @@
-// WeekComparisonCard.tsx
+// WeekComparisonCard.tsx (SERVER COMPONENT)
+
 import { prisma } from "@/app/utils/db";
 import { ArrowUp, ArrowDown, Clock } from "lucide-react";
 import { cookies } from "next/headers";
 
-// ------------------- HELPERS -------------------
+// ---------------- HELPERS ----------------
 
-// ✅ NEW: format minutes into real hours + minutes (NO decimals)
-function formatMinutesToHours(minutes: number) {
-  const hrs = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+function formatMinutes(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
 
-  if (hrs === 0) return `${mins} min`;
-  if (mins === 0) return `${hrs} h`;
-  return `${hrs} h ${mins} min`;
-}
-
-async function getTotalMinutesBetween(
-  companyId: string,
-  startDate: Date,
-  endDate: Date
-) {
-  const logs = await prisma.timeLog.findMany({
-    where: { companyId, logDate: { gte: startDate, lte: endDate } },
-    select: { totalMinutes: true },
-  });
-
-  return logs.reduce((sum, log) => sum + (log.totalMinutes || 0), 0);
-}
-
-function compareValues(val1: number, val2: number) {
-  if (val1 > val2) return "more";
-  if (val1 < val2) return "less";
-  return "equal";
+  if (h === 0) return `${m} min`;
+  if (m === 0) return `${h} h`;
+  return `${h} h ${m} min`;
 }
 
 function getMonday(date: Date) {
   const d = new Date(date);
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
-// ------------------- MAIN COMPONENT -------------------
+function getSunday(monday: Date) {
+  const d = new Date(monday);
+  d.setDate(monday.getDate() + 6);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
+// ⬇️ CORE: real worked minutes inside a range
+async function getWorkedMinutesBetween(
+  companyId: string,
+  start: Date,
+  end: Date
+) {
+  const now = new Date();
+
+  const logs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      loginTime: { lt: end }, // started before range ends
+      OR: [
+        { logoutTime: { gte: start } }, // ended after range starts
+        { logoutTime: null }, // still working
+      ],
+    },
+    select: {
+      loginTime: true,
+      logoutTime: true,
+    },
+  });
+
+  let totalMinutes = 0;
+
+  for (const log of logs) {
+    if (!log.loginTime) continue;
+
+    const realStart =
+      log.loginTime > start ? log.loginTime : start;
+
+    const realEnd =
+      log.logoutTime && log.logoutTime < end
+        ? log.logoutTime
+        : log.logoutTime
+        ? log.logoutTime
+        : now < end
+        ? now
+        : end;
+
+    if (realEnd > realStart) {
+      totalMinutes += Math.floor(
+        (realEnd.getTime() - realStart.getTime()) / 60000
+      );
+    }
+  }
+
+  return totalMinutes;
+}
+
+// ---------------- COMPONENT ----------------
 
 export default async function WeekComparisonCard() {
-  const jar = await cookies();
+  const jar =await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  // Current week
-  const startOfThisWeek = getMonday(today);
-  const endOfThisWeek = new Date(startOfThisWeek);
-  endOfThisWeek.setDate(startOfThisWeek.getDate() + 6);
+  // This week
+  const thisWeekStart = getMonday(today);
+  const thisWeekEnd = getSunday(thisWeekStart);
 
   // Last week
-  const startOfLastWeek = new Date(startOfThisWeek);
-  startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
-  const endOfLastWeek = new Date(startOfThisWeek);
-  endOfLastWeek.setDate(startOfThisWeek.getDate() - 1);
+  const lastWeekStart = new Date(thisWeekStart);
+  lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+  const lastWeekEnd = getSunday(lastWeekStart);
 
-  const thisWeekMinutes = await getTotalMinutesBetween(
+  const thisWeekMinutes = await getWorkedMinutesBetween(
     companyId,
-    startOfThisWeek,
-    endOfThisWeek
+    thisWeekStart,
+    thisWeekEnd
   );
 
-  const lastWeekMinutes = await getTotalMinutesBetween(
+  const lastWeekMinutes = await getWorkedMinutesBetween(
     companyId,
-    startOfLastWeek,
-    endOfLastWeek
+    lastWeekStart,
+    lastWeekEnd
   );
 
-  const comparison = compareValues(thisWeekMinutes, lastWeekMinutes);
+  const diff = thisWeekMinutes - lastWeekMinutes;
 
-  // ✅ FIXED COLORS (as you wanted)
-  const comparisonColor =
-    comparison === "more"
-      ? "text-red-600"
-      : comparison === "less"
-      ? "text-green-600"
-      : "text-gray-500";
+  const comparison =
+    diff > 0 ? "more" : diff < 0 ? "less" : "equal";
 
-  const ComparisonIcon =
+  const Icon =
     comparison === "more"
       ? ArrowUp
       : comparison === "less"
       ? ArrowDown
       : Clock;
 
-  // ✅ FIXED: difference calculated in MINUTES, not decimals
-  const diffMinutes = thisWeekMinutes - lastWeekMinutes;
-  const diffLabel = formatMinutesToHours(Math.abs(diffMinutes));
-  const diffSign = diffMinutes > 0 ? "+" : diffMinutes < 0 ? "-" : "";
+  const color =
+    comparison === "more"
+      ? "text-red-600"
+      : comparison === "less"
+      ? "text-green-600"
+      : "text-gray-500";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 px-2">
-      <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-xl shadow-lg border shadow-teal-100 border-teal-200 w-full max-w-md mx-auto">
-        <div className="flex items-center mb-6">
-          <div className="bg-teal-50 p-4 rounded-full flex items-center justify-center mr-4">
-            <Clock className="w-10 h-10 text-teal-900" />
-          </div>
-
-          {/* ✅ CHANGED: real hours + minutes */}
-          <h2 className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">
-            <span className="text-gray-400 font-semibold text-lg">
-              Worked Hours
-            </span>
-            <br />
-            {formatMinutesToHours(thisWeekMinutes)}
-          </h2>
+    <div className="bg-white px-4 py-3 rounded-xl shadow border border-teal-100 max-w-md">
+      <div className="flex items-center gap-4">
+        <div className="bg-teal-50 p-4 rounded-full">
+          <Clock className="w-10 h-10 text-teal-900" />
         </div>
 
-        <div className="flex flex-col text-gray-600 dark:text-gray-300 mb-4">
-          {/* ✅ CHANGED: real hours + minutes */}
-          <p className="text-xs">
-            Last Week: {formatMinutesToHours(lastWeekMinutes)}
+        <div>
+          <p className="text-sm text-gray-400 font-semibold">
+            Worked hours (this week)
           </p>
-
-          {/* ✅ CHANGED: real diff with + / - */}
-          <p className="text-xs">
-            Difference: {diffSign}
-            {diffLabel}
+          <p className="text-2xl font-extrabold">
+            {formatMinutes(thisWeekMinutes)}
           </p>
         </div>
+      </div>
 
-        <div className="flex items-center justify-between">
-          <div className={`flex items-center text-xl font-bold ${comparisonColor}`}>
-            <ComparisonIcon className="w-6 h-6 mr-2" />
-            {comparison === "equal"
-              ? "Equal to last week"
-              : `This week is ${comparison}`}
-          </div>
-        </div>
+      <div className="mt-3 text-xs text-gray-500">
+        <p>Last week: {formatMinutes(lastWeekMinutes)}</p>
+        <p>
+          Difference:{" "}
+          {diff > 0 ? "+" : diff < 0 ? "-" : ""}
+          {formatMinutes(Math.abs(diff))}
+        </p>
+      </div>
+
+      <div className={`mt-4 flex items-center text-lg font-bold ${color}`}>
+        <Icon className="w-5 h-5 mr-2" />
+        {comparison === "equal"
+          ? "Same as last week"
+          : `This week is ${comparison}`}
       </div>
     </div>
   );
