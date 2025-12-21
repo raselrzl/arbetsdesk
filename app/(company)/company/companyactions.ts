@@ -154,3 +154,5 @@ export async function logoutEmployeeWithPin(
     data: { logoutTime: new Date() },
   });
 }
+
+
