@@ -117,3 +117,40 @@ export async function loginEmployeeWithPinByNumber(
   return await loginEmployee(employee.id);
 }
 
+/* ----------------------------------------
+   LOGOUT WITH PERSONAL NUMBER
+---------------------------------------- */
+export async function logoutEmployeeWithPin(
+  employeeId: string,
+  personalNumber: string
+) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+  });
+
+  if (!employee) {
+    throw new Error("Employee not found");
+  }
+
+  if (employee.personalNumber !== personalNumber) {
+    throw new Error("Incorrect personal ID");
+  }
+
+  // find active log
+  const activeLog = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
+    },
+    orderBy: { loginTime: "desc" },
+  });
+
+  if (!activeLog) {
+    throw new Error("No active session found");
+  }
+
+  return await prisma.timeLog.update({
+    where: { id: activeLog.id },
+    data: { logoutTime: new Date() },
+  });
+}
