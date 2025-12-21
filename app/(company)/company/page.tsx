@@ -3,6 +3,7 @@ import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import CompanyPageClient from "./companycomponents/CompanyPageClient";
+import WorkComparisonCard from "./companycomponents/HourComparison";
 
 export default async function CompanyPageServer() {
   const jar = await cookies();
@@ -38,5 +39,10 @@ export default async function CompanyPageServer() {
 
   if (!company) redirect("/login");
 
-  return <CompanyPageClient companyData={company} />;
+  return (
+    <div className="grid grid-cols-2 max-w-7xl mx-auto">
+      <div className="col-span-2"><CompanyPageClient companyData={company}/></div>
+      <div className="col-span-2"><WorkComparisonCard /> <div></div> <div></div></div>
+    </div>
+  );
 }

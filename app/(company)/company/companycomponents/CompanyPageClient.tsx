@@ -6,6 +6,7 @@ import RealTimeClock from "./RealTimeClock";
 import { loginEmployee, logoutEmployee } from "@/app/actions";
 import { ClipboardClock, TimerOff } from "lucide-react";
 import { loginEmployeeWithPin } from "../companyactions";
+import WorkComparisonCard from "./HourComparison";
 
 function safeTime(value?: string | Date | null, mounted?: boolean) {
   if (!mounted || !value) return "--:--";
@@ -88,7 +89,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
   return (
     <div className="">
-      <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 orve">
+      <div className="max-w-7xl mx-auto px-2 py-10 mt-12 orve">
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
             <thead className="bg-teal-700 text-white">
@@ -96,7 +97,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 <th className="px-4 py-2 text-left">Employee</th>
                 <th className="px-4 py-2 text-left">Today's Schedule</th>
                 <th className="px-4 py-2 text-left">Time Logs</th>
-                <th className="px-4 py-2 text-left">Worked Today</th>
+               {/*  <th className="px-4 py-2 text-left">Worked Today</th> */}
                 <th className="px-4 py-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -165,9 +166,9 @@ export default function CompanyPageClient({ companyData }: any) {
                       ))}
                     </td>
 
-                    <td className="px-4 py-2 font-medium text-teal-900 whitespace-nowrap">
+                 {/*    <td className="px-4 py-2 font-medium text-teal-900 whitespace-nowrap">
                       {workedToday}
-                    </td>
+                    </td> */}
 
                     <td className="px-4 py-2 whitespace-nowrap">
                       {todayLogs.length === 0 ||
@@ -192,6 +193,7 @@ export default function CompanyPageClient({ companyData }: any) {
               })}
             </tbody>
           </table>
+         
         </div>
       </div>
 
