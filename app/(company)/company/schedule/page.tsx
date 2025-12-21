@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clock, Plus, User } from "lucide-react";
+import { Calendar, Clock, Plus, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ClockDisplay from "./ClockDisplay";
 import {
@@ -9,32 +9,32 @@ import {
   getSchedulesForCompany,
   updateSchedule,
 } from "./schedules";
+import DatePicker from "react-multi-date-picker";
 
 export default function CompanySchedulePage() {
   const [employeesFromDB, setEmployeesFromDB] = useState<
     { id: string; name: string }[]
   >([]);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
-  const [date, setDate] = useState("");
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
 
-  // Start Time states
   const [startHour, setStartHour] = useState("00");
   const [startMinute, setStartMinute] = useState("00");
-
-  // End Time states
   const [endHour, setEndHour] = useState("00");
   const [endMinute, setEndMinute] = useState("00");
 
   const [schedules, setSchedules] = useState<any[]>([]);
 
-  // Toggle employee selection
   const toggleEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
       prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]
     );
   };
 
-  // Load employees and schedules
+  const removeDate = (date: string) => {
+    setSelectedDates((prev) => prev.filter((d) => d !== date));
+  };
+
   const loadData = async () => {
     try {
       const emps = await getCompanyEmployees();
@@ -56,79 +56,75 @@ export default function CompanySchedulePage() {
     const computedEndTime = `${endHour}:${endMinute}`;
 
     if (
-      !date ||
+      selectedDates.length === 0 ||
       !computedStartTime ||
       !computedEndTime ||
       selectedEmployees.length === 0
     )
       return;
 
-    // Find conflicting schedules
-    const conflictingSchedules = schedules.filter(
-      (sch) =>
-        selectedEmployees.includes(sch.employee.id) &&
-        new Date(sch.date).toDateString() === new Date(date).toDateString()
-    );
-
-    if (conflictingSchedules.length > 0) {
-      const employeeNames = conflictingSchedules
-        .map((sch) => sch.employee.name)
-        .join(", ");
-
-      const confirmUpdate = confirm(
-        `The following Innovator(s) already have a schedule on this date: ${employeeNames}. Do you want to update their schedule?`
+    for (const date of selectedDates) {
+      const conflictingSchedules = schedules.filter(
+        (sch) =>
+          selectedEmployees.includes(sch.employee.id) &&
+          new Date(sch.date).toDateString() === new Date(date).toDateString()
       );
 
-      if (!confirmUpdate) return; // Cancel if user selects "No"
+      if (conflictingSchedules.length > 0) {
+        const employeeNames = conflictingSchedules
+          .map((sch) => sch.employee.name)
+          .join(", ");
 
-      // Update existing schedules
-      for (const sch of conflictingSchedules) {
+        const confirmUpdate = confirm(
+          `The following Innovator(s) already have a schedule on ${new Date(
+            date
+          ).toLocaleDateString()}: ${employeeNames}. Do you want to update their schedule?`
+        );
+
+        if (!confirmUpdate) continue;
+
+        for (const sch of conflictingSchedules) {
+          try {
+            await updateSchedule(sch.id, {
+              startTime: computedStartTime,
+              endTime: computedEndTime,
+            });
+          } catch (err) {
+            console.error(
+              `Error updating schedule for ${sch.employee.name}:`,
+              err
+            );
+          }
+        }
+      }
+
+      const employeesToCreate = selectedEmployees.filter(
+        (id) => !conflictingSchedules.some((sch) => sch.employee.id === id)
+      );
+
+      if (employeesToCreate.length > 0) {
         try {
-          await updateSchedule(sch.id, {
+          await createSchedule({
+            employeeIds: employeesToCreate,
+            date,
             startTime: computedStartTime,
             endTime: computedEndTime,
           });
         } catch (err) {
-          console.error(
-            `Error updating schedule for ${sch.employee.name}:`,
-            err
-          );
+          console.error("Error creating new schedules:", err);
         }
       }
     }
 
-    // Create new schedules for employees without conflicts
-    const employeesToCreate = selectedEmployees.filter(
-      (id) => !conflictingSchedules.some((sch) => sch.employee.id === id)
-    );
-
-    if (employeesToCreate.length > 0) {
-      try {
-        await createSchedule({
-          employeeIds: employeesToCreate,
-          date,
-          startTime: computedStartTime,
-          endTime: computedEndTime,
-        });
-      } catch (err) {
-        console.error("Error creating new schedules:", err);
-        return;
-      }
-    }
-
-    // Reload data
     await loadData();
-
-    // Reset form
     setSelectedEmployees([]);
-    setDate("");
+    setSelectedDates([]);
     setStartHour("00");
     setStartMinute("00");
     setEndHour("00");
     setEndMinute("00");
   };
 
-  // Generate hour options
   const hours = Array.from({ length: 24 }, (_, i) =>
     i.toString().padStart(2, "0")
   );
@@ -144,7 +140,6 @@ export default function CompanySchedulePage() {
 
       <ClockDisplay />
 
-      {/* Add Schedule Form */}
       <div className="bg-white p-6 rounded-xs shadow border border-teal-100 space-y-4">
         <h2 className="text-xl font-semibold">Add New Schedule</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,17 +166,49 @@ export default function CompanySchedulePage() {
             </div>
           </div>
 
-          {/* Date */}
+          {/* Dates */}
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-teal-600 font-medium">
-              <Calendar className="w-5 h-5" /> Date
+              <Calendar className="w-5 h-5" /> Dates
             </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="border py-1 px-3 rounded-xs border-teal-100"
+            <DatePicker
+              multiple
+              value={selectedDates}
+              onChange={(dates: any) =>
+                setSelectedDates(dates.map((d: any) => d.format("YYYY-MM-DD")))
+              }
+              format="YYYY-MM-DD"
+              render={(value, openCalendar) => (
+                <div
+                  onClick={openCalendar}
+                  className="flex items-center gap-2 px-3 py-1 rounded-xs border border-teal-100 cursor-pointer bg-white"
+                >
+                  <Calendar className="w-5 h-5 text-teal-600" />
+                  <span className="text-teal-600">
+                    {selectedDates.length > 0
+                      ? selectedDates
+                          .map((d) => new Date(d).toLocaleDateString())
+                          .join(", ")
+                      : "Select date(s)"}
+                  </span>
+                </div>
+              )}
             />
+
+            {/* 1️⃣ Show selected dates nicely */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selectedDates.map((date) => (
+                <div
+                  key={date}
+                  className="flex items-center gap-1 bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm"
+                >
+                  {new Date(date).toLocaleDateString()}
+                  <button onClick={() => removeDate(date)}>
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Start Time */}
@@ -269,7 +296,7 @@ export default function CompanySchedulePage() {
             return acc;
           }, {})
         )
-          // Sort days descending (latest first)
+          // 2️⃣ Sort days descending (latest date first)
           .sort(
             ([dayA], [dayB]) =>
               new Date(dayB).getTime() - new Date(dayA).getTime()
