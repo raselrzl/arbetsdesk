@@ -1,28 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { loginEmployeeWithPinByNumber } from "../companyactions";
-import RealClock from "./RealClock";
+import { useRouter } from "next/navigation";
 
 export default function PersonnummerLoginModal({
   open,
   onClose,
+  company,
 }: {
   open: boolean;
   onClose: () => void;
+  company: { id: string; name: string } | null;
 }) {
   const [personalNumber, setPersonalNumber] = useState("");
   const [loading, setLoading] = useState(false);
+  const [time, setTime] = useState(new Date());
+  const router = useRouter();
+
+  // Update time every second
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (!open) return null;
 
-  const today = new Date();
-  const dayName = today.toLocaleDateString("en-GB", { weekday: "long" });
-  const fullDate = today.toLocaleDateString("en-GB", {
+  const dayName = time.toLocaleDateString("en-GB", { weekday: "long" });
+  const fullDate = time.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",
+  });
+  const clockTime = time.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
   });
 
   const submitLogin = async () => {
@@ -30,9 +44,18 @@ export default function PersonnummerLoginModal({
 
     try {
       setLoading(true);
-      await loginEmployeeWithPinByNumber(personalNumber);
+      const employee = await loginEmployeeWithPinByNumber(personalNumber);
+
+      // Check company restriction
+      if (employee.companyId !== company?.id) {
+        alert("You are not authorized for this company.");
+        return;
+      }
+
       setPersonalNumber("");
       alert("Login successful");
+      router.refresh();
+
     } catch (err: any) {
       alert(err.message || "Login failed");
     } finally {
@@ -42,36 +65,31 @@ export default function PersonnummerLoginModal({
 
   return (
     <div className="fixed inset-0 z-9999 bg-black w-screen h-screen flex flex-col items-center justify-center px-4">
-      {/* CLOSE */}
+      {/* CLOSE BUTTON */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-3xl font-bold text-gray-600 hover:text-gray-800"
+        className="absolute top-4 right-4 text-3xl font-bold text-gray-300 hover:text-white"
         aria-label="Close"
       >
         ×
       </button>
 
-      {/* 🕒 BIG CLOCK */}
-      <div className="mb-8 text-center">
-        <div className="">
-          <RealClock />
-        </div>
-
-        <div className=" text-xl font-semibold text-gray-700">
-          {dayName}
-        </div>
-        <div className="text-md text-gray-500">{fullDate}</div>
+      {/* 🕒 CLOCK */}
+      <div className="mb-8 text-center text-white">
+        <div className="text-6xl md:text-7xl font-bold">{clockTime}</div>
+        <div className="mt-2 text-xl font-semibold">{dayName}</div>
+        <div className="text-md text-gray-300">{fullDate}</div>
       </div>
 
       {/* INPUT */}
       <input
-        className="w-full max-w-sm mb-6 border bg-white border-teal-200 px-3 py-3 h-14 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
+        className="w-full max-w-sm mb-6 border bg-white border-gray-300 px-3 py-3 h-14 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
         placeholder="YYYYMMDDXXXX"
         value={personalNumber}
         readOnly
       />
 
-      {/* 🔢 KEYPAD */}
+      {/* KEYPAD */}
       <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
@@ -115,7 +133,7 @@ export default function PersonnummerLoginModal({
         </button>
       </div>
 
-      {/* ENTER */}
+      {/* ENTER BUTTON */}
       <button
         onClick={submitLogin}
         disabled={loading || personalNumber.length < 12}

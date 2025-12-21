@@ -3,6 +3,7 @@ import { prisma } from "@/app/utils/db";
 import CompanyNavbarClient from "./CompanyNavbarClient";
 
 type CompanySession = {
+  id: string, 
   name: string;
   email: string;
   organizationNo: string;
@@ -22,6 +23,7 @@ export default async function CompanyNavbar() {
   const company = await prisma.company.findUnique({
     where: { id: companyId },
     select: {
+      id:true,
       name: true,
       email: true,
       organizationNo: true,
@@ -36,6 +38,7 @@ export default async function CompanyNavbar() {
   }
 
   const companySession: CompanySession = {
+    id: company.id, 
     name: company.name,
     email: company.email,
     organizationNo: company.organizationNo,

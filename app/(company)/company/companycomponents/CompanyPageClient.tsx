@@ -50,7 +50,8 @@ function calculateWorkedTime(logs: any[]) {
 }
 export default function CompanyPageClient({ companyData }: any) {
   const router = useRouter();
-  const [company, setCompany] = useState(companyData);
+  const company = companyData;/* 
+  const [company, setCompany] = useState(companyData); */
   const [mounted, setMounted] = useState(false);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -68,66 +69,34 @@ export default function CompanyPageClient({ companyData }: any) {
     setShowLoginModal(true);
   };
 
-  const submitLogin = async () => {
-    if (!selectedEmployee) return;
+ const submitLogin = async () => {
+  if (!selectedEmployee) return;
 
-    try {
-      const log = await loginEmployeeWithPin(
-        selectedEmployee.id,
-        personalNumber
-        /* pinCode */
-      );
+  try {
+    await loginEmployeeWithPin(
+      selectedEmployee.id,
+      personalNumber
+    );
 
-      setCompany((prev: any) => {
-        const updated = { ...prev };
-        updated.employees = [...updated.employees];
-        const idx = updated.employees.findIndex(
-          (e: any) => e.id === selectedEmployee.id
-        );
-        if (idx !== -1) {
-          updated.employees[idx] = {
-            ...updated.employees[idx],
-            timeLogs: [...(updated.employees[idx].timeLogs || []), log],
-          };
-        }
+    router.refresh();
 
-        return updated;
-      });
+    setShowLoginModal(false);
+    setPersonalNumber("");
+  } catch (err: any) {
+    alert(err.message || "Login failed");
+  }
+};
 
-      setShowLoginModal(false);
-      setPersonalNumber("");
-      setPinCode("");
-    } catch (err: any) {
-      alert(err.message || "Login failed");
-    }
-  };
 
   const submitLogout = async (emp: any) => {
-    try {
-      const log = await logoutEmployee(emp.id);
+  try {
+    await logoutEmployee(emp.id);
+    router.refresh(); // ✅ server decides state
+  } catch (err: any) {
+    alert(err.message || "Logout failed");
+  }
+};
 
-      setCompany((prev: any) => {
-        const updated = { ...prev };
-        const idx = updated.employees.findIndex((e: any) => e.id === emp.id);
-
-        if (idx !== -1) {
-          const logs = updated.employees[idx].timeLogs || [];
-          for (let i = logs.length - 1; i >= 0; i--) {
-            if (!logs[i].logoutTime) {
-              logs[i] = log;
-              break;
-            }
-          }
-        }
-
-        return updated;
-      });
-
-      router.push("/company");
-    } catch (err: any) {
-      alert(err.message || "Logout failed");
-    }
-  };
 
   return (
     <div className="min-h-screen max-w-7xl mx-auto px-2 py-10 mt-12 ">

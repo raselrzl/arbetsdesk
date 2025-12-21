@@ -18,6 +18,7 @@ import { useState } from "react";
 import PersonnummerLoginModal from "./PersonnummerLoginModal";
 
 type CompanySession = {
+  id:string,
   name: string;
   email: string;
   organizationNo: string;
@@ -26,12 +27,13 @@ type CompanySession = {
   employeesCount: number;
 };
 
-
 interface CompanyNavbarClientProps {
   company: CompanySession | null;
 }
 
-export default function CompanyNavbarClient({ company }: CompanyNavbarClientProps) {
+export default function CompanyNavbarClient({
+  company,
+}: CompanyNavbarClientProps) {
   const pathname = usePathname();
 
   const employees = []; // placeholder if needed
@@ -42,27 +44,64 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
     <>
       <nav className="w-full bg-teal-600 px-4 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
-
           <div className="flex items-center gap-3 h-full">
-             <div
+            <div
               onClick={() => setShowLogin(true)}
               className="text-xl font-bold tracking-wide uppercase cursor-pointer hover:text-teal-200"
             >
               Login
             </div>
 
-
             <div className="hidden lg:flex items-center gap-1 font-medium h-full">
-              <NavItem href="/company" label="Start" icon={Home} pathname={pathname} />
-              <NavItem href="/company/schedule" label="Schedule" icon={Calendar} pathname={pathname} />
-              <NavItem href="/company/time" label="Time" icon={Clock} pathname={pathname} />
-              <NavItem href="/company/salary" label="Salary" icon={Wallet} pathname={pathname} />
-              <NavItem href="/company/tips" label="Tips" icon={Wallet} pathname={pathname} />
-              <NavItem href="/company/analysis" label="Analysis" icon={BarChart} pathname={pathname} />
-              <NavItem href="/company/employee" label="Employee" icon={Users} pathname={pathname} />
-              <NavItem href="/company/message" label="Message" icon={MessageSquare} pathname={pathname} />
+              <NavItem
+                href="/company"
+                label="Start"
+                icon={Home}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/schedule"
+                label="Schedule"
+                icon={Calendar}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/time"
+                label="Time"
+                icon={Clock}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/salary"
+                label="Salary"
+                icon={Wallet}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/tips"
+                label="Tips"
+                icon={Wallet}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/analysis"
+                label="Analysis"
+                icon={BarChart}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/employee"
+                label="Employee"
+                icon={Users}
+                pathname={pathname}
+              />
+              <NavItem
+                href="/company/message"
+                label="Message"
+                icon={MessageSquare}
+                pathname={pathname}
+              />
             </div>
-            
           </div>
 
           <CompanyUserMenu company={company} />
@@ -73,6 +112,9 @@ export default function CompanyNavbarClient({ company }: CompanyNavbarClientProp
       <PersonnummerLoginModal
         open={showLogin}
         onClose={() => setShowLogin(false)}
+        company={
+          company ? { id: company.id, name: company.name } : null
+        }
       />
     </>
   );
@@ -98,4 +140,3 @@ function NavItem({ href, label, icon: Icon, pathname }: NavItemProps) {
     </Link>
   );
 }
-
