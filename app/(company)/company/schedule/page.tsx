@@ -169,7 +169,7 @@ export default function CompanySchedulePage() {
           {/* Dates */}
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-teal-600 font-medium">
-              <Calendar className="w-5 h-5" /> Dates
+             {/*  <Calendar className="w-5 h-5" /> Dates */}
             </label>
             <DatePicker
               multiple
@@ -181,7 +181,7 @@ export default function CompanySchedulePage() {
               render={(value, openCalendar) => (
                 <div
                   onClick={openCalendar}
-                  className="flex items-center gap-2 px-3 py-1 rounded-xs border border-teal-100 cursor-pointer bg-white"
+                  className="flex items-center gap-2 px-3 py-1 rounded-xs border w-40 border-teal-100 cursor-pointer bg-white"
                 >
                   <Calendar className="w-5 h-5 text-teal-600" />
                   <span className="text-teal-600">
