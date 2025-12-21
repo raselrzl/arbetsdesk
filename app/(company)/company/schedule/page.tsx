@@ -51,57 +51,6 @@ export default function CompanySchedulePage() {
     loadData();
   }, []);
 
-  // Add new schedule
-  /* const addScheduleHandler = async () => {
-  const computedStartTime = `${startHour}:${startMinute}`;
-  const computedEndTime = `${endHour}:${endMinute}`;
-
-  if (!date || !computedStartTime || !computedEndTime || selectedEmployees.length === 0) return;
-
-  // Check if any selected employee already has a schedule on this date
-  const conflictingEmployees = selectedEmployees.filter((empId) =>
-    schedules.some(
-      (sch) =>
-        sch.employee.id === empId &&
-        new Date(sch.date).toDateString() === new Date(date).toDateString()
-    )
-  );
-
-  if (conflictingEmployees.length > 0) {
-    const employeeNames = employeesFromDB
-      .filter((emp) => conflictingEmployees.includes(emp.id))
-      .map((emp) => emp.name)
-      .join(", ");
-
-    const confirmUpdate = confirm(
-      `The following employee(s) already have a schedule on this date: ${employeeNames}. Do you want to update their schedule?`
-    );
-
-    if (!confirmUpdate) return; // Cancel if user selects "No"
-  }
-
-  try {
-    await createSchedule({
-      employeeIds: selectedEmployees,
-      date,
-      startTime: computedStartTime,
-      endTime: computedEndTime,
-    });
-
-    // Reload data
-    await loadData();
-
-    // Reset form
-    setSelectedEmployees([]);
-    setDate("");
-    setStartHour("08");
-    setStartMinute("00");
-    setEndHour("09");
-    setEndMinute("00");
-  } catch (err) {
-    console.error("Error creating schedule:", err);
-  }
-}; */
   const addScheduleHandler = async () => {
     const computedStartTime = `${startHour}:${startMinute}`;
     const computedEndTime = `${endHour}:${endMinute}`;
@@ -341,7 +290,10 @@ export default function CompanySchedulePage() {
                 </thead>
                 <tbody>
                   {daySchedules.map((sch) => (
-                    <tr key={sch.id} className="hover:bg-gray-50 border-t border-teal-100">
+                    <tr
+                      key={sch.id}
+                      className="hover:bg-gray-50 border-t border-teal-100"
+                    >
                       <td className="p-3">{sch.employee.name}</td>
                       <td className="p-3">
                         {new Date(sch.startTime).toLocaleTimeString([], {
