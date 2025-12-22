@@ -80,7 +80,7 @@ export default function CompanyPageClient({ companyData }: any) {
       <div className="max-w-7xl mx-auto px-2 py-10 mt-12">
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
-            <thead className="bg-teal-700 text-white">
+            <thead className="bg-teal-100 text-teal-800">
               <tr>
                 <th className="px-4 py-2">Employee</th>
                 <th className="px-4 py-2"></th>
@@ -121,12 +121,12 @@ export default function CompanyPageClient({ companyData }: any) {
                     ))
                   : "—";
 
-                const rowBg = idx % 2 === 0 ? "bg-teal-100" : "bg-teal-200";
+                const rowBg = idx % 2 === 0 ? "bg-white" : "bg-teal-50";
 
                 return (
                   <tr
                     key={emp.id}
-                    className={`${rowBg} border-b border-teal-300`}
+                    className={`${rowBg} border border-teal-100`}
                   >
                     <td className="px-4 py-2 font-medium text-teal-900">
                       {emp.name}
