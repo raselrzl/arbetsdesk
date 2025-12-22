@@ -20,7 +20,7 @@ export default async function AdminPageWrapper() {
   });
 
   if (!user || user.role !== "ADMIN") {
-    redirect("/login");
+    redirect("/");
   }
 
   return <AdminPage user={user} />;
