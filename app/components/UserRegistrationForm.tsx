@@ -70,12 +70,12 @@ export default function UserRegistrationForm() {
   }, [state.success]);
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-teal-100 flex items-center justify-center px-4 py-8">
       <form
         action={formAction}
-        className="space-y-6 max-w-md w-full bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700"
+        className="space-y-6 max-w-md w-full bg-white p-8 rounded-xs shadow-lg border border-teal-200"
       >
-        <h1 className="text-3xl font-extrabold text-white text-center mb-6">
+        <h1 className="text-3xl font-extrabold text-teal-800 text-center mb-4 uppercase">
           User Registration
         </h1>
 
@@ -91,58 +91,60 @@ export default function UserRegistrationForm() {
 
         {/* Name */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Name</Label>
+          <Label className="text-gray-600">Name</Label>
           <Input
             name="name"
             required
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0"
+            placeholder="Enter a name"
+            className="bg-white text-black border-teal-200 focus:border-teal-500 focus:ring-0 rounded-xs"
           />
         </div>
 
         {/* Email */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Email</Label>
+          <Label className="text-gray-600">Email</Label>
           <Input
             name="email"
             type="email"
             required
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0"
+            placeholder="Enter a valid email"
+            className="bg-white text-black border-teal-200 focus:border-teal-500 focus:ring-0 rounded-xs"
           />
         </div>
 
         {/* Phone Number */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Phone Number</Label>
+          <Label className="text-gray-600">Phone Number</Label>
           <Input
             name="phoneNumber"
             required
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0"
+            className="bg-white text-black border-teal-200 focus:border-teal-500 focus:ring-0 rounded-xs"
           />
         </div>
 
         {/* Personal Number */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Swedish Personal Number</Label>
+          <Label className="text-gray-600">Personal Number</Label>
           <Input
             name="personalNumber"
             required
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0"
+             className="bg-white text-black border-teal-200 focus:border-teal-500 focus:ring-0 rounded-xs"
           />
         </div>
 
         {/* Address */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Address</Label>
+          <Label className="text-gray-600">Address</Label>
           <Input
             name="address"
             required
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0"
+             className="bg-white text-black border-teal-200 focus:border-teal-500 focus:ring-0 rounded-xs"
           />
         </div>
 
         {/* PIN */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Enter a PIN (4 digits)</Label>
+          <Label className="text-gray-600">Enter a PIN (4 digits)</Label>
           <div className="flex gap-2 justify-center">
             {pinDigits.map((digit, i) => (
               <Input
@@ -154,7 +156,7 @@ export default function UserRegistrationForm() {
                 placeholder="•"
                 value={digit}
                 onChange={(e) => handlePinChange(i, e.target.value)}
-                className="w-12 h-12 text-center text-xl text-black bg-white border border-gray-400 rounded"
+                className="w-12 h-12 text-center text-xl text-black bg-white border border-teal-200 rounded-xs"
               />
             ))}
           </div>
@@ -162,7 +164,7 @@ export default function UserRegistrationForm() {
 
         {/* Confirm PIN */}
         <div className="flex flex-col gap-1">
-          <Label className="text-gray-200">Confirm PIN</Label>
+          <Label className="text-gray-600">Confirm PIN</Label>
           <div className="flex gap-2 justify-center">
             {confirmPinDigits.map((digit, i) => (
               <Input
@@ -174,8 +176,8 @@ export default function UserRegistrationForm() {
                 placeholder="•"
                 value={digit}
                 onChange={(e) => handleConfirmPinChange(i, e.target.value)}
-                className={`w-12 h-12 text-center text-xl text-black bg-white border rounded ${
-                  showPinError ? "border-red-600" : "border-gray-400"
+                className={`w-12 h-12 text-center text-xl text-black bg-white border rounded-xs ${
+                  showPinError ? "border-red-600" : "border-teal-200"
                 }`}
               />
             ))}
@@ -188,7 +190,7 @@ export default function UserRegistrationForm() {
         </div>
 
         {/* Role */}
-        <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
           <Label className="text-gray-200">Role</Label>
           <select
             name="role"
@@ -199,7 +201,7 @@ export default function UserRegistrationForm() {
             <option value="COMPANY">Company</option>
           </select>
         </div>
-
+ */}
         {/* Hidden combined PIN */}
         <input type="hidden" name="pinNumber" value={pinValue} />
         <input type="hidden" name="confirmPinNumber" value={confirmPinValue} />
