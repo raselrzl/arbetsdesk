@@ -10,7 +10,7 @@ export default async function CompanyPageServer() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
 
-  if (!companyId) redirect("/login");
+  if (!companyId) redirect("/");
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
