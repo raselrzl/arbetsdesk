@@ -140,7 +140,7 @@ export default function HomePage() {
 
       {/* RIGHT: Image (bigger & closer) */}
       <div className="flex-[1.2] w-full">
-        <div className="relative w-full h-[320px] md:h-[380px] rounded-xl overflow-hidden">
+        <div className="relative w-full h-80 md:h-[380px] rounded-xl overflow-hidden">
           <Image
             src={image}
             alt={`${title} preview`}
