@@ -7,7 +7,7 @@ export default function AdminLayout({
 }>) {
   return (
     <div className="bg-teal-50">
-      <div className="mb-20">
+      <div className="mb-14 shadow">
         <Navbar />
       </div>
       <div>{children}</div>

@@ -70,7 +70,7 @@ export default function UserRegistrationForm() {
   }, [state.success]);
 
   return (
-    <div className="min-h-screen bg-teal-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <form
         action={formAction}
         className="space-y-6 max-w-md w-full bg-white p-8 rounded-xs shadow-lg border border-teal-200"
