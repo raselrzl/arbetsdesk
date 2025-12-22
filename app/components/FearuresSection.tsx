@@ -46,7 +46,7 @@ const features = [
 export function FeaturesSection() {
   return (
     <section className="py-24 bg-[#f9fafb] border-t">
-      <div className="max-w-7xl mx-auto px-6 text-center">
+      <div className="max-w-7xl mx-auto px-6 text-start">
         {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
