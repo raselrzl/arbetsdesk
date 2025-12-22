@@ -42,7 +42,7 @@ export default async function CompanyPageServer() {
   return (
     <div className="grid grid-cols-2 max-w-7xl mx-auto">
       <div className="col-span-2"><CompanyPageClient companyData={company}/></div>
-      <div className="col-span-2"><WorkComparisonCard /> <div></div> <div></div></div>
+      <div className="col-span-2 p-2"><WorkComparisonCard /> <div></div> <div></div></div>
     </div>
   );
 }
