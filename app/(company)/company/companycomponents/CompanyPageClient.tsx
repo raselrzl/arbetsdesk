@@ -6,12 +6,13 @@ import {
   CalendarDays,
   ClipboardClock,
   TimerOff,
+  User2,
+  UsersIcon,
+  UserSquare,
 } from "lucide-react";
 
-import {
-  loginEmployeeWithPin,
-  logoutEmployeeWithPin,
-} from "../companyactions";
+import { loginEmployeeWithPin, logoutEmployeeWithPin } from "../companyactions";
+import Link from "next/link";
 
 // ---------------- HELPERS ----------------
 
@@ -79,14 +80,22 @@ export default function CompanyPageClient({ companyData }: any) {
     <div>
       <div className="max-w-7xl mx-auto px-2 py-10 mt-12">
         <div className="overflow-x-auto">
+          <div className="bg-teal-100 flex justify-between items-center">
+            <h1 className="px-4 py-2 uppercase text-xl md:text-2xl flex items-center bg-teal-100 text-teal-800 font-bold">
+            <UsersIcon className="mr-2" />
+            today’s team
+          </h1>
+          <Link href="/company/schedule" className="border mx-2 px-2 py-1 text-xs md:text-sm hover:bg-teal-200">Check Schedule →</Link>
+          </div>
+
           <table className="min-w-full border-collapse text-left">
-            <thead className="bg-teal-100 text-teal-800">
+            {/* <thead className="bg-teal-100 text-teal-800">
               <tr>
-                <th className="px-4 py-2 uppercase">today’s team</th>
+                <th className="px-4 py-2 uppercase text-2xl flex items-center"><UsersIcon className="mr-2"/>today’s team</th>
                 <th className="px-4 py-2"></th>
                 <th className="px-4 py-2"></th>
               </tr>
-            </thead>
+            </thead> */}
 
             <tbody>
               {company.employees.map((emp: any, idx: number) => {
@@ -133,7 +142,7 @@ export default function CompanyPageClient({ companyData }: any) {
                     </td>
 
                     <td className="px-4 py-2 text-teal-800">
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 text-sm">
                         {todaysSchedule}
 
                         <div className="mt-2 text-xs flex flex-col gap-1">
@@ -175,7 +184,7 @@ export default function CompanyPageClient({ companyData }: any) {
                       ) : (
                         <button
                           onClick={() => openAuth(emp, "login")}
-                          className="px-3 py-1 text-teal-700 hover:underline text-sm"
+                          className="px-3 py-1 text-teal-700/60 hover:underline text-xs md:text-sm"
                         >
                           Not logged in
                         </button>
@@ -245,9 +254,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 0
               </button>
               <button
-                onClick={() =>
-                  setPersonalNumber(personalNumber.slice(0, -1))
-                }
+                onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
                 className="p-4 bg-yellow-400"
               >
                 x
