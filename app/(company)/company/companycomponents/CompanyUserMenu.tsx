@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { logoutCompanyAction } from "@/app/actions";
+import CompanyLogoutButton from "./CompanyLogoutButton";
 
 type CompanySession = {
   name: string;
@@ -75,13 +76,7 @@ export default function CompanyUserMenu({ company }: CompanyUserMenuProps) {
               </div>
 
               <form action={logoutCompanyAction} className="pt-4">
-                <button
-                  type="submit"
-                  className="w-40 flex items-center justify-center gap-2 rounded-xs bg-red-600 py-2 text-white hover:bg-red-700 transition cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
+                <CompanyLogoutButton />
               </form>
             </>
           ) : (

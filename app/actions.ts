@@ -413,7 +413,7 @@ export async function logoutCompanyAction() {
     path: "/",
   });
 
-  redirect("/login");
+  redirect("/");
 }
 
 
