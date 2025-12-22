@@ -20,22 +20,23 @@ export default function LoginForm() {
   const search = useSearchParams();
   const [tab, setTab] = useState<Tab>("USER");
 
-  // shared
+  // shared personal number
   const [personalNumber, setPersonalNumber] = useState("");
 
-  // user pin
+  // company org no
+  const [organizationNo, setOrganizationNo] = useState("");
+
+  // shared 4-digit PIN (USER / COMPANY / EMPLOYEE)
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);
   const pinRefs = Array.from({ length: 4 }, () =>
     useRef<HTMLInputElement>(null)
   );
-  const pinNumber = pinDigits.join("");
+  const pinValue = pinDigits.join("");
 
-  // company
-  const [organizationNo, setOrganizationNo] = useState("");
-  const [loginCode, setLoginCode] = useState("");
-
-  // employee
-  const [pinCode, setPinCode] = useState("");
+  // reset PIN when switching tabs
+  useEffect(() => {
+    setPinDigits(["", "", "", ""]);
+  }, [tab]);
 
   useEffect(() => {
     if (search.get("error")) {
@@ -45,12 +46,31 @@ export default function LoginForm() {
 
   const handlePinChange = (i: number, v: string) => {
     if (!/^\d?$/.test(v)) return;
+
     const next = [...pinDigits];
     next[i] = v;
     setPinDigits(next);
+
     if (v && i < 3) pinRefs[i + 1].current?.focus();
     if (!v && i > 0) pinRefs[i - 1].current?.focus();
   };
+
+  const PinInput = (
+    <>
+      <div className="flex gap-2 justify-center mt-1">
+        {pinDigits.map((d, i) => (
+          <Input
+            key={i}
+            ref={pinRefs[i]}
+            value={d}
+            maxLength={1}
+            onChange={(e) => handlePinChange(i, e.target.value)}
+            className="w-12 h-12 text-center bg-white text-black"
+          />
+        ))}
+      </div>
+    </>
+  );
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
@@ -85,25 +105,16 @@ export default function LoginForm() {
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-                className="bg-white text-black"
+                className="bg-white text-black text-center"
+                placeholder="YYYYMMDDXXXX"
+                
               />
             </div>
 
             <div>
               <Label className="text-white">PIN</Label>
-              <div className="flex gap-2 justify-center mt-1">
-                {pinDigits.map((d, i) => (
-                  <Input
-                    key={i}
-                    ref={pinRefs[i]}
-                    value={d}
-                    maxLength={1}
-                    onChange={(e) => handlePinChange(i, e.target.value)}
-                    className="w-12 h-12 text-center bg-white text-black"
-                  />
-                ))}
-              </div>
-              <input type="hidden" name="pinNumber" value={pinNumber} />
+              {PinInput}
+              <input type="hidden" name="pinNumber" value={pinValue} />
             </div>
 
             <Button className="bg-teal-900">
@@ -121,18 +132,15 @@ export default function LoginForm() {
                 name="organizationNo"
                 value={organizationNo}
                 onChange={(e) => setOrganizationNo(e.target.value)}
-                className="bg-white text-black"
+                className="bg-white text-black text-center"
+                placeholder="YYYYMMDDXXXX"
               />
             </div>
 
             <div>
-              <Label className="text-white">Login Code</Label>
-              <Input
-                name="loginCode"
-                value={loginCode}
-                onChange={(e) => setLoginCode(e.target.value)}
-                className="bg-white text-black"
-              />
+              <Label className="text-white">PIN</Label>
+              {PinInput}
+              <input type="hidden" name="loginCode" value={pinValue} />
             </div>
 
             <HomeLoginButton />
@@ -148,18 +156,15 @@ export default function LoginForm() {
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-                className="bg-white text-black"
+                className="bg-white text-black text-center"
+                placeholder="YYYYMMDDXXXX"
               />
             </div>
 
             <div>
-              <Label className="text-white">PIN Code</Label>
-              <Input
-                name="pinCode"
-                value={pinCode}
-                onChange={(e) => setPinCode(e.target.value)}
-                className="bg-white text-black"
-              />
+              <Label className="text-white">PIN</Label>
+              {PinInput}
+              <input type="hidden" name="pinCode" value={pinValue} />
             </div>
 
             <HomeLoginButton />
@@ -168,7 +173,7 @@ export default function LoginForm() {
       </div>
 
       <div className="w-full max-w-md p-2 mt-6 text-sm text-gray-600 text-center bg-teal-50 rounded-lg">
-        One login for User, Company & Employee
+        If you are have problem with login, Contact us
       </div>
     </div>
   );
