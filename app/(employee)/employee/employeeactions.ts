@@ -42,8 +42,6 @@ export async function getEmployeeSchedule() {
   }));
 }
 
-
-
 export async function getEmployeeMonthlyHours() {
   const jar = await cookies();
   const employeeId = jar.get("employee_session")?.value;
@@ -92,7 +90,6 @@ export async function getEmployeeMonthlyHours() {
     daily,
   };
 }
-
 
 export async function getEmployeeMonthlySchedule(month: string) {
   const jar = await cookies();
