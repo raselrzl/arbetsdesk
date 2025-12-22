@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import CompanyPageClient from "./companycomponents/CompanyPageClient";
 import WorkComparisonCard from "./companycomponents/HourComparison";
+import { ChartNoAxesCombined } from "lucide-react";
 
 export default async function CompanyPageServer() {
   const jar = await cookies();
@@ -41,8 +42,13 @@ export default async function CompanyPageServer() {
 
   return (
     <div className="grid grid-cols-2 max-w-7xl mx-auto">
-      <div className="col-span-2"><CompanyPageClient companyData={company}/></div>
-      <div className="col-span-2 p-2"><WorkComparisonCard /> <div></div> <div></div></div>
+      <div className="col-span-2 p-2 mt-20 text-teal-600">
+       <div className="flex flex-row text-xl font-semibold mb-4 items-center place-items-center"><ChartNoAxesCombined className="h-8 w-8"/> <h2>Current Week vs Last Week</h2></div>
+        <WorkComparisonCard />{" "}
+      </div>
+      <div className="col-span-2 mb-20">
+        <CompanyPageClient companyData={company} />
+      </div>
     </div>
   );
 }

@@ -82,7 +82,7 @@ export default function CompanyPageClient({ companyData }: any) {
           <table className="min-w-full border-collapse text-left">
             <thead className="bg-teal-100 text-teal-800">
               <tr>
-                <th className="px-4 py-2">Employee</th>
+                <th className="px-4 py-2 uppercase">today’s team</th>
                 <th className="px-4 py-2"></th>
                 <th className="px-4 py-2"></th>
               </tr>
@@ -138,9 +138,9 @@ export default function CompanyPageClient({ companyData }: any) {
 
                         <div className="mt-2 text-xs flex flex-col gap-1">
                           {todayLogs.length === 0 && (
-                            <div className="flex items-center gap-1 text-gray-500">
+                            <div className="flex items-center gap-1 text-gray-500 text-xs">
                               <ClipboardClock className="w-4 h-4" />
-                              Not logged today
+                              --:--
                             </div>
                           )}
 
@@ -175,7 +175,7 @@ export default function CompanyPageClient({ companyData }: any) {
                       ) : (
                         <button
                           onClick={() => openAuth(emp, "login")}
-                          className="px-3 py-1 text-teal-700 hover:underline"
+                          className="px-3 py-1 text-teal-700 hover:underline text-sm"
                         >
                           Not logged in
                         </button>
