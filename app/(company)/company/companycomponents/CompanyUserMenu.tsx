@@ -49,7 +49,7 @@ export default function CompanyUserMenu({ company }: CompanyUserMenuProps) {
                 </div>
               </div>
 
-           {/*    <div>
+              {/*    <div>
                 <p className="font-medium">Admin</p>
                 <p>{company.adminName}</p>
               </div> */}
