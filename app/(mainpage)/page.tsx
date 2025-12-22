@@ -10,6 +10,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
+import { FeaturesSection } from "../components/FearuresSection";
 
 const features = [
   {
@@ -108,78 +109,10 @@ export default function HomePage() {
         </div>
       </section>
 
-    <section className="max-w-6xl mx-auto px-6 py-24 space-y-24">
-  {features.map(({ title, desc, icon: Icon, image, href }, idx) => (
-    <div
-      key={title}
-      className={`flex flex-col md:flex-row items-center gap-8 ${
-        idx % 2 !== 0 ? "md:flex-row-reverse" : ""
-      }`}
-    >
-      {/* LEFT: Icon + Text */}
-      <div className="flex-1 flex items-start gap-6">
-        <div className="shrink-0 w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center text-teal-600">
-          <Icon className="w-12 h-12" />
-        </div>
-
-        <div className="max-w-md">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-            {title}
-          </h3>
-          <p className="text-gray-600 mb-3">{desc}</p>
-
-          <Link
-            href={href}
-            className="inline-flex items-center gap-2 text-teal-600 font-medium hover:underline"
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            Learn more
-          </Link>
-        </div>
-      </div>
-
-      {/* RIGHT: Image (bigger & closer) */}
-      <div className="flex-[1.2] w-full">
-        <div className="relative w-full h-80 md:h-[380px] rounded-xl overflow-hidden">
-          <Image
-            src={image}
-            alt={`${title} preview`}
-            fill
-            className="object-contain"
-          />
-        </div>
-      </div>
-    </div>
-  ))}
-</section>
-
-
-      {/* ================= ROLES ================= */}
-      <section className="bg-teal-50 py-24">
-        <div className="max-w-6xl mx-auto px-6 space-y-24">
-          {roles.map((role, idx) => (
-            <div
-              key={role.title}
-              className={`flex flex-col md:flex-row items-center gap-12 ${
-                idx % 2 !== 0 ? "md:flex-row-reverse" : ""
-              }`}
-            >
-              <div className="flex-1 text-center md:text-left">
-                <h3 className="text-2xl font-semibold text-teal-700 mb-3">
-                  {role.title}
-                </h3>
-                <p className="text-gray-600">{role.text}</p>
-              </div>
-              <div className="flex-1">
-                <div className="w-full h-48 bg-teal-100 rounded-xl" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+   <FeaturesSection />
 
       {/* ================= FOOTER ================= */}
-      <footer className="py-10 text-center text-gray-600">
+      <footer className="py-4 text-center text-gray-600">
         <p>
           © {new Date().getFullYear()} Arbets-desk — Workforce management made
           simple.
