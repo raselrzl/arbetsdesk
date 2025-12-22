@@ -62,7 +62,7 @@ export default function PersonnummerLoginModal({
   };
 
   return (
-    <div className="fixed inset-0 z-9999 bg-black w-screen h-screen flex flex-col items-center justify-center px-4">
+    <div className="fixed inset-0 z-9999 bg-teal-800 w-screen h-screen flex flex-col items-center justify-center px-4">
       {/* CLOSE BUTTON */}
       <button
         onClick={onClose}
