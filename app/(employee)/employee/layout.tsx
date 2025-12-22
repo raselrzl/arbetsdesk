@@ -12,7 +12,7 @@ export default async function EmployeeLayout({
   const cookieStore = await cookies();
   const employeeId = cookieStore.get("employee_session")?.value;
 
-  if (!employeeId) redirect("/login");
+  if (!employeeId) redirect("/");
 
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
