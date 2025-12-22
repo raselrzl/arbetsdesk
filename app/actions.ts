@@ -152,7 +152,7 @@ export async function logoutUserAction() {
     name: "user_session",
     path: "/",
   });
-  redirect("/login");
+  redirect("/");
 }
 
 export async function registerCompanyAction(
