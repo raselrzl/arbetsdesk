@@ -12,6 +12,7 @@ import {
   loginCompanyAction,
   loginEmployeeAction,
 } from "../actions";
+import { HomeLoginButton } from "./HomeLoginButton";
 
 type Tab = "USER" | "COMPANY" | "EMPLOYEE";
 
@@ -134,9 +135,7 @@ export default function LoginForm() {
               />
             </div>
 
-            <Button className="bg-teal-900">
-              Login <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            <HomeLoginButton />
           </form>
         )}
 
@@ -163,9 +162,7 @@ export default function LoginForm() {
               />
             </div>
 
-            <Button className="bg-teal-900">
-              Login <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            <HomeLoginButton />
           </form>
         )}
       </div>
