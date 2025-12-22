@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import CompanySelect from "./CompanySelect";
 import { Button } from "@/components/ui/button";
+import { logoutUserAction } from "../employee/employeeactions";
 
 type UserInfo = {
   name?: string;
@@ -77,11 +78,10 @@ export default function UserMenu({
           </div>
 
           {user && (
-            <form action="/" method="post">
+            <form action={logoutUserAction}>
               <Button
                 type="submit"
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2 rounded-xs bg-red-600"
+                className="w-full flex items-center justify-center gap-2 rounded-xs bg-red-600 text-white hover:bg-red-700"
               >
                 <LogOut className="w-4 h-4" /> Logout
               </Button>

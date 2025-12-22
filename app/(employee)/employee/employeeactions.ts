@@ -3,6 +3,7 @@
 
 import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function getEmployeeSchedule() {
   const jar = await cookies();
@@ -181,4 +182,11 @@ export async function getEmployeeMonthlyData(month: string): Promise<{ employee:
   }));
 
   return { employee: emp, dailyWork: daily };
+}
+
+
+export async function logoutUserAction() {
+  const cookieStore =await cookies();
+  cookieStore.delete("employee_session");
+  redirect("/");
 }
