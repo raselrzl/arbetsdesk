@@ -295,7 +295,7 @@ export default function CompanyPageClient({ companyData }: any) {
                     </div>
 
                     {/* LOGIN / LOGOUT — BOTTOM RIGHT */}
-                    <div className="absolute top-2 right-2 text-white">
+                    <div className="absolute bottom-2 right-2 text-white">
                       {isLoggedIn ? (
                         <button
                           onClick={() => openAuth(emp, "logout")}

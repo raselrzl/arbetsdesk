@@ -42,7 +42,7 @@ export default async function CompanyPageServer() {
 
   return (
     <div className="grid grid-cols-2 max-w-7xl mx-auto">
-      <div className="col-span-2 p-2">
+      <div className="col-span-2 p-2 mb-20">
         <div className="col-span-2 mb-10">
           <CompanyPageClient companyData={company} />
         </div>
