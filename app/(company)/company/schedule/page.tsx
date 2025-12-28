@@ -55,6 +55,7 @@ export default function CompanySchedulePage() {
   const addScheduleHandler = async () => {
     const computedStartTime = `${startHour}:${startMinute}`;
     const computedEndTime = `${endHour}:${endMinute}`;
+    
 
     if (
       selectedDates.length === 0 ||
@@ -132,7 +133,7 @@ export default function CompanySchedulePage() {
   const minutes = ["00", "15", "30", "45"];
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <h1 className="text-3xl font-bold mb-1 uppercase">Working Schedule</h1>
       <p className="text-teal-600 mb-6">
         Plan upcoming sessions and build schedules for your team in just a few
