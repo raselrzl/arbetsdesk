@@ -42,12 +42,15 @@ export default async function CompanyPageServer() {
 
   return (
     <div className="grid grid-cols-2 max-w-7xl mx-auto">
-      <div className="col-span-2 p-2 mt-20 text-teal-600">
-       <div className="flex flex-row text-xl font-semibold mb-4 items-center place-items-center"><ChartNoAxesCombined className="h-8 w-8"/> <h2>Current Week vs Last Week</h2></div>
+      <div className="col-span-2 p-2">
+        <div className="col-span-2 mb-10">
+          <CompanyPageClient companyData={company} />
+        </div>
+        <div className="flex flex-row text-xl font-semibold mb-4 items-center place-items-center">
+          <ChartNoAxesCombined className="h-8 w-8" />{" "}
+          <h2>Current Week vs Last Week</h2>
+        </div>
         <WorkComparisonCard />{" "}
-      </div>
-      <div className="col-span-2 mb-20">
-        <CompanyPageClient companyData={company} />
       </div>
     </div>
   );

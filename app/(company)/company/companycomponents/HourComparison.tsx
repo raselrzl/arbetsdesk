@@ -131,7 +131,7 @@ export default async function WeekComparisonCard() {
       : "text-gray-500";
 
   return (
-    <div className="bg-white px-4 py-3 rounded-xl shadow border border-teal-100 max-w-md">
+    <div className="bg-white p-4 mx-2 py-3 rounded-xs shadow border border-teal-100 max-w-md">
       <div className="flex items-center gap-4">
         <div className="bg-teal-50 p-4 rounded-full">
           <Clock className="w-10 h-10 text-teal-900" />

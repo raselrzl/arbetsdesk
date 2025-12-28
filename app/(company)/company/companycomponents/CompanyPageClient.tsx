@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   CalendarDays,
   ClipboardClock,
+  ClockAlert,
+  ClockCheck,
+  CornerRightUp,
+  CornerUpLeft,
+  LogIn,
+  LogOut,
   TimerOff,
   User2,
   UsersIcon,
@@ -82,21 +88,18 @@ export default function CompanyPageClient({ companyData }: any) {
         <div className="overflow-x-auto">
           <div className="bg-teal-100 flex justify-between items-center">
             <h1 className="px-4 py-2 uppercase text-xl md:text-2xl flex items-center bg-teal-100 text-teal-800 font-bold">
-            <UsersIcon className="mr-2" />
-            today’s team
-          </h1>
-          <Link href="/company/schedule" className="border mx-2 px-2 py-1 text-xs md:text-sm hover:bg-teal-200">Check Schedule →</Link>
+              <UsersIcon className="mr-2" />
+              today’s team
+            </h1>
+            <Link
+              href="/company/schedule"
+              className="border mx-2 px-2 py-1 text-xs md:text-sm hover:bg-teal-200"
+            >
+              Check Schedule →
+            </Link>
           </div>
 
-          <table className="min-w-full border-collapse text-left">
-            {/* <thead className="bg-teal-100 text-teal-800">
-              <tr>
-                <th className="px-4 py-2 uppercase text-2xl flex items-center"><UsersIcon className="mr-2"/>today’s team</th>
-                <th className="px-4 py-2"></th>
-                <th className="px-4 py-2"></th>
-              </tr>
-            </thead> */}
-
+          {/* <table className="min-w-full border-collapse text-left">
             <tbody>
               {company.employees.map((emp: any, idx: number) => {
                 const todayLogs =
@@ -194,7 +197,126 @@ export default function CompanyPageClient({ companyData }: any) {
                 );
               })}
             </tbody>
-          </table>
+          </table> */}
+
+          <div className="">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 mt-2">
+              {company.employees.map((emp: any, idx: number) => {
+                const todayLogs =
+                  emp.timeLogs?.filter((log: any) => {
+                    if (!log.logDate) return false;
+                    return (
+                      new Date(log.logDate).setHours(0, 0, 0, 0) === todayTime
+                    );
+                  }) || [];
+
+                const isLoggedIn =
+                  todayLogs.length > 0 &&
+                  !todayLogs[todayLogs.length - 1]?.logoutTime;
+
+                const todaysSchedule = emp.schedules?.length
+                  ? emp.schedules.map((s: any, i: number) => (
+                      <div key={i} className="flex items-center">
+                        <CalendarDays className="w-3 h-3 text-teal-800" />
+                        <span>
+                          {new Date(s.startTime).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}{" "}
+                          -{" "}
+                          {new Date(s.endTime).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    ))
+                  : "—";
+
+                return (
+                  <div
+                    key={emp.id}
+                    role="button"
+                    tabIndex={0}
+                    className={`cursor-pointer flex p-2 relative rounded-xs ${
+                      isLoggedIn
+                        ? "bg-teal-600"
+                        : "bg-gray-400 border border-gray-300"
+                    }`}
+                  >
+                    {/* LEFT SIDE */}
+                    <div className="flex flex-col gap-1">
+                      {/* NAME + MR / IMAGE */}
+                      <div className="flex items-center gap-2">
+                        {/* You can replace this with an image from /public */}
+                        <img
+                          src="/avater.png"
+                          className="w-10 h-10 rounded-full"
+                        />
+                        {/*   <p className="rounded-full bg-gray-700 w-10 h-10 flex items-center justify-center text-white">
+                          MR
+                        </p> */}
+
+                        <div className="font-bold uppercase text-lg text-gray-200">
+                          {emp.name}
+                        </div>
+                      </div>
+
+                      {/* SCHEDULE + LOGS */}
+                      <div>
+                        <div className="flex flex-col text-sm">
+                          {todaysSchedule}
+
+                          {todayLogs.length === 0 && (
+                            <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+                              <ClipboardClock className="w-3 h-3" />
+                              00:00
+                            </div>
+                          )}
+
+                          {todayLogs.map((log: any, i: number) => (
+                            <div key={i} className="flex gap-2 text-xs mt-1">
+                              {log.loginTime && (
+                                <div className="flex items-center text-xs">
+                                  <ClipboardClock className="w-3 h-3" />
+                                  {safeTime(log.loginTime, mounted)}
+                                </div>
+                              )}
+                              {log.logoutTime && (
+                                <div className="flex items-center gap-1">
+                                  {" "}
+                                  - {safeTime(log.logoutTime, mounted)}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* LOGIN / LOGOUT — BOTTOM RIGHT */}
+                    <div className="absolute top-2 right-2 text-white">
+                      {isLoggedIn ? (
+                        <button
+                          onClick={() => openAuth(emp, "logout")}
+                          className="cursor-pointer text-green-300"
+                        >
+                          <ClockCheck />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => openAuth(emp, "login")}
+                          className="cursor-pointer text-black"
+                        >
+                          <ClockAlert />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
