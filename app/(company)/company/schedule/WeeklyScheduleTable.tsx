@@ -27,10 +27,7 @@ function getWeekRange(offset = 0) {
 
 /* ---------------- COMPONENT ---------------- */
 
-export default function WeeklyScheduleTable({
-  schedules,
-  employees,
-}: Props) {
+export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
 
   const { start, end } = getWeekRange(weekOffset);
@@ -62,14 +59,15 @@ export default function WeeklyScheduleTable({
   });
 
   function getWeekNumber(date: Date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-}
-const weekNumber = getWeekNumber(start);
-
+    const d = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  }
+  const weekNumber = getWeekNumber(start);
 
   return (
     <div className="space-y-3">
@@ -80,9 +78,9 @@ const weekNumber = getWeekNumber(start);
           {start.toLocaleDateString()} – {end.toLocaleDateString()}
         </div> */}
         <div className="font-semibold text-teal-700">
-  Week {weekNumber} · {start.toLocaleDateString()} – {end.toLocaleDateString()}
-</div>
-
+          Week {weekNumber} · {start.toLocaleDateString()} –{" "}
+          {end.toLocaleDateString()}
+        </div>
 
         <div className="flex gap-2">
           <button
@@ -115,10 +113,7 @@ const weekNumber = getWeekNumber(start);
             <tr className="bg-teal-100">
               <th className="p-3 border text-left">Schedule</th>
               {daysOfWeek.map((day) => (
-                <th
-                  key={day.toDateString()}
-                  className="p-3 border text-center"
-                >
+                <th key={day.toDateString()} className="p-3 border text-center">
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
                   <p className="text-xs text-gray-600">
                     {day.toLocaleDateString()}
@@ -131,9 +126,7 @@ const weekNumber = getWeekNumber(start);
           <tbody>
             {employees.map((emp) => (
               <tr key={emp.id} className="border-t">
-                <td className="p-3 border font-medium">
-                  {emp.name}
-                </td>
+                <td className="p-3 border font-medium">{emp.name}</td>
 
                 {daysOfWeek.map((day) => {
                   const dayKey = day.toDateString();
