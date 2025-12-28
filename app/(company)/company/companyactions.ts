@@ -136,7 +136,6 @@ export async function logoutEmployeeWithPin(
     throw new Error("Incorrect personal ID");
   }
 
-  // find active log
   const activeLog = await prisma.timeLog.findFirst({
     where: {
       employeeId,
@@ -145,14 +144,24 @@ export async function logoutEmployeeWithPin(
     orderBy: { loginTime: "desc" },
   });
 
-  if (!activeLog) {
+  if (!activeLog || !activeLog.loginTime) {
     throw new Error("No active session found");
   }
 
+  const logoutTime = new Date();
+
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - activeLog.loginTime.getTime()) / 60000
+  );
+
   return await prisma.timeLog.update({
     where: { id: activeLog.id },
-    data: { logoutTime: new Date() },
+    data: {
+      logoutTime,
+      totalMinutes,
+    },
   });
 }
+
 
 
