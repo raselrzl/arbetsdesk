@@ -10,6 +10,7 @@ import {
   updateSchedule,
 } from "./schedules";
 import DatePicker from "react-multi-date-picker";
+import WeeklyScheduleTable from "./WeeklyScheduleTable";
 
 export default function CompanySchedulePage() {
   const [employeesFromDB, setEmployeesFromDB] = useState<
@@ -169,7 +170,7 @@ export default function CompanySchedulePage() {
           {/* Dates */}
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-teal-600 font-medium">
-             {/*  <Calendar className="w-5 h-5" /> Dates */}
+              {/*  <Calendar className="w-5 h-5" /> Dates */}
             </label>
             <DatePicker
               multiple
@@ -283,7 +284,7 @@ export default function CompanySchedulePage() {
       </div>
 
       {/* Existing Schedules Table */}
-      <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
+      {/*  <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
         <h2 className="text-xl font-semibold mb-3 uppercase">
           All Existing Schedules
         </h2>
@@ -345,7 +346,8 @@ export default function CompanySchedulePage() {
               </table>
             </div>
           ))}
-      </div>
+      </div> */}
+      <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
     </div>
   );
 }
