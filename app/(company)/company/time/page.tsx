@@ -125,51 +125,66 @@ export default function CompanyTimePage() {
       </div>
 
       {/* FILTERS */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-3 bg-white p-4 rounded-xs shadow border border-teal-100">
-        <input
-          placeholder="Search employee"
-          className="border p-2 rounded-xs border-teal-100"
-          value={nameFilter}
-          onChange={(e) => setNameFilter(e.target.value)}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-white p-4 rounded-xs shadow border border-teal-100">
+        <div>
+          <label>Search by name</label>
+          <input
+            placeholder="Employee Name"
+            className="border p-2 rounded-xs border-teal-100"
+            value={nameFilter}
+            onChange={(e) => setNameFilter(e.target.value)}
+          />
+        </div>
 
-        <select
-          className="border p-2 rounded-xs border-teal-100"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-        >
-          <option value="ALL">All</option>
-          <option value="Working">Working</option>
-          <option value="Not working">Not working</option>
-        </select>
+        <div className="flex flex-col">
+          <label>Select a Option</label>
+          <select
+            className="border p-2 rounded-xs border-teal-100"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+          >
+            <option value="ALL">All</option>
+            <option value="Working">Working</option>
+            <option value="Not working">Not working</option>
+          </select>
+        </div>
+        <div className="flex md:flex-col justify-between md:justify-start">
+          <label>Specific Date</label>
+          <input
+            type="date"
+            className="border p-2 rounded-xs border-teal-100 w-50"
+            value={singleDate}
+            onChange={(e) => setSingleDate(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col gap-1 ">
+          <div className="flex md:flex-col justify-between md:justify-start">
+            <label>From Date</label>
+            <input
+              type="date"
+              className="border p-2 rounded-xs border-teal-100 w-50"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </div>
 
-        <input
-          type="date"
-          className="border p-2 rounded-xs border-teal-100"
-          value={singleDate}
-          onChange={(e) => setSingleDate(e.target.value)}
-        />
-
-        <input
-          type="date"
-          className="border p-2 rounded-xs border-teal-100"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-        />
-
-        <input
-          type="date"
-          className="border p-2 rounded-xs border-teal-100"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-        />
+          <div className="flex md:flex-col justify-between md:justify-start">
+            <label>Till Date</label>
+            <input
+              type="date"
+              className="border p-2 rounded-xs border-teal-100 w-50"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </div>
+        </div>
 
         <button
           onClick={clearFilters}
-          className="bg-teal-100 hover:bg-teal-200 rounded-xs p-2 font-medium cursor-pointer"
-        >
-          Clear
+          className="bg-teal-100 h-10 hover:bg-teal-200 rounded-xs p-2 font-medium cursor-pointer"
+        >Clear
         </button>
+          
       </div>
 
       {/* MONTH SUMMARY */}
@@ -179,52 +194,57 @@ export default function CompanyTimePage() {
           {Object.entries(totals).map(([name, minutes]) => (
             <p key={name}>
               {name}:{" "}
-              <span className="font-semibold">
-                {formatMinutes(minutes)}
-              </span>
+              <span className="font-semibold">{formatMinutes(minutes)}</span>
             </p>
           ))}
         </div>
       )}
 
       {/* TABLES */}
-     {/* TABLES */}
-{filteredReports.map((day) => (
-  <div key={day.date} className="bg-white rounded-xs shadow border border-teal-100">
-    <div className="px-4 py-3 border-b font-semibold bg-teal-400">{day.date}</div>
+      {/* TABLES */}
+      {filteredReports.map((day) => (
+        <div
+          key={day.date}
+          className="bg-white rounded-xs shadow border border-teal-100"
+        >
+          <div className="px-4 py-3 border-b font-semibold bg-teal-400">
+            {day.date}
+          </div>
 
-    {/* Responsive wrapper */}
-    <div className="overflow-x-auto w-full">
-      <table className="w-full text-sm min-w-[600px]">
-        <thead className="bg-teal-100">
-          <tr>
-            <th className="p-3 text-left">Name</th>
-            <th className="p-3 text-left">Status</th>
-            <th className="p-3 text-left">Start</th>
-            <th className="p-3 text-left">End</th>
-            <th className="p-3 text-left">Worked time</th>
-            <th className="p-3 text-left">Cost Center</th>
-          </tr>
-        </thead>
-        <tbody>
-          {day.employees.map((e, i) => (
-            <tr key={i} className="border-t border-teal-100 hover:bg-teal-50">
-              <td className="p-3">{e.name}</td>
-              <td className="p-3">{e.status}</td>
-              <td className="p-3">{e.startTime}</td>
-              <td className="p-3">{e.endTime}</td>
-              <td className="p-3">
-                {e.totalMinutes > 0 ? formatMinutes(e.totalMinutes) : "—"}
-              </td>
-              <td className="p-3">{e.costCenter}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-))}
-
+          {/* Responsive wrapper */}
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead className="bg-teal-100">
+                <tr>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Status</th>
+                  <th className="p-3 text-left">Start</th>
+                  <th className="p-3 text-left">End</th>
+                  <th className="p-3 text-left">Worked time</th>
+                  <th className="p-3 text-left">Cost Center</th>
+                </tr>
+              </thead>
+              <tbody>
+                {day.employees.map((e, i) => (
+                  <tr
+                    key={i}
+                    className="border-t border-teal-100 hover:bg-teal-50"
+                  >
+                    <td className="p-3">{e.name}</td>
+                    <td className="p-3">{e.status}</td>
+                    <td className="p-3">{e.startTime}</td>
+                    <td className="p-3">{e.endTime}</td>
+                    <td className="p-3">
+                      {e.totalMinutes > 0 ? formatMinutes(e.totalMinutes) : "—"}
+                    </td>
+                    <td className="p-3">{e.costCenter}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
