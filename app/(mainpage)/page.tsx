@@ -71,7 +71,7 @@ export default function HomePage() {
             Workforce Management Platform
           </span>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-teal-900 mb-6">
             Manage your workforce <br />
             <span className="text-teal-600">smarter & faster</span>
           </h1>
@@ -109,7 +109,31 @@ export default function HomePage() {
         </div>
       </section>
 
-   <FeaturesSection />
+      <FeaturesSection />
+
+      {/* ---------- VIDEO SECTION ---------- */}
+      <section className="max-w-7xl mx-auto mt-6 mb-20 px-6">
+        <div className="bg-white shadow-sm rounded-lg p-6 border-l-4 border-teal-500">
+         <h1 className="text-4xl md:text-5xl font-extrabold text-teal-900 mb-6">
+            See how Arbets-desk works
+          </h1>
+
+          <p className="text-gray-600 mb-6 max-w-2xl">
+            A quick overview of how companies and employees use Arbets-desk to
+            track time, manage schedules, and simplify payroll.
+          </p>
+
+          <div className="overflow-hidden rounded-lg border border-gray-200">
+            <video
+              src="/vedio.mp4"
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-auto"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* ================= FOOTER ================= */}
       <footer className="py-4 text-center text-gray-600">
