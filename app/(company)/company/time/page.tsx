@@ -217,11 +217,10 @@ export default function CompanyTimePage() {
               <thead className="bg-teal-100">
                 <tr>
                   <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Status</th>
+                 {/*  <th className="p-3 text-left">Status</th> */}
                   <th className="p-3 text-left">Start</th>
                   <th className="p-3 text-left">End</th>
                   <th className="p-3 text-left">Worked time</th>
-                  <th className="p-3 text-left">Cost Center</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,13 +230,13 @@ export default function CompanyTimePage() {
                     className="border-t border-teal-100 hover:bg-teal-50"
                   >
                     <td className="p-3">{e.name}</td>
-                    <td className="p-3">{e.status}</td>
+                   {/*  <td className="p-3">{e.status}</td> */}
                     <td className="p-3">{e.startTime}</td>
                     <td className="p-3">{e.endTime}</td>
                     <td className="p-3">
                       {e.totalMinutes > 0 ? formatMinutes(e.totalMinutes) : "—"}
                     </td>
-                    <td className="p-3">{e.costCenter}</td>
+                   {/*  <td className="p-3">{e.costCenter}</td> */}
                   </tr>
                 ))}
               </tbody>
