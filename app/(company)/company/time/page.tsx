@@ -130,7 +130,7 @@ export default function CompanyTimePage() {
           <label>Search by name</label>
           <input
             placeholder="Employee Name"
-            className="border p-2 rounded-xs border-teal-100"
+            className="border p-2 rounded-xs border-teal-100 w-36"
             value={nameFilter}
             onChange={(e) => setNameFilter(e.target.value)}
           />
@@ -139,7 +139,7 @@ export default function CompanyTimePage() {
         <div className="flex flex-col">
           <label>Select a Option</label>
           <select
-            className="border p-2 rounded-xs border-teal-100"
+            className="border p-2 rounded-xs border-teal-100 w-36"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
           >
@@ -152,7 +152,7 @@ export default function CompanyTimePage() {
           <label>Specific Date</label>
           <input
             type="date"
-            className="border p-2 rounded-xs border-teal-100 w-50"
+            className="border p-2 rounded-xs border-teal-100 w-36"
             value={singleDate}
             onChange={(e) => setSingleDate(e.target.value)}
           />
@@ -162,7 +162,7 @@ export default function CompanyTimePage() {
             <label>From Date</label>
             <input
               type="date"
-              className="border p-2 rounded-xs border-teal-100 w-50"
+              className="border p-2 rounded-xs border-teal-100 w-36"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
             />
@@ -172,7 +172,7 @@ export default function CompanyTimePage() {
             <label>Till Date</label>
             <input
               type="date"
-              className="border p-2 rounded-xs border-teal-100 w-50"
+              className="border p-2 rounded-xs border-teal-100 w-36"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
             />
