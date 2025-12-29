@@ -112,8 +112,8 @@ export default function HomePage() {
       <FeaturesSection />
 
       {/* ---------- VIDEO SECTION ---------- */}
-      <section className="mb-20 p-6 bg-teal-100 border-t ">
-        <div className="max-w-7xl mx-auto">
+      <section className="mb-20 p-6 bg-teal-50 border-t ">
+        <div className="max-w-7xl mx-auto px-4">
          <h1 className="text-4xl md:text-5xl font-extrabold text-teal-900 mb-6">
             See how Arbets-desk works
           </h1>
