@@ -19,6 +19,8 @@ export default function PersonnummerLoginModal({
   const [loading, setLoading] = useState(false);
   const [time, setTime] = useState(new Date());
   const [statusPopup, setStatusPopup] = useState<null | any>(null);
+  const [authResult, setAuthResult] = useState<any>(null);
+
   const router = useRouter();
 
   // Update time every second
@@ -53,11 +55,8 @@ export default function PersonnummerLoginModal({
         company.id
       );
 
-      setPersonalNumber("");
-      setStatusPopup(result.status);
+      setAuthResult(result);
       router.refresh();
-    } catch (err: any) {
-      setStatusPopup("ALREADY_LOGGED_IN");
     } finally {
       setLoading(false);
     }
@@ -144,12 +143,14 @@ export default function PersonnummerLoginModal({
         </button>
       </div>
 
-      {statusPopup && (
+      {authResult && (
         <AuthStatusPopup
-          status={statusPopup}
+          status={authResult.status}
+          employeeName={authResult.employeeName}
+          schedule={authResult.schedule}
           onClose={() => {
-            setStatusPopup(null);
-            onClose();
+            setAuthResult(null); // 👈 hides popup
+            setPersonalNumber("");
           }}
         />
       )}

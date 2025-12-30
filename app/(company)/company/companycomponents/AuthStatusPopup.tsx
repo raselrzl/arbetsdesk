@@ -9,49 +9,66 @@ type Status =
 
 export default function AuthStatusPopup({
   status,
+  employeeName,
+  schedule,
   onClose,
 }: {
   status: Status;
+  employeeName: string;
+  schedule?: {
+    startTime: string | Date;
+    endTime: string | Date;
+  };
   onClose: () => void;
 }) {
-  const config = {
-    ALREADY_LOGGED_IN: {
-      icon: <LogOut className="w-10 h-10 text-yellow-500" />,
-      title: "Already logged in",
-      message: "If you want to log out, please use your logout button.",
-      color: "bg-yellow-50 border-yellow-400",
-    },
-    LOGGED_IN_NO_SCHEDULE: {
-      icon: <Info className="w-10 h-10 text-blue-500" />,
-      title: "Logged in",
-      message: "You don’t have a schedule today.",
-      color: "bg-blue-50 border-blue-400",
-    },
-    LOGGED_IN_WITH_SCHEDULE: {
-      icon: <CheckCircle className="w-10 h-10 text-green-500" />,
-      title: "Login successful",
-      message: "Your workday has started.",
-      color: "bg-green-50 border-green-400",
-    },
-  }[status];
+  const formatTime = (v: string | Date) =>
+    new Date(v).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
-      <div
-        className={`w-full max-w-sm p-6 border rounded shadow-xl ${config.color}`}
-      >
-        <div className="flex flex-col items-center text-center gap-3">
-          {config.icon}
-          <h2 className="text-xl font-bold">{config.title}</h2>
-          <p className="text-sm text-gray-700">{config.message}</p>
+      <div className="bg-white w-full max-w-sm p-6 rounded shadow-xl text-center">
+        <h2 className="text-xl font-bold mb-2">{employeeName}</h2>
 
-          <button
-            onClick={onClose}
-            className="mt-4 px-6 py-2 bg-black text-white rounded hover:opacity-80"
-          >
-            OK
-          </button>
-        </div>
+        {status === "LOGGED_IN_WITH_SCHEDULE" && schedule && (
+          <>
+            <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+            <p className="font-semibold">You have a schedule today</p>
+            <p className="text-lg font-bold mt-1">
+              {formatTime(schedule.startTime)} –{" "}
+              {formatTime(schedule.endTime)}
+            </p>
+          </>
+        )}
+
+        {status === "LOGGED_IN_NO_SCHEDULE" && (
+          <>
+            <Info className="w-10 h-10 text-blue-500 mx-auto mb-2" />
+            <p className="font-semibold">Logged in</p>
+            <p className="text-sm text-gray-600">
+              You don’t have a schedule today
+            </p>
+          </>
+        )}
+
+        {status === "ALREADY_LOGGED_IN" && (
+          <>
+            <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
+            <p className="font-semibold">Already logged in</p>
+            <p className="text-sm text-gray-600">
+              If you want to log out, please use your logout button
+            </p>
+          </>
+        )}
+
+        <button
+          onClick={onClose}
+          className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
+        >
+          OK
+        </button>
       </div>
     </div>
   );
