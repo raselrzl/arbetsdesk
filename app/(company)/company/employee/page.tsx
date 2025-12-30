@@ -11,6 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { deleteEmployee } from "../companyactions";
 
 type Employee = {
   id: string;
@@ -141,13 +142,25 @@ export default function CompanyEmployeePage() {
 
                         {/* Placeholder delete action */}
                         <DropdownMenuItem
-                          className="text-red-600 focus:text-red-600"
-                          onClick={() => {
-                            console.log("Delete", emp.id);
-                          }}
-                        >
-                          Delete Employee
-                        </DropdownMenuItem>
+  className="text-red-600 focus:text-red-600"
+  onClick={async () => {
+    if (!confirm(`Are you sure you want to delete ${emp.name}?`)) return;
+
+    try {
+      "use server"; // ensure this runs as a server action
+      await deleteEmployee(emp.id);
+
+      // Update the local state to remove employee from the list
+      setEmployees((prev) => prev.filter((e) => e.id !== emp.id));
+      alert("Employee deleted successfully");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Error deleting employee");
+    }
+  }}
+>
+  Delete Employee
+</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>

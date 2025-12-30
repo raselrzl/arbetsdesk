@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/app/utils/db";
+import { cookies } from "next/headers";
 
 /* ----------------------------------------
    LOGIN (start time)
@@ -230,5 +231,43 @@ export async function loginEmployeeWithPinByNumber(
       endTime: schedule.endTime,
     },
   };
+}
+
+
+export async function deleteEmployee(employeeId: string) {
+  const jar =await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) {
+    throw new Error("Unauthorized");
+  }
+
+  const employee = await prisma.employee.findFirst({
+    where: { id: employeeId, companyId },
+  });
+
+  if (!employee) {
+    throw new Error("Employee not found or unauthorized");
+  }
+
+  // Delete dependent records
+  await prisma.timeLog.deleteMany({
+    where: { employeeId },
+  });
+
+  await prisma.schedule.deleteMany({
+    where: { employeeId },
+  });
+
+  await prisma.salarySlip.deleteMany({
+    where: { employeeId },
+  });
+
+  // Finally, delete the employee
+  await prisma.employee.delete({
+    where: { id: employeeId },
+  });
+
+  return { success: true };
 }
 
