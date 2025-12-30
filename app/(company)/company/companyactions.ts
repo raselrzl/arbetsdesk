@@ -74,8 +74,6 @@ export async function logoutEmployee(employeeId: string) {
    LOGIN WITH PERSONAL NUMBER + PIN
 ---------------------------------------- */
 
-
-
 export async function loginEmployeeWithPin(
   employeeId: string,
   personalNumber: string
@@ -101,9 +99,7 @@ export async function loginEmployeeWithPin(
   }
 }
 
-
-
-export async function loginEmployeeWithPinByNumber(
+/* export async function loginEmployeeWithPinByNumber(
   personalNumber: string,
   companyId: string
 ) {
@@ -119,7 +115,7 @@ export async function loginEmployeeWithPinByNumber(
   }
 
   return await loginEmployee(employee.id);
-}
+} */
 
 /* ----------------------------------------
    LOGOUT WITH PERSONAL NUMBER
@@ -167,5 +163,49 @@ export async function logoutEmployeeWithPin(
   });
 }
 
+export async function loginEmployeeWithPinByNumber(
+  personalNumber: string,
+  companyId: string
+) {
+  const employee = await prisma.employee.findFirst({
+    where: { personalNumber, companyId },
+  });
 
+  if (!employee) {
+    throw new Error("Not authorized for this company");
+  }
 
+  // 🔹 Check active login
+  const activeLog = await prisma.timeLog.findFirst({
+    where: {
+      employeeId: employee.id,
+      logoutTime: null,
+    },
+  });
+
+  if (activeLog) {
+    return {
+      status: "ALREADY_LOGGED_IN",
+    };
+  }
+
+  // 🔹 Today range
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = new Date(todayStart);
+  todayEnd.setHours(23, 59, 59, 999);
+
+  const hasSchedule = await prisma.schedule.findFirst({
+    where: {
+      employeeId: employee.id,
+      date: { gte: todayStart, lte: todayEnd },
+    },
+  });
+
+  await loginEmployee(employee.id);
+
+  return {
+    status: hasSchedule ? "LOGGED_IN_WITH_SCHEDULE" : "LOGGED_IN_NO_SCHEDULE",
+  };
+}
