@@ -10,7 +10,7 @@ export default function MobileBottomNav() {
 
   const links = [
     {
-      href: "/employee/start",
+      href: "/employee",
       label: "Start",
       icon: Home,
     },
