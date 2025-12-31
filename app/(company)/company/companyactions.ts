@@ -4,12 +4,22 @@ import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 
 /* ----------------------------------------
-   LOGIN (start time)
+   HELPERS
 ---------------------------------------- */
-export async function loginEmployee(employeeId: string) {
-  const now = new Date();
+function getTodayRange() {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
 
-  // get employee to access companyId
+  const end = new Date(start);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
+}
+
+/* ----------------------------------------
+   CORE LOGIN (creates timelog)
+---------------------------------------- */
+async function createLogin(employeeId: string) {
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
     select: { companyId: true },
@@ -19,109 +29,42 @@ export async function loginEmployee(employeeId: string) {
     throw new Error("Employee not found");
   }
 
-  // prevent double login
-  const activeLog = await prisma.timeLog.findFirst({
+  const { start, end } = getTodayRange();
+
+  // 🔒 Prevent double login TODAY only
+  const activeToday = await prisma.timeLog.findFirst({
     where: {
       employeeId,
       logoutTime: null,
+      logDate: {
+        gte: start,
+        lte: end,
+      },
     },
   });
 
-  if (activeLog) {
-    throw new Error("Employee is already logged in");
+  if (activeToday) {
+    return {
+      status: "ALREADY_LOGGED_IN",
+    };
   }
 
-  const log = await prisma.timeLog.create({
+  await prisma.timeLog.create({
     data: {
       employeeId,
-      companyId: employee.companyId, // ✅ REQUIRED
-      loginTime: now,
-      logDate: now,
+      companyId: employee.companyId,
+      loginTime: new Date(),
+      logDate: new Date(),
     },
   });
 
-  return log;
+  return { status: "LOGGED_IN" };
 }
 
 /* ----------------------------------------
-   LOGOUT (stop time)
+   LOGIN WITH PERSONAL NUMBER
 ---------------------------------------- */
-export async function logoutEmployee(employeeId: string) {
-  const activeLog = await prisma.timeLog.findFirst({
-    where: {
-      employeeId,
-      logoutTime: null,
-    },
-    orderBy: {
-      loginTime: "desc",
-    },
-  });
-
-  if (!activeLog) {
-    throw new Error("No active session found");
-  }
-
-  const updated = await prisma.timeLog.update({
-    where: { id: activeLog.id },
-    data: {
-      logoutTime: new Date(),
-    },
-  });
-
-  return updated;
-}
-
-/* ----------------------------------------
-   LOGIN WITH PERSONAL NUMBER + PIN
----------------------------------------- */
-
 export async function loginEmployeeWithPin(
-  employeeId: string,
-  personalNumber: string
-  /*  pin: string */
-) {
-  try {
-    const employee = await prisma.employee.findUnique({
-      where: { id: employeeId },
-    });
-
-    if (!employee || employee.personalNumber !== personalNumber) {
-      throw new Error("Employee not registered or wrong personnummer");
-    }
-
-    /*  if (employee.pinCode !== pin) {
-    throw new Error("Incorrect PIN code");
-  } */
-
-    return await loginEmployee(employeeId);
-  } catch {
-    // ✅ Always send a safe, readable message to client
-    throw new Error("Employee not registered or wrong personnummer");
-  }
-}
-
-/* export async function loginEmployeeWithPinByNumber(
-  personalNumber: string,
-  companyId: string
-) {
-  const employee = await prisma.employee.findFirst({
-    where: {
-      personalNumber,
-      companyId,
-    },
-  });
-
-  if (!employee) {
-    throw new Error("Not authorized for this company");
-  }
-
-  return await loginEmployee(employee.id);
-} */
-
-/* ----------------------------------------
-   LOGOUT WITH PERSONAL NUMBER
----------------------------------------- */
-export async function logoutEmployeeWithPin(
   employeeId: string,
   personalNumber: string
 ) {
@@ -129,41 +72,16 @@ export async function logoutEmployeeWithPin(
     where: { id: employeeId },
   });
 
-  if (!employee) {
-    throw new Error("Employee not found");
+  if (!employee || employee.personalNumber !== personalNumber) {
+    throw new Error("Employee not registered or wrong personal number");
   }
 
-  if (employee.personalNumber !== personalNumber) {
-    throw new Error("Incorrect personal ID");
-  }
-
-  const activeLog = await prisma.timeLog.findFirst({
-    where: {
-      employeeId,
-      logoutTime: null,
-    },
-    orderBy: { loginTime: "desc" },
-  });
-
-  if (!activeLog || !activeLog.loginTime) {
-    throw new Error("No active session found");
-  }
-
-  const logoutTime = new Date();
-
-  const totalMinutes = Math.floor(
-    (logoutTime.getTime() - activeLog.loginTime.getTime()) / 60000
-  );
-
-  return await prisma.timeLog.update({
-    where: { id: activeLog.id },
-    data: {
-      logoutTime,
-      totalMinutes,
-    },
-  });
+  return await createLogin(employee.id);
 }
 
+/* ----------------------------------------
+   LOGIN BY PERSONAL NUMBER + COMPANY
+---------------------------------------- */
 export async function loginEmployeeWithPinByNumber(
   personalNumber: string,
   companyId: string
@@ -176,35 +94,34 @@ export async function loginEmployeeWithPinByNumber(
     throw new Error("Not authorized for this company");
   }
 
-  // 🔹 Already logged in?
-  const activeLog = await prisma.timeLog.findFirst({
+  const { start, end } = getTodayRange();
+
+  // 🔒 Already logged in today?
+  const activeToday = await prisma.timeLog.findFirst({
     where: {
       employeeId: employee.id,
       logoutTime: null,
+      logDate: {
+        gte: start,
+        lte: end,
+      },
     },
   });
 
-  if (activeLog) {
+  if (activeToday) {
     return {
       status: "ALREADY_LOGGED_IN",
       employeeName: employee.name,
     };
   }
 
-  // 🔹 Today range
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-
-  const todayEnd = new Date(todayStart);
-  todayEnd.setHours(23, 59, 59, 999);
-
   // 🔹 Fetch today's schedule
   const schedule = await prisma.schedule.findFirst({
     where: {
       employeeId: employee.id,
       date: {
-        gte: todayStart,
-        lte: todayEnd,
+        gte: start,
+        lte: end,
       },
     },
     select: {
@@ -213,8 +130,15 @@ export async function loginEmployeeWithPinByNumber(
     },
   });
 
-  // 🔹 Login always allowed
-  await loginEmployee(employee.id);
+  // 🔹 Create login
+  await prisma.timeLog.create({
+    data: {
+      employeeId: employee.id,
+      companyId,
+      loginTime: new Date(),
+      logDate: new Date(),
+    },
+  });
 
   if (!schedule) {
     return {
@@ -226,12 +150,95 @@ export async function loginEmployeeWithPinByNumber(
   return {
     status: "LOGGED_IN_WITH_SCHEDULE",
     employeeName: employee.name,
-    schedule: {
-      startTime: schedule.startTime,
-      endTime: schedule.endTime,
-    },
+    schedule,
   };
 }
+
+/* ----------------------------------------
+   LOGOUT WITH PERSONAL NUMBER
+---------------------------------------- */
+export async function logoutEmployeeWithPin(
+  employeeId: string,
+  personalNumber: string
+) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+  });
+
+  if (!employee || employee.personalNumber !== personalNumber) {
+    throw new Error("Invalid personal number");
+  }
+
+  const { start, end } = getTodayRange();
+
+  const activeLog = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
+      logDate: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: {
+      loginTime: "desc",
+    },
+  });
+
+  if (!activeLog || !activeLog.loginTime) {
+    throw new Error("No active session found");
+  }
+
+  const logoutTime = new Date();
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - activeLog.loginTime.getTime()) / 60000
+  );
+
+  await prisma.timeLog.update({
+    where: { id: activeLog.id },
+    data: {
+      logoutTime,
+      totalMinutes,
+    },
+  });
+
+  return { status: "LOGGED_OUT" };
+}
+
+/* ----------------------------------------
+   ADMIN FORCE LOGOUT (optional)
+---------------------------------------- */
+export async function forceLogoutEmployee(employeeId: string) {
+  const { start, end } = getTodayRange();
+
+  const activeLog = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
+      logDate: {
+        gte: start,
+        lte: end,
+      },
+    },
+  });
+
+  if (!activeLog) return;
+
+  const logoutTime = new Date();
+
+  await prisma.timeLog.update({
+    where: { id: activeLog.id },
+    data: {
+      logoutTime,
+      totalMinutes: Math.floor(
+        (logoutTime.getTime() -
+          (activeLog.loginTime?.getTime() ?? logoutTime.getTime())) /
+          60000
+      ),
+    },
+  });
+}
+
 
 
 export async function deleteEmployee(employeeId: string) {
@@ -270,4 +277,3 @@ export async function deleteEmployee(employeeId: string) {
 
   return { success: true };
 }
-

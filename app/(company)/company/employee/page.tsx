@@ -58,9 +58,7 @@ export default function CompanyEmployeePage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 overflow-x-hidden">
-      <h1 className="text-3xl font-bold text-teal-200">
-        Employee Management
-      </h1>
+      <h1 className="text-3xl font-bold text-teal-200">Employee Management</h1>
 
       <div className="flex justify-start md:justify-end">
         <Link
@@ -128,39 +126,50 @@ export default function CompanyEmployeePage() {
                       >
                         {/* Navigate to employee details page */}
                         <DropdownMenuItem asChild>
-                          <Link href={`/company/employee/${emp.id}/employeedetails`}>
+                          <Link
+                            href={`/company/employee/${emp.id}/employeedetails`}
+                          >
                             View Details
                           </Link>
                         </DropdownMenuItem>
 
                         {/* Navigate to edit employee page */}
                         <DropdownMenuItem asChild>
-                          <Link href={`/company/employee/${emp.id}/editemployee`}>
+                          <Link
+                            href={`/company/employee/${emp.id}/editemployee`}
+                          >
                             Edit Employee
                           </Link>
                         </DropdownMenuItem>
 
                         {/* Placeholder delete action */}
                         <DropdownMenuItem
-  className="text-red-600 focus:text-red-600"
-  onClick={async () => {
-    if (!confirm(`Are you sure you want to delete ${emp.name}?`)) return;
+                          className="text-red-600 focus:text-red-600"
+                          onClick={async () => {
+                            if (
+                              !confirm(
+                                `Are you sure you want to delete ${emp.name}?`
+                              )
+                            )
+                              return;
 
-    try {
-      "use server"; // ensure this runs as a server action
-      await deleteEmployee(emp.id);
+                            try {
+                              ("use server"); // ensure this runs as a server action
+                              await deleteEmployee(emp.id);
 
-      // Update the local state to remove employee from the list
-      setEmployees((prev) => prev.filter((e) => e.id !== emp.id));
-      alert("Employee deleted successfully");
-    } catch (err: any) {
-      console.error(err);
-      alert(err.message || "Error deleting employee");
-    }
-  }}
->
-  Delete Employee
-</DropdownMenuItem>
+                              // Update the local state to remove employee from the list
+                              setEmployees((prev) =>
+                                prev.filter((e) => e.id !== emp.id)
+                              );
+                              alert("Employee deleted successfully");
+                            } catch (err: any) {
+                              console.error(err);
+                              alert(err.message || "Error deleting employee");
+                            }
+                          }}
+                        >
+                          Delete Employee
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
