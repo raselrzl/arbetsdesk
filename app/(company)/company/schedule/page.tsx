@@ -261,27 +261,26 @@ export default function CompanySchedulePage() {
         </div>
 
         <button
-  onClick={addScheduleHandler}
-  disabled={isCreating}
-  className={`px-4 py-2 rounded-xs flex items-center gap-2 transition
+          onClick={addScheduleHandler}
+          disabled={isCreating}
+          className={`px-4 py-2 rounded-xs flex items-center gap-2 transition
     ${
       isCreating
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-teal-600 hover:bg-teal-700 text-white"
     }`}
->
-  {isCreating ? (
-    <>
-      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-      Creating...
-    </>
-  ) : (
-    <>
-      <Plus className="w-4 h-4" /> Add Schedule
-    </>
-  )}
-</button>
-
+        >
+          {isCreating ? (
+            <>
+              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+              Wait Creating...
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4" /> Add Schedule
+            </>
+          )}
+        </button>
       </div>
 
       {/* Existing Schedules Table */}
