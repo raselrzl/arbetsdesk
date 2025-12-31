@@ -4,7 +4,7 @@ import { Calendar, Clock, Plus, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ClockDisplay from "./ClockDisplay";
 import {
-  createSchedule,
+  createOrReplaceSchedule,
   getCompanyEmployees,
   getSchedulesForCompany,
   updateSchedule,
@@ -25,6 +25,8 @@ export default function CompanySchedulePage() {
   const [endMinute, setEndMinute] = useState("00");
 
   const [schedules, setSchedules] = useState<any[]>([]);
+
+  const [isCreating, setIsCreating] = useState(false);
 
   const toggleEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
@@ -53,78 +55,60 @@ export default function CompanySchedulePage() {
   }, []);
 
   const addScheduleHandler = async () => {
-    const computedStartTime = `${startHour}:${startMinute}`;
-    const computedEndTime = `${endHour}:${endMinute}`;
-    
+    if (isCreating) return; // extra safety
 
-    if (
-      selectedDates.length === 0 ||
-      !computedStartTime ||
-      !computedEndTime ||
-      selectedEmployees.length === 0
-    )
-      return;
+    const start = `${startHour}:${startMinute}`;
+    const end = `${endHour}:${endMinute}`;
 
-    for (const date of selectedDates) {
-      const conflictingSchedules = schedules.filter(
-        (sch) =>
-          selectedEmployees.includes(sch.employee.id) &&
-          new Date(sch.date).toDateString() === new Date(date).toDateString()
-      );
+    if (!selectedDates.length || !selectedEmployees.length) return;
 
-      if (conflictingSchedules.length > 0) {
-        const employeeNames = conflictingSchedules
-          .map((sch) => sch.employee.name)
-          .join(", ");
+    setIsCreating(true);
 
-        const confirmUpdate = confirm(
-          `The following Innovator(s) already have a schedule on ${new Date(
-            date
-          ).toLocaleDateString()}: ${employeeNames}. Do you want to update their schedule?`
-        );
-
-        if (!confirmUpdate) continue;
-
-        for (const sch of conflictingSchedules) {
-          try {
-            await updateSchedule(sch.id, {
-              startTime: computedStartTime,
-              endTime: computedEndTime,
-            });
-          } catch (err) {
-            console.error(
-              `Error updating schedule for ${sch.employee.name}:`,
-              err
+    try {
+      for (const date of selectedDates) {
+        try {
+          await createOrReplaceSchedule({
+            employeeIds: selectedEmployees,
+            date,
+            startTime: start,
+            endTime: end,
+            replace: false,
+          });
+        } catch (err: any) {
+          if (err.message === "OVERLAP_EXISTS") {
+            const ok = confirm(
+              `One or more employees already have a schedule overlapping this time on ${new Date(
+                date
+              ).toLocaleDateString()}. Replace it?`
             );
+
+            if (!ok) continue;
+
+            await createOrReplaceSchedule({
+              employeeIds: selectedEmployees,
+              date,
+              startTime: start,
+              endTime: end,
+              replace: true,
+            });
+          } else {
+            console.error(err);
           }
         }
       }
 
-      const employeesToCreate = selectedEmployees.filter(
-        (id) => !conflictingSchedules.some((sch) => sch.employee.id === id)
-      );
+      await loadData();
 
-      if (employeesToCreate.length > 0) {
-        try {
-          await createSchedule({
-            employeeIds: employeesToCreate,
-            date,
-            startTime: computedStartTime,
-            endTime: computedEndTime,
-          });
-        } catch (err) {
-          console.error("Error creating new schedules:", err);
-        }
-      }
+      // reset UI
+      setSelectedEmployees([]);
+      setSelectedDates([]);
+      setStartHour("00");
+      setStartMinute("00");
+      setEndHour("00");
+      setEndMinute("00");
+    } finally {
+      setIsCreating(false);
     }
-
-    await loadData();
-    setSelectedEmployees([]);
-    setSelectedDates([]);
-    setStartHour("00");
-    setStartMinute("00");
-    setEndHour("00");
-    setEndMinute("00");
   };
 
   const hours = Array.from({ length: 24 }, (_, i) =>
@@ -277,11 +261,27 @@ export default function CompanySchedulePage() {
         </div>
 
         <button
-          onClick={addScheduleHandler}
-          className="bg-teal-600 text-white px-4 py-2 rounded-xs cursor-pointer hover:bg-teal-700 flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" /> Add Schedule
-        </button>
+  onClick={addScheduleHandler}
+  disabled={isCreating}
+  className={`px-4 py-2 rounded-xs flex items-center gap-2 transition
+    ${
+      isCreating
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-teal-600 hover:bg-teal-700 text-white"
+    }`}
+>
+  {isCreating ? (
+    <>
+      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+      Creating...
+    </>
+  ) : (
+    <>
+      <Plus className="w-4 h-4" /> Add Schedule
+    </>
+  )}
+</button>
+
       </div>
 
       {/* Existing Schedules Table */}

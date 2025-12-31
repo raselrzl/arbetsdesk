@@ -11,8 +11,23 @@ async function getCompanyId() {
   return companyId;
 }
 
+
+
+function buildDateTimes(date: string, start: string, end: string) {
+  const startTime = new Date(`${date}T${start}`);
+  let endTime = new Date(`${date}T${end}`);
+
+  // overnight shift (e.g. 16:00 → 03:00)
+  if (endTime <= startTime) {
+    endTime.setDate(endTime.getDate() + 1);
+  }
+
+  return { startTime, endTime };
+}
+
+
 // Server Actions
-export async function createSchedule({
+/* export async function createSchedule({
   employeeIds,
   date,
   startTime,
@@ -38,7 +53,61 @@ export async function createSchedule({
       })
     )
   );
+} */
+
+export async function createOrReplaceSchedule({
+  employeeIds,
+  date,
+  startTime,
+  endTime,
+  replace,
+}: {
+  employeeIds: string[];
+  date: string;
+  startTime: string;
+  endTime: string;
+  replace: boolean;
+}) {
+  const companyId = await getCompanyId();
+  const { startTime: start, endTime: end } =
+    buildDateTimes(date, startTime, endTime);
+
+  for (const employeeId of employeeIds) {
+    // 🔍 find overlaps
+    const overlaps = await prisma.schedule.findMany({
+      where: {
+        companyId,
+        employeeId,
+        startTime: { lt: end },
+        endTime: { gt: start },
+      },
+    });
+
+    // ❌ overlap exists and not allowed
+    if (overlaps.length > 0 && !replace) {
+      throw new Error("OVERLAP_EXISTS");
+    }
+
+    // 🔁 replace overlapping schedules
+    if (overlaps.length > 0 && replace) {
+      await prisma.schedule.deleteMany({
+        where: { id: { in: overlaps.map((s) => s.id) } },
+      });
+    }
+
+    // ✅ create new schedule
+    await prisma.schedule.create({
+      data: {
+        companyId,
+        employeeId,
+        date: new Date(date),
+        startTime: start,
+        endTime: end,
+      },
+    });
+  }
 }
+
 
 export async function getCompanyEmployees() {
   const companyId = await getCompanyId();

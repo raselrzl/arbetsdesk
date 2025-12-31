@@ -118,6 +118,9 @@ model Schedule {
   endTime    DateTime
   isAccepted Boolean  @default(false)
   createdAt  DateTime @default(now())
+
+  @@index([companyId, employeeId])
+  @@index([startTime, endTime])
 }
 
 model TimeLog {
