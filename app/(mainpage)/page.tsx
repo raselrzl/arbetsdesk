@@ -117,7 +117,7 @@ export default function HomePage() {
                   <div className="flex flex-col items-center gap-2 hover:scale-110 transition-transform duration-300">
                     <div className="w-12 h-12 relative">
                       <Image
-                        src="/icons/13.png"
+                        src="/icons/16.png"
                         alt="Daily Expenses"
                         fill
                         className="object-contain"
