@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FeaturesSection } from "../components/FearuresSection";
-import { Calendar, DollarSign, ListChecks } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -16,7 +15,7 @@ export default function HomePage() {
             Workforce Management Platform
           </span>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-teal-900 leading-snug mb-6">
+          <h1 className="text-3xl sm:text-4xl uppercase md:text-5xl lg:text-6xl font-extrabold text-teal-900 leading-snug mb-6">
             Manage your workforce <br />
             <span className="text-teal-600">smarter & faster</span>
           </h1>
@@ -60,9 +59,9 @@ export default function HomePage() {
       <FeaturesSection />
 
       {/* ================= VIDEO ================= */}
-      <section className="py-20 bg-teal-50 border-t">
+      <section className="py-10 bg-teal-50 border-t">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-8">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-8 uppercase text-center">
             See how Arbets-desk works in practice
           </h2>
 
@@ -83,7 +82,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Text */}
           <div className="space-y-6">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-teal-900 leading-tight uppercase">
+            <h2 className="text-2xl md:text-4xl font-extrabold text-teal-900 leading-tight uppercase">
               Track & manage <br />
               <span className="text-teal-600">
                 company expenses effortlessly
@@ -108,7 +107,7 @@ export default function HomePage() {
             <div className="relative w-full max-w-md">
               {/* Background Circles */}
               <div className="absolute -top-10 -left-10 w-48 h-48 bg-teal-100 rounded-full opacity-40"></div>
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-200 rounded-full opacity-30"></div>
+              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-300 rounded-full opacity-30"></div>
 
               {/* Card */}
               <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-gray-200 space-y-6">
