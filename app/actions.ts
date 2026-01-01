@@ -485,6 +485,31 @@ export async function addDailyTip({ date, amount }: { date: string | Date; amoun
 }
 
 
+// app/actions/getAvailableTipMonths.ts
+export async function getAvailableTipMonths() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const tips = await prisma.dailyTip.findMany({
+    where: { companyId },
+    select: { date: true },
+    orderBy: { date: "desc" },
+  });
+
+  // Convert to YYYY-MM and remove duplicates
+  const months = Array.from(
+    new Set(
+      tips.map(t =>
+        `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`
+      )
+    )
+  );
+
+  return months;
+}
+
+
 export async function getMonthlyTips(companyId: string, month: string) {
   const start = new Date(`${month}-01`);
   const end = new Date(start);
