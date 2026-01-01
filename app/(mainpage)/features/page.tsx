@@ -1,147 +1,159 @@
 "use client";
 
-import { Clock, Users, Calendar, DollarSign, BarChart2, FileText, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function FeaturesPage() {
   const features = [
     {
-      title: "Digital Time Clock",
-      img: "/h21.png",
-      icon: <Clock className="w-6 h-6 text-teal-600" />,
-      description:
-        "A modern solution for time tracking that streamlines reporting for employees and managers.",
-      points: [
-        "Clock in and out easily",
-        "Overview of working hours and deviations",
-        "Automated notifications for approvals",
-        "Compliant with electronic staff registers",
-      ],
+      title: "Time Log",
+      href: "/features/timelog",
+      icon: "/icons/1.png",
     },
     {
-      title: "Efficient & Flexible Scheduling",
-      img: "/h22.png",
-      icon: <Calendar className="w-6 h-6 text-teal-600" />,
-      description:
-        "Manage staff schedules easily and adapt to changing circumstances.",
-      points: [
-        "Create and assign shifts quickly",
-        "Optimize staffing levels based on data",
-        "Simplifies day-to-day planning",
-      ],
+      title: "Efficient Scheduling",
+      href: "/features/schedule",
+      icon: "/icons/7.png",
     },
     {
-      title: "Reliable Payroll Management",
-      img: "/ht2.png",
-      icon: <DollarSign className="w-6 h-6 text-teal-600" />,
-      description:
-        "Automates payroll calculation for accurate and reliable employee payments.",
-      points: [
-        "Automatic transfer of working hours",
-        "Shift premiums, vacation pay, and overtime calculated",
-        "Reduces errors and saves time",
-        "Transparent payroll workflow",
-      ],
+      title: "Payment Management",
+      href: "/features/payroll",
+      icon: "/icons/9.png",
     },
     {
-      title: "Actionable Insights",
-      img: "/h1.png",
-      icon: <BarChart2 className="w-6 h-6 text-teal-600" />,
-      description:
-        "Get a clear view of business metrics and make data-driven decisions.",
-      points: [
-        "Track labor costs and productivity",
-        "Compare metrics with historical data",
-        "Identify opportunities for improvement",
-      ],
+      title: "Analytics",
+      href: "/features/analytics",
+      icon: "/icons/3.png",
     },
     {
-      title: "Automated Tip Distribution",
-      img: "/h2.png",
-      icon: <Users className="w-6 h-6 text-teal-600" />,
-      description:
-        "Distribute tips automatically based on predefined rules.",
-      points: [
-        "Automatic distribution according to rules",
-        "Transparent documentation for accounting",
-        "Eliminates manual calculations",
-      ],
+      title: "Tip Distribution",
+      href: "/features/tips",
+      icon: "/icons/8.png",
     },
     {
-      title: "Employment Contracts & Certificates",
-      img: "/h21.png",
-      icon: <FileText className="w-6 h-6 text-teal-600" />,
-      description:
-        "Simplifies contract creation and digital document management.",
-      points: [
-        "Automatic digital contracts",
-        "Centralized document storage",
-        "Generate employer certificates with one click",
-        "Reduces manual administration",
-      ],
+      title: "Contracts & Certificates",
+      href: "/features/jobcontracts",
+      icon: "/icons/6.png",
     },
     {
-      title: "Simplified Communication",
-      img: "/h22.png",
-      icon: <MessageCircle className="w-6 h-6 text-teal-600" />,
-      description:
-        "Employees stay informed and managers communicate efficiently.",
-      points: [
-        "View schedules, payroll, and tips in the app",
-        "Request shift swaps and availability",
-        "Centralized messaging for managers",
-        "Improves internal communication",
-      ],
+      title: "Cummunication",
+      href: "/features/communication",
+      icon: "/icons/2.png",
+    },
+
+    {
+      title: "Employee",
+      href: "/features/employee",
+      icon: "/icons/10.png",
+    },
+
+    {
+      title: "Time Report",
+      href: "/features/time",
+      icon: "/icons/11.png",
     },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 space-y-24">
-      <h1 className="text-4xl font-bold text-center text-teal-600 mb-16">
-        Arbetsdesk Features
-      </h1>
-
-      {features.map((feature, index) => {
-        const isEven = index % 2 === 0;
-        return (
-          <motion.div
-            key={index}
-            whileHover={{ scale: 1.02 }}
-            className="flex flex-col md:flex-row items-center gap-8"
+    <>
+      <section className="py-16 bg-white border-b">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          {/* Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-4"
           >
-            {/* Points */}
-            <div className={`md:w-1/2 ${isEven ? "order-1" : "order-2"}`}>
-              <div className="flex items-center gap-3 mb-3">
-                {feature.icon}
-                <h2 className="text-2xl font-semibold text-teal-600">{feature.title}</h2>
-              </div>
-              <p className="text-gray-700 mb-4">{feature.description}</p>
-              <ul className="list-disc list-inside text-gray-600 space-y-1">
-                {feature.points.map((point, idx) => (
-                  <li key={idx}>{point}</li>
-                ))}
-              </ul>
-            </div>
+            Arbetsdesk Features
+          </motion.h2>
 
-            {/* Image */}
-           {/* Image */}
-<div className={`md:w-1/2 ${isEven ? "order-2" : "order-1"}`}>
-  <div className="overflow-hidden rounded-xl shadow-md w-full h-80 md:h-96 flex items-center justify-center ">
-    <img
-      src={feature.img}
-      alt={feature.title}
-      className="object-contain w-full h-full"
-    />
-  </div>
-</div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ delay: 0.2, duration: 0.7 }}
+            className="text-lg text-gray-700 mt-2 mb-10"
+          >
+            Discover the tools that power smart workforce management.
+          </motion.p>
 
+          {/* Feature Cards */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ staggerChildren: 0.1 }}
+          >
+            {features.map((feature, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.05 }}
+                className="bg-teal-900 border border-teal-950 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition"
+              >
+                <Link
+                  href={feature.href}
+                  className="flex items-center justify-between p-6 text-left group"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Image Icon */}
+                    {/* Image Icon */}
+                    <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center overflow-hidden">
+                      <img
+                        src={feature.icon}
+                        alt={feature.title}
+                        className="w-8 h-8 object-contain scale-110"
+                      />
+                    </div>
+
+                    <h3 className="text-lg font-semibold text-white group-hover:underline">
+                      {feature.title}
+                    </h3>
+                  </div>
+
+                  {/* Chevron */}
+                  <ChevronRight className="w-5 h-5 text-white opacity-70 group-hover:translate-x-1 transition" />
+                </Link>
+              </motion.div>
+            ))}
           </motion.div>
-        );
-      })}
+        </div>
+      </section>
+      {/* Call to Action */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className=" bg-teal-100 px-6 py-14 text-center shadow-lg"
+      >
+        <h3 className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-4">
+          Ready to simplify your workforce management?
+        </h3>
 
-      <p className="text-center text-gray-500 mt-16">
-        Arbetsdesk – Simplifying workforce management with smart digital solutions.
-      </p>
-    </div>
+        <Link
+          href="/book-demo"
+          className="inline-flex items-center gap-2 my-6 bg-white border border-teal-400 text-teal-900 font-semibold px-8 py-4 rounded-full hover:bg-teal-100 transition shadow-md"
+        >
+          Book a demo now
+          <ChevronRight className="w-5 h-5" />
+        </Link>
+
+        <p className="text-teal-800 max-w-2xl mx-auto mb-8 text-lg">
+          Arbetsdesk helps you save time, reduce errors, and gain full control
+          over scheduling, time tracking, payroll, and communication – all in
+          one platform. Book a demo and see how it works for your business.
+        </p>
+
+        <p className="text-sm text-teal-800 mt-4 border-t">
+          No commitment • Free walkthrough • Tailored to your company
+        </p>
+      </motion.div>
+    </>
   );
 }

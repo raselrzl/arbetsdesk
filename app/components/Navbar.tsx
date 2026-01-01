@@ -22,7 +22,7 @@ export default async function Navbar() {
     <nav className="w-full bg-white shadow-sm px-4 py-3 fixed top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* LOGO */}
-        <div className="text-2xl font-bold uppercase text-teal-700">
+        <div className="text-2xl font-bold uppercase text-teal-900">
           <Link href="/">Arbets-desk</Link>
         </div>
 
@@ -32,13 +32,13 @@ export default async function Navbar() {
             label="Features"
             href="/features"
             items={[
-              ["Time Clock", "/features/time-clock"],
-              ["Schedule", "/features/schedule"],
-              ["Hours", "/features/hours"],
-              ["Payroll", "/features/payroll"],
+              ["Time Log", "/features/timelog"],
+              ["Scheduling", "/features/schedule"],
+              ["Payment", "/features/payroll"],
+              ["Tip Distribution", "/features/tips"],
               ["Analytics", "/features/analytics"],
-              ["Tips", "/features/tips"],
-              ["Staff", "/features/staff"],
+              ["Employee", "/features/employee"],
+              ["Time Report", "/features/time"],
             ]}
           />
 

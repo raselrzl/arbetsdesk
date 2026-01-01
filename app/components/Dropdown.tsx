@@ -50,12 +50,12 @@ export default function Dropdown({ label, href, items }: DropdownProps) {
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 mt-2 bg-white shadow-md rounded-md w-48 z-50">
+        <div className="absolute top-full left-0 mt-2 bg-white shadow-md rounded-xs w-48 z-50 border border-teal-200">
           {items.map(([itemLabel, itemHref]) => (
             <Link
               key={itemHref}
               href={itemHref}
-              className="block px-4 py-2 hover:bg-gray-100"
+              className="block px-4 py-2 hover:bg-teal-100"
               onClick={() => setOpen(false)}
             >
               {itemLabel}

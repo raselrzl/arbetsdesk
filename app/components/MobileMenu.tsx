@@ -17,7 +17,7 @@ export default function MobileMenu({ user }: { user: any }) {
       {!user && (
         <Link
           href="/login"
-          className="py-1 px-3 bg-teal-600 text-white rounded-xs hover:bg-teal-700 text-sm"
+          className="py-1 px-3 bg-teal-900 text-white rounded-3xl hover:bg-teal-700 text-sm"
         >
           Login
         </Link>

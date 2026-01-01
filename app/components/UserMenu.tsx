@@ -2,12 +2,16 @@
 import Link from "next/link";
 import { logoutUserAction } from "../actions";
 
-export default function UserMenu({ user }: { user: { personalNumber: string } | null }) {
+export default function UserMenu({
+  user,
+}: {
+  user: { personalNumber: string } | null;
+}) {
   if (!user) {
     return (
       <Link
         href="/login"
-        className="hover:text-white bg-teal-600 text-white font-bold px-4 py-1 rounded-xs"
+        className="hover:text-white bg-teal-900 text-white font-bold px-4 py-1 rounded-3xl"
       >
         Login
       </Link>

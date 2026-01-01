@@ -12,10 +12,10 @@ import {
 
 const features = [
   {
-    title: "Time Clock",
+    title: "Time Log",
     desc: "Track work hours accurately in real time.",
     icon: Clock,
-    href: "/features/time-clock",
+    href: "/features/timelog",
   },
   {
     title: "Scheduling",
@@ -24,7 +24,7 @@ const features = [
     href: "/features/schedule",
   },
   {
-    title: "Payroll",
+    title: "Payment Management",
     desc: "Automated salary calculations and payouts.",
     icon: Wallet,
     href: "/features/payroll",
@@ -36,43 +36,33 @@ const features = [
     href: "/features/analytics",
   },
   {
-    title: "Staff Management",
+    title: "Employee Management",
     desc: "Manage employees from one dashboard.",
     icon: Users,
-    href: "/features/staff",
+    href: "/features/employee",
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 bg-[#f9fafb] border-t">
-      <div className="max-w-7xl mx-auto px-6 text-start">
+    <section className="py-24 bg-slate-50 border-t">
+      <div className="max-w-7xl mx-auto px-6">
         {/* Heading */}
         <motion.h2
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl font-extrabold text-teal-900"
+          className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-12"
         >
-          Powerful Features
+          Everything you need to manage your workforce
         </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-lg text-gray-600 mt-3 mb-14"
-        >
-          Everything you need to manage your workforce efficiently
-        </motion.p>
 
         {/* Grid */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true }}
           transition={{ staggerChildren: 0.1 }}
         >
           {features.map((feature, idx) => {
@@ -82,24 +72,26 @@ export function FeaturesSection() {
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.05 }}
-                className="bg-teal-900 border border-teal-950 rounded-xl p-6 text-left hover:shadow-xl transition"
+                transition={{ duration: 0.45, delay: idx * 0.05 }}
+                className="bg-teal-900 rounded-2xl p-6 flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition"
               >
-                <div className="w-12 h-12 mb-4 rounded-lg bg-teal-700 flex items-center justify-center text-white">
-                  <Icon className="w-6 h-6" />
+                <div>
+                  <div className="w-12 h-12 rounded-xl bg-teal-700 flex items-center justify-center mb-4">
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-sm text-teal-100">
+                    {feature.desc}
+                  </p>
                 </div>
-
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {feature.title}
-                </h3>
-
-                <p className="text-sm text-teal-100 mb-4">
-                  {feature.desc}
-                </p>
 
                 <Link
                   href={feature.href}
-                  className="text-sm font-medium text-teal-300 hover:text-white transition"
+                  className="mt-5 inline-block text-sm font-semibold text-teal-300 hover:text-white transition"
                 >
                   Learn more →
                 </Link>
