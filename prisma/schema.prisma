@@ -61,6 +61,9 @@ model Company {
   timeLogs  TimeLog[]
   dailyTips DailyTip[]
 
+  costTypes       CostType[]
+  costs           Cost[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -177,3 +180,27 @@ model DailyTip {
 
   @@unique([companyId, date])
 }
+
+model CostType {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+  costs Cost[]
+  @@unique([companyId, name])
+}
+
+model Cost {
+  id         String   @id @default(cuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  costTypeId String
+  costType   CostType @relation(fields: [costTypeId], references: [id])
+  date       DateTime
+  amount     Float
+  createdAt  DateTime @default(now())
+  @@index([companyId, date])
+}
+
+

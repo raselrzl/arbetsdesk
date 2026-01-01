@@ -52,7 +52,7 @@ export default function CompanyAnalysisClient({ companyId }: { companyId: string
   const totalSalary = useMemo(() => salaryData.reduce((sum, s) => sum + s.salary, 0), [salaryData]);
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <div>
