@@ -156,7 +156,7 @@ export default function CompanyCostsPage() {
 
  return (
   <div className="p-4 md:p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-    <h1 className="text-2xl md:text-4xl font-bold">Company Costs</h1>
+    <h1 className="text-2xl md:text-4xl font-bold text-teal-900">Company Costs</h1>
 
     {/* Month Selector */}
     <div className="bg-white p-4 shadow border flex flex-col md:flex-row gap-3 items-start md:items-center">
