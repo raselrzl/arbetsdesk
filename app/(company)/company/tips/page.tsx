@@ -178,6 +178,77 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
   );
 }
 
+
+/* ---------------- MONTHLY EMPLOYEE SUMMARY ---------------- */
+
+function MonthlyEmployeeTipSummary({
+  dailyTips,
+}: {
+  dailyTips: DailyTip[];
+}) {
+  const monthlyTotals = useMemo(() => {
+    const acc: Record<
+      string,
+      { id: string; name: string; totalTip: number }
+    > = {};
+
+    for (const day of dailyTips) {
+      const finished = day.employees.filter(
+        (e) => e.loggedOutTime && e.hours > 0
+      );
+
+      if (!finished.length) continue;
+
+      const totalHours = finished.reduce((a, e) => a + e.hours, 0);
+      if (totalHours === 0) continue;
+
+      const tipPerHour = day.totalTip / totalHours;
+
+      for (const emp of finished) {
+        const tip = emp.hours * tipPerHour;
+
+        if (!acc[emp.id]) {
+          acc[emp.id] = {
+            id: emp.id,
+            name: emp.name,
+            totalTip: 0,
+          };
+        }
+
+        acc[emp.id].totalTip += tip;
+      }
+    }
+
+    return Object.values(acc).sort(
+      (a, b) => b.totalTip - a.totalTip
+    );
+  }, [dailyTips]);
+
+  if (!monthlyTotals.length) return null;
+
+  return (
+    <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
+      <h2 className="text-xl font-semibold mb-3">
+        Monthly Tip Summary (Per Employee)
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        {monthlyTotals.map((emp) => (
+          <div
+            key={emp.id}
+            className="border rounded p-4 bg-teal-50 flex flex-col items-center"
+          >
+            <span className="font-semibold">{emp.name}</span>
+            <span className="text-lg font-bold text-teal-700">
+              {emp.totalTip.toFixed(2)} SEK
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ---------------- MAIN COMPONENT ---------------- */
 
 export default function CompanyTipsPage() {
@@ -307,6 +378,9 @@ export default function CompanyTipsPage() {
         dailyTipsForMonth={dailyTipsForMonth}
         daysInMonth={daysInMonth}
       />
+
+      <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
+
 
       {dailyTipsForMonth.map((d) => (
         <DailyDistribution key={d.date} dailyTip={d} />
