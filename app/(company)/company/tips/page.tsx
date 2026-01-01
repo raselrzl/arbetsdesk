@@ -157,7 +157,7 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
   const tipPerHour = dailyTip.totalTip / totalHours;
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-4 border border-teal-100">
+    <div className="bg-white rounded-xs shadow p-4 mb-4 border border-teal-100">
       <h2 className="text-xl font-semibold mb-2">
         Tip Distribution – {dailyTip.date}
       </h2>
