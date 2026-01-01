@@ -31,7 +31,8 @@ function getSunday(monday: Date) {
   return d;
 }
 
-// ⬇️ CORE: real worked minutes inside a range
+/*
+//this is count anyone even if they are not logged out
 async function getWorkedMinutesBetween(
   companyId: string,
   start: Date,
@@ -42,10 +43,10 @@ async function getWorkedMinutesBetween(
   const logs = await prisma.timeLog.findMany({
     where: {
       companyId,
-      loginTime: { lt: end }, // started before range ends
+      loginTime: { lt: end }, 
       OR: [
-        { logoutTime: { gte: start } }, // ended after range starts
-        { logoutTime: null }, // still working
+        { logoutTime: { gte: start } },
+        { logoutTime: null },
       ],
     },
     select: {
@@ -70,6 +71,42 @@ async function getWorkedMinutesBetween(
         : now < end
         ? now
         : end;
+
+    if (realEnd > realStart) {
+      totalMinutes += Math.floor(
+        (realEnd.getTime() - realStart.getTime()) / 60000
+      );
+    }
+  }
+
+  return totalMinutes;
+} */
+async function getWorkedMinutesBetween(
+  companyId: string,
+  start: Date,
+  end: Date
+) {
+  // 🔹 Only fetch logs that have both login and logout
+  const logs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      loginTime: { lt: end },        // started before range ends
+      logoutTime: { not: null, lte: end }, // must have logout
+    },
+    select: {
+      loginTime: true,
+      logoutTime: true,
+    },
+  });
+
+  let totalMinutes = 0;
+
+  for (const log of logs) {
+    if (!log.loginTime || !log.logoutTime) continue;
+
+    // Clip log times to the range
+    const realStart = log.loginTime > start ? log.loginTime : start;
+    const realEnd = log.logoutTime < end ? log.logoutTime : end;
 
     if (realEnd > realStart) {
       totalMinutes += Math.floor(
