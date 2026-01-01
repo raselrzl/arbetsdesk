@@ -95,7 +95,7 @@ export default function EmployeeSalaryPage() {
               <Clock className="w-5 h-5 text-teal-600" /> Total Hours: {totalHours}h
             </div>
             <div className="flex items-center gap-2 font-medium">
-              <Wallet className="w-5 h-5 text-teal-600" /> Monthly Salary: {salary} SEK
+              <Wallet className="w-5 h-5 text-teal-600" /> Monthly Salary: {salary} 
             </div>
           </div>
         </>

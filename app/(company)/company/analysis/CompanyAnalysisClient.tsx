@@ -76,8 +76,8 @@ export default function CompanyAnalysisClient({ companyId }: { companyId: string
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <KPI icon={Users} label="Employees" value={employeesCount} />
         <KPI icon={Clock} label="Worked Hours" value={formatHours(totalHours)} />
-        <KPI icon={Wallet} label="Salary Cost" value={`${totalSalary.toFixed(0)} SEK`} />
-        <KPI icon={TrendingUp} label="Total Tips" value={`${totalTips.toFixed(0)} SEK`} />
+        <KPI icon={Wallet} label="Salary Cost" value={`${totalSalary.toFixed(0)} `} />
+        <KPI icon={TrendingUp} label="Total Tips" value={`${totalTips.toFixed(0)} `} />
       </div>
 
       {/* TABS */}
@@ -118,7 +118,7 @@ export default function CompanyAnalysisClient({ companyId }: { companyId: string
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value: number) => `${value.toFixed(0)} SEK`} />
+                  <Tooltip formatter={(value: number) => `${value.toFixed(0)} `} />
                   <Bar dataKey="salary" fill="#0d9488" />
                 </BarChart>
               </ResponsiveContainer>
@@ -136,7 +136,7 @@ export default function CompanyAnalysisClient({ companyId }: { companyId: string
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
-                  <Tooltip formatter={(value: number) => `${value.toFixed(0)} SEK`} />
+                  <Tooltip formatter={(value: number) => `${value.toFixed(0)} `} />
                   <Bar dataKey="tips" fill="#facc15" />
                 </BarChart>
               </ResponsiveContainer>

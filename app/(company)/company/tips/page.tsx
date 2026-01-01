@@ -132,7 +132,7 @@ function TipsCalendar({
               {tipForDay && (
                 <span className="text-sm flex items-center gap-1">
                   <Wallet className="w-4 h-4 text-teal-600" />
-                  {tipForDay.totalTip} SEK
+                  {tipForDay.totalTip} 
                 </span>
               )}
             </div>
@@ -170,7 +170,7 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
           >
             <span className="font-semibold">{emp.name}</span>
             <span>Hours: {emp.hours.toFixed(2)}</span>
-            <span>Tip: {(emp.hours * tipPerHour).toFixed(2)} SEK</span>
+            <span>Tip: {(emp.hours * tipPerHour).toFixed(2)} </span>
           </div>
         ))}
       </div>
@@ -240,7 +240,7 @@ function MonthlyEmployeeTipSummary({
           >
             <span className="font-semibold">{emp.name}</span>
             <span className="text-lg font-bold text-teal-700">
-              {emp.totalTip.toFixed(2)} SEK
+              {emp.totalTip.toFixed(2)} 
             </span>
           </div>
         ))}
@@ -353,7 +353,7 @@ export default function CompanyTipsPage() {
   }, [month]);
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <h1 className="text-3xl font-bold">Tips Management</h1>
 
       <MonthSelector month={month} setMonth={setMonth} months={months} />
@@ -370,7 +370,7 @@ export default function CompanyTipsPage() {
         <Wallet className="w-5 h-5 text-teal-600" />
         <span className="font-semibold">
           Total Tips: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
-          SEK
+          
         </span>
       </div>
 

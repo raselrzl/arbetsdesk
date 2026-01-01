@@ -123,11 +123,11 @@ export default function CompanySalaryPage() {
                   <td className="p-3">
                     <div className="flex items-center gap-2 font-semibold">
                       <Wallet className="w-4 h-4 text-teal-600" />
-                      <span>{row.salary.toFixed(2)} SEK</span>
+                      <span>{row.salary.toFixed(2)} </span>
                     </div>
                     {row.contractType === "HOURLY" && row.hourlyRate && (
                       <div className="text-xs text-gray-500 ml-6">
-                        {hours.toFixed(2)}h × {row.hourlyRate} SEK
+                        {hours.toFixed(2)}h × {row.hourlyRate} 
                       </div>
                     )}
                     {row.contractType === "MONTHLY" && (
