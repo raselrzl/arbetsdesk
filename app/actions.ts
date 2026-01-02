@@ -709,22 +709,21 @@ export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[
     },
   });
 
-  // 2️⃣ Fetch time logs for this month
-  const timeLogs = await prisma.timeLog.findMany({
-    where: {
-      companyId,
-      logDate: {
-        gte: startOfMonth,
-        lte: endOfMonth,
-      },
-    },
-    select: {
-      employeeId: true,
-      loginTime: true,
-      logoutTime: true,
-      totalMinutes: true,
-    },
-  });
+const timeLogs = await prisma.timeLog.findMany({
+  where: {
+    companyId,
+    loginTime: { gte: startOfMonth, lte: endOfMonth },
+    logoutTime: { not: null },
+    totalMinutes: { not: null }, 
+  },
+  select: {
+    employeeId: true,
+    loginTime: true,
+    logoutTime: true,
+    totalMinutes: true,
+  },
+});
+
 
   // 3️⃣ Aggregate total minutes
   const minutesMap: Record<string, number> = {};
