@@ -101,11 +101,13 @@ export default function CompanyPageClient({ companyData }: any) {
                 emp.timeLogs?.filter((log: any) => {
                   if (!log.loginTime) return false;
                   const login = new Date(log.loginTime).getTime();
-                  const logout = log.logoutTime ? new Date(log.logoutTime).getTime() : null;
+                  const logout = log.logoutTime
+                    ? new Date(log.logoutTime).getTime()
+                    : null;
 
                   // Include logs that are relevant to today (5 AM to next 5 AM)
                   return (
-                    (login >= todayStart && login < todayEnd) || 
+                    (login >= todayStart && login < todayEnd) ||
                     (login < todayStart && (!logout || logout >= todayStart))
                   );
                 }) || [];
@@ -139,16 +141,23 @@ export default function CompanyPageClient({ companyData }: any) {
                   tabIndex={0}
                   className={`cursor-pointer flex p-2 relative rounded-xs ${
                     isLoggedIn
-                      ? "bg-teal-600"
-                      : "bg-gray-400 border border-gray-300"
+                      ? "bg-teal-300"
+                      : "bg-gray-200 border border-gray-300"
                   }`}
                 >
                   {/* LEFT SIDE */}
                   <div className="flex flex-col gap-1">
                     {/* NAME + IMAGE */}
                     <div className="flex items-center gap-2">
-                      <img src="/avater.png" className="w-10 h-10 rounded-full" />
-                      <div className="font-bold uppercase text-lg text-gray-200">
+                      <img
+                        src="/avater.png"
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div
+                        className={`font-bold uppercase text-lg text-gray-500 ${
+                          isLoggedIn ? "text-teal-900" : "text-gray-200"
+                        }`}
+                      >
                         {emp.name}
                       </div>
                     </div>
@@ -189,16 +198,16 @@ export default function CompanyPageClient({ companyData }: any) {
                     {isLoggedIn ? (
                       <button
                         onClick={() => openAuth(emp, "logout")}
-                        className="cursor-pointer text-green-300"
+                        className="cursor-pointer text-green-700"
                       >
-                        <ClockCheck />
+                        <ClockCheck className="h-4 w-4" />
                       </button>
                     ) : (
                       <button
                         onClick={() => openAuth(emp, "login")}
                         className="cursor-pointer text-black"
                       >
-                        <ClockAlert />
+                        <ClockAlert className="h-4 w-4"/>
                       </button>
                     )}
                   </div>
@@ -225,7 +234,8 @@ export default function CompanyPageClient({ companyData }: any) {
                 authMode === "login" ? "text-teal-600" : "text-red-600"
               }`}
             >
-              {authMode === "login" ? "Login" : "Logout"} – {selectedEmployee.name}
+              {authMode === "login" ? "Login" : "Logout"} –{" "}
+              {selectedEmployee.name}
             </h3>
 
             <input
