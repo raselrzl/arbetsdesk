@@ -7,67 +7,54 @@ export default async function CompanyAnalysisPage() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
 
-  if (!companyId) {
-    // Redirect to login if no session
-    throw new Error("Unauthorized: No company session");
-  }
+  if (!companyId) throw new Error("Unauthorized: No company session");
 
-  // Optional: fetch company name or verify it exists
-  const company = await prisma.company.findUnique({
-    where: { id: companyId },
-  });
-
+  const company = await prisma.company.findUnique({ where: { id: companyId } });
   if (!company) throw new Error("Company not found");
 
   return (
-    <div >
+    <>
       {/* Company Analysis Section */}
       <CompanyAnalysisClient companyId={companyId} />
-      <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 mb-10">
-        {/* Explanatory text */}
-        <div className="bg-white p-4 md:p-6 rounded shadow border space-y-2">
-          <p className="text-gray-700 text-lg md:text-xl">
-            Monitor your company’s spending and see how your costs are
-            distributed.
-          </p>
-          <p className="text-gray-500 text-sm md:text-base">
-            Based on your monthly expenses, you can optimize the cost and reduce
-            unnecessary spending.
-          </p>
 
-          {/* Responsive button link */}
+      {/* Cards Wrapper */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 sm:grid-cols-2 gap-6 mb-20">
+        {/* Cost Card */}
+        <div className="bg-white p-4 md:p-6 rounded shadow border space-y-2 flex flex-col justify-between">
+          <div>
+            <p className="text-gray-700 text-lg md:text-xl font-semibold">
+              Monitor your company’s spending and see how your costs are distributed.
+            </p>
+            <p className="text-gray-500 text-sm md:text-base mt-1">
+              Based on your monthly expenses, you can optimize the cost and reduce unnecessary spending.
+            </p>
+          </div>
           <Link
             href="/company/additionalcost"
-            className="inline-block mt-2 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition w-full md:w-auto text-center"
+            className="mt-4 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition w-full text-center"
           >
             Go to Cost Optimizer
           </Link>
         </div>
+
+        {/* Sales Card */}
+        <div className="bg-white p-4 md:p-6 rounded shadow border space-y-2 flex flex-col justify-between">
+          <div>
+            <p className="text-gray-700 text-lg md:text-xl font-semibold">
+              Monitor your company’s daily sales and see how your revenue is distributed between cash and card payments.
+            </p>
+            <p className="text-gray-500 text-sm md:text-base mt-1">
+              Based on your daily sales, you can optimize your cash flow and better understand your payment methods.
+            </p>
+          </div>
+          <Link
+            href="/company/sales"
+            className="mt-4 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition w-full text-center"
+          >
+            Go to Sales Dashboard
+          </Link>
+        </div>
       </div>
-
-      <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 mb-50">
-      {/* Explanatory text */}
-      <div className="bg-white p-4 md:p-6 rounded shadow border space-y-2">
-        <p className="text-gray-700 text-lg md:text-xl">
-          Monitor your company’s daily sales and see how your revenue is
-          distributed between cash and card payments.
-        </p>
-        <p className="text-gray-500 text-sm md:text-base">
-          Based on your daily sales, you can optimize your cash flow and better understand your payment methods.
-        </p>
-
-        {/* Responsive button link */}
-        <Link
-          href="/company/sales"
-          className="inline-block mt-2 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition w-full md:w-auto text-center"
-        >
-          Go to Sales Dashboard
-        </Link>
-      </div>
-    </div>
-
-
-
-    </div>
+    </>
   );
 }

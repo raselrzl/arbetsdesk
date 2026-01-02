@@ -52,9 +52,8 @@ export default async function CompanyPageServer() {
           <ChartNoAxesCombined className="h-8 w-8" />{" "}
           <h2>Current Week vs Last Week</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-          <WorkComparisonCard /> <CostComparisonCard />{" "}
-          <WeeklySalesComparisonCard />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 gap-y-6">
+          <WorkComparisonCard /> <CostComparisonCard /> <WeeklySalesComparisonCard />
         </div>
       </div>
     </div>
