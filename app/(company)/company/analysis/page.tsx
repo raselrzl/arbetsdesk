@@ -20,7 +20,7 @@ export default async function CompanyAnalysisPage() {
   if (!company) throw new Error("Company not found");
 
   return (
-    <>
+    <div >
       {/* Company Analysis Section */}
       <CompanyAnalysisClient companyId={companyId} />
       <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 mb-50">
@@ -44,6 +44,6 @@ export default async function CompanyAnalysisPage() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }
