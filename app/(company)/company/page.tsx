@@ -46,7 +46,7 @@ export default async function CompanyPageServer() {
         <div className="col-span-2 mb-10">
           <CompanyPageClient companyData={company} />
         </div>
-        <div className="flex flex-row text-xl font-semibold mb-4 items-center place-items-center">
+        <div className="flex flex-row mb-4 items-center justify-center text-2xl font-bold uppercase text-teal-900 border-t border-teal-100 pt-4">
           <ChartNoAxesCombined className="h-8 w-8" />{" "}
           <h2>Current Week vs Last Week</h2>
         </div>
