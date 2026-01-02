@@ -27,7 +27,7 @@ export default async function Navbar() {
         </div>
 
         {/* DESKTOP NAV */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6 text-teal-900">
           <Dropdown
             label="Features"
             href="/features"

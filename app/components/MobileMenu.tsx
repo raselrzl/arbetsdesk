@@ -32,7 +32,7 @@ export default function MobileMenu({ user }: { user: any }) {
 
       {/* Dropdown Menu */}
       {open && (
-        <div className="fixed top-[60px] left-0 right-0 bg-white shadow-md p-4 flex flex-col gap-2 z-50 max-h-[80vh] overflow-y-auto">
+        <div className="fixed top-[60px] left-0 right-0 bg-white shadow-md p-4 flex flex-col gap-2 z-50 max-h-[80vh] overflow-y-auto text-teal-900">
           <Link
             href="/features"
             className="py-2 border-b"
