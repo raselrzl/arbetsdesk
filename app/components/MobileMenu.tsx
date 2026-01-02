@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function MobileMenu({ user }: { user: any }) {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function MobileMenu({ user }: { user: any }) {
         onClick={() => setOpen(!open)}
         className="p-2 rounded hover:bg-gray-100"
       >
-        <Menu />
+        {open ? <X /> : <Menu />}
       </button>
 
       {/* Dropdown Menu */}
