@@ -64,6 +64,8 @@ model Company {
   costTypes       CostType[]
   costs           Cost[]
 
+  sales Sale[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -204,3 +206,21 @@ model Cost {
 }
 
 
+model Sale {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+
+  date      DateTime
+  amount    Float
+  method    SaleMethod
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, date, method])
+}
+
+enum SaleMethod {
+  CASH
+  CARD
+}
