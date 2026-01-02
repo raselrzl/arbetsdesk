@@ -86,14 +86,11 @@ export default function CompanyPageClient({ companyData }: any) {
     <div>
       <div className="max-w-7xl mx-auto px-2 py-10 mt-12">
         <div className="overflow-x-auto">
-          <div className="bg-teal-100 flex justify-between items-center">
-            <h1 className="px-4 py-2 uppercase text-xl md:text-2xl flex items-center bg-teal-100 text-teal-800 font-bold">
-              <UsersIcon className="mr-2" />
-              today’s team
-            </h1>
+          <div className="flex justify-end items-end">
+           
             <Link
               href="/company/schedule"
-              className="border mx-2 px-2 py-1 text-xs md:text-sm hover:bg-teal-200"
+              className="border border-teal-200 px-2 py-1 text-xs md:text-sm bg-teal-200 hover:bg-teal-100"
             >
               Check Schedule →
             </Link>
