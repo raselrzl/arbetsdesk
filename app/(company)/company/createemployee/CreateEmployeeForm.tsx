@@ -5,6 +5,26 @@ import { createEmployeeAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { useFormStatus } from "react-dom";
+
+function SubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      disabled={disabled || pending}
+      className="w-full bg-teal-600 hover:bg-teal-700 rounded-xs disabled:opacity-50 flex items-center justify-center gap-2"
+    >
+      {pending && (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      )}
+      {pending ? "Creating..." : "Create Employee"}
+    </Button>
+  );
+}
+
 
 type Props = {
   company: {
@@ -192,13 +212,7 @@ export default function CreateEmployeeForm({ company }: Props) {
           )}
 
           {/* Submit */}
-          <Button
-            type="submit"
-            disabled={!canSubmit}
-            className="w-full bg-teal-600 hover:bg-teal-700 rounded-xs disabled:opacity-50"
-          >
-            Create Employee
-          </Button>
+          <SubmitButton disabled={!canSubmit} />
         </form>
       </div>
     </div>
