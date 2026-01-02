@@ -9,7 +9,7 @@ export default function BookDemoButton() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed bottom-80 md:bottom-8 right-10 z-50"
+      className="fixed bottom-8 right-10 z-50"
     >
       <Link
         href="/book-demo"

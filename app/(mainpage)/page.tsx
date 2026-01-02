@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FeaturesSection } from "../components/FearuresSection";
+import BookDemoButton from "../components/BookDemoButton";
 
 export default function HomePage() {
   return (
@@ -166,6 +167,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+    <BookDemoButton />
     </main>
   );
 }
