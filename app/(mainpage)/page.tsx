@@ -59,7 +59,7 @@ export default function HomePage() {
       <FeaturesSection />
 
       {/* ================= VIDEO ================= */}
-      <section className="py-10 bg-teal-50 border-t">
+      <section className="py-10 bg-teal-50 border-t border-teal-100">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-2xl md:text-4xl text-teal-900 mb-8 uppercase text-center">
             See how Arbets-desk works in practice
@@ -78,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* ================= COMPANY EXPENSES MARKETING ================= */}
-      <section className="py-24 bg-white border-t mb-20">
+      <section className="py-24 bg-white border-t mb-20 border-teal-100">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Text */}
           <div className="space-y-6">

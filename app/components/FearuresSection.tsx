@@ -15,33 +15,25 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section style={{ padding: "6rem 1rem", backgroundColor: "#f8fafc", borderTop: "1px solid #e5e7eb" }}>
-      <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
+    <section className="py-24 px-4 bg-slate-50 border-t border-teal-100">
+      <div className="max-w-7xl mx-auto">
+        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{
-            
-            marginBottom: "3rem",
-            textAlign: "center",
-            textTransform: "uppercase",
-          }}
-          className="px-4 text-2xl md:text-4xl text-teal-900"
+          className="mb-12 text-center text-2xl md:text-4xl font-extrabold uppercase text-teal-900"
         >
           Everything you need to manage your workforce
         </motion.h2>
 
+        {/* Grid */}
         <motion.div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "1.5rem",
-          }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           transition={{ staggerChildren: 0.1 }}
+          className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
         >
           {features.map((feature, idx) => (
             <motion.div
@@ -49,42 +41,37 @@ export function FeaturesSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: idx * 0.05 }}
-              style={{
-                backgroundColor: "#065f46",
-                borderRadius: "1rem",
-                padding: "1.5rem",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                cursor: "pointer",
-                transition: "all 0.3s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-8px)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+              className="bg-teal-900 rounded-2xl p-6 flex flex-col justify-between
+                         transform transition-all duration-300
+                         hover:-translate-y-2 hover:shadow-2xl"
             >
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div style={{ width: "64px", height: "64px", marginBottom: "1rem", position: "relative" }}>
-                  <Image src={feature.img} alt={feature.title} fill style={{ objectFit: "contain" }} />
+              <div className="flex flex-col items-center text-center">
+                {/* Icon */}
+                <div className="relative w-16 h-16 mb-4">
+                  <Image
+                    src={feature.img}
+                    alt={feature.title}
+                    fill
+                    className="object-contain"
+                  />
                 </div>
-                <h3 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#ffffff", marginBottom: "0.5rem", textAlign: "center" }}>
+
+                {/* Title */}
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
                   {feature.title}
                 </h3>
-                <p style={{ fontSize: "1rem", color: "#d1fae5", textAlign: "center" }}>{feature.desc}</p>
+
+                {/* Description */}
+                <p className="text-sm md:text-base text-teal-100">
+                  {feature.desc}
+                </p>
               </div>
+
+              {/* Link */}
               <Link
                 href={feature.href}
-                style={{
-                  marginTop: "1.25rem",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  color: "#a7f3d0",
-                  textAlign: "center",
-                  display: "inline-block",
-                  textDecoration: "none",
-                  transition: "color 0.3s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#a7f3d0")}
+                className="mt-5 text-center text-sm md:text-base font-semibold
+                           text-teal-300 hover:text-white transition-colors"
               >
                 Learn more →
               </Link>
