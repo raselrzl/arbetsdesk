@@ -12,7 +12,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-6 pt-10 pb-6 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div>
-          <span className="inline-flex items-center rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
+          <span className="inline-flex items-center shadow shadow-teal-200 uppercase rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
             Workforce Management Platform
           </span>
 

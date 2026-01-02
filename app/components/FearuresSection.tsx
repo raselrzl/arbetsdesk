@@ -17,16 +17,6 @@ export function FeaturesSection() {
   return (
     <section className="py-24 px-4 bg-slate-50 border-t border-teal-100">
       <div className="max-w-7xl mx-auto">
-        {/* Heading */}
-        <motion.h2
-          initial={{ opacity: 0, y: -16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 text-center text-2xl md:text-4xl font-extrabold uppercase text-teal-900"
-        >
-          Everything you need to manage your workforce
-        </motion.h2>
-
         {/* Grid */}
         <motion.div
           initial="hidden"
