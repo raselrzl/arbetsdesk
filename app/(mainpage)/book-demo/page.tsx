@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// Mock shifts for step 2
 const mockShifts = [
   "09:00 - 10:00",
   "10:00 - 11:00",
@@ -17,7 +16,8 @@ const mockShifts = [
 export default function BookDemoPopup() {
   const [step, setStep] = useState(1);
   const [trainingType, setTrainingType] = useState("");
-  const [selectedShift, setSelectedShift] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,15 +27,41 @@ export default function BookDemoPopup() {
     consent: false,
   });
 
-  const steps = ["Demo", "Select Shift", "Fill Form", "Confirm"];
+  const steps = ["Demo", "Time", "Information", "Confirm"];
 
-  // Navigate only if previous steps are filled
+  // Today (YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0];
+
+  // Auto-select demo
+  useEffect(() => {
+    setTrainingType("Book a demo training");
+  }, []);
+
+  const isPastTime = (timeRange: string) => {
+    if (!selectedDate) return false;
+    if (selectedDate !== today) return false;
+
+    const now = new Date();
+    const startTime = timeRange.split(" - ")[0];
+    const [hours, minutes] = startTime.split(":").map(Number);
+
+    const slotTime = new Date();
+    slotTime.setHours(hours, minutes, 0, 0);
+
+    return slotTime <= now;
+  };
+
   const goToStep = (index: number) => {
     if (
       index === 1 ||
       (index === 2 && trainingType) ||
-      (index === 3 && trainingType && selectedShift) ||
-      (index === 4 && trainingType && selectedShift && formData.name && formData.email)
+      (index === 3 && trainingType && selectedDate && selectedTime) ||
+      (index === 4 &&
+        trainingType &&
+        selectedDate &&
+        selectedTime &&
+        formData.name &&
+        formData.email)
     ) {
       setStep(index);
     }
@@ -44,54 +70,61 @@ export default function BookDemoPopup() {
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  // Type-safe handleChange for inputs and checkbox
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : value,
     }));
   };
 
   const handleSubmit = () => {
     console.log({
       trainingType,
-      selectedShift,
+      selectedDate,
+      selectedTime,
       ...formData,
     });
     alert("Booking submitted! Check console for data.");
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-xs shadow-lg p-6 w-full max-w-[400px]">
-        <h2 className="text-xl font-bold mb-4">Book a Demo</h2>
+        <h2 className="text-xl font-bold mb-4 text-center">Book a Demo</h2>
 
         {/* Step Header */}
         <div className="flex justify-between mb-6">
           {steps.map((label, index) => {
             const stepNum = index + 1;
             const isCompleted =
-              (stepNum === 1) ||
+              stepNum === 1 ||
               (stepNum === 2 && trainingType) ||
-              (stepNum === 3 && trainingType && selectedShift) ||
-              (stepNum === 4 && trainingType && selectedShift && formData.name && formData.email);
+              (stepNum === 3 && trainingType && selectedDate && selectedTime) ||
+              (stepNum === 4 &&
+                trainingType &&
+                selectedDate &&
+                selectedTime &&
+                formData.name &&
+                formData.email);
 
             return (
               <button
                 key={label}
                 onClick={() => goToStep(stepNum)}
-                className={`flex-1 text-center px-2 py-1 text-sm font-medium ${
+                disabled={!isCompleted && stepNum !== step}
+                className={`flex-1 px-2 py-1 text-sm font-medium ${
                   stepNum === step
                     ? "bg-teal-600 text-white"
                     : isCompleted
                     ? "bg-teal-100 text-teal-700"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}
-                disabled={!isCompleted && stepNum !== step}
               >
                 {label}
               </button>
@@ -99,57 +132,56 @@ export default function BookDemoPopup() {
           })}
         </div>
 
-        {/* Step 1: Training / Demo */}
+        {/* STEP 1 */}
         {step === 1 && (
+          <input
+            type="text"
+            value={trainingType}
+            disabled
+            className="border p-2 rounded w-full bg-gray-100 text-gray-700 cursor-not-allowed"
+          />
+        )}
+
+        {/* STEP 2 */}
+        {step === 2 && (
           <div className="space-y-4">
-            <p>Select type of session:</p>
-            <div className="flex flex-col gap-2">
-              <label>
-                <input
-                  type="radio"
-                  name="trainingType"
-                  value="Training"
-                  checked={trainingType === "Training"}
-                  onChange={(e) => setTrainingType(e.target.value)}
-                  className="mr-2"
-                />
-                Training
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="trainingType"
-                  value="Demo"
-                  checked={trainingType === "Demo"}
-                  onChange={(e) => setTrainingType(e.target.value)}
-                  className="mr-2"
-                />
-                Demo
-              </label>
+            <input
+              type="date"
+              min={today}
+              value={selectedDate}
+              onChange={(e) => {
+                setSelectedDate(e.target.value);
+                setSelectedTime("");
+              }}
+              className="border p-2 rounded w-full"
+            />
+
+            <div className="grid grid-cols-2 gap-2">
+              {mockShifts.map((time) => {
+                const disabled = isPastTime(time);
+
+                return (
+                  <button
+                    key={time}
+                    disabled={disabled}
+                    onClick={() => setSelectedTime(time)}
+                    className={`px-2 py-1 text-sm border rounded-xs ${
+                      selectedTime === time
+                        ? "bg-teal-600 text-white border-teal-600"
+                        : disabled
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 hover:border-teal-400"
+                    }`}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* Step 2: Select Shift */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <p>Select a shift:</p>
-            <select
-              value={selectedShift}
-              onChange={(e) => setSelectedShift(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">-- Select Shift --</option>
-              {mockShifts.map((shift) => (
-                <option key={shift} value={shift}>
-                  {shift}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {/* Step 3: Fill Form */}
+        {/* STEP 3 */}
         {step === 3 && (
           <div className="space-y-3">
             <input
@@ -203,59 +235,41 @@ export default function BookDemoPopup() {
           </div>
         )}
 
-        {/* Step 4: Confirm */}
+        {/* STEP 4 */}
         {step === 4 && (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <h3 className="font-semibold">Confirm Your Booking</h3>
-            <p>
-              <strong>Type:</strong> {trainingType}
-            </p>
-            <p>
-              <strong>Shift:</strong> {selectedShift}
-            </p>
-            <p>
-              <strong>Name:</strong> {formData.name}
-            </p>
-            <p>
-              <strong>Email:</strong> {formData.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {formData.phone}
-            </p>
-            <p>
-              <strong>Company:</strong> {formData.company}
-            </p>
-            <p>
-              <strong>Notes:</strong> {formData.notes}
-            </p>
-            <p>
-              <strong>Consent:</strong> {formData.consent ? "Yes" : "No"}
-            </p>
+            <p><strong>Type:</strong> {trainingType}</p>
+            <p><strong>Date:</strong> {selectedDate}</p>
+            <p><strong>Time:</strong> {selectedTime}</p>
+            <p><strong>Name:</strong> {formData.name}</p>
+            <p><strong>Email:</strong> {formData.email}</p>
           </div>
         )}
 
-        {/* Navigation Buttons */}
+        {/* Navigation */}
         <div className="flex justify-between mt-6">
           {step > 1 && (
             <button
               onClick={prevStep}
-              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              className="px-4 py-1 bg-teal-100 rounded-xs hover:bg-teal-300"
             >
               Back
             </button>
           )}
+
           {step < 4 ? (
             <button
               onClick={nextStep}
-              disabled={(step === 1 && !trainingType) || (step === 2 && !selectedShift)}
-              className={`px-4 py-2 rounded bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50`}
+              disabled={step === 2 && (!selectedDate || !selectedTime)}
+              className="px-4 py-1 bg-teal-600 text-white rounded-xs hover:bg-teal-700 disabled:opacity-50"
             >
               Next
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+              className="px-4 py-1 bg-green-600 text-white rounded-xs hover:bg-green-700"
             >
               Confirm
             </button>
