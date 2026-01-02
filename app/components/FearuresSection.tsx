@@ -22,14 +22,12 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           style={{
-            fontSize: "2rem",
-            fontWeight: 800,
-            color: "#065f46",
+            
             marginBottom: "3rem",
             textAlign: "center",
             textTransform: "uppercase",
           }}
-          className="px-4 text-2xl md:text-4xl"
+          className="px-4 text-2xl md:text-4xl text-teal-900"
         >
           Everything you need to manage your workforce
         </motion.h2>

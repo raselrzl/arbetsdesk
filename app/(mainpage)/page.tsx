@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <main className="bg-linear-to-b from-slate-50 to-white">
       {/* ================= HERO ================= */}
-      <section className="max-w-7xl mx-auto px-6 pt-20 pb-16 grid lg:grid-cols-2 gap-14 items-center">
+      <section className="max-w-7xl mx-auto px-6 pt-10 pb-6 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div>
           <span className="inline-flex items-center rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
@@ -61,7 +61,7 @@ export default function HomePage() {
       {/* ================= VIDEO ================= */}
       <section className="py-10 bg-teal-50 border-t">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-8 uppercase text-center">
+          <h2 className="text-2xl md:text-4xl text-teal-900 mb-8 uppercase text-center">
             See how Arbets-desk works in practice
           </h2>
 
