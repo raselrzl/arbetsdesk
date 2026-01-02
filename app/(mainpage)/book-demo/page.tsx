@@ -28,13 +28,11 @@ export default function BookDemoPopup() {
   });
 
   const steps = ["Demo", "Time", "Information", "Confirm"];
-
-  // Today (YYYY-MM-DD)
   const today = new Date().toISOString().split("T")[0];
 
   // Auto-select demo
   useEffect(() => {
-    setTrainingType("Book a demo training");
+    setTrainingType("ARBET DESK");
   }, []);
 
   const isPastTime = (timeRange: string) => {
@@ -90,190 +88,225 @@ export default function BookDemoPopup() {
       selectedTime,
       ...formData,
     });
-    alert("Booking submitted! Check console for data.");
+    alert("Booking submitted!");
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xs shadow-lg p-6 w-full max-w-[400px]">
-        <h2 className="text-xl font-bold mb-4 text-center">Book a Demo</h2>
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 sm:p-6">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg">
 
-        {/* Step Header */}
-        <div className="flex justify-between mb-6">
-          {steps.map((label, index) => {
-            const stepNum = index + 1;
-            const isCompleted =
-              stepNum === 1 ||
-              (stepNum === 2 && trainingType) ||
-              (stepNum === 3 && trainingType && selectedDate && selectedTime) ||
-              (stepNum === 4 &&
-                trainingType &&
-                selectedDate &&
-                selectedTime &&
-                formData.name &&
-                formData.email);
-
-            return (
-              <button
-                key={label}
-                onClick={() => goToStep(stepNum)}
-                disabled={!isCompleted && stepNum !== step}
-                className={`flex-1 px-2 py-1 text-sm font-medium ${
-                  stepNum === step
-                    ? "bg-teal-600 text-white"
-                    : isCompleted
-                    ? "bg-teal-100 text-teal-700"
-                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
+        {/* HEADING */}
+        <div className="w-full bg-teal-600 text-white text-center py-4 sm:py-6 uppercase text-xl sm:text-2xl font-bold">
+          ARBET DESK
         </div>
 
-        {/* STEP 1 */}
-        {step === 1 && (
-          <input
-            type="text"
-            value={trainingType}
-            disabled
-            className="border p-2 rounded w-full bg-gray-100 text-gray-700 cursor-not-allowed"
-          />
-        )}
+        <div className="p-4 sm:p-6">
+          {/* Step Header - single row */}
+          <div className="flex justify-between mb-6">
+            {steps.map((label, index) => {
+              const stepNum = index + 1;
+              const isCompleted =
+                stepNum === 1 ||
+                (stepNum === 2 && trainingType) ||
+                (stepNum === 3 && trainingType && selectedDate && selectedTime) ||
+                (stepNum === 4 &&
+                  trainingType &&
+                  selectedDate &&
+                  selectedTime &&
+                  formData.name &&
+                  formData.email);
 
-        {/* STEP 2 */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <input
-              type="date"
-              min={today}
-              value={selectedDate}
-              onChange={(e) => {
-                setSelectedDate(e.target.value);
-                setSelectedTime("");
-              }}
-              className="border p-2 rounded w-full"
-            />
-
-            <div className="grid grid-cols-2 gap-2">
-              {mockShifts.map((time) => {
-                const disabled = isPastTime(time);
-
-                return (
-                  <button
-                    key={time}
-                    disabled={disabled}
-                    onClick={() => setSelectedTime(time)}
-                    className={`px-2 py-1 text-sm border rounded-xs ${
-                      selectedTime === time
-                        ? "bg-teal-600 text-white border-teal-600"
-                        : disabled
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white border-gray-300 hover:border-teal-400"
-                    }`}
-                  >
-                    {time}
-                  </button>
-                );
-              })}
-            </div>
+              return (
+                <button
+                  key={label}
+                  onClick={() => goToStep(stepNum)}
+                  disabled={!isCompleted && stepNum !== step}
+                  className={`flex-1 px-2 py-1 text-sm sm:text-base font-medium border border-teal-100 ${
+                    stepNum === step
+                      ? "bg-teal-600 text-white"
+                      : isCompleted
+                      ? "bg-teal-100 text-teal-700"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
-        )}
 
-        {/* STEP 3 */}
-        {step === 3 && (
-          <div className="space-y-3">
+          {/* STEP 1 */}
+          {step === 1 && (
             <input
               type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
+              value={trainingType}
+              disabled
+              className="border border-teal-100 p-2 w-full font-bold bg-teal-100 text-teal-700 cursor-not-allowed"
             />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            />
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            />
-            <input
-              type="text"
-              name="company"
-              placeholder="Company"
-              value={formData.company}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            />
-            <textarea
-              name="notes"
-              placeholder="Any specific requirements"
-              value={formData.notes}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            />
-            <label className="flex items-center gap-2">
+          )}
+
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="space-y-4">
               <input
-                type="checkbox"
-                name="consent"
-                checked={formData.consent}
-                onChange={handleChange}
+                type="date"
+                min={today}
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  setSelectedTime("");
+                }}
+                className="border border-teal-100 p-2 w-full"
               />
-              Save my data for future bookings
-            </label>
-          </div>
-        )}
 
-        {/* STEP 4 */}
-        {step === 4 && (
-          <div className="space-y-2">
-            <h3 className="font-semibold">Confirm Your Booking</h3>
-            <p><strong>Type:</strong> {trainingType}</p>
-            <p><strong>Date:</strong> {selectedDate}</p>
-            <p><strong>Time:</strong> {selectedTime}</p>
-            <p><strong>Name:</strong> {formData.name}</p>
-            <p><strong>Email:</strong> {formData.email}</p>
-          </div>
-        )}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {mockShifts.map((time) => {
+                  const disabled = isPastTime(time);
 
-        {/* Navigation */}
-        <div className="flex justify-between mt-6">
-          {step > 1 && (
-            <button
-              onClick={prevStep}
-              className="px-4 py-1 bg-teal-100 rounded-xs hover:bg-teal-300"
-            >
-              Back
-            </button>
+                  return (
+                    <button
+                      key={time}
+                      disabled={disabled}
+                      onClick={() => setSelectedTime(time)}
+                      className={`px-2 py-1 text-sm sm:text-base border border-teal-100 ${
+                        selectedTime === time
+                          ? "bg-teal-600 text-white border-teal-600"
+                          : disabled
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:border-teal-400"
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
-          {step < 4 ? (
-            <button
-              onClick={nextStep}
-              disabled={step === 2 && (!selectedDate || !selectedTime)}
-              className="px-4 py-1 bg-teal-600 text-white rounded-xs hover:bg-teal-700 disabled:opacity-50"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-1 bg-green-600 text-white rounded-xs hover:bg-green-700"
-            >
-              Confirm
-            </button>
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="border border-teal-100 p-2 w-full"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="border border-teal-100 p-2 w-full"
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="border border-teal-100 p-2 w-full"
+              />
+              <input
+                type="text"
+                name="company"
+                placeholder="Company"
+                value={formData.company}
+                onChange={handleChange}
+                className="border border-teal-100 p-2 w-full"
+              />
+              <textarea
+                name="notes"
+                placeholder="Any specific requirements"
+                value={formData.notes}
+                onChange={handleChange}
+                className="border border-teal-100 p-2 w-full"
+              />
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="consent"
+                  checked={formData.consent}
+                  onChange={handleChange}
+                />
+                Save my data for future bookings
+              </label>
+            </div>
           )}
+
+          {/* STEP 4 */}
+          {step === 4 && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg sm:text-xl mb-2">Confirm Your Booking</h3>
+
+              {/* Section 1: Type of Booking */}
+              <div className="bg-white border border-teal-100 p-3">
+                <h4 className="font-medium mb-1">Booking Type</h4>
+                <p>{trainingType}</p>
+              </div>
+
+              {/* Section 2: Date, Time, Timezone */}
+              <div className="bg-white border border-teal-100 p-3">
+                <h4 className="font-medium mb-1">Date & Time</h4>
+                <p>{selectedDate}</p>
+                <p>{selectedTime} (Stockholm, Sweden)</p>
+              </div>
+
+              {/* Section 3: Your Information */}
+              <div className="bg-white border border-teal-100 p-3">
+                <h4 className="font-medium mb-2">Your Information</h4>
+                <div className="grid grid-cols-3 gap-2 text-gray-700">
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Name</div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.name}</div>
+
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Email</div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.email}</div>
+
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Phone</div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.phone}</div>
+
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Company</div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.company}</div>
+
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Notes</div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.notes || "-"}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-6 gap-2 sm:gap-0">
+            {step > 1 && (
+              <button
+                onClick={prevStep}
+                className="px-4 py-2 bg-teal-100 hover:bg-teal-300 w-full sm:w-auto"
+              >
+                Back
+              </button>
+            )}
+
+            {step < 4 ? (
+              <button
+                onClick={nextStep}
+                disabled={step === 2 && (!selectedDate || !selectedTime)}
+                className="px-4 py-2 bg-teal-600 text-white hover:bg-teal-700 w-full sm:w-auto disabled:opacity-50"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 w-full sm:w-auto"
+              >
+                Confirm
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
