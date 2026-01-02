@@ -27,7 +27,7 @@ export default function BookDemoPopup() {
     consent: false,
   });
 
-  const steps = ["Session Type", "Select Shift", "Fill Form", "Confirm"];
+  const steps = ["Demo", "Select Shift", "Fill Form", "Confirm"];
 
   // Navigate only if previous steps are filled
   const goToStep = (index: number) => {
@@ -66,8 +66,8 @@ export default function BookDemoPopup() {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+    <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xs shadow-lg p-6 w-full max-w-[400px]">
         <h2 className="text-xl font-bold mb-4">Book a Demo</h2>
 
         {/* Step Header */}
@@ -84,7 +84,7 @@ export default function BookDemoPopup() {
               <button
                 key={label}
                 onClick={() => goToStep(stepNum)}
-                className={`flex-1 text-center px-2 py-1 rounded-md text-sm font-medium ${
+                className={`flex-1 text-center px-2 py-1 text-sm font-medium ${
                   stepNum === step
                     ? "bg-teal-600 text-white"
                     : isCompleted
