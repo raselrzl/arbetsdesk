@@ -48,10 +48,10 @@ export default async function CompanyPageServer() {
         <div className="col-span-2 mb-10">
           <CompanyPageClient companyData={company} />
         </div>
-        <div className="flex flex-row mb-4 items-center justify-center text-2xl font-bold uppercase text-teal-900 border-t border-teal-100 pt-4">
+       {/*  <div className="flex flex-row mb-4 items-center justify-center text-2xl font-bold uppercase text-teal-900 border-t border-teal-100 pt-4">
           <ChartNoAxesCombined className="h-8 w-8" />{" "}
           <h2>Current Week vs Last Week</h2>
-        </div>
+        </div> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 gap-y-6">
           <WorkComparisonCard /> <CostComparisonCard /> <WeeklySalesComparisonCard />
         </div>
