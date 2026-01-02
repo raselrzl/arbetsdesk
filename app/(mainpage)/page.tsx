@@ -65,7 +65,7 @@ export default function HomePage() {
             See how Arbets-desk works in practice
           </h2>
 
-          <div className="rounded-xl overflow-hidden border border-gray-200 shadow-md bg-white">
+          <div className="rounded-xl overflow-hidden border border-teal-200 shadow-md bg-white">
             <video
               src="/vedio.mp4"
               controls
@@ -110,7 +110,7 @@ export default function HomePage() {
               <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-300 rounded-full opacity-30"></div>
 
               {/* Card */}
-              <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-gray-200 space-y-6">
+              <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
                 <div className="flex justify-around">
                   {/* Card Item */}
                   <div className="flex flex-col items-center gap-2 hover:scale-110 transition-transform duration-300">

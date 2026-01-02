@@ -24,7 +24,7 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
         className="
           w-full max-w-md space-y-5
           bg-gray-800/90
-          border border-gray-700
+          border border-teal-200
           p-6 rounded-2xl
           shadow-xl
         "
@@ -53,7 +53,7 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             disabled
             className="
               bg-gray-700
-              border-gray-600
+              border-teal-200
               text-gray-300
               cursor-not-allowed
             "
@@ -67,7 +67,7 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             disabled
             className="
               bg-gray-700
-              border-gray-600
+              border-teal-200
               text-gray-300
               cursor-not-allowed
             "
@@ -82,10 +82,10 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             required
             className="
               bg-gray-900
-              border-gray-700
+              border-teal-200
               text-gray-100
               placeholder:text-gray-500
-              focus:border-gray-500
+              focus:border-teal-200
               focus:ring-gray-500
             "
           />
@@ -99,10 +99,10 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             required
             className="
               bg-gray-900
-              border-gray-700
+              border-teal-200
               text-gray-100
               placeholder:text-gray-500
-              focus:border-gray-500
+              focus:border-teal-200
               focus:ring-gray-500
             "
           />
@@ -115,10 +115,10 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             required
             className="
               bg-gray-900
-              border-gray-700
+              border-teal-200
               text-gray-100
               placeholder:text-gray-500
-              focus:border-gray-500
+              focus:border-teal-200
               focus:ring-gray-500
             "
           />
@@ -131,10 +131,10 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             required
             className="
               bg-gray-900
-              border-gray-700
+              border-teal-200
               text-gray-100
               placeholder:text-gray-500
-              focus:border-gray-500
+              focus:border-teal-200
               focus:ring-gray-500
             "
           />
@@ -149,10 +149,10 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
             required
             className="
               bg-gray-900
-              border-gray-700
+              border-teal-200
               text-gray-100
               placeholder:text-gray-500
-              focus:border-gray-500
+              focus:border-teal-200
               focus:ring-gray-500
             "
           />

@@ -194,7 +194,7 @@ export default function UserRegistrationForm() {
           <Label className="text-gray-200">Role</Label>
           <select
             name="role"
-            className="bg-gray-700 text-white border-gray-600 focus:border-blue-500 focus:ring-0 px-2 py-1 rounded"
+            className="bg-gray-700 text-white border-teal-200 focus:border-blue-500 focus:ring-0 px-2 py-1 rounded"
           >
             <option value="USER">User</option>
             <option value="EMPLOYEE">Employee</option>
