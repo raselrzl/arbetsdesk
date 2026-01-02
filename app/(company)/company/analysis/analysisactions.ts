@@ -8,28 +8,35 @@ type CompanyAnalysisParams = {
   month: string; // "2025-12"
 };
 
-export async function getCompanyAnalysis({ companyId, month }: CompanyAnalysisParams) {
+export async function getCompanyAnalysis({
+  companyId,
+  month,
+}: CompanyAnalysisParams) {
   const [year, monthNum] = month.split("-").map(Number);
   const monthStart = startOfMonth(new Date(year, monthNum - 1));
   const monthEnd = endOfMonth(monthStart);
 
-  const now = new Date();
-
   // 1️⃣ Daily Time Logs
-  const timeLogs = await prisma.timeLog.findMany({
+  /*   const timeLogs = await prisma.timeLog.findMany({
     where: { companyId, logDate: { gte: monthStart, lte: monthEnd } },
+  }); */
+
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      logDate: { gte: monthStart, lte: monthEnd },
+      logoutTime: { not: null },
+      totalMinutes: { not: null },
+    },
   });
 
   const dailyHoursMap: Record<number, number> = {};
   timeLogs.forEach((log) => {
+    if (!log.logoutTime || log.totalMinutes == null) return;
+
     const day = log.logDate.getDate();
-    let hours = 0;
-    if (log.logoutTime && log.totalMinutes != null) {
-      hours = log.totalMinutes / 60;
-    } else if (log.loginTime) {
-      const endTime = log.logoutTime ?? now;
-      hours = (endTime.getTime() - log.loginTime.getTime()) / 1000 / 3600;
-    }
+    const hours = log.totalMinutes / 60;
+
     dailyHoursMap[day] = (dailyHoursMap[day] || 0) + hours;
   });
 
@@ -56,23 +63,32 @@ export async function getCompanyAnalysis({ companyId, month }: CompanyAnalysisPa
   });
 
   // 3️⃣ Salary per employee (so far)
-  const employees = await prisma.employee.findMany({
+  /*  const employees = await prisma.employee.findMany({
     where: { companyId },
     include: {
       timeLogs: {
         where: { logDate: { gte: monthStart, lte: monthEnd } },
       },
     },
+  }); */
+
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    include: {
+      timeLogs: {
+        where: {
+          logDate: { gte: monthStart, lte: monthEnd },
+          logoutTime: { not: null },
+          totalMinutes: { not: null },
+        },
+      },
+    },
   });
 
   const salaryData = employees.map((emp) => {
     const hoursWorked = emp.timeLogs.reduce((sum, log) => {
-      if (log.totalMinutes != null) return sum + log.totalMinutes / 60;
-      if (log.loginTime) {
-        const endTime = log.logoutTime ?? now;
-        return sum + (endTime.getTime() - log.loginTime.getTime()) / 1000 / 3600;
-      }
-      return sum;
+      if (!log.logoutTime || log.totalMinutes == null) return sum;
+      return sum + log.totalMinutes / 60;
     }, 0);
 
     let salarySoFar = 0;
@@ -93,8 +109,17 @@ export async function getCompanyAnalysis({ companyId, month }: CompanyAnalysisPa
 }
 
 export async function getAvailableMonths(companyId: string) {
-  const timeLogMonths = await prisma.timeLog.findMany({
+  /* const timeLogMonths = await prisma.timeLog.findMany({
     where: { companyId },
+    select: { logDate: true },
+  }); */
+
+  const timeLogMonths = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      logoutTime: { not: null },
+      totalMinutes: { not: null },
+    },
     select: { logDate: true },
   });
 
@@ -109,9 +134,25 @@ export async function getAvailableMonths(companyId: string) {
   });
 
   const monthsSet = new Set<string>();
-  timeLogMonths.forEach(t => monthsSet.add(`${t.logDate.getFullYear()}-${String(t.logDate.getMonth()+1).padStart(2,"0")}`));
-  tipMonths.forEach(t => monthsSet.add(`${t.date.getFullYear()}-${String(t.date.getMonth()+1).padStart(2,"0")}`));
-  salaryMonths.forEach(s => monthsSet.add(`${s.year}-${String(s.month).padStart(2,"0")}`));
+  timeLogMonths.forEach((t) =>
+    monthsSet.add(
+      `${t.logDate.getFullYear()}-${String(t.logDate.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`
+    )
+  );
+  tipMonths.forEach((t) =>
+    monthsSet.add(
+      `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`
+    )
+  );
+  salaryMonths.forEach((s) =>
+    monthsSet.add(`${s.year}-${String(s.month).padStart(2, "0")}`)
+  );
 
-  return Array.from(monthsSet).sort((a,b) => b.localeCompare(a));
+  return Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
 }
