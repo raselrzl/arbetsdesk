@@ -30,7 +30,7 @@ export default function BookDemoPopup() {
   const steps = ["Demo", "Time", "Information", "Confirm"];
   const today = new Date().toISOString().split("T")[0];
 
-  // Auto-select demo
+  // Auto-select ARBET DESK
   useEffect(() => {
     setTrainingType("ARBET DESK");
   }, []);
@@ -59,7 +59,9 @@ export default function BookDemoPopup() {
         selectedDate &&
         selectedTime &&
         formData.name &&
-        formData.email)
+        formData.email &&
+        formData.phone &&
+        formData.company)
     ) {
       setStep(index);
     }
@@ -75,9 +77,7 @@ export default function BookDemoPopup() {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : value,
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -91,6 +91,14 @@ export default function BookDemoPopup() {
     alert("Booking submitted!");
   };
 
+  // Step validation: Step 2 requires date & time, Step 3 requires name, email, phone, company
+  const isStepValid = () => {
+    if (step === 2) return selectedDate && selectedTime;
+    if (step === 3)
+      return formData.name && formData.email && formData.phone && formData.company;
+    return true;
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg">
@@ -98,9 +106,14 @@ export default function BookDemoPopup() {
         {/* HEADING */}
         <div className="w-full bg-teal-600 text-white text-center py-4 sm:py-6 uppercase text-xl sm:text-2xl font-bold">
           ARBET DESK
+          <br />
+          <span className="text-sm font-normal capitalize border-t border-teal-100 mt-2 block pt-1">
+            Your first step to smarter workspace management
+          </span>
         </div>
 
         <div className="p-4 sm:p-6">
+
           {/* Step Header - single row */}
           <div className="flex justify-between mb-6">
             {steps.map((label, index) => {
@@ -114,7 +127,9 @@ export default function BookDemoPopup() {
                   selectedDate &&
                   selectedTime &&
                   formData.name &&
-                  formData.email);
+                  formData.email &&
+                  formData.phone &&
+                  formData.company);
 
               return (
                 <button
@@ -148,6 +163,15 @@ export default function BookDemoPopup() {
           {/* STEP 2 */}
           {step === 2 && (
             <div className="space-y-4">
+              {/* Timezone */}
+              <div className="flex items-center justify-between bg-amber-200 border border-teal-100 p-2 rounded-sm">
+                <span className="text-gray-700 font-semibold">Timezone:</span>
+                <span className="text-gray-900 font-medium">
+                  Stockholm, Sweden (CET)
+                </span>
+              </div>
+
+              {/* Date Picker */}
               <input
                 type="date"
                 min={today}
@@ -159,6 +183,7 @@ export default function BookDemoPopup() {
                 className="border border-teal-100 p-2 w-full"
               />
 
+              {/* Time Slots */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {mockShifts.map((time) => {
                   const disabled = isPastTime(time);
@@ -190,7 +215,7 @@ export default function BookDemoPopup() {
               <input
                 type="text"
                 name="name"
-                placeholder="Name"
+                placeholder="Name *"
                 value={formData.name}
                 onChange={handleChange}
                 className="border border-teal-100 p-2 w-full"
@@ -198,7 +223,7 @@ export default function BookDemoPopup() {
               <input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Email *"
                 value={formData.email}
                 onChange={handleChange}
                 className="border border-teal-100 p-2 w-full"
@@ -206,7 +231,7 @@ export default function BookDemoPopup() {
               <input
                 type="text"
                 name="phone"
-                placeholder="Phone"
+                placeholder="Phone *"
                 value={formData.phone}
                 onChange={handleChange}
                 className="border border-teal-100 p-2 w-full"
@@ -214,7 +239,7 @@ export default function BookDemoPopup() {
               <input
                 type="text"
                 name="company"
-                placeholder="Company"
+                placeholder="Company *"
                 value={formData.company}
                 onChange={handleChange}
                 className="border border-teal-100 p-2 w-full"
@@ -241,7 +266,9 @@ export default function BookDemoPopup() {
           {/* STEP 4 */}
           {step === 4 && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg sm:text-xl mb-2">Confirm Your Booking</h3>
+              <h3 className="font-semibold text-lg sm:text-xl mb-2">
+                Confirm Your Booking
+              </h3>
 
               {/* Section 1: Type of Booking */}
               <div className="bg-white border border-teal-100 p-3">
@@ -260,20 +287,40 @@ export default function BookDemoPopup() {
               <div className="bg-white border border-teal-100 p-3">
                 <h4 className="font-medium mb-2">Your Information</h4>
                 <div className="grid grid-cols-3 gap-2 text-gray-700">
-                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Name</div>
-                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.name}</div>
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">
+                    Name
+                  </div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">
+                    {formData.name}
+                  </div>
 
-                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Email</div>
-                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.email}</div>
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">
+                    Email
+                  </div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">
+                    {formData.email}
+                  </div>
 
-                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Phone</div>
-                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.phone}</div>
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">
+                    Phone
+                  </div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">
+                    {formData.phone}
+                  </div>
 
-                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Company</div>
-                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.company}</div>
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">
+                    Company
+                  </div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">
+                    {formData.company}
+                  </div>
 
-                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">Notes</div>
-                  <div className="px-2 py-1 border border-teal-100 col-span-2">{formData.notes || "-"}</div>
+                  <div className="bg-teal-100 px-2 py-1 font-medium border border-teal-100 col-span-1">
+                    Notes
+                  </div>
+                  <div className="px-2 py-1 border border-teal-100 col-span-2">
+                    {formData.notes || "-"}
+                  </div>
                 </div>
               </div>
             </div>
@@ -293,7 +340,7 @@ export default function BookDemoPopup() {
             {step < 4 ? (
               <button
                 onClick={nextStep}
-                disabled={step === 2 && (!selectedDate || !selectedTime)}
+                disabled={!isStepValid()}
                 className="px-4 py-2 bg-teal-600 text-white hover:bg-teal-700 w-full sm:w-auto disabled:opacity-50"
               >
                 Next
