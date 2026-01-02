@@ -62,8 +62,7 @@ export default function HomePage() {
       {/* ================= VIDEO ================= */}
       <section className="py-10 bg-teal-50 border-t border-teal-100">
         <div className="max-w-6xl mx-auto px-6">
-          <h2   className="mb-12 text-center text-2xl md:text-4xl font-extrabold uppercase text-teal-900"
-        >
+          <h2 className="mb-12 text-center text-2xl md:text-4xl font-extrabold uppercase text-teal-900">
             See how Arbets-desk works in practice
           </h2>
 
@@ -167,7 +166,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    <BookDemoButton />
+      <BookDemoButton />
     </main>
   );
 }

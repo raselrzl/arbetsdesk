@@ -30,7 +30,6 @@ export default function MainLayout({
         <Navbar />
       </div>
       <div>{children}</div>
-      <BookDemoButton />
     </div>
   );
 }
