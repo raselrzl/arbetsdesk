@@ -142,7 +142,7 @@ export default function CompanyPageClient({ companyData }: any) {
                   className={`cursor-pointer flex p-2 relative rounded-xs ${
                     isLoggedIn
                       ? "bg-teal-300"
-                      : "bg-gray-200 border border-gray-300"
+                      : "bg-gray-200 border border-teal-200"
                   }`}
                 >
                   {/* LEFT SIDE */}
