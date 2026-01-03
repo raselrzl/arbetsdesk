@@ -64,7 +64,7 @@ export default function PersonnummerLoginModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-9999 bg-teal-800 w-screen h-screen flex flex-col items-center justify-center px-4">
+      <div className="fixed inset-0 z-9999 bg-teal-950 w-screen h-screen flex flex-col items-center justify-center px-4">
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
@@ -75,10 +75,10 @@ export default function PersonnummerLoginModal({
         </button>
 
         {/* 🕒 CLOCK */}
-        <div className="mb-8 text-center text-white">
+        <div className="mb-8 text-center text-white">          
           <div className="text-6xl md:text-7xl font-bold">{clockTime}</div>
-          <div className="mt-2 text-xl font-semibold">{dayName}</div>
-          <div className="text-md text-gray-300">{fullDate}</div>
+          <div className="text-md text-gray-300 text-right">{dayName}, <span className="mr-2">{fullDate}</span></div>
+          <div className="mt-2 text-xl font-semibold text-right"></div>
         </div>
 
         {/* INPUT */}
