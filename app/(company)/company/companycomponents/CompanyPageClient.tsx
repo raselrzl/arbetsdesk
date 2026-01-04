@@ -12,6 +12,7 @@ import {
 import { loginEmployeeWithPin, logoutEmployeeWithPin } from "../companyactions";
 import Link from "next/link";
 import LogoutThankYouPopup from "./LogoutThankYouPopup";
+import LoginThankYouPopup from "./LoginThankYouPopup";
 
 // ---------------- HELPERS ----------------
 
@@ -56,6 +57,11 @@ export default function CompanyPageClient({ companyData }: any) {
     logoutTime?: string | Date | null;
   } | null>(null);
 
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [loginTimes, setLoginTimes] = useState<{
+    loginTime?: string | Date | null;
+  } | null>(null);
+
   const todayStart = startOfToday();
   const todayEnd = endOfToday();
 
@@ -88,6 +94,12 @@ export default function CompanyPageClient({ companyData }: any) {
         setShowLogoutPopup(true);
       } else {
         await loginEmployeeWithPin(selectedEmployee.id, personalNumber);
+
+        setLoginTimes({
+          loginTime: new Date(),
+        });
+
+        setShowLoginPopup(true);
       }
 
       setShowAuthModal(false);
@@ -276,9 +288,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 0
               </button>
               <button
-                onClick={() =>
-                  setPersonalNumber(personalNumber.slice(0, -1))
-                }
+                onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
                 className="p-4 bg-yellow-400"
               >
                 x
@@ -308,6 +318,18 @@ export default function CompanyPageClient({ companyData }: any) {
         onClose={() => {
           setShowLogoutPopup(false);
           setLogoutTimes(null);
+          router.refresh();
+        }}
+      />
+
+      {/* ---------- LOGIN THANK YOU POPUP ---------- */}
+      <LoginThankYouPopup
+        open={showLoginPopup}
+        employeeName={selectedEmployee?.name}
+        loginTime={loginTimes?.loginTime}
+        onClose={() => {
+          setShowLoginPopup(false);
+          setLoginTimes(null);
           router.refresh();
         }}
       />
