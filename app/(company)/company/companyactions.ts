@@ -157,7 +157,7 @@ export async function loginEmployeeWithPinByNumber(
 /* ----------------------------------------
    LOGOUT WITH PERSONAL NUMBER
 ---------------------------------------- */
-export async function logoutEmployeeWithPin(
+/* export async function logoutEmployeeWithPin(
   employeeId: string,
   personalNumber: string
 ) {
@@ -179,6 +179,48 @@ export async function logoutEmployeeWithPin(
         gte: start,
         lte: end,
       },
+    },
+    orderBy: {
+      loginTime: "desc",
+    },
+  });
+
+  if (!activeLog || !activeLog.loginTime) {
+    throw new Error("No active session found");
+  }
+
+  const logoutTime = new Date();
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - activeLog.loginTime.getTime()) / 60000
+  );
+
+  await prisma.timeLog.update({
+    where: { id: activeLog.id },
+    data: {
+      logoutTime,
+      totalMinutes,
+    },
+  });
+
+  return { status: "LOGGED_OUT" };
+} */
+
+  export async function logoutEmployeeWithPin(
+  employeeId: string,
+  personalNumber: string
+) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+  });
+
+  if (!employee || employee.personalNumber !== personalNumber) {
+    throw new Error("Invalid personal number");
+  }
+
+  const activeLog = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
     },
     orderBy: {
       loginTime: "desc",
