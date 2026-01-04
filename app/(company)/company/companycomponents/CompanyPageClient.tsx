@@ -7,11 +7,11 @@ import {
   ClipboardClock,
   ClockAlert,
   ClockCheck,
-  UsersIcon,
 } from "lucide-react";
 
 import { loginEmployeeWithPin, logoutEmployeeWithPin } from "../companyactions";
 import Link from "next/link";
+import LogoutThankYouPopup from "./LogoutThankYouPopup";
 
 // ---------------- HELPERS ----------------
 
@@ -50,6 +50,12 @@ export default function CompanyPageClient({ companyData }: any) {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [personalNumber, setPersonalNumber] = useState("");
 
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [logoutTimes, setLogoutTimes] = useState<{
+    loginTime?: string | Date | null;
+    logoutTime?: string | Date | null;
+  } | null>(null);
+
   const todayStart = startOfToday();
   const todayEnd = endOfToday();
 
@@ -68,13 +74,22 @@ export default function CompanyPageClient({ companyData }: any) {
     if (!selectedEmployee) return;
 
     try {
-      if (authMode === "login") {
-        await loginEmployeeWithPin(selectedEmployee.id, personalNumber);
-      } else {
+      if (authMode === "logout") {
         await logoutEmployeeWithPin(selectedEmployee.id, personalNumber);
+
+        const logs = selectedEmployee.timeLogs ?? [];
+        const lastLog = logs[logs.length - 1];
+
+        setLogoutTimes({
+          loginTime: lastLog?.loginTime,
+          logoutTime: new Date(),
+        });
+
+        setShowLogoutPopup(true);
+      } else {
+        await loginEmployeeWithPin(selectedEmployee.id, personalNumber);
       }
 
-      router.refresh();
       setShowAuthModal(false);
       setPersonalNumber("");
     } catch (err: any) {
@@ -100,12 +115,12 @@ export default function CompanyPageClient({ companyData }: any) {
               const todayLogs =
                 emp.timeLogs?.filter((log: any) => {
                   if (!log.loginTime) return false;
+
                   const login = new Date(log.loginTime).getTime();
                   const logout = log.logoutTime
                     ? new Date(log.logoutTime).getTime()
                     : null;
 
-                  // Include logs that are relevant to today (5 AM to next 5 AM)
                   return (
                     (login >= todayStart && login < todayEnd) ||
                     (login < todayStart && (!logout || logout >= todayStart))
@@ -137,64 +152,56 @@ export default function CompanyPageClient({ companyData }: any) {
               return (
                 <div
                   key={emp.id}
-                  role="button"
-                  tabIndex={0}
                   className={`cursor-pointer flex p-2 relative rounded-xs ${
                     isLoggedIn
                       ? "bg-teal-300"
                       : "bg-gray-200 border border-teal-200"
                   }`}
                 >
-                  {/* LEFT SIDE */}
                   <div className="flex flex-col gap-1">
-                    {/* NAME + IMAGE */}
                     <div className="flex items-center gap-2">
                       <img
                         src="/avater.png"
                         className="w-10 h-10 rounded-full"
                       />
                       <div
-                        className={`font-bold uppercase text-lg text-gray-500 ${
-                          isLoggedIn ? "text-teal-900" : "text-gray-200"
+                        className={`font-bold uppercase text-lg ${
+                          isLoggedIn ? "text-teal-900" : "text-gray-500"
                         }`}
                       >
                         {emp.name}
                       </div>
                     </div>
 
-                    {/* SCHEDULE + LOGS */}
-                    <div>
-                      <div className="flex flex-col text-sm">
-                        {todaysSchedule}
+                    <div className="flex flex-col text-sm">
+                      {todaysSchedule}
 
-                        {todayLogs.length === 0 && (
-                          <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
-                            <ClipboardClock className="w-3 h-3" />
-                            00:00
-                          </div>
-                        )}
+                      {todayLogs.length === 0 && (
+                        <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+                          <ClipboardClock className="w-3 h-3" />
+                          00:00
+                        </div>
+                      )}
 
-                        {todayLogs.map((log: any, i: number) => (
-                          <div key={i} className="flex gap-2 text-xs mt-1">
-                            {log.loginTime && (
-                              <div className="flex items-center text-xs">
-                                <ClipboardClock className="w-3 h-3" />
-                                {safeTime(log.loginTime, mounted)}
-                              </div>
-                            )}
-                            {log.logoutTime && (
-                              <div className="flex items-center gap-1">
-                                - {safeTime(log.logoutTime, mounted)}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {todayLogs.map((log: any, i: number) => (
+                        <div key={i} className="flex gap-2 text-xs mt-1">
+                          {log.loginTime && (
+                            <div className="flex items-center text-xs">
+                              <ClipboardClock className="w-3 h-3" />
+                              {safeTime(log.loginTime, mounted)}
+                            </div>
+                          )}
+                          {log.logoutTime && (
+                            <div className="flex items-center gap-1">
+                              - {safeTime(log.logoutTime, mounted)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  {/* LOGIN / LOGOUT — BOTTOM RIGHT */}
-                  <div className="absolute bottom-2 right-2 text-white">
+                  <div className="absolute bottom-2 right-2">
                     {isLoggedIn ? (
                       <button
                         onClick={() => openAuth(emp, "logout")}
@@ -207,7 +214,7 @@ export default function CompanyPageClient({ companyData }: any) {
                         onClick={() => openAuth(emp, "login")}
                         className="cursor-pointer text-black"
                       >
-                        <ClockAlert className="h-4 w-4"/>
+                        <ClockAlert className="h-4 w-4" />
                       </button>
                     )}
                   </div>
@@ -229,23 +236,18 @@ export default function CompanyPageClient({ companyData }: any) {
               ×
             </button>
 
-            <h3
-              className={`text-lg font-bold mb-3 text-center ${
-                authMode === "login" ? "text-teal-600" : "text-red-600"
-              }`}
-            >
+            <h3 className="text-lg font-bold mb-3 text-center">
               {authMode === "login" ? "Login" : "Logout"} –{" "}
               {selectedEmployee.name}
             </h3>
 
             <input
               className="w-full mb-3 border px-2 py-1 h-12 text-center font-mono tracking-widest"
-              placeholder="YYYYMMDDXXXX"
               value={personalNumber}
               readOnly
             />
 
-            <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="grid grid-cols-3 gap-2">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
                 <button
                   key={n}
@@ -274,7 +276,9 @@ export default function CompanyPageClient({ companyData }: any) {
                 0
               </button>
               <button
-                onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
+                onClick={() =>
+                  setPersonalNumber(personalNumber.slice(0, -1))
+                }
                 className="p-4 bg-yellow-400"
               >
                 x
@@ -294,6 +298,19 @@ export default function CompanyPageClient({ companyData }: any) {
           </div>
         </div>
       )}
+
+      {/* ---------- LOGOUT THANK YOU POPUP ---------- */}
+      <LogoutThankYouPopup
+        open={showLogoutPopup}
+        loginTime={logoutTimes?.loginTime}
+        employeeName={selectedEmployee?.name}
+        logoutTime={logoutTimes?.logoutTime}
+        onClose={() => {
+          setShowLogoutPopup(false);
+          setLogoutTimes(null);
+          router.refresh();
+        }}
+      />
     </div>
   );
 }
