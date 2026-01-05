@@ -7,6 +7,7 @@ import {
   createOrReplaceSchedule,
   getCompanyEmployees,
   getSchedulesForCompany,
+  getTimeLogsForCompany,
   updateSchedule,
 } from "./schedules";
 import DatePicker from "react-multi-date-picker";
@@ -36,6 +37,8 @@ export default function CompanySchedulePage() {
 
   const [schedules, setSchedules] = useState<any[]>([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [timeLogs, setTimeLogs] = useState<any[]>([]);
+
 
   // Toggle employee selection
   const toggleEmployee = (id: string) => {
@@ -51,25 +54,28 @@ export default function CompanySchedulePage() {
 
   // Load employees and schedules from backend
   const loadData = async () => {
-    try {
-      const emps = await getCompanyEmployees();
-      // ✅ Make sure we map them to include required fields
-      setEmployeesFromDB(
-        emps.map((emp: any) => ({
-          id: emp.id,
-          name: emp.name,
-          contractType: emp.contractType,
-          hourlyRate: emp.hourlyRate,
-          monthlySalary: emp.monthlySalary,
-        }))
-      );
+  try {
+    const emps = await getCompanyEmployees();
+    setEmployeesFromDB(
+      emps.map((emp: any) => ({
+        id: emp.id,
+        name: emp.name,
+        contractType: emp.contractType,
+        hourlyRate: emp.hourlyRate,
+        monthlySalary: emp.monthlySalary,
+      }))
+    );
 
-      const schs = await getSchedulesForCompany();
-      setSchedules(schs);
-    } catch (err) {
-      console.error("Error loading data:", err);
-    }
-  };
+    const schs = await getSchedulesForCompany();
+    setSchedules(schs);
+
+    const logs = await getTimeLogsForCompany();
+    setTimeLogs(logs); // <- fetch time logs here
+  } catch (err) {
+    console.error("Error loading data:", err);
+  }
+};
+
 
   useEffect(() => {
     loadData();
@@ -297,7 +303,7 @@ export default function CompanySchedulePage() {
       {/* ✅ Tables */}
       <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
       <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} />
-      <MonthlySummaryTable schedules={schedules} employees={employeesFromDB} />
+      <MonthlySummaryTable schedules={schedules} employees={employeesFromDB} timeLogs={timeLogs}/>
     </div>
   );
 }

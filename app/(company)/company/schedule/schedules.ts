@@ -158,3 +158,14 @@ export async function updateSchedule(
     data: updateData,
   });
 }
+
+// Get time logs for the company
+export async function getTimeLogsForCompany() {
+  const companyId = await getCompanyId();
+
+  return prisma.timeLog.findMany({
+    where: { companyId },
+    include: { employee: true },
+    orderBy: { logDate: "asc" },
+  });
+}

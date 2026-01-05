@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 
-type Props = {
-  schedules: any[];
-  employees: { id: string; name: string }[];
-};
-
 /* ---------------- HELPERS ---------------- */
+function formatDate(d: Date | string) {
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function formatTime(d: Date | string) {
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toTimeString().slice(0, 5); // HH:MM 24-hour
+}
 
 function getWeekRange(offset = 0) {
   const now = new Date();
@@ -25,61 +29,57 @@ function getWeekRange(offset = 0) {
   return { start, end };
 }
 
+function getWeekNumber(date: Date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
 /* ---------------- COMPONENT ---------------- */
+type Props = {
+  schedules: any[];
+  employees: { id: string; name: string }[];
+};
 
 export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
-
   const { start, end } = getWeekRange(weekOffset);
+  const weekNumber = getWeekNumber(start);
 
-  /* Filter selected week only */
+  // Filter selected week only
   const weekSchedules = schedules.filter((sch) => {
     const d = new Date(sch.date);
     return d >= start && d <= end;
   });
 
-  /* Build week days (Mon–Sun) */
+  // Build week days (Mon–Sun)
   const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
     return d;
   });
 
-  /* Group schedules by day */
+  // Group schedules by day
   const schedulesByDay: Record<string, any[]> = {};
   daysOfWeek.forEach((d) => {
-    schedulesByDay[d.toDateString()] = [];
+    schedulesByDay[formatDate(d)] = [];
   });
 
   weekSchedules.forEach((sch) => {
-    const key = new Date(sch.date).toDateString();
+    const key = formatDate(sch.date);
     if (schedulesByDay[key]) {
       schedulesByDay[key].push(sch);
     }
   });
 
-  function getWeekNumber(date: Date) {
-    const d = new Date(
-      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-    );
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  }
-  const weekNumber = getWeekNumber(start);
-
   return (
     <div className="space-y-3">
       {/* WEEK FILTER */}
       <div className="flex items-center justify-between">
-        {/* <div className="font-semibold text-teal-700">
-          Week of{" "}
-          {start.toLocaleDateString()} – {end.toLocaleDateString()}
-        </div> */}
         <div className="font-semibold text-gray-100 bg-teal-950 px-2 py-1 uppercase">
-          Week {weekNumber} · {start.toLocaleDateString()} –{" "}
-          {end.toLocaleDateString()}
+          Week {weekNumber} · {formatDate(start)} – {formatDate(end)}
         </div>
 
         <div className="flex gap-2">
@@ -113,11 +113,9 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
             <tr className="bg-teal-100">
               <th className="p-3 border text-left">Schedule</th>
               {daysOfWeek.map((day) => (
-                <th key={day.toDateString()} className="p-3 border text-center">
+                <th key={formatDate(day)} className="p-3 border text-center">
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
-                  <p className="text-xs text-gray-600">
-                    {day.toLocaleDateString()}
-                  </p>
+                  <p className="text-xs text-gray-600">{formatDate(day)}</p>
                 </th>
               ))}
             </tr>
@@ -129,11 +127,9 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                 <td className="p-3 border font-medium">{emp.name}</td>
 
                 {daysOfWeek.map((day) => {
-                  const dayKey = day.toDateString();
+                  const dayKey = formatDate(day);
                   const empSchedules =
-                    schedulesByDay[dayKey]?.filter(
-                      (s) => s.employee.id === emp.id
-                    ) || [];
+                    schedulesByDay[dayKey]?.filter((s) => s.employee.id === emp.id) || [];
 
                   return (
                     <td key={dayKey} className="p-3 border text-xs">
@@ -142,19 +138,7 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                       ) : (
                         empSchedules.map((sch) => (
                           <div key={sch.id}>
-                            {new Date(sch.startTime).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-
-                            })}{" "}
-                            –{" "}
-                            {new Date(sch.endTime).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-
-                            })}
+                            {formatTime(sch.startTime)} – {formatTime(sch.endTime)}
                           </div>
                         ))
                       )}

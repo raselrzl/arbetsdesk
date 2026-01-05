@@ -4,7 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 
 type Props = {
-  schedules: {
+  schedules?: {
     id: string;
     date: string | Date;
     startTime: string | Date;
@@ -14,7 +14,17 @@ type Props = {
       name: string;
     };
   }[];
-  employees: {
+  timeLogs?: {
+    id: string;
+    logDate: string | Date;
+    loginTime: string | Date | null;
+    logoutTime: string | Date | null;
+    employee: {
+      id: string;
+      name: string;
+    };
+  }[];
+  employees?: {
     id: string;
     name: string;
     contractType: "HOURLY" | "MONTHLY";
@@ -23,8 +33,9 @@ type Props = {
   }[];
 };
 
-/* -------- HELPERS -------- */
-function diffHours(start: string | Date, end: string | Date) {
+/* ---------- HELPERS ---------- */
+function diffHours(start: string | Date | null, end: string | Date | null) {
+  if (!start || !end) return 0;
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();
   if (isNaN(startTime) || isNaN(endTime)) return 0;
@@ -40,18 +51,26 @@ function getMonthRange(offset = 0) {
   return { start, end };
 }
 
-/* -------- COMPONENT -------- */
-export default function MonthlySummaryTable({ schedules, employees }: Props) {
+/* ---------- COMPONENT ---------- */
+export default function MonthlySummaryTable({
+  schedules = [],
+  timeLogs = [],
+  employees = [],
+}: Props) {
   const [monthOffset, setMonthOffset] = useState(0);
   const { start, end } = getMonthRange(monthOffset);
 
-  // Filter schedules within month
+  // Filter schedules and timelogs within the month
   const monthSchedules = schedules.filter((s) => {
     const d = new Date(s.date);
     return d >= start && d <= end;
   });
 
-  // Total working hours in month standard (for monthly contracts)
+  const monthTimeLogs = timeLogs.filter((t) => {
+    const d = new Date(t.logDate);
+    return d >= start && d <= end;
+  });
+
   const STANDARD_MONTHLY_HOURS = 160;
 
   return (
@@ -59,8 +78,7 @@ export default function MonthlySummaryTable({ schedules, employees }: Props) {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div className="font-semibold text-gray-100 bg-teal-950 px-2 py-1 uppercase">
-          Monthly Summary ·{" "}
-          {format(start, "yyyy-MM")} {/* SSR-safe */}
+          Monthly Summary · {format(start, "yyyy-MM")}
         </div>
 
         <div className="flex gap-2">
@@ -94,8 +112,10 @@ export default function MonthlySummaryTable({ schedules, employees }: Props) {
             <tr className="bg-teal-100">
               <th className="p-3 border text-left">Employee</th>
               <th className="p-3 border text-center">Contract</th>
-              <th className="p-3 border text-center">Working Days</th>
-              <th className="p-3 border text-center">Total Hours</th>
+              <th className="p-3 border text-center">Scheduled Days</th>
+              <th className="p-3 border text-center">Worked Days</th>
+              <th className="p-3 border text-center">Scheduled Hours</th>
+              <th className="p-3 border text-center">Worked Hours</th>
               <th className="p-3 border text-center">Hourly Rate</th>
               <th className="p-3 border text-center">Salary Earned</th>
             </tr>
@@ -103,22 +123,27 @@ export default function MonthlySummaryTable({ schedules, employees }: Props) {
 
           <tbody>
             {employees.map((emp) => {
-              const empSchedules = monthSchedules.filter(
-                (s) => s.employee.id === emp.id
-              );
-
-              const workingDays = new Set(
-                empSchedules.map((s) =>
-                  new Date(s.date).toDateString()
-                )
+              // Scheduled info
+              const empSchedules = monthSchedules.filter((s) => s.employee.id === emp.id);
+              const scheduledDays = new Set(
+                empSchedules.map((s) => new Date(s.date).toDateString())
               ).size;
-
-              const totalHours = empSchedules.reduce(
+              const scheduledHours = empSchedules.reduce(
                 (sum, s) => sum + diffHours(s.startTime, s.endTime),
                 0
               );
 
-              // Determine hourly rate
+              // TimeLog info
+              const empTimeLogs = monthTimeLogs.filter((t) => t.employee.id === emp.id);
+              const workedDays = new Set(
+                empTimeLogs.map((t) => new Date(t.logDate).toDateString())
+              ).size;
+              const workedHours = empTimeLogs.reduce(
+                (sum, t) => sum + diffHours(t.loginTime, t.logoutTime),
+                0
+              );
+
+              // Hourly rate
               let hourlyRate = 0;
               if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
                 hourlyRate = emp.monthlySalary / STANDARD_MONTHLY_HOURS;
@@ -126,19 +151,23 @@ export default function MonthlySummaryTable({ schedules, employees }: Props) {
                 hourlyRate = emp.hourlyRate;
               }
 
-              const totalPay = totalHours * hourlyRate;
+              const salaryEarned = workedHours * hourlyRate;
 
               return (
                 <tr key={emp.id} className="border-t">
                   <td className="p-3 border font-medium">{emp.name}</td>
                   <td className="p-3 border text-center">{emp.contractType}</td>
-                  <td className="p-3 border text-center">{workingDays}</td>
+                  <td className="p-3 border text-center">{scheduledDays}</td>
+                  <td className="p-3 border text-center">{workedDays}</td>
                   <td className="p-3 border text-center font-semibold">
-                    {totalHours.toFixed(2)}
+                    {scheduledHours.toFixed(2)}
+                  </td>
+                  <td className="p-3 border text-center font-semibold">
+                    {workedHours.toFixed(2)}
                   </td>
                   <td className="p-3 border text-center">{hourlyRate.toFixed(2)}</td>
                   <td className="p-3 border text-center font-semibold">
-                    {totalPay.toFixed(2)}
+                    {salaryEarned.toFixed(2)}
                   </td>
                 </tr>
               );
