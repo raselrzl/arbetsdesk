@@ -74,13 +74,13 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md bg-teal-700 p-8 shadow-md rounded-md">
-        <h1 className="text-4xl font-extrabold uppercase mb-6 text-center text-white">
+      <div className="w-full max-w-md bg-teal-900 p-8 shadow-md rounded-md">
+        <h1 className="text-4xl font-extrabold uppercase mb-10 text-center text-white">
           Login
         </h1>
 
         {/* TABS */}
-        <div className="flex mb-6 rounded overflow-hidden">
+        <div className="flex mb-6 rounded overflow-hidden border border-gray-100">
           {(["USER", "COMPANY", "EMPLOYEE"] as Tab[]).map((t) => (
             <button
               key={t}
@@ -88,7 +88,7 @@ export default function LoginForm() {
               className={`flex-1 py-2 text-sm font-bold ${
                 tab === t
                   ? "bg-teal-900 text-white"
-                  : "bg-teal-600 text-teal-100"
+                  : "bg-teal-600 text-teal-100 border"
               }`}
             >
               {t}
@@ -100,12 +100,12 @@ export default function LoginForm() {
         {tab === "USER" && (
           <form action={loginUserAction} className="grid gap-6">
             <div>
-              <Label className="text-white">Personal Number</Label>
+              <Label className="text-white mb-2">Personal Number</Label>
               <Input
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-                className="bg-white text-black text-center"
+               className="bg-white text-black text-center h-12"
                 placeholder="YYYYMMDDXXXX"
                 
               />
@@ -117,7 +117,7 @@ export default function LoginForm() {
               <input type="hidden" name="pinNumber" value={pinValue} />
             </div>
 
-            <Button className="bg-teal-900">
+            <Button className="bg-teal-900 border h-12">
               Login <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </form>
@@ -127,13 +127,13 @@ export default function LoginForm() {
         {tab === "COMPANY" && (
           <form action={loginCompanyAction} className="grid gap-6">
             <div>
-              <Label className="text-white">Organization Number</Label>
+              <Label className="text-white mb-2">Organization Number</Label>
               <Input
                 name="organizationNo"
                 value={organizationNo}
                 onChange={(e) => setOrganizationNo(e.target.value)}
-                className="bg-white text-black text-center"
-                placeholder="YYYYMMDDXXXX"
+                className="bg-white text-black text-center h-12"
+                placeholder=""
               />
             </div>
 
@@ -151,12 +151,12 @@ export default function LoginForm() {
         {tab === "EMPLOYEE" && (
           <form action={loginEmployeeAction} className="grid gap-6">
             <div>
-              <Label className="text-white">Personal Number</Label>
+              <Label className="text-white mb-2">Personal Number</Label>
               <Input
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-                className="bg-white text-black text-center"
+                className="bg-white text-black text-center h-12"
                 placeholder="YYYYMMDDXXXX"
               />
             </div>
@@ -172,7 +172,7 @@ export default function LoginForm() {
         )}
       </div>
 
-      <div className="w-full max-w-md p-2 mt-6 text-sm text-gray-600 text-center bg-teal-50 rounded-lg">
+      <div className="w-full max-w-md p-2 mt-6 text-sm text-teal-100 text-center bg-teal-900 rounded-xs ">
         If you are have problem with login, Contact us
       </div>
     </div>
