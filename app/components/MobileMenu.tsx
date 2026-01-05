@@ -75,13 +75,6 @@ export default function MobileMenu({ user }: { user: any }) {
           >
             Contact
           </Link>
-           <Link
-            href="/admin/createuser"
-            className="py-2 border-b"
-            onClick={handleLinkClick}
-          >
-            Register
-          </Link>
 
           {/* Inside dropdown, no need to show login again */}
           {user && <UserMenu user={user} />}

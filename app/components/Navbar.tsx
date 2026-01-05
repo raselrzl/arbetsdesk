@@ -66,10 +66,6 @@ export default async function Navbar() {
           <Link href="/contact" className="hover:text-teal-700">
             Contact
           </Link>
-         {/*  <Link href="/admin/createuser" className="hover:text-teal-700">
-            Register
-          </Link> */}
-
           {/* User Menu */}
           <UserMenu user={user} />
         </div>
