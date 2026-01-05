@@ -74,7 +74,7 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md bg-teal-900 p-8 shadow-md rounded-md">
+      <div className="w-full max-w-md bg-teal-900 p-8 shadow-md rounded-xs">
         <h1 className="text-4xl font-extrabold uppercase mb-10 text-center text-white">
           Login
         </h1>
