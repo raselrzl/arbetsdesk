@@ -114,11 +114,18 @@ export async function getCompanyEmployees() {
 
   const employees = await prisma.employee.findMany({
     where: { companyId },
-    select: { id: true, name: true },
+    select: {
+      id: true,
+      name: true,
+      contractType: true,
+      hourlyRate: true,
+      monthlySalary: true,
+    },
   });
 
   return employees;
 }
+
 
 export async function getSchedulesForCompany() {
   const companyId = await getCompanyId();

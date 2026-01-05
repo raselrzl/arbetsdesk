@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clock, Plus, User, X } from "lucide-react";
+import { Calendar, Clock, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ClockDisplay from "./ClockDisplay";
 import {
@@ -15,9 +15,17 @@ import MonthlyScheduleTable from "./MonthlyScheduleTable";
 import MonthlySummaryTable from "./MonthlySummaryTable";
 
 export default function CompanySchedulePage() {
+  // ✅ Updated state type for employees to include all required fields
   const [employeesFromDB, setEmployeesFromDB] = useState<
-    { id: string; name: string }[]
+    {
+      id: string;
+      name: string;
+      contractType: "HOURLY" | "MONTHLY";
+      hourlyRate?: number;
+      monthlySalary?: number;
+    }[]
   >([]);
+
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
 
@@ -27,23 +35,34 @@ export default function CompanySchedulePage() {
   const [endMinute, setEndMinute] = useState("00");
 
   const [schedules, setSchedules] = useState<any[]>([]);
-
   const [isCreating, setIsCreating] = useState(false);
 
+  // Toggle employee selection
   const toggleEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
       prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]
     );
   };
 
+  // Remove selected date
   const removeDate = (date: string) => {
     setSelectedDates((prev) => prev.filter((d) => d !== date));
   };
 
+  // Load employees and schedules from backend
   const loadData = async () => {
     try {
       const emps = await getCompanyEmployees();
-      setEmployeesFromDB(emps);
+      // ✅ Make sure we map them to include required fields
+      setEmployeesFromDB(
+        emps.map((emp: any) => ({
+          id: emp.id,
+          name: emp.name,
+          contractType: emp.contractType,
+          hourlyRate: emp.hourlyRate,
+          monthlySalary: emp.monthlySalary,
+        }))
+      );
 
       const schs = await getSchedulesForCompany();
       setSchedules(schs);
@@ -56,8 +75,9 @@ export default function CompanySchedulePage() {
     loadData();
   }, []);
 
+  // Add schedule for selected employees and dates
   const addScheduleHandler = async () => {
-    if (isCreating) return; // extra safety
+    if (isCreating) return;
 
     const start = `${startHour}:${startMinute}`;
     const end = `${endHour}:${endMinute}`;
@@ -83,7 +103,6 @@ export default function CompanySchedulePage() {
                 date
               ).toLocaleDateString()}. Replace it?`
             );
-
             if (!ok) continue;
 
             await createOrReplaceSchedule({
@@ -101,7 +120,7 @@ export default function CompanySchedulePage() {
 
       await loadData();
 
-      // reset UI
+      // Reset UI
       setSelectedEmployees([]);
       setSelectedDates([]);
       setStartHour("00");
@@ -113,9 +132,7 @@ export default function CompanySchedulePage() {
     }
   };
 
-  const hours = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, "0")
-  );
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"));
   const minutes = ["00", "15", "30", "45"];
 
   return (
@@ -123,10 +140,6 @@ export default function CompanySchedulePage() {
       <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4">
         Working Schedule
       </h1>
-      {/*    <p className="text-teal-600 mb-6">
-        Plan upcoming sessions and build schedules for your team in just a few
-        clicks.
-      </p> */}
 
       <ClockDisplay />
 
@@ -157,9 +170,6 @@ export default function CompanySchedulePage() {
 
           {/* Dates */}
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-teal-600 font-medium">
-              {/*  <Calendar className="w-5 h-5" /> Dates */}
-            </label>
             <DatePicker
               multiple
               value={selectedDates}
@@ -184,7 +194,6 @@ export default function CompanySchedulePage() {
               )}
             />
 
-            {/* 1️⃣ Show selected dates nicely */}
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedDates.map((date) => (
                 <div
@@ -266,12 +275,11 @@ export default function CompanySchedulePage() {
         <button
           onClick={addScheduleHandler}
           disabled={isCreating}
-          className={`px-4 py-2 rounded-xs flex items-center gap-2 transition cursor-pointer
-    ${
-      isCreating
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-teal-800 hover:bg-teal-900 text-white"
-    }`}
+          className={`px-4 py-2 rounded-xs flex items-center gap-2 transition cursor-pointer ${
+            isCreating
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-teal-800 hover:bg-teal-900 text-white"
+          }`}
         >
           {isCreating ? (
             <>
@@ -286,6 +294,7 @@ export default function CompanySchedulePage() {
         </button>
       </div>
 
+      {/* ✅ Tables */}
       <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
       <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} />
       <MonthlySummaryTable schedules={schedules} employees={employeesFromDB} />
