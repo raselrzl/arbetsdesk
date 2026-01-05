@@ -9,6 +9,12 @@ type Props = {
 
 /* -------- HELPERS -------- */
 
+function diffHours(start: string, end: string) {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  return (endDate.getTime() - startDate.getTime()) / 36e5;
+}
+
 function getMonthRange(offset = 0) {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth() + offset, 1);
@@ -95,6 +101,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
               <th className="p-2 border text-left sticky left-0 bg-teal-100 z-10">
                 Employee
               </th>
+
               {daysInMonth.map((day) => (
                 <th key={day.toDateString()} className="p-2 border text-center">
                   {day.getDate()}
@@ -103,51 +110,66 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                   </p>
                 </th>
               ))}
+
+              <th className="p-2 border text-center bg-teal-100">
+                Total (h)
+              </th>
             </tr>
           </thead>
 
           <tbody>
-            {employees.map((emp) => (
-              <tr key={emp.id} className="border-t">
-                <td className="p-2 border font-medium sticky left-0 bg-white z-10">
-                  {emp.name}
-                </td>
+            {employees.map((emp) => {
+              const totalHours = monthSchedules
+                .filter((s) => s.employee.id === emp.id)
+                .reduce(
+                  (sum, s) => sum + diffHours(s.startTime, s.endTime),
+                  0
+                );
 
-                {daysInMonth.map((day) => {
-                  const dayKey = day.toDateString();
-                  const empSchedules =
-                    schedulesByDay[dayKey]?.filter(
-                      (s) => s.employee.id === emp.id
-                    ) || [];
+              return (
+                <tr key={emp.id} className="border-t">
+                  <td className="p-2 border font-medium sticky left-0 bg-white z-10">
+                    {emp.name}
+                  </td>
 
-                  return (
-                    <td key={dayKey} className="p-2 border text-center">
-                      {empSchedules.length === 0 ? (
-                        <span className="text-gray-300">—</span>
-                      ) : (
-                        empSchedules.map((sch) => (
-                          <div key={sch.id}>
-                            {new Date(sch.startTime).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
+                  {daysInMonth.map((day) => {
+                    const dayKey = day.toDateString();
+                    const empSchedules =
+                      schedulesByDay[dayKey]?.filter(
+                        (s) => s.employee.id === emp.id
+                      ) || [];
 
-                            })}
-                            –
-                            {new Date(sch.endTime).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
+                    return (
+                      <td key={dayKey} className="p-2 border text-center">
+                        {empSchedules.length === 0 ? (
+                          <span className="text-gray-300">—</span>
+                        ) : (
+                          empSchedules.map((sch) => (
+                            <div key={sch.id}>
+                              {new Date(sch.startTime).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })}
+                              –
+                              {new Date(sch.endTime).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })}
+                            </div>
+                          ))
+                        )}
+                      </td>
+                    );
+                  })}
 
-                            })}
-                          </div>
-                        ))
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                  <td className="p-2 border text-center font-semibold bg-gray-50">
+                    {totalHours.toFixed(2)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
