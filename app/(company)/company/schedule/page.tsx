@@ -118,21 +118,21 @@ export default function CompanySchedulePage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-      <h1 className="text-3xl font-bold mb-1 uppercase">Working Schedule</h1>
-      <p className="text-teal-600 mb-6">
+      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4">Working Schedule</h1>
+   {/*    <p className="text-teal-600 mb-6">
         Plan upcoming sessions and build schedules for your team in just a few
         clicks.
-      </p>
+      </p> */}
 
       <ClockDisplay />
 
-      <div className="bg-white p-6 rounded-xs shadow border border-teal-100 space-y-4">
-        <h2 className="text-xl font-semibold">Add New Schedule</h2>
+      <div className="bg-white p-6 rounded-xs border border-teal-900 space-y-4">
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Employees */}
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-teal-600 font-medium">
-              <User className="w-5 h-5" /> Select Employees
+            <label className="flex items-center gap-2 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
+              Select Employees
             </label>
             <div className="flex flex-wrap gap-2">
               {employeesFromDB.map((emp) => (
@@ -167,7 +167,7 @@ export default function CompanySchedulePage() {
               render={(value, openCalendar) => (
                 <div
                   onClick={openCalendar}
-                  className="flex items-center gap-2 px-3 py-1 rounded-xs border w-40 border-teal-100 cursor-pointer bg-white"
+                  className="flex text-[8px] items-center gap-2 px-3 py-1 rounded-xs  border sm:w-80 border-teal-100 cursor-pointer bg-white"
                 >
                   <Calendar className="w-5 h-5 text-teal-600" />
                   <span className="text-teal-600">
@@ -263,11 +263,11 @@ export default function CompanySchedulePage() {
         <button
           onClick={addScheduleHandler}
           disabled={isCreating}
-          className={`px-4 py-2 rounded-xs flex items-center gap-2 transition
+          className={`px-4 py-2 rounded-xs flex items-center gap-2 transition cursor-pointer
     ${
       isCreating
         ? "bg-gray-400 cursor-not-allowed"
-        : "bg-teal-600 hover:bg-teal-700 text-white"
+        : "bg-teal-800 hover:bg-teal-900 text-white"
     }`}
         >
           {isCreating ? (
@@ -283,71 +283,7 @@ export default function CompanySchedulePage() {
         </button>
       </div>
 
-      {/* Existing Schedules Table */}
-      {/*  <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
-        <h2 className="text-xl font-semibold mb-3 uppercase">
-          All Existing Schedules
-        </h2>
-
-        {Object.entries(
-          schedules.reduce((acc: Record<string, any[]>, sch) => {
-            const day = new Date(sch.date).toLocaleDateString();
-            if (!acc[day]) acc[day] = [];
-            acc[day].push(sch);
-            return acc;
-          }, {})
-        )
-          // 2️⃣ Sort days descending (latest date first)
-          .sort(
-            ([dayA], [dayB]) =>
-              new Date(dayB).getTime() - new Date(dayA).getTime()
-          )
-          .map(([day, daySchedules]) => (
-            <div key={day} className="mb-4">
-              <h3 className="text-lg font-semibold text-teal-600 mb-2">
-                {day}
-              </h3>
-              <table className="w-full text-sm border-collapse">
-                <thead className="bg-teal-100">
-                  <tr>
-                    <th className="p-3 text-left border-b">Employees</th>
-                    <th className="p-3 text-left border-b">Start</th>
-                    <th className="p-3 text-left border-b">End</th>
-                    <th className="p-3 text-left border-b">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {daySchedules.map((sch) => (
-                    <tr
-                      key={sch.id}
-                      className="hover:bg-gray-50 border-t border-teal-100"
-                    >
-                      <td className="p-3">{sch.employee.name}</td>
-                      <td className="p-3">
-                        {new Date(sch.startTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </td>
-                      <td className="p-3">
-                        {new Date(sch.endTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </td>
-                      <td className="p-3">
-                        <button className="text-red-600 hover:underline">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
-      </div> */}
-      <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
+     <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
     </div>
   );
 }
