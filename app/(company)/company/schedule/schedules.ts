@@ -64,16 +64,23 @@ export async function createOrReplaceSchedule({
 }: {
   employeeIds: string[];
   date: string;
-  startTime: string;
-  endTime: string;
+  startTime: string; // "16:00"
+  endTime: string;   // "23:00"
   replace: boolean;
 }) {
   const companyId = await getCompanyId();
-  const { startTime: start, endTime: end } =
-    buildDateTimes(date, startTime, endTime);
 
   for (const employeeId of employeeIds) {
-    // 🔍 find overlaps
+    // Build full start/end Date objects in UTC
+    const start = new Date(`${date}T${startTime}:00Z`); // Z = UTC
+    let end = new Date(`${date}T${endTime}:00Z`);
+
+    // Handle overnight shift
+    if (end <= start) {
+      end.setUTCDate(end.getUTCDate() + 1);
+    }
+
+    // Find overlapping schedules
     const overlaps = await prisma.schedule.findMany({
       where: {
         companyId,
@@ -83,30 +90,31 @@ export async function createOrReplaceSchedule({
       },
     });
 
-    // ❌ overlap exists and not allowed
+    // If overlap exists and replace is false
     if (overlaps.length > 0 && !replace) {
       throw new Error("OVERLAP_EXISTS");
     }
 
-    // 🔁 replace overlapping schedules
+    // If replace is true, delete overlaps
     if (overlaps.length > 0 && replace) {
       await prisma.schedule.deleteMany({
         where: { id: { in: overlaps.map((s) => s.id) } },
       });
     }
 
-    // ✅ create new schedule
+    // Create new schedule
     await prisma.schedule.create({
       data: {
         companyId,
         employeeId,
-        date: new Date(date),
+        date: new Date(date), // date for reference only
         startTime: start,
         endTime: end,
       },
     });
   }
 }
+
 
 
 export async function getCompanyEmployees() {
@@ -139,6 +147,7 @@ export async function getSchedulesForCompany() {
 
 
 // Server Action to update an existing schedule
+// Server Action to update an existing schedule
 export async function updateSchedule(
   scheduleId: string,
   {
@@ -147,17 +156,47 @@ export async function updateSchedule(
     endTime,
   }: { date?: string; startTime?: string; endTime?: string }
 ) {
+  // Fetch existing schedule to get the original date if needed
+  const existing = await prisma.schedule.findUnique({
+    where: { id: scheduleId },
+  });
+  if (!existing) throw new Error("Schedule not found");
+
   const updateData: any = {};
 
-  if (date) updateData.date = new Date(date);
-  if (startTime) updateData.startTime = new Date(`${date ?? new Date().toISOString().slice(0,10)}T${startTime}`);
-  if (endTime) updateData.endTime = new Date(`${date ?? new Date().toISOString().slice(0,10)}T${endTime}`);
+  // Determine which date to use (updated or existing)
+  const baseDate = date ?? existing.date.toISOString().slice(0, 10);
+
+  // Build start/end times if provided
+  if (startTime) {
+    updateData.startTime = new Date(`${baseDate}T${startTime}:00Z`);
+  }
+
+  if (endTime) {
+    let end = new Date(`${baseDate}T${endTime}:00Z`);
+
+    // If startTime is also updated, use it; otherwise fallback to existing startTime
+    const start = updateData.startTime ?? existing.startTime;
+
+    // Handle overnight shift
+    if (end <= start) {
+      end.setUTCDate(end.getUTCDate() + 1);
+    }
+
+    updateData.endTime = end;
+  }
+
+  // Update the reference date if provided
+  if (date) {
+    updateData.date = new Date(date); // For reference only
+  }
 
   return prisma.schedule.update({
     where: { id: scheduleId },
     data: updateData,
   });
 }
+
 
 // Get time logs for the company
 export async function getTimeLogsForCompany() {
