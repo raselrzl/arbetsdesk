@@ -107,10 +107,13 @@ export default function MonthlySummaryTable({
 
       {/* TABLE */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-collapse text-sm min-w-max">
           <thead>
             <tr className="bg-teal-100">
-              <th className="p-3 border text-left">Employee</th>
+              {/* Employee column */}
+              <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
+                Employee
+              </th>
               <th className="p-3 border text-center">Contract</th>
               <th className="p-3 border text-center">Scheduled Days</th>
               <th className="p-3 border text-center">Worked Days</th>
@@ -124,7 +127,9 @@ export default function MonthlySummaryTable({
           <tbody>
             {employees.map((emp) => {
               // Scheduled info
-              const empSchedules = monthSchedules.filter((s) => s.employee.id === emp.id);
+              const empSchedules = monthSchedules.filter(
+                (s) => s.employee.id === emp.id
+              );
               const scheduledDays = new Set(
                 empSchedules.map((s) => new Date(s.date).toDateString())
               ).size;
@@ -134,7 +139,9 @@ export default function MonthlySummaryTable({
               );
 
               // TimeLog info
-              const empTimeLogs = monthTimeLogs.filter((t) => t.employee.id === emp.id);
+              const empTimeLogs = monthTimeLogs.filter(
+                (t) => t.employee.id === emp.id
+              );
               const workedDays = new Set(
                 empTimeLogs.map((t) => new Date(t.logDate).toDateString())
               ).size;
@@ -146,7 +153,7 @@ export default function MonthlySummaryTable({
               // Hourly rate
               let hourlyRate = 0;
               if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
-                hourlyRate = emp.monthlySalary / STANDARD_MONTHLY_HOURS;
+                hourlyRate = emp.monthlySalary / 160;
               } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
                 hourlyRate = emp.hourlyRate;
               }
@@ -155,7 +162,12 @@ export default function MonthlySummaryTable({
 
               return (
                 <tr key={emp.id} className="border-t">
-                  <td className="p-3 border font-medium">{emp.name}</td>
+                  <td
+                    className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
+                    title={emp.name} // tooltip on hover
+                  >
+                    {emp.name}
+                  </td>
                   <td className="p-3 border text-center">{emp.contractType}</td>
                   <td className="p-3 border text-center">{scheduledDays}</td>
                   <td className="p-3 border text-center">{workedDays}</td>
@@ -165,7 +177,9 @@ export default function MonthlySummaryTable({
                   <td className="p-3 border text-center font-semibold">
                     {workedHours.toFixed(2)}
                   </td>
-                  <td className="p-3 border text-center">{hourlyRate.toFixed(2)}</td>
+                  <td className="p-3 border text-center">
+                    {hourlyRate.toFixed(2)}
+                  </td>
                   <td className="p-3 border text-center font-semibold">
                     {salaryEarned.toFixed(2)}
                   </td>
