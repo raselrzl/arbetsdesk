@@ -30,7 +30,9 @@ function getWeekRange(offset = 0) {
 }
 
 function getWeekNumber(date: Date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -107,13 +109,21 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
       </div>
 
       {/* TABLE */}
+      {/* TABLE */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-collapse text-sm min-w-max">
           <thead>
             <tr className="bg-teal-100">
-              <th className="p-3 border text-left">Schedule</th>
+              {/* Employee Column */}
+              <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
+                Schedule
+              </th>
+
               {daysOfWeek.map((day) => (
-                <th key={formatDate(day)} className="p-3 border text-center">
+                <th
+                  key={formatDate(day)}
+                  className="p-3 border text-center w-28"
+                >
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
                   <p className="text-xs text-gray-600">{formatDate(day)}</p>
                 </th>
@@ -124,21 +134,32 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           <tbody>
             {employees.map((emp) => (
               <tr key={emp.id} className="border-t">
-                <td className="p-3 border font-medium">{emp.name}</td>
+                <td
+                  className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
+                  title={emp.name} // tooltip on hover for full name
+                >
+                  {emp.name}
+                </td>
 
                 {daysOfWeek.map((day) => {
                   const dayKey = formatDate(day);
                   const empSchedules =
-                    schedulesByDay[dayKey]?.filter((s) => s.employee.id === emp.id) || [];
+                    schedulesByDay[dayKey]?.filter(
+                      (s) => s.employee.id === emp.id
+                    ) || [];
 
                   return (
-                    <td key={dayKey} className="p-3 border text-xs">
+                    <td
+                      key={dayKey}
+                      className="p-3 border text-xs text-center w-28"
+                    >
                       {empSchedules.length === 0 ? (
                         <span className="text-gray-400">—</span>
                       ) : (
                         empSchedules.map((sch) => (
                           <div key={sch.id}>
-                            {formatTime(sch.startTime)} – {formatTime(sch.endTime)}
+                            {formatTime(sch.startTime)} –{" "}
+                            {formatTime(sch.endTime)}
                           </div>
                         ))
                       )}
