@@ -11,6 +11,7 @@ import {
 } from "./schedules";
 import DatePicker from "react-multi-date-picker";
 import WeeklyScheduleTable from "./WeeklyScheduleTable";
+import MonthlyScheduleTable from "./MonthlyScheduleTable";
 
 export default function CompanySchedulePage() {
   const [employeesFromDB, setEmployeesFromDB] = useState<
@@ -285,6 +286,7 @@ export default function CompanySchedulePage() {
       </div>
 
       <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
+      <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} />
     </div>
   );
 }
