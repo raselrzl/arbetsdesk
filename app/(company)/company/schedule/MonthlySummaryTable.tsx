@@ -60,7 +60,6 @@ export default function MonthlySummaryTable({
   const [monthOffset, setMonthOffset] = useState(0);
   const { start, end } = getMonthRange(monthOffset);
 
-  // Filter schedules and timelogs within the month
   const monthSchedules = schedules.filter((s) => {
     const d = new Date(s.date);
     return d >= start && d <= end;
@@ -72,33 +71,34 @@ export default function MonthlySummaryTable({
   });
 
   const STANDARD_MONTHLY_HOURS = 160;
+  const totalDaysInMonth = end.getDate();
 
   return (
-    <div className="mt-12 space-y-3">
+    <div className="mt-12 space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold text-gray-100 bg-teal-950 px-2 py-1 uppercase">
+        <div className="font-bold text-gray-100 bg-teal-900 px-4 py-2 uppercase rounded shadow-sm">
           Monthly Summary · {format(start, "yyyy-MM")}
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setMonthOffset((m) => m - 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded text-xs font-medium"
           >
             ← Prev
           </button>
 
           <button
             onClick={() => setMonthOffset(0)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded text-xs font-medium"
           >
             Current
           </button>
 
           <button
             onClick={() => setMonthOffset((m) => m + 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded text-xs font-medium"
           >
             Next →
           </button>
@@ -106,27 +106,40 @@ export default function MonthlySummaryTable({
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
-            <tr className="bg-teal-100">
-              {/* Employee column */}
-              <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
+            <tr className="bg-teal-100 shadow-inner">
+              <th className="p-3 border text-left sticky left-0 bg-teal-900 text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Employee
               </th>
               <th className="p-3 border text-center">Contract</th>
-              <th className="p-3 border text-center">Scheduled Days</th>
-              <th className="p-3 border text-center">Worked Days</th>
-              <th className="p-3 border text-center">Scheduled Hours</th>
-              <th className="p-3 border text-center">Worked Hours</th>
+
+              {/* Days column */}
+              <th className="p-3 border text-center">
+                Days
+                <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
+                  <span className="px-2 py-0.5 bg-blue-500 text-white">Scheduled</span>
+                  <span className="px-2 py-0.5 bg-green-500 text-white">Worked</span>
+                </div>
+              </th>
+
+              {/* Hours column */}
+              <th className="p-3 border text-center">
+                Hours
+                <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
+                  <span className="px-2 py-0.5 bg-purple-500 text-white">Scheduled</span>
+                  <span className="px-2 py-0.5 bg-orange-500 text-white">Worked</span>
+                </div>
+              </th>
+
               <th className="p-3 border text-center">Hourly Rate</th>
               <th className="p-3 border text-center">Salary Earned</th>
             </tr>
           </thead>
 
           <tbody>
-            {employees.map((emp) => {
-              // Scheduled info
+            {employees.map((emp, idx) => {
               const empSchedules = monthSchedules.filter(
                 (s) => s.employee.id === emp.id
               );
@@ -138,7 +151,6 @@ export default function MonthlySummaryTable({
                 0
               );
 
-              // TimeLog info
               const empTimeLogs = monthTimeLogs.filter(
                 (t) => t.employee.id === emp.id
               );
@@ -150,39 +162,69 @@ export default function MonthlySummaryTable({
                 0
               );
 
-              // Hourly rate
               let hourlyRate = 0;
               if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
-                hourlyRate = emp.monthlySalary / 160;
+                hourlyRate = emp.monthlySalary / STANDARD_MONTHLY_HOURS;
               } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
                 hourlyRate = emp.hourlyRate;
               }
 
               const salaryEarned = workedHours * hourlyRate;
 
+              const scheduledHoursPercent = Math.min((scheduledHours / STANDARD_MONTHLY_HOURS) * 100, 100);
+              const workedHoursPercent = Math.min((workedHours / STANDARD_MONTHLY_HOURS) * 100, 100);
+
               return (
-                <tr key={emp.id} className="border-t">
+                <tr
+                  key={emp.id}
+                  className={`border-t hover:bg-gray-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                >
                   <td
-                    className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
-                    title={emp.name} // tooltip on hover
+                    className="p-3 border font-medium sticky left-0 bg-teal-600 text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
+                    title={emp.name}
                   >
                     {emp.name}
                   </td>
                   <td className="p-3 border text-center">{emp.contractType}</td>
-                  <td className="p-3 border text-center">{scheduledDays}</td>
-                  <td className="p-3 border text-center">{workedDays}</td>
-                  <td className="p-3 border text-center font-semibold">
-                    {scheduledHours.toFixed(2)}
+
+                  {/* Days column */}
+                  <td className="p-0 border text-center h-12">
+                    <div className="flex flex-col h-full w-full">
+                      <div
+                        className="h-1/2 w-full bg-blue-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{ width: `${(scheduledDays / totalDaysInMonth) * 100}%` }}
+                      >
+                        {scheduledDays}
+                      </div>
+                      <div
+                        className="h-1/2 w-full bg-green-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{ width: `${(workedDays / totalDaysInMonth) * 100}%` }}
+                      >
+                        {workedDays}
+                      </div>
+                    </div>
                   </td>
-                  <td className="p-3 border text-center font-semibold">
-                    {workedHours.toFixed(2)}
+
+                  {/* Hours column */}
+                  <td className="p-0 border text-center h-12">
+                    <div className="flex flex-col h-full w-full">
+                      <div
+                        className="h-1/2 w-full bg-purple-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{ width: `${scheduledHoursPercent}%` }}
+                      >
+                        {scheduledHours.toFixed(1)}
+                      </div>
+                      <div
+                        className="h-1/2 w-full bg-orange-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{ width: `${workedHoursPercent}%` }}
+                      >
+                        {workedHours.toFixed(1)}
+                      </div>
+                    </div>
                   </td>
-                  <td className="p-3 border text-center">
-                    {hourlyRate.toFixed(2)}
-                  </td>
-                  <td className="p-3 border text-center font-semibold">
-                    {salaryEarned.toFixed(2)}
-                  </td>
+
+                  <td className="p-3 border text-center font-medium">{hourlyRate.toFixed(2)}</td>
+                  <td className="p-3 border text-center font-semibold">{salaryEarned.toFixed(2)}</td>
                 </tr>
               );
             })}
