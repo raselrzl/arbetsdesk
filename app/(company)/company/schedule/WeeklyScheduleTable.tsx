@@ -77,7 +77,7 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           Week of{" "}
           {start.toLocaleDateString()} – {end.toLocaleDateString()}
         </div> */}
-        <div className="font-semibold text-teal-700">
+        <div className="font-semibold text-gray-100 bg-teal-950 px-2 py-1 uppercase">
           Week {weekNumber} · {start.toLocaleDateString()} –{" "}
           {end.toLocaleDateString()}
         </div>

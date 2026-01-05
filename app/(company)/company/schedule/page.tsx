@@ -118,8 +118,10 @@ export default function CompanySchedulePage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4">Working Schedule</h1>
-   {/*    <p className="text-teal-600 mb-6">
+      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4">
+        Working Schedule
+      </h1>
+      {/*    <p className="text-teal-600 mb-6">
         Plan upcoming sessions and build schedules for your team in just a few
         clicks.
       </p> */}
@@ -127,7 +129,6 @@ export default function CompanySchedulePage() {
       <ClockDisplay />
 
       <div className="bg-white p-6 rounded-xs border border-teal-900 space-y-4">
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Employees */}
           <div className="flex flex-col gap-2">
@@ -283,7 +284,7 @@ export default function CompanySchedulePage() {
         </button>
       </div>
 
-     <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
+      <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
     </div>
   );
 }
