@@ -22,12 +22,12 @@ export default async function Navbar() {
     <nav className="w-full bg-white shadow-sm shadow-teal-100 px-4 py-3 fixed top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* LOGO */}
-        <div className="text-2xl font-bold uppercase text-teal-900">
+        <div className="text-xl font-bold uppercase text-teal-900">
           <Link href="/">Arbets-desk</Link>
         </div>
 
         {/* DESKTOP NAV */}
-        <div className="hidden md:flex items-center gap-6 text-teal-900">
+        <div className="hidden md:flex items-center gap-3 text-teal-900">
           <Dropdown
             label="Features"
             href="/features"
@@ -66,9 +66,9 @@ export default async function Navbar() {
           <Link href="/contact" className="hover:text-teal-700">
             Contact
           </Link>
-          <Link href="/admin/createuser" className="hover:text-teal-700">
+         {/*  <Link href="/admin/createuser" className="hover:text-teal-700">
             Register
-          </Link>
+          </Link> */}
 
           {/* User Menu */}
           <UserMenu user={user} />
