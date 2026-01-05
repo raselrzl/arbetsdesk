@@ -95,15 +95,19 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
 
       {/* TABLE */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-xs">
+        <table className="min-w-[1200px] border-collapse text-xs">
           <thead>
             <tr className="bg-teal-100">
-              <th className="p-2 border text-left sticky left-0 bg-teal-100 z-10">
+              {/* Employee column fixed width */}
+              <th className="p-2 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Employee
               </th>
 
               {daysInMonth.map((day) => (
-                <th key={day.toDateString()} className="p-2 border text-center">
+                <th
+                  key={day.toDateString()}
+                  className="p-2 border text-center min-w-[60px]"
+                >
                   {day.getDate()}
                   <p className="text-[10px] text-gray-600">
                     {day.toLocaleDateString(undefined, { weekday: "short" })}
@@ -111,7 +115,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                 </th>
               ))}
 
-              <th className="p-2 border text-center bg-teal-100">
+              <th className="p-2 border text-center bg-teal-100 w-20">
                 Total (h)
               </th>
             </tr>
@@ -121,14 +125,11 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
             {employees.map((emp) => {
               const totalHours = monthSchedules
                 .filter((s) => s.employee.id === emp.id)
-                .reduce(
-                  (sum, s) => sum + diffHours(s.startTime, s.endTime),
-                  0
-                );
+                .reduce((sum, s) => sum + diffHours(s.startTime, s.endTime), 0);
 
               return (
                 <tr key={emp.id} className="border-t">
-                  <td className="p-2 border font-medium sticky left-0 bg-white z-10">
+                  <td className="p-2 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                     {emp.name}
                   </td>
 
@@ -140,12 +141,15 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                       ) || [];
 
                     return (
-                      <td key={dayKey} className="p-2 border text-center">
+                      <td
+                        key={dayKey}
+                        className="p-2 border text-center min-w-[60px]"
+                      >
                         {empSchedules.length === 0 ? (
                           <span className="text-gray-300">—</span>
                         ) : (
                           empSchedules.map((sch) => (
-                            <div key={sch.id}>
+                            <div key={sch.id} className="whitespace-nowrap">
                               {new Date(sch.startTime).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -164,7 +168,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                     );
                   })}
 
-                  <td className="p-2 border text-center font-semibold bg-gray-50">
+                  <td className="p-2 border text-center font-semibold bg-gray-50 w-20">
                     {totalHours.toFixed(2)}
                   </td>
                 </tr>
