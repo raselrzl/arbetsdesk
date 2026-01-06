@@ -223,14 +223,14 @@ export default function MySchedulePage() {
                     <td className="p-2 border border-teal-100 text-gray-500 w-24">
                       {dateKey}
                     </td>
-                    <td className="p-2 border border-teal-100 font-semibold text-teal-900">
+                    <td className="p-2 border border-teal-100 text-center font-semibold text-teal-900">
                       {daySchedules.length
                         ? daySchedules.map((s, idx) => (
                             <div key={idx}>
                               {formatTime(s.startTime)} – {formatTime(s.endTime)}
                             </div>
                           ))
-                        : "—"}
+                        : ""}
                     </td>
                     <td className="p-2 border border-teal-100 text-right text-teal-900 font-semibold">
                       {(() => {
@@ -244,7 +244,7 @@ export default function MySchedulePage() {
                             </span>
                           </>
                         ) : (
-                          "—"
+                          ""
                         );
                       })()}
                     </td>
