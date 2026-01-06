@@ -179,7 +179,7 @@ export default function MySchedulePage() {
                           ))
                         : "—"}
                     </td>
-                    <td className="p-2 border border-teal-100 text-right text-teal-900 font-bold">
+                    <td className="p-2 border border-teal-100 text-right text-teal-900 font-semibold">
                       {(() => {
                         const h = daySchedules.reduce(
                           (a, s) => a + s.hours,
