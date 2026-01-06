@@ -1,7 +1,6 @@
 "use client";
-
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function EditableField({
   label,
@@ -36,12 +35,11 @@ export default function EditableField({
     try {
       await onSave?.(oldVal, newVal);
       setSuccess(`${label} updated successfully!`);
-
       setTimeout(() => {
         setOpen(false);
         setSuccess("");
         setLoading(false);
-        window.location.reload(); // refresh page to reflect new value
+        window.location.reload();
       }, 1000);
     } catch (err: any) {
       setError(err?.message || "Update failed");
@@ -50,67 +48,75 @@ export default function EditableField({
   }
 
   return (
-    <div className="border rounded-md p-3 flex justify-between items-center">
-      <div>
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="font-medium">{masked && !showValue ? "****" : value ?? "-"}</p>
-      </div>
-
-      <div className="flex gap-2">
-        {masked && (
-          <button
-            type="button"
-            onClick={() => setShowValue(!showValue)}
-            className="text-xs text-gray-500 hover:underline"
-          >
-            {showValue ? "Hide" : "View"}
-          </button>
-        )}
-
-        {!disabled && (
-          <button
-            onClick={() => setOpen(true)}
-            className="text-sm text-teal-600 hover:underline"
-          >
-            Edit
-          </button>
-        )}
+    <>
+      <div className="grid grid-cols-3 items-center border rounded-xs overflow-hidden">
+        <div className="bg-gray-100 p-4 text-gray-800 text-xs font-semibold">
+          {label}
+        </div>
+        <div className="col-span-2 p-2 flex justify-between items-center">
+          <span>{masked && !showValue ? "****" : value ?? "-"}</span>
+          <div className="flex gap-2">
+            {masked && (
+              <button
+                type="button"
+                onClick={() => setShowValue(!showValue)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {showValue ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            )}
+            {!disabled && (
+              <button
+                onClick={() => setOpen(true)}
+                className="text-teal-600 hover:underline text-xs"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {open && (
         <div className="fixed inset-0 bg-black/40 grid place-items-center z-50">
-          <div className="bg-white p-6 rounded-md w-80">
+          <div className="bg-white text-teal-900 p-6 rounded-xs w-80">
             <h3 className="font-semibold mb-3">Edit {label}</h3>
 
             <input
               type={masked ? "password" : "text"}
               placeholder="Current"
-              className="input w-full"
+              className="input w-full border h-8 p-2 border-teal-100 mt-2"
               onChange={(e) => setOldVal(e.target.value)}
             />
             <input
               type={masked ? "password" : "text"}
               placeholder="New"
-              className="input w-full mt-2"
+              className="input w-full border h-8 p-2 border-teal-100 mt-2"
               onChange={(e) => setNewVal(e.target.value)}
             />
             <input
               type={masked ? "password" : "text"}
               placeholder="Confirm New"
-              className="input w-full mt-2"
+              className="input w-full border h-8 p-2 border-teal-100 mt-2"
               onChange={(e) => setConfirm(e.target.value)}
             />
 
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-            {success && <p className="text-green-500 text-xs mt-1">{success}</p>}
+            {success && (
+              <p className="text-green-500 text-xs mt-1">{success}</p>
+            )}
 
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setOpen(false)} disabled={loading}>
+              <button onClick={() => setOpen(false)} disabled={loading} className="border px-2 py-1 border-red-500 rounded-xs">
                 Cancel
               </button>
               <button
                 onClick={submit}
-                className={`bg-teal-600 text-white px-3 py-1 rounded flex items-center gap-2 ${
+                className={`bg-teal-900 text-white px-3 py-1 rounded flex items-center gap-2 rounded-xs${
                   loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
                 disabled={loading}
@@ -122,6 +128,6 @@ export default function EditableField({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

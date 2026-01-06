@@ -31,10 +31,9 @@ export default async function EmployeeLayout({
   if (!employee) redirect("/login");
 
   return (
-    <div className="bg-teal-50 min-h-screen">
-      {/* ✅ Pass employee info */}
+    <div className="min-h-screen">
       <EmployeeNavbar employee={employee} />
-      {children}
+      <div className="px-2">{children}</div>
     </div>
   );
 }
