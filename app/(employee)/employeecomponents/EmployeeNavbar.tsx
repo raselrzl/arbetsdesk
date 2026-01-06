@@ -21,9 +21,9 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
   const companies = [employee.company.name];
 
   const links = [
-    { href: "/employee/schedule", label: "My Schedule", icon: Calendar },
-    { href: "/employee/salary-hours", label: "Salary & Hours", icon: Clock },
-    { href: "/employee/profile", label: "Profile", icon: User },
+    { href: "/employee/schedule", label: "My Schedule" },
+    { href: "/employee/salary-hours", label: "Salary & Hours" },
+    { href: "/employee/profile", label: "Profile" },
   ];
 
   return (
@@ -40,17 +40,16 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
             </div>
 
             <div className="hidden md:flex flex-wrap items-center gap-4 lg:gap-6 font-medium">
-              {links.map(({ href, label, icon: Icon }) => {
+              {links.map(({ href, label }) => {
                 const active = pathname === href;
                 return (
                   <Link
                     key={href}
                     href={href}
-                    className={`flex items-center gap-2 px-2 py-1 rounded-full transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-0.5 rounded-full transition-colors ${
                       active ? "bg-teal-700" : "hover:bg-teal-600"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
                     {label}
                   </Link>
                 );
