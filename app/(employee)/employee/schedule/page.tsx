@@ -57,9 +57,7 @@ export default function MySchedulePage() {
 
     getEmployeeMonthlySchedule(currentMonth)
       .then((data) => {
-        setTodaySchedules(
-          data.filter((s) => s.date.slice(0, 10) === todayKey)
-        );
+        setTodaySchedules(data.filter((s) => s.date.slice(0, 10) === todayKey));
       })
       .catch(console.error);
   }, []);
@@ -127,13 +125,17 @@ export default function MySchedulePage() {
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setView("calendar")}
-            className={`p-2 border border-teal-100 ${view === "calendar" ? "bg-teal-200" : ""}`}
+            className={`p-2 border border-teal-100 ${
+              view === "calendar" ? "bg-teal-200" : ""
+            }`}
           >
             <Calendar className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView("table")}
-            className={`p-2 border border-teal-100${view === "table" ? "bg-teal-200" : ""}`}
+            className={`p-2 border border-teal-100 ${
+              view === "table" ? "bg-teal-200" : ""
+            }`}
           >
             <List className="w-4 h-4" />
           </button>
@@ -171,12 +173,18 @@ export default function MySchedulePage() {
             const dateKey = `${month}-${day}`;
             const daySchedules = schedulesByDate[dateKey] || [];
 
+            // ---------------- WEEKEND CHECK ----------------
+            const dateObj = new Date(year, monthNum - 1, i + 1);
+            const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 6 = Saturday
+
             return (
               <div
                 key={dateKey}
                 className={`border p-2 min-h-20 ${
                   dateKey === todayKey
                     ? "bg-amber-100 border-amber-300"
+                    : dayOfWeek === 0 || dayOfWeek === 6
+                    ? "bg-gray-200 border-teal-100"
                     : "border-teal-100"
                 }`}
               >
@@ -213,11 +221,18 @@ export default function MySchedulePage() {
                 const dateKey = `${month}-${day}`;
                 const daySchedules = schedulesByDate[dateKey] || [];
 
+                const dateObj = new Date(year, monthNum - 1, i + 1);
+                const dayOfWeek = dateObj.getDay();
+
                 return (
                   <tr
                     key={dateKey}
                     className={
-                      dateKey === todayKey ? "bg-amber-100" : "even:bg-gray-50"
+                      dateKey === todayKey
+                        ? "bg-amber-100"
+                        : dayOfWeek === 0 || dayOfWeek === 6
+                        ? "bg-red-100 border-teal-100"
+                        : "even:bg-gray-50"
                     }
                   >
                     <td className="p-2 border border-teal-100 text-gray-500 w-24">
@@ -227,7 +242,8 @@ export default function MySchedulePage() {
                       {daySchedules.length
                         ? daySchedules.map((s, idx) => (
                             <div key={idx}>
-                              {formatTime(s.startTime)} – {formatTime(s.endTime)}
+                              {formatTime(s.startTime)} –{" "}
+                              {formatTime(s.endTime)}
                             </div>
                           ))
                         : ""}
@@ -254,7 +270,10 @@ export default function MySchedulePage() {
 
               {/* 🔹 TOTAL ROW */}
               <tr className="bg-teal-800 text-white font-bold uppercase">
-                <td className="p-2 border border-teal-200 text-right" colSpan={2}>
+                <td
+                  className="p-2 border border-teal-200 text-right"
+                  colSpan={2}
+                >
                   Total Working Days: {totalDays}
                 </td>
                 <td className="p-2 border border-teal-200 text-right">
