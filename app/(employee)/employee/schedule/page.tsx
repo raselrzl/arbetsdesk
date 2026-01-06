@@ -140,7 +140,61 @@ export default function MySchedulePage() {
         </div>
       </div>
 
+      {/* TODAY BOX */}
+      <div
+        className={`border p-4 ${
+          todaySchedules.length
+            ? "bg-amber-100 border-amber-300"
+            : "bg-teal-50 border-teal-200"
+        }`}
+      >
+        <div className="font-semibold mb-1">Today ({todayKey})</div>
+
+        {todaySchedules.length ? (
+          todaySchedules.map((s, i) => (
+            <div key={i} className="text-sm">
+              {formatTime(s.startTime)} – {formatTime(s.endTime)}
+            </div>
+          ))
+        ) : (
+          <span className="text-gray-500">—</span>
+        )}
+      </div>
+
       {loading && <p className="text-gray-400">Loading schedule…</p>}
+
+      {/* CALENDAR VIEW */}
+      {!loading && view === "calendar" && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1 sm:gap-2">
+          {Array.from({ length: daysInMonth }, (_, i) => {
+            const day = (i + 1).toString().padStart(2, "0");
+            const dateKey = `${month}-${day}`;
+            const daySchedules = schedulesByDate[dateKey] || [];
+
+            return (
+              <div
+                key={dateKey}
+                className={`border p-2 min-h-20 ${
+                  dateKey === todayKey
+                    ? "bg-amber-100 border-amber-300"
+                    : "border-teal-100"
+                }`}
+              >
+                <div className="font-semibold text-sm text-teal-950">{day}</div>
+                {daySchedules.length ? (
+                  daySchedules.map((s, idx) => (
+                    <div key={idx} className="text-xs text-teal-700">
+                      {formatTime(s.startTime)} – {formatTime(s.endTime)}
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-gray-400 text-sm">—</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* TABLE VIEW */}
       {!loading && view === "table" && (
@@ -166,25 +220,21 @@ export default function MySchedulePage() {
                       dateKey === todayKey ? "bg-amber-100" : "even:bg-gray-50"
                     }
                   >
-                    <td className="p-2 border border-teal-100 text-gray-500">
+                    <td className="p-2 border border-teal-100 text-gray-500 w-24">
                       {dateKey}
                     </td>
                     <td className="p-2 border border-teal-100 font-semibold text-teal-900">
                       {daySchedules.length
                         ? daySchedules.map((s, idx) => (
                             <div key={idx}>
-                              {formatTime(s.startTime)} –{" "}
-                              {formatTime(s.endTime)}
+                              {formatTime(s.startTime)} – {formatTime(s.endTime)}
                             </div>
                           ))
                         : "—"}
                     </td>
                     <td className="p-2 border border-teal-100 text-right text-teal-900 font-semibold">
                       {(() => {
-                        const h = daySchedules.reduce(
-                          (a, s) => a + s.hours,
-                          0
-                        );
+                        const h = daySchedules.reduce((a, s) => a + s.hours, 0);
                         return h > 0 ? (
                           <>
                             {h.toFixed(1)}
@@ -202,10 +252,10 @@ export default function MySchedulePage() {
                 );
               })}
 
-              {/* 🔹 TOTAL ROW (NEW) */}
-              <tr className="bg-teal-800 font-bold text-white uppercase">
+              {/* 🔹 TOTAL ROW */}
+              <tr className="bg-teal-800 text-white font-bold uppercase">
                 <td className="p-2 border border-teal-200 text-right" colSpan={2}>
-                  Days: {totalDays}
+                  Total Working Days: {totalDays}
                 </td>
                 <td className="p-2 border border-teal-200 text-right">
                   {totalHours.toFixed(1)}
@@ -220,7 +270,7 @@ export default function MySchedulePage() {
         </div>
       )}
 
-       {/* TOTALS */}
+      {/* TOTALS BOX */}
       <div className="bg-teal-300 p-4 flex items-center gap-6">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5" />
