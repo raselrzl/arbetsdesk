@@ -23,12 +23,12 @@ export default function EmployeeNavbar({
   return (
     <>
       {/* TOP NAV */}
-      <nav className="w-full bg-teal-600 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
+      <nav className="w-full bg-teal-800 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center gap-8">
             <div className="text-2xl font-bold tracking-wide">
-              <Link href="/employee">Arbetsdesk</Link>
+              <Link href="/employee" className="uppercase">Arbetsdesk</Link>
             </div>
 
             <div className="hidden md:flex items-center gap-6 font-medium">

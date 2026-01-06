@@ -190,3 +190,97 @@ export async function logoutUserAction() {
   cookieStore.delete("employee_session");
   redirect("/");
 }
+
+
+export async function getEmployeeProfile() {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+
+  if (!employeeId) throw new Error("Unauthorized");
+
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      personalNumber: true,
+      contractType: true,
+      pinCode: true,
+      hourlyRate: true,
+      monthlySalary: true,
+      createdAt: true,
+      company: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  if (!employee) throw new Error("Employee not found");
+
+  return employee;
+}
+
+
+async function  getEmployeeId() {
+  const jar =await cookies();
+  const id = jar.get("employee_session")?.value;
+  if (!id) throw new Error("Unauthorized");
+  return id;
+}
+
+/* -------- UPDATE NAME -------- */
+export async function updateName(oldValue: string, newValue: string) {
+  const id =await getEmployeeId();
+
+  const emp = await prisma.employee.findUnique({ where: { id } });
+  if (!emp || emp.name !== oldValue) throw new Error("Invalid current name");
+
+  await prisma.employee.update({
+    where: { id },
+    data: { name: newValue },
+  });
+}
+
+/* -------- UPDATE EMAIL -------- */
+export async function updateEmail(oldValue: string, newValue: string) {
+  const id =await getEmployeeId();
+
+  const emp = await prisma.employee.findUnique({ where: { id } });
+  if (!emp || emp.email !== oldValue) throw new Error("Invalid current email");
+
+  await prisma.employee.update({
+    where: { id },
+    data: { email: newValue },
+  });
+}
+
+/* -------- UPDATE PHONE -------- */
+export async function updatePhone(oldValue: string, newValue: string) {
+  const id =await getEmployeeId();
+
+  const emp = await prisma.employee.findUnique({ where: { id } });
+  if (!emp || emp.phone !== oldValue) throw new Error("Invalid current phone");
+
+  await prisma.employee.update({
+    where: { id },
+    data: { phone: newValue },
+  });
+}
+
+/* -------- UPDATE PIN -------- */
+export async function updatePin(oldPin: string, newPin: string) {
+  const id =await getEmployeeId();
+
+  const emp = await prisma.employee.findUnique({ where: { id } });
+  if (!emp || emp.pinCode !== oldPin) throw new Error("Invalid PIN");
+
+  await prisma.employee.update({
+    where: { id },
+    data: { pinCode: newPin },
+  });
+}
