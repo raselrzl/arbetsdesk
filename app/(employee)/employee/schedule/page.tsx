@@ -158,15 +158,22 @@ export default function MySchedulePage() {
 
       {/* CALENDAR VIEW */}
       {!loading && view === "calendar" && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1 sm:gap-2">
           {Array.from({ length: daysInMonth }, (_, i) => {
             const day = (i + 1).toString().padStart(2, "0");
             const dateKey = `${month}-${day}`;
             const daySchedules = schedulesByDate[dateKey] || [];
 
             return (
-              <div key={dateKey} className="border p-2 min-h-[90px]">
-                <div className="font-semibold text-sm">{day}</div>
+              <div
+                key={dateKey}
+                className={`border p-2 min-h-20 ${
+                  dateKey === todayKey
+                    ? "bg-amber-100 border-amber-300"
+                    : "border-teal-100"
+                }`}
+              >
+                <div className="font-semibold text-sm text-teal-950">{day}</div>
                 {daySchedules.length ? (
                   daySchedules.map((s, idx) => (
                     <div key={idx} className="text-xs text-teal-700">
@@ -200,7 +207,12 @@ export default function MySchedulePage() {
                 const daySchedules = schedulesByDate[dateKey] || [];
 
                 return (
-                  <tr key={dateKey} className="even:bg-gray-50">
+                  <tr
+                    key={dateKey}
+                    className={
+                      dateKey === todayKey ? "bg-amber-100" : "even:bg-gray-50"
+                    }
+                  >
                     <td className="p-2 border border-teal-100">{dateKey}</td>
                     <td className="p-2 border border-teal-100">
                       {daySchedules.length
