@@ -33,7 +33,7 @@ export default async function EmployeeLayout({
   return (
     <div className="min-h-screen">
       <EmployeeNavbar employee={employee} />
-      <div className="px-2">{children}</div>
+      <div className="px-2 pt-4">{children}</div>
     </div>
   );
 }
