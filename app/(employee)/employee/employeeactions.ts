@@ -15,10 +15,7 @@ export async function getEmployeeSchedule() {
 
   const schedules = await prisma.schedule.findMany({
     where: { employeeId },
-    orderBy: [
-      { date: "asc" },
-      { startTime: "asc" },
-    ],
+    orderBy: [{ date: "asc" }, { startTime: "asc" }],
     select: {
       id: true,
       date: true,
@@ -115,8 +112,7 @@ export async function getEmployeeMonthlySchedule(month: string) {
   });
 
   return schedules.map((s) => {
-    const minutes =
-      (s.endTime.getTime() - s.startTime.getTime()) / 60000;
+    const minutes = (s.endTime.getTime() - s.startTime.getTime()) / 60000;
 
     return {
       date: s.date.toISOString().slice(0, 10),
@@ -126,9 +122,6 @@ export async function getEmployeeMonthlySchedule(month: string) {
     };
   });
 }
-
-
-
 
 export type DailyWork = {
   date: string;
@@ -145,7 +138,9 @@ export type Employee = {
   monthlySalary?: number | null;
 };
 
-export async function getEmployeeMonthlyData(month: string): Promise<{ employee: Employee; dailyWork: DailyWork[] }> {
+export async function getEmployeeMonthlyData(
+  month: string
+): Promise<{ employee: Employee; dailyWork: DailyWork[] }> {
   const jar = await cookies();
   const employeeId = jar.get("employee_session")?.value;
   if (!employeeId) throw new Error("Unauthorized");
@@ -177,20 +172,20 @@ export async function getEmployeeMonthlyData(month: string): Promise<{ employee:
     totalMinutes:
       log.totalMinutes ??
       (log.loginTime && log.logoutTime
-        ? Math.floor((log.logoutTime.getTime() - log.loginTime.getTime()) / 60000)
+        ? Math.floor(
+            (log.logoutTime.getTime() - log.loginTime.getTime()) / 60000
+          )
         : 0),
   }));
 
   return { employee: emp, dailyWork: daily };
 }
 
-
 export async function logoutUserAction() {
-  const cookieStore =await cookies();
+  const cookieStore = await cookies();
   cookieStore.delete("employee_session");
   redirect("/");
 }
-
 
 export async function getEmployeeProfile() {
   const jar = await cookies();
@@ -225,9 +220,8 @@ export async function getEmployeeProfile() {
   return employee;
 }
 
-
-async function  getEmployeeId() {
-  const jar =await cookies();
+async function getEmployeeId() {
+  const jar = await cookies();
   const id = jar.get("employee_session")?.value;
   if (!id) throw new Error("Unauthorized");
   return id;
@@ -235,7 +229,7 @@ async function  getEmployeeId() {
 
 /* -------- UPDATE NAME -------- */
 export async function updateName(oldValue: string, newValue: string) {
-  const id =await getEmployeeId();
+  const id = await getEmployeeId();
 
   const emp = await prisma.employee.findUnique({ where: { id } });
   if (!emp || emp.name !== oldValue) throw new Error("Invalid current name");
@@ -248,7 +242,7 @@ export async function updateName(oldValue: string, newValue: string) {
 
 /* -------- UPDATE EMAIL -------- */
 export async function updateEmail(oldValue: string, newValue: string) {
-  const id =await getEmployeeId();
+  const id = await getEmployeeId();
 
   const emp = await prisma.employee.findUnique({ where: { id } });
   if (!emp || emp.email !== oldValue) throw new Error("Invalid current email");
@@ -261,7 +255,7 @@ export async function updateEmail(oldValue: string, newValue: string) {
 
 /* -------- UPDATE PHONE -------- */
 export async function updatePhone(oldValue: string, newValue: string) {
-  const id =await getEmployeeId();
+  const id = await getEmployeeId();
 
   const emp = await prisma.employee.findUnique({ where: { id } });
   if (!emp || emp.phone !== oldValue) throw new Error("Invalid current phone");
@@ -274,7 +268,7 @@ export async function updatePhone(oldValue: string, newValue: string) {
 
 /* -------- UPDATE PIN -------- */
 export async function updatePin(oldPin: string, newPin: string) {
-  const id =await getEmployeeId();
+  const id = await getEmployeeId();
 
   const emp = await prisma.employee.findUnique({ where: { id } });
   if (!emp || emp.pinCode !== oldPin) throw new Error("Invalid PIN");
@@ -283,4 +277,28 @@ export async function updatePin(oldPin: string, newPin: string) {
     where: { id },
     data: { pinCode: newPin },
   });
+}
+
+export async function getEmployeeAvailableMonths(): Promise<string[]> {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+  if (!employeeId) throw new Error("Unauthorized");
+
+  // Get distinct months from TimeLog
+  const logs = await prisma.timeLog.findMany({
+    where: { employeeId },
+    select: { logDate: true },
+    orderBy: { logDate: "asc" },
+  });
+
+  const monthsSet = new Set(
+    logs.map((log) => {
+      const d = log.logDate;
+      const year = d.getFullYear();
+      const month = (d.getMonth() + 1).toString().padStart(2, "0");
+      return `${year}-${month}`;
+    })
+  );
+
+  return Array.from(monthsSet).sort();
 }
