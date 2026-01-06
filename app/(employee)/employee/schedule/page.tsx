@@ -213,8 +213,10 @@ export default function MySchedulePage() {
                       dateKey === todayKey ? "bg-amber-100" : "even:bg-gray-50"
                     }
                   >
-                    <td className="p-2 border border-teal-100">{dateKey}</td>
-                    <td className="p-2 border border-teal-100">
+                    <td className="p-2 border border-teal-100 text-gray-500">
+                      {dateKey}
+                    </td>
+                    <td className="p-2 border border-teal-100 font-semibold text-teal-900">
                       {daySchedules.length
                         ? daySchedules.map((s, idx) => (
                             <div key={idx}>
@@ -224,10 +226,20 @@ export default function MySchedulePage() {
                           ))
                         : "—"}
                     </td>
-                    <td className="p-2 border border-teal-100 text-right">
+                    <td className="p-2 border border-teal-100 text-right text-teal-900 font-bold">
                       {(() => {
                         const h = daySchedules.reduce((a, s) => a + s.hours, 0);
-                        return h > 0 ? `${h.toFixed(1)}h` : "—";
+                        return h > 0 ? (
+                          <>
+                            {h.toFixed(1)}
+                            <span className="text-gray-500 text-[8px] ml-0.5 font-light">
+                              {" "}
+                              H
+                            </span>
+                          </>
+                        ) : (
+                          "—"
+                        );
                       })()}
                     </td>
                   </tr>
