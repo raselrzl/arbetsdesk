@@ -29,11 +29,11 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
   return (
     <>
       {/* TOP NAV */}
-      <nav className="w-full bg-teal-800 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
+      <nav className="w-full bg-teal-500 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
           {/* LEFT */}
           <div className="flex items-center flex-wrap gap-4 md:gap-8">
-            <div className="text-2xl font-bold tracking-wide">
+            <div className="text-xl font-bold tracking-wide">
               <Link href="/employee" className="uppercase">
                 Arbetsdesk
               </Link>
@@ -46,7 +46,7 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
                   <Link
                     key={href}
                     href={href}
-                    className={`flex items-center gap-2 px-2 py-1 rounded transition-colors ${
+                    className={`flex items-center gap-2 px-2 py-1 rounded-full transition-colors ${
                       active ? "bg-teal-700" : "hover:bg-teal-600"
                     }`}
                   >

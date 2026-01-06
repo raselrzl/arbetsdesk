@@ -50,10 +50,10 @@ export default function EditableField({
   return (
     <>
       <div className="grid grid-cols-3 items-center border rounded-xs overflow-hidden">
-        <div className="bg-gray-100 p-4 text-gray-800 text-xs font-semibold">
+        <div className="bg-gray-100 p-4 text-gray-900 text-xs font-semibold">
           {label}
         </div>
-        <div className="col-span-2 p-2 flex justify-between items-center">
+        <div className="col-span-2 px-2 py-1 flex justify-between items-center">
           <span>{masked && !showValue ? "****" : value ?? "-"}</span>
           <div className="flex gap-2">
             {masked && (

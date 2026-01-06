@@ -5,7 +5,7 @@ export default async function ProfilePage() {
   const employee = await getEmployeeProfile();
 
   return (
-    <div className="max-w-7xl mx-auto my-24 p-6 bg-teal-800 text-white rounded-md shadow">
+    <div className="max-w-7xl mx-auto my-24 p-6 bg-teal-500 text-white rounded-md shadow">
       <h1 className="text-2xl font-bold mb-6 uppercase">My Profile</h1>
 
       {/* PERSONAL INFORMATION */}
@@ -13,7 +13,7 @@ export default async function ProfilePage() {
         <EditableField label="Name" value={employee.name} onSave={updateName} />
         <EditableField label="Email" value={employee.email} onSave={updateEmail} />
         <EditableField label="Phone" value={employee.phone} onSave={updatePhone} />
-        <EditableField label="Personal Number" value={employee.personalNumber} disabled />
+        <EditableField label="ID" value={employee.personalNumber} disabled />
       </Section>
 
       {/* CONTRACT INFO */}
@@ -34,7 +34,7 @@ export default async function ProfilePage() {
         <EditableField label="Login PIN" value={employee.pinCode} masked onSave={updatePin} />
       </Section>
 
-      <p className="text-xs text-gray-400 mt-6">Employee ID: {employee.id}</p>
+      <p className="text-xs text-gray-500 mt-6">Employee ID: {employee.id}</p>
     </div>
   );
 }
@@ -45,7 +45,7 @@ export default async function ProfilePage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-6">
-      <h2 className="text-sm font-semibold text-teal-100 mb-3">{title}</h2>
+      <h2 className="text-md font-bold uppercase text-teal-900 mb-2">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
   );
@@ -53,7 +53,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Item({ label, value }: { label: string; value?: string | number | null }) {
   return (
-    <div className="border border-teal-100 rounded-xs p-2">
+    <div className="border border-teal-100 rounded-xs px-2 py-0.5">
       <p className="text-xs text-gray-500">{label}</p>
       <p className="font-medium">{value ?? "-"}</p>
     </div>
