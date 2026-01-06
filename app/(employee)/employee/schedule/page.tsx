@@ -1,23 +1,45 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Clock } from "lucide-react";
-import { getEmployeeMonthlySchedule } from "../employeeactions";
+import { Calendar, Clock, List } from "lucide-react";
+import {
+  getEmployeeMonthlySchedule,
+  getEmployeeAvailableMonths,
+} from "../employeeactions";
 
 type DailySchedule = {
-  date: string;        // YYYY-MM-DD
-  startTime: string;   // ISO string
-  endTime: string;     // ISO string
+  date: string; // YYYY-MM-DD
+  startTime: string;
+  endTime: string;
   hours: number;
 };
 
-export default function MySchedulePage() {
-  const [month, setMonth] = useState("2025-12");
-  const [scheduleData, setScheduleData] = useState<DailySchedule[]>([]);
-  const [loading, setLoading] = useState(true);
+type ViewMode = "calendar" | "table";
 
-  /* ---------------- FETCH SCHEDULE ---------------- */
+export default function MySchedulePage() {
+  const [month, setMonth] = useState("");
+  const [availableMonths, setAvailableMonths] = useState<string[]>([]);
+  const [scheduleData, setScheduleData] = useState<DailySchedule[]>([]);
+  const [todaySchedules, setTodaySchedules] = useState<DailySchedule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<ViewMode>("calendar");
+
+  /* ---------------- AVAILABLE MONTHS ---------------- */
   useEffect(() => {
+    async function fetchMonths() {
+      const months = await getEmployeeAvailableMonths();
+      if (months.length) {
+        const sorted = months.sort();
+        setAvailableMonths(sorted);
+        setMonth(sorted[sorted.length - 1]); // latest month
+      }
+    }
+    fetchMonths();
+  }, []);
+
+  /* ---------------- MONTHLY SCHEDULE ---------------- */
+  useEffect(() => {
+    if (!month) return;
     setLoading(true);
     getEmployeeMonthlySchedule(month)
       .then(setScheduleData)
@@ -25,18 +47,41 @@ export default function MySchedulePage() {
       .finally(() => setLoading(false));
   }, [month]);
 
-  /* ---------------- HELPERS ---------------- */
-  const formatTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  /* ---------------- TODAY SCHEDULE (INDEPENDENT) ---------------- */
+  useEffect(() => {
+    const today = new Date();
+    const todayKey = today.toISOString().slice(0, 10);
+    const currentMonth = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}`;
 
-  const daysInMonth = new Date(
-    Number(month.split("-")[0]),
-    Number(month.split("-")[1]),
-    0
-  ).getDate();
+    getEmployeeMonthlySchedule(currentMonth)
+      .then((data) => {
+        setTodaySchedules(data.filter((s) => s.date === todayKey));
+      })
+      .catch(console.error);
+  }, []);
+
+  /* ---------------- HELPERS ---------------- */
+  const formatTime = (iso?: string) =>
+    iso
+      ? new Date(iso).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "—";
+
+  const [year, monthNum] = month.split("-").map(Number);
+  const daysInMonth = new Date(year, monthNum, 0).getDate();
+
+  /* ---------------- GROUP BY DATE ---------------- */
+  const schedulesByDate = useMemo(() => {
+    return scheduleData.reduce<Record<string, DailySchedule[]>>((acc, s) => {
+      acc[s.date] = acc[s.date] || [];
+      acc[s.date].push(s);
+      return acc;
+    }, {});
+  }, [scheduleData]);
 
   /* ---------------- TOTAL HOURS ---------------- */
   const totalHours = useMemo(
@@ -44,98 +89,148 @@ export default function MySchedulePage() {
     [scheduleData]
   );
 
-  return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">My Schedule</h1>
-      <p className="text-gray-600">
-        View your work schedule for the selected month.
-      </p>
+  const todayKey = new Date().toISOString().slice(0, 10);
 
-      {/* Month Selector */}
-      <div className="bg-white p-4 rounded shadow flex items-center gap-3">
-        <Calendar className="w-5 h-5 text-teal-600" />
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          className="border p-2 rounded"
-        />
+  return (
+    <div className="p-4 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
+      {/* HEADER */}
+      <div>
+        <h1 className="text-xl font-bold uppercase text-teal-900">
+          My Schedule
+        </h1>
+        <p className="text-sm text-teal-500">Monthly work schedule overview</p>
       </div>
 
-      {/* Calendar */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-xl font-semibold mb-4">
-          Calendar ({month})
-        </h2>
+      {/* MONTH + VIEW */}
+      <div className="flex flex-wrap gap-3 items-center bg-white p-3 border border-teal-100">
+        <Calendar className="w-5 h-5 text-teal-600" />
 
-        {loading && (
-          <p className="text-sm text-gray-400">Loading schedule...</p>
+        <select
+          value={month}
+          onChange={(e) => setMonth(e.target.value)}
+          className="border border-teal-100 p-2"
+        >
+          {availableMonths.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
+
+        <div className="ml-auto flex gap-2">
+          <button
+            onClick={() => setView("calendar")}
+            className={`p-2 border ${view === "calendar" ? "bg-teal-200" : ""}`}
+          >
+            <Calendar className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setView("table")}
+            className={`p-2 border ${view === "table" ? "bg-teal-200" : ""}`}
+          >
+            <List className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* TODAY BOX */}
+      <div
+        className={`border p-4 ${
+          todaySchedules.length
+            ? "bg-amber-100 border-amber-300"
+            : "bg-teal-50 border-teal-200"
+        }`}
+      >
+        <div className="font-semibold mb-1">Today ({todayKey})</div>
+
+        {todaySchedules.length ? (
+          todaySchedules.map((s, i) => (
+            <div key={i} className="text-sm">
+              {formatTime(s.startTime)} – {formatTime(s.endTime)}
+            </div>
+          ))
+        ) : (
+          <span className="text-gray-500">—</span>
         )}
+      </div>
 
-        <div className="grid grid-cols-7 gap-1">
+      {loading && <p className="text-gray-400">Loading schedule…</p>}
+
+      {/* CALENDAR VIEW */}
+      {!loading && view === "calendar" && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
           {Array.from({ length: daysInMonth }, (_, i) => {
             const day = (i + 1).toString().padStart(2, "0");
             const dateKey = `${month}-${day}`;
-
-            // ✅ MULTIPLE schedules per day
-            const daySchedules = scheduleData.filter(
-              (s) => s.date === dateKey
-            );
-
-            const dayTotalHours = daySchedules.reduce(
-              (acc, s) => acc + s.hours,
-              0
-            );
+            const daySchedules = schedulesByDate[dateKey] || [];
 
             return (
-              <div
-                key={dateKey}
-                className={`min-h-28 border rounded p-2 flex flex-col items-center gap-1
-                  ${
-                    daySchedules.length
-                      ? "bg-teal-50"
-                      : "bg-gray-50"
-                  }`}
-              >
-                <span className="font-semibold">{day}</span>
-
-                {daySchedules.length > 0 ? (
-                  <>
-                    <div className="flex flex-col gap-1 w-full">
-                      {daySchedules.map((s, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white rounded px-1 py-0.5 text-center text-xs text-teal-700"
-                        >
-                          <div>
-                            {formatTime(s.startTime)} –{" "}
-                            {formatTime(s.endTime)}
-                          </div>
-                        </div>
-                      ))}
+              <div key={dateKey} className="border p-2 min-h-[90px]">
+                <div className="font-semibold text-sm">{day}</div>
+                {daySchedules.length ? (
+                  daySchedules.map((s, idx) => (
+                    <div key={idx} className="text-xs text-teal-700">
+                      {formatTime(s.startTime)} – {formatTime(s.endTime)}
                     </div>
-
-                    <div className="flex items-center gap-1 text-xs font-semibold text-teal-800 mt-auto">
-                      <Clock className="w-3 h-3" />
-                      {dayTotalHours.toFixed(1)}h
-                    </div>
-                  </>
+                  ))
                 ) : (
-                  <span className="text-gray-400 text-sm mt-auto">
-                    Off
-                  </span>
+                  <span className="text-gray-400 text-sm">—</span>
                 )}
               </div>
             );
           })}
         </div>
-      </div>
+      )}
 
-      {/* Total Hours */}
-      <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
-        <Clock className="w-5 h-5 text-teal-600" />
+      {/* TABLE VIEW */}
+      {!loading && view === "table" && (
+        <div className="overflow-x-auto bg-white border">
+          <table className="w-full text-sm">
+            <thead className="bg-teal-200">
+              <tr>
+                <th className="p-2 border">Date</th>
+                <th className="p-2 border">Schedule</th>
+                <th className="p-2 border">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: daysInMonth }, (_, i) => {
+                const day = (i + 1).toString().padStart(2, "0");
+                const dateKey = `${month}-${day}`;
+                const daySchedules = schedulesByDate[dateKey] || [];
+
+                return (
+                  <tr key={dateKey} className="even:bg-gray-50">
+                    <td className="p-2 border border-teal-100">{dateKey}</td>
+                    <td className="p-2 border border-teal-100">
+                      {daySchedules.length
+                        ? daySchedules.map((s, idx) => (
+                            <div key={idx}>
+                              {formatTime(s.startTime)} –{" "}
+                              {formatTime(s.endTime)}
+                            </div>
+                          ))
+                        : "—"}
+                    </td>
+                    <td className="p-2 border border-teal-100 text-right">
+                      {(() => {
+                        const h = daySchedules.reduce((a, s) => a + s.hours, 0);
+                        return h > 0 ? `${h.toFixed(1)}h` : "—";
+                      })()}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* TOTAL */}
+      <div className="bg-teal-300 p-4 flex items-center gap-2">
+        <Clock className="w-5 h-5" />
         <span className="font-semibold">
-          Total Hours This Month: {totalHours.toFixed(1)}h
+          Total Hours: {totalHours.toFixed(1)}h
         </span>
       </div>
     </div>
