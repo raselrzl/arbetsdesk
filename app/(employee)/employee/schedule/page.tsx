@@ -99,7 +99,7 @@ export default function MySchedulePage() {
   const todayKey = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="p-4 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
+    <div className="mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* HEADER */}
       <div>
         <h1 className="text-xl font-bold uppercase text-teal-900">
@@ -127,13 +127,13 @@ export default function MySchedulePage() {
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setView("calendar")}
-            className={`p-2 border ${view === "calendar" ? "bg-teal-200" : ""}`}
+            className={`p-2 border border-teal-100 ${view === "calendar" ? "bg-teal-200" : ""}`}
           >
             <Calendar className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView("table")}
-            className={`p-2 border ${view === "table" ? "bg-teal-200" : ""}`}
+            className={`p-2 border border-teal-100${view === "table" ? "bg-teal-200" : ""}`}
           >
             <List className="w-4 h-4" />
           </button>
@@ -165,7 +165,7 @@ export default function MySchedulePage() {
 
       {/* CALENDAR VIEW */}
       {!loading && view === "calendar" && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1 sm:gap-2">
+        <div className="grid grid-cols-7 md:grid-cols-7 gap-0.5 sm:gap-2">
           {Array.from({ length: daysInMonth }, (_, i) => {
             const day = (i + 1).toString().padStart(2, "0");
             const dateKey = `${month}-${day}`;
