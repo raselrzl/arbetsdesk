@@ -6,6 +6,7 @@ import {
   getEmployeeMonthlySchedule,
   getEmployeeAvailableMonths,
 } from "../employeeactions";
+import DayPopup from "./DayPopup";
 
 type DailySchedule = {
   date: string;
@@ -23,6 +24,7 @@ export default function MySchedulePage() {
   const [todaySchedules, setTodaySchedules] = useState<DailySchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("calendar");
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   /* ---------------- AVAILABLE MONTHS ---------------- */
   useEffect(() => {
@@ -180,7 +182,8 @@ export default function MySchedulePage() {
             return (
               <div
                 key={dateKey}
-                className={`border p-2 min-h-20 ${
+                onClick={() => setSelectedDate(dateKey)}
+                className={`border p-2 min-h-20 cursor-pointer ${
                   dateKey === todayKey
                     ? "bg-amber-100 border-amber-300"
                     : dayOfWeek === 0 || dayOfWeek === 6
@@ -227,13 +230,14 @@ export default function MySchedulePage() {
                 return (
                   <tr
                     key={dateKey}
-                    className={
+                    onClick={() => setSelectedDate(dateKey)}
+                    className={`cursor-pointer ${
                       dateKey === todayKey
                         ? "bg-amber-100"
                         : dayOfWeek === 0 || dayOfWeek === 6
                         ? "bg-red-100 border-teal-100"
                         : "even:bg-gray-50"
-                    }
+                    }`}
                   >
                     <td className="p-2 border border-teal-100 text-gray-500 w-24">
                       {dateKey}
@@ -302,6 +306,13 @@ export default function MySchedulePage() {
           Total Working Days: {totalDays}
         </div>
       </div>
+      {selectedDate && (
+        <DayPopup
+          dateKey={selectedDate}
+          schedules={schedulesByDate[selectedDate] || []}
+          onClose={() => setSelectedDate(null)}
+        />
+      )}
     </div>
   );
 }
