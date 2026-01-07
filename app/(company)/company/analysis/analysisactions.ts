@@ -156,3 +156,94 @@ export async function getAvailableMonths(companyId: string) {
 
   return Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
 }
+
+
+
+export async function getMonthlyProfitability(companyId: string, month: string) {
+  const [year, monthNum] = month.split("-").map(Number);
+  const monthStart = startOfMonth(new Date(year, monthNum - 1));
+  const monthEnd = endOfMonth(monthStart);
+
+  // 1️⃣ Fetch daily sales
+  const salesRecords = await prisma.sale.findMany({
+    where: { companyId, date: { gte: monthStart, lte: monthEnd } },
+  });
+  const salesMap: Record<number, number> = {};
+  salesRecords.forEach(s => {
+    const day = s.date.getDate();
+    salesMap[day] = (salesMap[day] || 0) + s.amount;
+  });
+
+  // 2️⃣ Fetch costs
+  const costRecords = await prisma.cost.findMany({
+    where: { companyId, date: { gte: monthStart, lte: monthEnd } },
+  });
+  const costMap: Record<number, number> = {};
+  costRecords.forEach(c => {
+    const day = c.date.getDate();
+    costMap[day] = (costMap[day] || 0) + c.amount;
+  });
+
+  // 3️⃣ Fetch salaries (from time logs & employee hourly/monthly rate)
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    include: {
+      timeLogs: {
+        where: { logDate: { gte: monthStart, lte: monthEnd }, logoutTime: { not: null }, totalMinutes: { not: null } },
+      },
+    },
+  });
+
+  const salaryMap: Record<number, number> = {};
+  employees.forEach(emp => {
+    emp.timeLogs.forEach(log => {
+      const day = log.logDate.getDate();
+      const hours = log.totalMinutes! / 60;
+      let salary = 0;
+
+      if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
+        const monthlyHours = 160;
+        salary = (hours / monthlyHours) * emp.monthlySalary;
+      } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
+        salary = hours * emp.hourlyRate;
+      }
+
+      salaryMap[day] = (salaryMap[day] || 0) + salary;
+    });
+  });
+
+  // 4️⃣ Merge all available days
+  const availableDays = new Set<number>([
+    ...Object.keys(salesMap).map(Number),
+    ...Object.keys(costMap).map(Number),
+    ...Object.keys(salaryMap).map(Number),
+  ]);
+
+  const rows = Array.from(availableDays)
+    .sort((a, b) => a - b)
+    .map(day => {
+      const sales = salesMap[day] || 0;
+      const cost = (costMap[day] || 0) + (salaryMap[day] || 0);
+      const result = sales - cost;
+      const margin = sales > 0 ? (result / sales) * 100 : 0;
+
+      return {
+        date: `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+        sales,
+        cost,
+        result,
+        margin,
+      };
+    });
+
+  // 5️⃣ Totals
+  const totalSales = rows.reduce((s, r) => s + r.sales, 0);
+  const totalCost = rows.reduce((s, r) => s + r.cost, 0);
+  const totalResult = totalSales - totalCost;
+  const totalMargin = totalSales > 0 ? (totalResult / totalSales) * 100 : 0;
+
+  const totals = { sales: totalSales, cost: totalCost, result: totalResult, margin: totalMargin };
+
+  return { rows, totals };
+}
+
