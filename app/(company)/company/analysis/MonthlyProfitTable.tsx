@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, Box } from "lucide-react"; // Using Box icon
 import { getMonthlyProfitability } from "./analysisactions";
 
 interface ProfitRow {
@@ -35,6 +35,7 @@ export default function MonthlyProfitTable({
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<"sales" | "cost" | "result" | "margin">("result");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [openRow, setOpenRow] = useState<string | null>(null);
 
   useEffect(() => {
     if (!month) return;
@@ -64,15 +65,15 @@ export default function MonthlyProfitTable({
 
   const getArrowColor = (key: "sales" | "cost" | "result" | "margin") => {
     if (key !== sortKey) return "text-gray-300";
-    if (sortOrder === "desc") return key === "result" || key === "margin" ? "text-green-600" : "text-teal-600";
+    if (sortOrder === "desc")
+      return key === "result" || key === "margin" ? "text-green-600" : "text-teal-600";
     return key === "result" || key === "margin" ? "text-red-600" : "text-teal-600";
   };
 
   const formatCost = (cost: number, sales: number) =>
     cost > sales ? `-${cost.toFixed(0)}` : cost.toFixed(0);
 
-  const formatResult = (value: number) =>
-    value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0);
+  const formatResult = (value: number) => (value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0));
 
   return (
     <div className="bg-white border rounded p-4 mt-8 overflow-x-auto">
@@ -121,11 +122,23 @@ export default function MonthlyProfitTable({
               {/* Sales */}
               <td className="border p-2 text-right text-teal-600">{r.sales.toFixed(0)}</td>
 
-              {/* Cost with hover breakdown */}
-              <td className="border p-2 text-right relative group">
-                <span className="cursor-help">{formatCost(r.cost, r.sales)}</span>
+              {/* Cost with hover + click breakdown */}
+              <td
+                className="border p-2 text-right relative cursor-pointer group"
+                onClick={() => setOpenRow(openRow === r.date ? null : r.date)}
+              >
+                <span>{formatCost(r.cost, r.sales)}</span>
 
-                <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-white border shadow-lg p-3 text-xs z-20 w-56">
+                {/* Tooltip */}
+                <div
+                  className={`absolute right-0 top-full mt-1 bg-white border shadow-lg p-3 text-xs z-20 w-56
+                    ${openRow === r.date ? "block" : "hidden"} group-hover:block`}
+                >
+                  {/* Top-left icon inside tooltip */}
+                  <div className="absolute -top-2 -left-2 bg-white p-1 border rounded">
+                    <Box className="w-3 h-3 text-gray-400" />
+                  </div>
+
                   <div className="font-semibold mb-1">Cost breakdown</div>
 
                   <div className="flex justify-between">
