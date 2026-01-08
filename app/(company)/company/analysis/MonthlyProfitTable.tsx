@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Calendar, Box } from "lucide-react"; // Using Box icon
+import { Calendar, Box, MoveUpRight } from "lucide-react"; // Using Box icon
 import { getMonthlyProfitability } from "./analysisactions";
 
 interface ProfitRow {
@@ -89,13 +89,13 @@ export default function MonthlyProfitTable({
   return (
     <div className="bg-white border rounded p-4 mt-8 overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-teal-600" /> Daily Profitability 
+        <Calendar className="w-5 h-5 text-teal-600" /> Daily Profitability
       </h2>
 
       <table className="w-full text-sm border-collapse min-w-[600px]">
-        <thead className="bg-gray-100">
+        <thead className="bg-teal-800 text-white">
           <tr>
-            <th className="border p-2 text-left whitespace-nowrap text-gray-500">
+            <th className="border p-2 text-left whitespace-nowrap text-gray-400">
               Date
             </th>
             {(["sales", "cost", "result", "margin"] as const).map((key) => (
@@ -133,7 +133,7 @@ export default function MonthlyProfitTable({
           {sortedRows.map((r) => (
             <tr key={r.date}>
               {/* Date */}
-              <td className="border p-2 whitespace-nowrap text-gray-500">
+              <td className="border border-teal-100 p-2 whitespace-nowrap text-gray-500">
                 {new Date(r.date).toLocaleDateString(undefined, {
                   day: "2-digit",
                   month: "short",
@@ -142,23 +142,29 @@ export default function MonthlyProfitTable({
 
               {/* Sales with hover + click breakdown */}
               <td
-                className="border p-2 text-right text-teal-600 relative cursor-pointer group"
+                className="border border-teal-100 pr-2 text-right text-teal-600 relative cursor-pointer group"
                 onClick={() =>
                   setOpenRow(
                     openRow === r.date + "-SALES" ? null : r.date + "-SALES"
                   )
                 }
               >
+                {/* Small icon in top-left corner */}
+                <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
+                  <MoveUpRight className="w-3 h-3 text-gray-200" />
+                </div>
+
+                {/* Sales value */}
                 <span>{r.sales.toFixed(0)}</span>
 
                 {/* Tooltip */}
                 <div
-                  className={`absolute right-0 top-full mt-1 bg-white border shadow-lg p-3 text-xs z-20 w-32
+                  className={`absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32
       ${openRow === r.date + "-SALES" ? "block" : "hidden"} group-hover:block`}
                 >
                   {/* Top-left icon inside tooltip */}
-                  <div className="absolute -top-2 -left-2 bg-white p-1 border rounded">
-                    <Box className="w-3 h-3 text-gray-400" />
+                  <div className="absolute -top-2 -left-2 bg-teal-400 p-1 border border-teal-100 rounded">
+                    <Box className="w-3 h-3 text-gray-100" />
                   </div>
 
                   <div className="font-semibold mb-1">Sales breakdown</div>
@@ -171,7 +177,7 @@ export default function MonthlyProfitTable({
                     <span>{r.salesBreakdown?.card.toFixed(0) ?? 0}</span>
                   </div>
 
-                  <hr className="my-1" />
+                  <hr className="my-1 border-t-2 border-teal-600" />
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
                     <span>{r.sales.toFixed(0)}</span>
@@ -181,24 +187,24 @@ export default function MonthlyProfitTable({
 
               {/* Cost with hover + click breakdown */}
               <td
-                className="border p-2 text-right relative cursor-pointer group"
+                className="border border-teal-100 p-2 text-right relative cursor-pointer group"
                 onClick={() => setOpenRow(openRow === r.date ? null : r.date)}
               >
                 <span>{formatCost(r.cost, r.sales)}</span>
 
                 {/* Tooltip */}
                 <div
-                  className={`absolute right-0 top-full mt-1 bg-white border shadow-lg p-3 text-xs z-20 w-32
+                  className={`absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32
                     ${
                       openRow === r.date ? "block" : "hidden"
                     } group-hover:block`}
                 >
                   {/* Top-left icon inside tooltip */}
-                  <div className="absolute -top-2 -left-2 bg-white p-1 border rounded">
-                    <Box className="w-3 h-3 text-gray-400" />
+                  <div className="absolute -top-2 -left-2 bg-red-700 p-1 border border-teal-100 rounded-xs">
+                    <Box className="w-3 h-3 text-gray-100" />
                   </div>
 
-                  <div className="font-semibold mb-1">Cost breakdown</div>
+                  {/*  <div className="font-semibold mb-1">Cost breakdown</div> */}
 
                   <div className="flex justify-between">
                     <span>Salary</span>
@@ -214,7 +220,7 @@ export default function MonthlyProfitTable({
                     )
                   )}
 
-                  <hr className="my-1" />
+                  <hr className="my-1 border-t-2 border-red-600" />
 
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
@@ -225,7 +231,7 @@ export default function MonthlyProfitTable({
 
               {/* Result */}
               <td
-                className={`border p-2 text-right ${
+                className={`border border-teal-100 p-2 text-right ${
                   r.result < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
@@ -233,31 +239,35 @@ export default function MonthlyProfitTable({
               </td>
 
               {/* Margin */}
-              <td className="border p-2 text-right">{r.margin.toFixed(2)}%</td>
+              <td className="border border-teal-100 p-2 text-right">
+                {r.margin.toFixed(2)}%
+              </td>
             </tr>
           ))}
 
           {totals && (
-            <tr className="font-bold bg-gray-50">
-              <td className="border p-2 text-gray-500">TOTAL</td>
-              <td className="border p-2 text-right text-teal-600">
+            <tr className="font-bold bg-teal-800 text-gray-50">
+              <td className="border border-teal-100 p-2 text-gray-100">
+                TOTAL
+              </td>
+              <td className="border p-2 text-right text-teal-100">
                 {totals.sales.toFixed(0)}
               </td>
               <td
-                className={`border p-2 text-right ${
-                  totals.cost > totals.sales ? "text-red-600" : "text-gray-500"
+                className={`border border-teal-100 p-2 text-right ${
+                  totals.cost > totals.sales ? "text-red-600" : "text-gray-300"
                 }`}
               >
                 {totals.cost.toFixed(0)}
               </td>
               <td
-                className={`border p-2 text-right ${
-                  totals.result < 0 ? "text-red-600" : "text-green-600"
+                className={`border border-teal-100 p-2 text-right ${
+                  totals.result < 0 ? "text-red-600" : "text-green-500"
                 }`}
               >
                 {formatResult(totals.result)}
               </td>
-              <td className="border p-2 text-right">
+              <td className="border border-teal-100 p-2 text-right">
                 {totals.margin.toFixed(2)}%
               </td>
             </tr>
