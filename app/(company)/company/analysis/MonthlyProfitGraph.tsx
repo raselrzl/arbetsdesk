@@ -91,8 +91,8 @@ export default function MonthlyProfitGraph({ rows }: MonthlyProfitGraphProps) {
   for (let i = 0; i <= maxAxis; i += 5000) ticks.push(i);
 
   return (
-    <div className="mt-8 bg-white p-4 rounded shadow">
-      <h3 className="font-bold text-teal-900 mb-4">
+    <div className="mt-8 bg-white p-4 rounded-xs shadow shadow-teal-100">
+      <h3 className="font-bold text-teal-900 mb-4 uppercase">
         Sales, Cost & Result Overview
       </h3>
       <ResponsiveContainer width="100%" height={350}>
