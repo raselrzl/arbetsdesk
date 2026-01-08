@@ -43,7 +43,7 @@ export default async function CompanyAnalysisPage() {
             <p className="text-teal-700 text-lg md:text-xl font-semibold">
               Monitor your company’s daily sales and see how your revenue is distributed between cash and card payments.
             </p>
-            <p className="text-teal-500 text-sm md:text-base mt-1">
+            <p className="text-teal-400 text-sm md:text-base mt-1">
               Based on your daily sales, you can optimize your cash flow and better understand your payment methods.
             </p>
           </div>

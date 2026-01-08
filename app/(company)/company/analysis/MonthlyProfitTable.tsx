@@ -95,7 +95,7 @@ export default function MonthlyProfitTable({
     value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0);
 
   return (
-    <div className="bg-white shadow-lg shadow-teal-800 rounded-xs p-4 mt-8 overflow-x-auto">
+    <div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
       <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
         <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
         Daily Profitability
@@ -199,7 +199,7 @@ export default function MonthlyProfitTable({
                 className="border border-teal-100 pr-2 text-right text-gray-600 relative cursor-pointer group"
                 onClick={() => setOpenRow(openRow === r.date ? null : r.date)}
               >
-                <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
+                <div className="absolute top-0 left-0 bg-gray-400 w-3 h-3 flex items-center justify-center shadow-sm z-10">
                   <MoveUpRight className="w-3 h-3 text-gray-200" />
                 </div>
                 <span>{formatCost(r.cost, r.sales)}</span>

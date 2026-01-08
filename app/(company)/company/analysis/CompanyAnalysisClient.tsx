@@ -160,7 +160,7 @@ export default function CompanyAnalysisClient({
       <MonthlyProfitTable companyId={companyId} month={selectedMonth} />
 
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border border-teal-100 shadow-xl shadow-teal-800 p-4 my-12">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border border-teal-100 shadow-lg shadow-teal-800 p-4 my-12">
         <KPI
           imageSrc="/icons/10.png"
           label="Employees"
@@ -202,7 +202,7 @@ export default function CompanyAnalysisClient({
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="hours">
+      <Tabs defaultValue="hours" className="border border-teal-100 shadow-lg shadow-teal-800">
         <TabsList className="rounded-xs bg-teal-200 text-gray-100 flex flex-wrap mb-8 h-auto">
           <TabsTrigger value="hours" className="rounded-xs">
             Worked Hours
