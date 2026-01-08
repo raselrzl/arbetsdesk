@@ -10,6 +10,10 @@ interface ProfitRow {
   sales: number;
   result: number;
   margin: number;
+  costBreakdown: {
+    salary: number;
+    categories: Record<string, number>;
+  };
 }
 
 interface Totals {
@@ -19,7 +23,13 @@ interface Totals {
   margin: number;
 }
 
-export default function MonthlyProfitTable({ companyId, month }: { companyId: string; month: string }) {
+export default function MonthlyProfitTable({
+  companyId,
+  month,
+}: {
+  companyId: string;
+  month: string;
+}) {
   const [rows, setRows] = useState<ProfitRow[]>([]);
   const [totals, setTotals] = useState<Totals | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,8 +47,9 @@ export default function MonthlyProfitTable({ companyId, month }: { companyId: st
   }, [companyId, month]);
 
   const handleSort = (key: "sales" | "cost" | "result" | "margin") => {
-    if (sortKey === key) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    else {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
       setSortKey(key);
       setSortOrder("desc");
     }
@@ -60,7 +71,8 @@ export default function MonthlyProfitTable({ companyId, month }: { companyId: st
   const formatCost = (cost: number, sales: number) =>
     cost > sales ? `-${cost.toFixed(0)}` : cost.toFixed(0);
 
-  const formatResult = (value: number) => (value >= 0 ? `+${value.toFixed(0)}` : `${value.toFixed(0)}`);
+  const formatResult = (value: number) =>
+    value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0);
 
   return (
     <div className="bg-white border rounded p-4 mt-8 overflow-x-auto">
@@ -107,13 +119,34 @@ export default function MonthlyProfitTable({ companyId, month }: { companyId: st
               </td>
 
               {/* Sales */}
-              <td className="border p-2 text-right text-teal-600">
-                {r.sales >= r.cost ? r.sales.toFixed(0) : `+${r.sales.toFixed(0)}`}
-              </td>
+              <td className="border p-2 text-right text-teal-600">{r.sales.toFixed(0)}</td>
 
-              {/* Cost */}
-              <td className={`border p-2 text-right ${r.cost > r.sales ? "text-red-600" : "text-gray-500"}`}>
-                {formatCost(r.cost, r.sales)}
+              {/* Cost with hover breakdown */}
+              <td className="border p-2 text-right relative group">
+                <span className="cursor-help">{formatCost(r.cost, r.sales)}</span>
+
+                <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-white border shadow-lg p-3 text-xs z-20 w-56">
+                  <div className="font-semibold mb-1">Cost breakdown</div>
+
+                  <div className="flex justify-between">
+                    <span>Salary</span>
+                    <span>{r.costBreakdown.salary.toFixed(0)}</span>
+                  </div>
+
+                  {Object.entries(r.costBreakdown.categories).map(([name, value]) => (
+                    <div key={name} className="flex justify-between">
+                      <span>{name}</span>
+                      <span>{value.toFixed(0)}</span>
+                    </div>
+                  ))}
+
+                  <hr className="my-1" />
+
+                  <div className="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>{r.cost.toFixed(0)}</span>
+                  </div>
+                </div>
               </td>
 
               {/* Result */}
@@ -130,14 +163,10 @@ export default function MonthlyProfitTable({ companyId, month }: { companyId: st
             <tr className="font-bold bg-gray-50">
               <td className="border p-2 text-gray-500">TOTAL</td>
               <td className="border p-2 text-right text-teal-600">{totals.sales.toFixed(0)}</td>
-              <td
-                className={`border p-2 text-right ${totals.cost > totals.sales ? "text-red-600" : "text-gray-500"}`}
-              >
-                {formatCost(totals.cost, totals.sales)}
+              <td className={`border p-2 text-right ${totals.cost > totals.sales ? "text-red-600" : "text-gray-500"}`}>
+                {totals.cost.toFixed(0)}
               </td>
-              <td
-                className={`border p-2 text-right ${totals.result < 0 ? "text-red-600" : "text-green-600"}`}
-              >
+              <td className={`border p-2 text-right ${totals.result < 0 ? "text-red-600" : "text-green-600"}`}>
                 {formatResult(totals.result)}
               </td>
               <td className="border p-2 text-right">{totals.margin.toFixed(2)}%</td>
