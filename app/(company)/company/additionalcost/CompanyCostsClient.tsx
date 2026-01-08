@@ -274,8 +274,6 @@ export default function CompanyCostsClient({
     );
   return (
     <div className="p-4 md:p-6 mt-20 max-w-full md:max-w-7xl mx-auto space-y-6 mb-20">
-    
-
       {/* Add Cost Type */}
       <div className="bg-amber-100 p-4 rounded-xs">
         <label className="block mb-2 text-sm font-medium text-teal-700">
@@ -354,8 +352,7 @@ export default function CompanyCostsClient({
         </div>
       </div>
 
-
-  {/* Top-level Month Selector */}
+      {/* Top-level Month Selector */}
       <div className="bg-white flex justify-between gap-3 items-start md:items-center">
         <Link
           href="/company/analysis"
@@ -382,44 +379,76 @@ export default function CompanyCostsClient({
         </div>
       </div>
       {/* Costs Table */}
-      <div className="bg-white shadow border overflow-x-auto">
-        <table className="min-w-[400px] w-full border table-auto">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border text-left">Date</th>
-              <th className="p-2 border text-left">Category & Amount</th>
-              <th className="p-2 border text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(groupedByDate).map(([date, items]) => {
+      <div className="space-y-4">
+        {(() => {
+          // Function to generate N visually distinct colors
+          function generateColors(n: number) {
+            const colors: string[] = [];
+            for (let i = 0; i < n; i++) {
+              const hue = (i * 360) / n; // distribute hues evenly
+              colors.push(`hsl(${hue}, 65%, 55%)`);
+            }
+            return colors;
+          }
+
+          // Get all unique categories
+          const allCategories = Array.from(
+            new Set(costs.map((c) => capitalizeFirst(c.costType.name)))
+          ).sort();
+
+          // Assign each category a unique color
+          const categoryColors = generateColors(allCategories.length);
+          const categoryColorMap: Record<string, string> = {};
+          allCategories.forEach((cat, idx) => {
+            categoryColorMap[cat] = categoryColors[idx];
+          });
+
+          return Object.entries(groupedByDate)
+            .sort(([dateA], [dateB]) => dateB.localeCompare(dateA)) // last date first
+            .map(([date, items]) => {
               const dateTotal = items.reduce((sum, i) => sum + i.amount, 0);
               return (
-                <tr key={date}>
-                  <td className="p-2 border font-medium">{date}</td>
-                  <td className="p-2 border">
+                <div
+                  key={date}
+                  className="border border-teal-100 shadow-md shadow-teal-400 p-4 rounded-xs bg-white flex justify-between items-center"
+                >
+                  {/* Date */}
+                  <div className="font-medium text-teal-700 w-28 text-xs sm:text-sm">
+                    {date}
+                  </div>
+
+                  {/* Category breakdown */}
+                  <div className="flex flex-wrap gap-3">
                     {items.map((i, idx) => (
-                      <div key={idx}>
+                      <div
+                        key={idx}
+                        className="rounded-xs px-1 py-0.5 text-sm font-medium"
+                        style={{
+                          backgroundColor:
+                            categoryColorMap[i.category] || "#ccc",
+                          color: "#fff",
+                        }}
+                      >
                         {i.category}: {i.amount}
                       </div>
                     ))}
-                  </td>
-                  <td className="p-2 border text-right font-medium">
+                  </div>
+
+                  {/* Total */}
+                  <div className="font-bold text-right text-teal-900">
                     {dateTotal}
-                  </td>
-                </tr>
+                  </div>
+                </div>
               );
-            })}
-            {costs.length > 0 && (
-              <tr className="bg-gray-100 font-bold">
-                <td className="p-2 border" colSpan={2}>
-                  Total
-                </td>
-                <td className="p-2 border text-right">{grandTotal}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            });
+        })()}
+
+        {/* Grand total */}
+        {costs.length > 0 && (
+          <div className="border-t pt-2 mt-2 text-right font-bold text-teal-900">
+            Total: {grandTotal}
+          </div>
+        )}
       </div>
 
       {/* Summary */}
