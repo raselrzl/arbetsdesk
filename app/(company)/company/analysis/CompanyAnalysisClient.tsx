@@ -15,7 +15,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, Clock, Wallet, TrendingUp, PlusCircle } from "lucide-react";
-import { getCompanyAnalysis, getAvailableMonths } from "./analysisactions";
+import {
+  getCompanyAnalysis,
+  getAvailableMonths,
+  getMonthlyProfitability,
+} from "./analysisactions";
 import { format } from "date-fns";
 import MonthlyProfitTable from "./MonthlyProfitTable";
 import Link from "next/link";
@@ -42,6 +46,7 @@ export default function CompanyAnalysisClient({
     { name: string; hours: number; salary: number }[]
   >([]);
   const [employeesCount, setEmployeesCount] = useState(0);
+  const [profitRows, setProfitRows] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchMonths() {
@@ -72,6 +77,17 @@ export default function CompanyAnalysisClient({
     fetchData();
   }, [selectedMonth, companyId]);
 
+  useEffect(() => {
+    if (!selectedMonth) return;
+
+    async function fetchProfitability() {
+      const result = await getMonthlyProfitability(companyId, selectedMonth);
+      setProfitRows(result.rows);
+    }
+
+    fetchProfitability();
+  }, [selectedMonth, companyId]);
+
   const totalHours = useMemo(
     () => dailyData.reduce((sum, d) => sum + d.hours, 0),
     [dailyData]
@@ -85,8 +101,29 @@ export default function CompanyAnalysisClient({
     [salaryData]
   );
 
+  const totalSales = useMemo(() => {
+    return profitRows.reduce((sum, row) => {
+      const cash = Number(row.salesBreakdown?.cash || 0);
+      const card = Number(row.salesBreakdown?.card || 0);
+      return sum + cash + card;
+    }, 0);
+  }, [profitRows]);
+
+  const totalAdditionalCost = useMemo(() => {
+    return profitRows.reduce((sum, row) => {
+      const dailyCost = Object.values(
+        row.costBreakdown?.categories || {}
+      ).reduce((s: number, v: any) => s + Number(v), 0);
+      return sum + dailyCost;
+    }, 0);
+  }, [profitRows]);
+
+  const netProfit = useMemo(() => {
+    return totalSales - totalSalary - totalAdditionalCost;
+  }, [totalSales, totalSalary, totalAdditionalCost]);
+
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
+    <div className="p-2 sm:p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         {/* ACTION LINKS */}
@@ -123,7 +160,7 @@ export default function CompanyAnalysisClient({
       <MonthlyProfitTable companyId={companyId} month={selectedMonth} />
 
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border border-teal-100 shadow-xl shadow-teal-800 p-4 my-12">
         <KPI
           imageSrc="/icons/10.png"
           label="Employees"
@@ -144,11 +181,29 @@ export default function CompanyAnalysisClient({
           label="Total Tips"
           value={`${totalTips.toFixed(0)} `}
         />
+
+        <KPI
+          imageSrc="/icons/6.png"
+          label="Total Sales"
+          value={`${totalSales.toFixed(0)} `}
+        />
+
+        <KPI
+          imageSrc="/icons/8.png"
+          label="Additional Costs"
+          value={`${totalAdditionalCost.toFixed(0)} `}
+        />
+
+        <KPI
+          imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
+          label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
+          value={`${Math.abs(netProfit).toFixed(0)} `}
+        />
       </div>
 
       {/* TABS */}
       <Tabs defaultValue="hours">
-        <TabsList className="rounded-xs bg-teal-200 text-gray-100">
+        <TabsList className="rounded-xs bg-teal-200 text-gray-100 flex flex-wrap mb-8 h-auto">
           <TabsTrigger value="hours" className="rounded-xs">
             Worked Hours
           </TabsTrigger>
@@ -157,6 +212,13 @@ export default function CompanyAnalysisClient({
           </TabsTrigger>
           <TabsTrigger value="tips" className="rounded-xs">
             Tips
+          </TabsTrigger>
+          <TabsTrigger value="monthly-sales" className="rounded-xs">
+            Monthly Sales
+          </TabsTrigger>
+
+          <TabsTrigger value="monthly-costs" className="rounded-xs">
+            Monthly Costs
           </TabsTrigger>
         </TabsList>
 
@@ -231,12 +293,103 @@ export default function CompanyAnalysisClient({
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="monthly-sales">
+          <Card className="rounded-xs shadow-teal-100 border-teal-100">
+            <CardHeader>
+              <CardTitle>Daily Sales (Cash & Card)</CardTitle>
+            </CardHeader>
+
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={profitRows}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+
+                  <Bar
+                    dataKey="salesBreakdown.cash"
+                    name="Cash"
+                    fill="#22c55e"
+                  />
+                  <Bar
+                    dataKey="salesBreakdown.card"
+                    name="Card"
+                    fill="#3b82f6"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="monthly-costs">
+          <Card className="rounded-xs shadow-teal-100 border-teal-100">
+            <CardHeader>
+              <CardTitle>Daily Additional Costs</CardTitle>
+            </CardHeader>
+
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={profitRows.map((row) => ({
+                    date: row.date,
+                    additionalCost: Object.values(
+                      row.costBreakdown.categories || {}
+                    ).reduce((sum: number, v: any) => sum + Number(v), 0),
+                    categories: row.costBreakdown.categories || {},
+                  }))}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+
+                      const data = payload[0].payload;
+                      const categories = data.categories || {};
+
+                      return (
+                        <div className="bg-white border rounded-xs p-3 shadow text-sm">
+                          <p className="font-semibold mb-1">Additional Costs</p>
+
+                          {Object.entries(categories).map(([name, value]) => (
+                            <div
+                              key={name}
+                              className="flex justify-between gap-4"
+                            >
+                              <span>{name}</span>
+                              <span className="font-medium">
+                                {Number(value).toFixed(0)}
+                              </span>
+                            </div>
+                          ))}
+
+                          <div className="border-t mt-2 pt-1 flex justify-between font-semibold">
+                            <span>Total</span>
+                            <span>{data.additionalCost.toFixed(0)}</span>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  />
+
+                  <Bar
+                    dataKey="additionalCost"
+                    name="Additional Cost"
+                    fill="#ef4444"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
 
-// KPI Component
 // KPI Component
 function KPI({ icon: Icon, imageSrc, label, value }: any) {
   return (

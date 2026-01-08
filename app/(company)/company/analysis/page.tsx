@@ -38,7 +38,7 @@ export default async function CompanyAnalysisPage() {
         </div>
 
         {/* Sales Card */}
-        <div className="bg-white p-4 md:p-6 rounded shadow border border-teal-300 space-y-2 flex flex-col justify-between">
+        <div className="bg-white p-4 md:p-6 rounded-xs shadow border border-teal-300 space-y-2 flex flex-col justify-between">
           <div>
             <p className="text-teal-700 text-lg md:text-xl font-semibold">
               Monitor your company’s daily sales and see how your revenue is distributed between cash and card payments.
