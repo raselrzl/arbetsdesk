@@ -4,7 +4,15 @@ import { useEffect, useState, useMemo } from "react";
 import { Calendar, Box, MoveUpRight } from "lucide-react"; // Using Box icon
 import { getMonthlyProfitability } from "./analysisactions";
 
-interface ProfitRow {
+
+import dynamic from "next/dynamic";
+
+// Dynamically import graph to disable SSR (Next.js client-only)
+const MonthlyProfitGraph = dynamic(() => import("./MonthlyProfitGraph"), {
+  ssr: false,
+});
+
+export interface ProfitRow {
   date: string;
   cost: number;
   sales: number;
@@ -278,6 +286,10 @@ export default function MonthlyProfitTable({
           )}
         </tbody>
       </table>
+
+      {/* Add this at the end of your MonthlyProfitTable render */}
+  {rows.length > 0 && <MonthlyProfitGraph rows={rows} />}
+
     </div>
   );
 }
