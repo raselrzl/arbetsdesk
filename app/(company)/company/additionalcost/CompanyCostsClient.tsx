@@ -44,11 +44,11 @@ function MonthSelect({
 }) {
   return (
     <div className="flex items-center gap-2 mb-3 flex-wrap">
-      <Calendar />
+      <Calendar className="text-teal-900"/>
       <select
         value={selectedMonth}
         onChange={(e) => onChange(e.target.value)}
-        className="border p-2"
+        className="border border-teal-100 p-2"
       >
         {months.map((m) => (
           <option key={m} value={m}>
@@ -229,12 +229,19 @@ export default function CompanyCostsClient({
   );
 
   const summary = useMemo(() => {
+    if (!month) return {};
+
     const acc: Record<string, number> = {};
-    costs.forEach(
-      (c) => (acc[c.costType.name] = (acc[c.costType.name] || 0) + c.amount)
-    );
+
+    costs
+      .filter((c) => c.date.startsWith(month)) // ✅ filter by month
+      .forEach((c) => {
+        const key = capitalizeFirst(c.costType.name);
+        acc[key] = (acc[key] || 0) + c.amount;
+      });
+
     return acc;
-  }, [costs]);
+  }, [costs, month]);
 
   const monthlyStackedDataByYear = useMemo(() => {
     if (!yearlyYear) return [];
@@ -265,6 +272,24 @@ export default function CompanyCostsClient({
         return acc;
       }, {});
   }, [costs, month]);
+
+  const categoryColorMap = useMemo(() => {
+    const categories = Array.from(
+      new Set(costs.map((c) => capitalizeFirst(c.costType.name)))
+    ).sort();
+
+    const colors = categories.map((_, i) => {
+      const hue = (i * 360) / categories.length;
+      return `hsl(${hue}, 65%, 55%)`;
+    });
+
+    const map: Record<string, string> = {};
+    categories.forEach((cat, idx) => {
+      map[cat] = colors[idx];
+    });
+
+    return map;
+  }, [costs]);
 
   if (loadingPage)
     return (
@@ -445,7 +470,7 @@ export default function CompanyCostsClient({
 
         {/* Grand total */}
         {costs.length > 0 && (
-          <div className="border-t pt-2 mt-2 text-right font-bold text-teal-900">
+          <div className="bg-teal-400 items-center justify-center py-2 pr-4 uppercase text-xl border-teal-900 pt-2 mt-2 text-right font-bold text-teal-900">
             Total: {grandTotal}
           </div>
         )}
@@ -453,10 +478,21 @@ export default function CompanyCostsClient({
 
       {/* Summary */}
       {Object.keys(summary).length > 0 && (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto my-10 border border-teal-900 shadow-lg shadow-teal-900 p-4">
+          <h1 className="font-bold text-xl my-6 text-teal-900">
+            Monthly Total Cost Summary ({month})
+          </h1>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 min-w-[400px]">
             {Object.entries(summary).map(([k, v]) => (
-              <div key={k} className="p-4 bg-teal-50 border">
+              <div
+                key={k}
+                className="p-4 border border-teal-200 rounded-xs text-white"
+                style={{
+                  backgroundColor:
+                    categoryColorMap[capitalizeFirst(k)] || "#ccc",
+                }}
+              >
                 <strong>{capitalizeFirst(k)}</strong>
                 <div>{v}</div>
               </div>
@@ -482,7 +518,7 @@ export default function CompanyCostsClient({
         )}
 
         {stackedGraphData.length > 0 && allCategories.length > 0 && (
-          <div className="overflow-x-auto bg-white border shadow p-4">
+          <div className="overflow-x-auto bg-white border border-teal-200 shadow-lg shadow-teal-900 p-4">
             <MonthSelect
               months={months}
               selectedMonth={stackedMonth}
