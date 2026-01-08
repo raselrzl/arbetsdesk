@@ -25,11 +25,11 @@ export default function DailyTotalBarChart({
   title,
   data,
   height = 300,
-  color = "#0d9488",
+  color = "#f97316"
 }: DailyTotalBarChartProps) {
   return (
-    <div className="bg-white border shadow p-4">
-      <h3 className="text-lg font-semibold mb-3">{title}</h3>
+    <div className="bg-white p-4">
+      <h3 className="text-lg font-semibold mb-5 text-teal-900">{title}</h3>
 
       <div style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">

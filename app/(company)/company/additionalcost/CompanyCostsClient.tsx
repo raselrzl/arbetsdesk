@@ -44,7 +44,7 @@ function MonthSelect({
 }) {
   return (
     <div className="flex items-center gap-2 mb-3 flex-wrap">
-      <Calendar className="text-teal-900"/>
+      <Calendar className="text-teal-900" />
       <select
         value={selectedMonth}
         onChange={(e) => onChange(e.target.value)}
@@ -504,7 +504,7 @@ export default function CompanyCostsClient({
       {/* Charts */}
       <div className="space-y-6">
         {dailyTotalGraphData.length > 0 && (
-          <div className="bg-white border shadow p-4">
+          <div className="overflow-x-auto bg-white border border-teal-200 shadow-lg shadow-teal-900 p-4">
             <MonthSelect
               months={months}
               selectedMonth={dailyMonth}
@@ -535,13 +535,13 @@ export default function CompanyCostsClient({
         )}
 
         {monthlyStackedDataByYear.length > 0 && allCategories.length > 0 && (
-          <div className="overflow-x-auto bg-white border shadow p-4">
+          <div className="overflow-x-auto bg-white  p-4 border border-teal-100 shadow-lg shadow-teal-900">
             <div className="flex items-center gap-2 mb-3 flex-wrap">
-              <Calendar />
+              <Calendar className="text-teal-900" />
               <select
                 value={yearlyYear}
                 onChange={(e) => setYearlyYear(e.target.value)}
-                className="border p-2"
+                className="border border-teal-200 py-1 px-4"
               >
                 {availableYears.map((y) => (
                   <option key={y} value={y}>
