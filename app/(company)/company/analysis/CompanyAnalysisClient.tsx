@@ -161,47 +161,49 @@ export default function CompanyAnalysisClient({
 
       {/* KPI CARDS */}
       <div className="border border-teal-100 shadow-lg shadow-teal-800 p-4 my-12">
-       <h1 className="text-xl font-bold mb-4 text-teal-900">Monthly Summary</h1>
+        <h1 className="text-xl font-bold mb-4 text-teal-900">
+          Monthly Summary
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
-        <KPI
-          imageSrc="/icons/10.png"
-          label="Employees"
-          value={employeesCount}
-        />
-        <KPI
-          imageSrc="/icons/1.png"
-          label="Worked Hours"
-          value={formatHours(totalHours)}
-        />
-        <KPI
-          imageSrc="/icons/13.png"
-          label="Salary Cost"
-          value={`${totalSalary.toFixed(0)} `}
-        />
-        <KPI
-          imageSrc="/icons/4.png"
-          label="Total Tips"
-          value={`${totalTips.toFixed(0)} `}
-        />
+          <KPI
+            imageSrc="/icons/10.png"
+            label="Employees"
+            value={employeesCount}
+          />
+          <KPI
+            imageSrc="/icons/1.png"
+            label="Worked Hours"
+            value={formatHours(totalHours)}
+          />
+          <KPI
+            imageSrc="/icons/13.png"
+            label="Salary Cost"
+            value={`${totalSalary.toFixed(0)} `}
+          />
+          <KPI
+            imageSrc="/icons/4.png"
+            label="Total Tips"
+            value={`${totalTips.toFixed(0)} `}
+          />
 
-        <KPI
-          imageSrc="/icons/6.png"
-          label="Total Sales"
-          value={`${totalSales.toFixed(0)} `}
-        />
+          <KPI
+            imageSrc="/icons/6.png"
+            label="Total Sales"
+            value={`${totalSales.toFixed(0)} `}
+          />
 
-        <KPI
-          imageSrc="/icons/8.png"
-          label="Additional Costs"
-          value={`${totalAdditionalCost.toFixed(0)} `}
-        />
+          <KPI
+            imageSrc="/icons/8.png"
+            label="Additional Costs"
+            value={`${totalAdditionalCost.toFixed(0)} `}
+          />
 
-        <KPI
-          imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
-          label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
-          value={`${Math.abs(netProfit).toFixed(0)} `}
-        />
-      </div>
+          <KPI
+            imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
+            label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
+            value={`${Math.abs(netProfit).toFixed(0)} `}
+          />
+        </div>
       </div>
 
       {/* TABS */}
@@ -271,7 +273,13 @@ export default function CompanyAnalysisClient({
                   <Tooltip
                     formatter={(value: number) => `${value.toFixed(0)} `}
                   />
-                  <Bar dataKey="salary" fill="#0d9488" />
+                  <Bar dataKey="salary" fill="#0d9488">
+                    <LabelList
+                      dataKey="salary"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -293,7 +301,13 @@ export default function CompanyAnalysisClient({
                   <Tooltip
                     formatter={(value: number) => `${value.toFixed(0)} `}
                   />
-                  <Bar dataKey="tips" fill="#facc15" />
+                  <Bar dataKey="tips" fill="#facc15">
+                    <LabelList
+                      dataKey="tips"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -306,50 +320,76 @@ export default function CompanyAnalysisClient({
               <CardTitle>Daily Sales (Cash & Card)</CardTitle>
             </CardHeader>
 
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="h-80 flex flex-col">
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={profitRows}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value: number) => `${value.toFixed(0)} `}
+                  />
 
                   <Bar
                     dataKey="salesBreakdown.cash"
                     name="Cash"
                     fill="#22c55e"
                   />
-                  <Bar
-                    dataKey="salesBreakdown.card"
-                    name="Card"
-                    fill="#3b82f6"
-                  />
+                  <Bar dataKey="salesBreakdown.cash" name="Cash" fill="#22c55e">
+                    <LabelList
+                      dataKey="salesBreakdown.cash"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
+                  <Bar dataKey="salesBreakdown.card" name="Card" fill="#3b82f6">
+                    <LabelList
+                      dataKey="salesBreakdown.card"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
+
+              {/* Legend below chart */}
+              <div className="flex gap-4 mt-4 justify-center">
+                <div className="flex items-center gap-1">
+                  <span className="w-4 h-4 bg-green-500 inline-block"></span>
+                  <span className="text-sm font-medium">Cash</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-4 h-4 bg-blue-500 inline-block"></span>
+                  <span className="text-sm font-medium">Card</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
+
         <TabsContent value="monthly-costs">
           <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
               <CardTitle>Daily Additional Costs</CardTitle>
             </CardHeader>
 
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="h-80 flex flex-col">
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={profitRows.map((row) => {
+                    const categories = row.costBreakdown?.categories || {};
                     const dailyAdditionalCost = Object.values(
-                      row.costBreakdown.categories || {}
+                      categories
                     ).reduce((sum: number, v: any) => sum + Number(v), 0);
 
                     return {
-                      date: row.date,
-                      salary: row.costBreakdown.salary || 0, // daily salary
+                      date: new Date(row.date).toLocaleDateString(),
+                      salary: row.costBreakdown?.salary || 0,
                       additionalCost: dailyAdditionalCost,
-                      categories: row.costBreakdown.categories || {},
+                      categories,
                     };
                   })}
+                  margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -357,16 +397,16 @@ export default function CompanyAnalysisClient({
                   <Tooltip
                     content={({ active, payload }) => {
                       if (!active || !payload?.length) return null;
-
                       const data = payload[0].payload;
                       const categories = data.categories || {};
 
                       return (
                         <div className="bg-white border rounded-xs p-3 shadow text-sm">
                           <p className="font-semibold mb-1">Daily Costs</p>
-
                           <div className="flex justify-between gap-4">
-                            <span>Salary</span>
+                            <span className="text-green-600 font-medium">
+                              Salary
+                            </span>
                             <span className="font-medium">
                               {data.salary.toFixed(0)}
                             </span>
@@ -377,7 +417,9 @@ export default function CompanyAnalysisClient({
                               key={name}
                               className="flex justify-between gap-4"
                             >
-                              <span>{name}</span>
+                              <span className="text-red-500 font-medium">
+                                {name}
+                              </span>
                               <span className="font-medium">
                                 {Number(value).toFixed(0)}
                               </span>
@@ -394,14 +436,45 @@ export default function CompanyAnalysisClient({
                       );
                     }}
                   />
+                  {/* Bars */}
+                  <Bar dataKey="salary" name="Salary" fill="#0d9488">
+                    <LabelList
+                      dataKey="salary"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
+                  <Bar
+                    dataKey="additionalCost"
+                    name="Additional Costs"
+                    fill="#ef4444"
+                  >
+                    <LabelList
+                      dataKey="additionalCost"
+                      position="top"
+                      formatter={(value) => Number(value).toFixed(0)}
+                    />
+                  </Bar>
 
                   <Bar
                     dataKey="additionalCost"
-                    name="Additional Cost"
+                    name="Additional Costs"
                     fill="#ef4444"
                   />
                 </BarChart>
               </ResponsiveContainer>
+
+              {/* Legend below chart */}
+              <div className="flex gap-4 mt-4 justify-center">
+                <div className="flex items-center gap-1">
+                  <span className="w-4 h-4 bg-green-600 inline-block"></span>
+                  <span className="text-sm font-medium">Salary</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-4 h-4 bg-red-500 inline-block"></span>
+                  <span className="text-sm font-medium">Additional Cost</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

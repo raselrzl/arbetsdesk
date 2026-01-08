@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import { Calendar, Box, MoveUpRight } from "lucide-react"; // Using Box icon
 import { getMonthlyProfitability } from "./analysisactions";
 
-
 import dynamic from "next/dynamic";
 
 // Dynamically import graph to disable SSR (Next.js client-only)
@@ -88,8 +87,7 @@ export default function MonthlyProfitTable({
       : "text-teal-600";
   };
 
-  const formatCost = (cost: number, sales: number) =>
-    cost > sales ? `-${cost.toFixed(0)}` : cost.toFixed(0);
+  const formatCost = (cost: number) => cost.toFixed(0);
 
   const formatResult = (value: number) =>
     value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0);
@@ -202,7 +200,7 @@ export default function MonthlyProfitTable({
                 <div className="absolute top-0 left-0 bg-gray-400 w-3 h-3 flex items-center justify-center shadow-sm z-10">
                   <MoveUpRight className="w-3 h-3 text-gray-200" />
                 </div>
-                <span>{formatCost(r.cost, r.sales)}</span>
+                <span>{formatCost(r.cost)}</span>
 
                 {/* Tooltip */}
                 <div
@@ -288,8 +286,7 @@ export default function MonthlyProfitTable({
       </table>
 
       {/* Add this at the end of your MonthlyProfitTable render */}
-  {rows.length > 0 && <MonthlyProfitGraph rows={rows} />}
-
+      {rows.length > 0 && <MonthlyProfitGraph rows={rows} />}
     </div>
   );
 }
