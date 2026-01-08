@@ -12,6 +12,7 @@ import {
 import DailyTotalBarChart from "./CompanyCostAnalysisGraph";
 import StackedBarChart from "./StackedBarChart";
 import MonthlyStackedBarChart from "./MonthlyStackedBarChart";
+import Link from "next/link";
 
 /* ---------------- TYPES ---------------- */
 type CostType = { id: string; name: string };
@@ -273,18 +274,101 @@ export default function CompanyCostsClient({
     );
   return (
     <div className="p-4 md:p-6 mt-20 max-w-full md:max-w-7xl mx-auto space-y-6 mb-20">
-      <h1 className="text-2xl md:text-4xl font-bold text-teal-900">
-        Company Costs
-      </h1>
+    
 
-      {/* Top-level Month Selector */}
-      <div className="bg-white p-4 shadow border flex flex-col md:flex-row gap-3 items-start md:items-center">
-        <div className="flex items-center gap-2 flex-wrap">
+      {/* Add Cost Type */}
+      <div className="bg-amber-100 p-4 rounded-xs">
+        <label className="block mb-2 text-sm font-medium text-teal-700">
+          Add New Cost Category (e.g., Electricity, Rent)
+        </label>
+        <div className="flex flex-col md:flex-row gap-2">
+          <input
+            type="text"
+            placeholder="Enter category name"
+            value={newType}
+            onChange={(e) => setNewType(e.target.value)}
+            className="border border-teal-300 bg-white rounded-xs p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+          <button
+            onClick={addType}
+            disabled={addingType}
+            className="bg-teal-800 cursor-pointer hover:bg-teal-700 text-white px-4 py-2 disabled:opacity-50 w-full md:w-[200px] rounded-xs transition-colors"
+          >
+            {addingType ? "Adding…" : "Add Cost category"}
+          </button>
+        </div>
+      </div>
+
+      {/* Add Cost */}
+      <div className="bg-white p-4 my-15 border border-teal-200 rounded-xs">
+        <label className="block mb-6 text-sm font-medium text-teal-700 ">
+          Add New Cost (Pick a category below)
+        </label>
+        <div className="flex flex-wrap justify-between gap-6">
+          {/* Date Picker */}
+          <input
+            type="date"
+            required
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="border border-teal-300 w-32 rounded-xs h-8 p-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+
+          {/* Category Buttons */}
+          <div className="flex flex-wrap gap-2">
+            {costTypes.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setSelectedType(t.id)}
+                className={`px-3 py-1 rounded-full border transition-colors cursor-pointer
+            ${
+              selectedType === t.id
+                ? "bg-teal-600 text-white border-teal-600"
+                : "bg-white text-teal-900 border-teal-300 hover:bg-teal-100"
+            }`}
+              >
+                {capitalizeFirst(t.name)}
+              </button>
+            ))}
+          </div>
+
+          {/* Amount Input */}
+          <input
+            type="number"
+            placeholder="Amount"
+            required
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="border border-teal-300 rounded-xs h-8 p-2 w-32 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+
+          {/* Add Button */}
+          <button
+            onClick={addCost}
+            disabled={addingCost || !selectedType || !date || !amount}
+            className="bg-teal-800 hover:bg-teal-700 h-8 text-white px-4 rounded-xs disabled:opacity-60 md:col-span-2 transition-colors"
+          >
+            {addingCost ? "Saving…" : "Add Cost"}
+          </button>
+        </div>
+      </div>
+
+
+  {/* Top-level Month Selector */}
+      <div className="bg-white flex justify-between gap-3 items-start md:items-center">
+        <Link
+          href="/company/analysis"
+          className="text-teal-900 bg-teal-200 hover:bg-teal-100 px-4 py-2 text-[12px] font-semibold uppercase rounded-xs border border-teal-200 transition flex items-center gap-2"
+        >
+          Go to analysis <span>➠</span>
+        </Link>
+        <div className="flex items-center gap-1 py-0.5 flex-wrap text-teal-900 border border-teal-200 px-1">
           <Calendar />
           <select
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            className="border p-2"
+            className="rounded-xs px-3 py-1"
           >
             {months.map((m) => (
               <option key={m} value={m}>
@@ -292,69 +376,11 @@ export default function CompanyCostsClient({
               </option>
             ))}
           </select>
-        </div>
-        {loadingMonth && (
-          <span className="text-sm text-gray-500">Loading…</span>
-        )}
-      </div>
-
-      {/* Add Cost Type */}
-      <div className="bg-white p-4 shadow border">
-        <div className="flex flex-col md:flex-row gap-2">
-          <input
-            placeholder="New cost category"
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-            className="border p-2 w-full"
-          />
-          <button
-            onClick={addType}
-            disabled={addingType}
-            className="bg-teal-600 text-white px-4 py-2 disabled:opacity-50 w-full md:w-auto"
-          >
-            {addingType ? "Adding…" : "Add Category"}
-          </button>
+          {loadingMonth && (
+            <span className="text-sm text-gray-500">Loading…</span>
+          )}
         </div>
       </div>
-
-      {/* Add Cost */}
-      <div className="bg-white p-4 shadow border">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="border p-2 w-full"
-          />
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="border p-2 w-full"
-          >
-            <option value="">Select category</option>
-            {costTypes.map((t) => (
-              <option key={t.id} value={t.id}>
-                {capitalizeFirst(t.name)}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="border p-2 w-full"
-          />
-          <button
-            onClick={addCost}
-            disabled={addingCost}
-            className="bg-teal-600 text-white px-4 py-2 disabled:opacity-50 md:col-span-2"
-          >
-            {addingCost ? "Saving…" : "Add Cost"}
-          </button>
-        </div>
-      </div>
-
       {/* Costs Table */}
       <div className="bg-white shadow border overflow-x-auto">
         <table className="min-w-[400px] w-full border table-auto">
