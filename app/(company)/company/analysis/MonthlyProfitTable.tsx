@@ -89,7 +89,7 @@ export default function MonthlyProfitTable({
   return (
     <div className="bg-white border rounded p-4 mt-8 overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-teal-600" /> Daily Profitability
+        <Calendar className="w-5 h-5 text-teal-600" /> Daily Profitability 
       </h2>
 
       <table className="w-full text-sm border-collapse min-w-[600px]">
