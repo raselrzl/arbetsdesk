@@ -95,15 +95,14 @@ export default function CompanyAnalysisClient({
             href="/company/additionalcost"
             className="text-teal-900 px-4 py-1 text-[14px] font-semibold uppercase rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
           >
-            <PlusCircle className="h-4 w-4"/> Add Cost
+            <PlusCircle className="h-4 w-4" /> Add Cost
           </Link>
 
           <Link
             href="/company/sales"
             className="text-teal-900 px-4 py-1 text-[14px] font-semibold uppercase rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
           >
-            <PlusCircle className="h-4 w-4"/> Add
-            Sales
+            <PlusCircle className="h-4 w-4" /> Add Sales
           </Link>
         </div>
 
@@ -125,19 +124,23 @@ export default function CompanyAnalysisClient({
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <KPI icon={Users} label="Employees" value={employeesCount} />
         <KPI
-          icon={Clock}
+          imageSrc="/icons/10.png"
+          label="Employees"
+          value={employeesCount}
+        />
+        <KPI
+          imageSrc="/icons/1.png"
           label="Worked Hours"
           value={formatHours(totalHours)}
         />
         <KPI
-          icon={Wallet}
+          imageSrc="/icons/13.png"
           label="Salary Cost"
           value={`${totalSalary.toFixed(0)} `}
         />
         <KPI
-          icon={TrendingUp}
+          imageSrc="/icons/4.png"
           label="Total Tips"
           value={`${totalTips.toFixed(0)} `}
         />
@@ -145,15 +148,21 @@ export default function CompanyAnalysisClient({
 
       {/* TABS */}
       <Tabs defaultValue="hours">
-        <TabsList>
-          <TabsTrigger value="hours">Worked Hours</TabsTrigger>
-          <TabsTrigger value="salary">Salary</TabsTrigger>
-          <TabsTrigger value="tips">Tips</TabsTrigger>
+        <TabsList className="rounded-xs bg-teal-200 text-gray-100">
+          <TabsTrigger value="hours" className="rounded-xs">
+            Worked Hours
+          </TabsTrigger>
+          <TabsTrigger value="salary" className="rounded-xs">
+            Salary
+          </TabsTrigger>
+          <TabsTrigger value="tips" className="rounded-xs">
+            Tips
+          </TabsTrigger>
         </TabsList>
 
         {/* Worked Hours Chart */}
         <TabsContent value="hours">
-          <Card>
+          <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
               <CardTitle>Daily Worked Hours</CardTitle>
             </CardHeader>
@@ -181,7 +190,7 @@ export default function CompanyAnalysisClient({
 
         {/* Salary Chart */}
         <TabsContent value="salary">
-          <Card>
+          <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
               <CardTitle>Salary per Employee</CardTitle>
             </CardHeader>
@@ -203,7 +212,7 @@ export default function CompanyAnalysisClient({
 
         {/* Tips Chart */}
         <TabsContent value="tips">
-          <Card>
+          <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
               <CardTitle>Daily Tips</CardTitle>
             </CardHeader>
@@ -228,11 +237,18 @@ export default function CompanyAnalysisClient({
 }
 
 // KPI Component
-function KPI({ icon: Icon, label, value }: any) {
+// KPI Component
+function KPI({ icon: Icon, imageSrc, label, value }: any) {
   return (
-    <Card>
+    <Card className="rounded-xs border-teal-100">
       <CardContent className="flex items-center gap-3 p-4">
-        <Icon className="w-6 h-6 text-teal-600" />
+        {/* Show image if provided, else use icon */}
+        {imageSrc ? (
+          <img src={imageSrc} alt={label} className="w-6 h-6" />
+        ) : (
+          <Icon className="w-6 h-6 text-teal-600" />
+        )}
+
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="font-bold">{value}</p>
