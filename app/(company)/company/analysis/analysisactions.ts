@@ -257,16 +257,21 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
     where: { companyId, date: { gte: monthStart, lte: monthEnd } },
   });
 
-  const salesMap: Record<number, number> = {};
+  // Group sales by day and method (CASH or CARD)
+  const salesMap: Record<number, { cash: number; card: number }> = {};
+
   salesRecords.forEach(s => {
     const day = s.date.getDate();
-    salesMap[day] = (salesMap[day] || 0) + s.amount;
+    if (!salesMap[day]) salesMap[day] = { cash: 0, card: 0 };
+
+    if (s.method === "CASH") salesMap[day].cash += s.amount;
+    else if (s.method === "CARD") salesMap[day].card += s.amount;
   });
 
-  /* ---------- 2️⃣ FETCH ADDITIONAL COSTS ---------- */
+  /* ---------- 2️⃣ FETCH COSTS ---------- */
   const costRecords = await prisma.cost.findMany({
     where: { companyId, date: { gte: monthStart, lte: monthEnd } },
-    include: { costType: true }, // include cost type for breakdown
+    include: { costType: true },
   });
 
   const costMap: Record<number, number> = {};
@@ -323,7 +328,9 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
   const rows = Array.from(availableDays)
     .sort((a, b) => a - b)
     .map(day => {
-      const sales = salesMap[day] || 0;
+      const salesBreakdown = salesMap[day] || { cash: 0, card: 0 };
+      const sales = salesBreakdown.cash + salesBreakdown.card;
+
       const salary = salaryMap[day] || 0;
       const otherCosts = costMap[day] || 0;
       const cost = salary + otherCosts;
@@ -333,6 +340,7 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
       return {
         date: `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
         sales,
+        salesBreakdown,
         cost,
         result,
         margin,
@@ -359,3 +367,5 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
     },
   };
 }
+
+

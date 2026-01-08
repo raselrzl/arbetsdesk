@@ -10,6 +10,10 @@ interface ProfitRow {
   sales: number;
   result: number;
   margin: number;
+  salesBreakdown?: {
+    cash: number;
+    card: number;
+  };
   costBreakdown: {
     salary: number;
     categories: Record<string, number>;
@@ -136,9 +140,43 @@ export default function MonthlyProfitTable({
                 })}
               </td>
 
-              {/* Sales */}
-              <td className="border p-2 text-right text-teal-600">
-                {r.sales.toFixed(0)}
+              {/* Sales with hover + click breakdown */}
+              <td
+                className="border p-2 text-right text-teal-600 relative cursor-pointer group"
+                onClick={() =>
+                  setOpenRow(
+                    openRow === r.date + "-SALES" ? null : r.date + "-SALES"
+                  )
+                }
+              >
+                <span>{r.sales.toFixed(0)}</span>
+
+                {/* Tooltip */}
+                <div
+                  className={`absolute right-0 top-full mt-1 bg-white border shadow-lg p-3 text-xs z-20 w-32
+      ${openRow === r.date + "-SALES" ? "block" : "hidden"} group-hover:block`}
+                >
+                  {/* Top-left icon inside tooltip */}
+                  <div className="absolute -top-2 -left-2 bg-white p-1 border rounded">
+                    <Box className="w-3 h-3 text-gray-400" />
+                  </div>
+
+                  <div className="font-semibold mb-1">Sales breakdown</div>
+                  <div className="flex justify-between">
+                    <span>Cash</span>
+                    <span>{r.salesBreakdown?.cash.toFixed(0) ?? 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Card</span>
+                    <span>{r.salesBreakdown?.card.toFixed(0) ?? 0}</span>
+                  </div>
+
+                  <hr className="my-1" />
+                  <div className="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>{r.sales.toFixed(0)}</span>
+                  </div>
+                </div>
               </td>
 
               {/* Cost with hover + click breakdown */}
