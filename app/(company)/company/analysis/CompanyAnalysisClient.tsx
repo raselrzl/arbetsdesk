@@ -160,7 +160,9 @@ export default function CompanyAnalysisClient({
       <MonthlyProfitTable companyId={companyId} month={selectedMonth} />
 
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border border-teal-100 shadow-lg shadow-teal-800 p-4 my-12">
+      <div className="border border-teal-100 shadow-lg shadow-teal-800 p-4 my-12">
+       <h1 className="text-xl font-bold mb-4 text-teal-900">Monthly Summary</h1>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
         <KPI
           imageSrc="/icons/10.png"
           label="Employees"
@@ -199,6 +201,7 @@ export default function CompanyAnalysisClient({
           label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
           value={`${Math.abs(netProfit).toFixed(0)} `}
         />
+      </div>
       </div>
 
       {/* TABS */}
