@@ -87,9 +87,10 @@ export default function MonthlyProfitTable({
     value >= 0 ? `+${value.toFixed(0)}` : value.toFixed(0);
 
   return (
-    <div className="bg-white border rounded p-4 mt-8 overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-teal-600" /> Daily Profitability
+    <div className="bg-white shadow-lg shadow-teal-800 rounded-xs p-4 mt-8 overflow-x-auto">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
+        <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
+        Daily Profitability
       </h2>
 
       <table className="w-full text-sm border-collapse min-w-[600px]">
@@ -187,9 +188,12 @@ export default function MonthlyProfitTable({
 
               {/* Cost with hover + click breakdown */}
               <td
-                className="border border-teal-100 p-2 text-right relative cursor-pointer group"
+                className="border border-teal-100 pr-2 text-right text-gray-600 relative cursor-pointer group"
                 onClick={() => setOpenRow(openRow === r.date ? null : r.date)}
               >
+                <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
+                  <MoveUpRight className="w-3 h-3 text-gray-200" />
+                </div>
                 <span>{formatCost(r.cost, r.sales)}</span>
 
                 {/* Tooltip */}
