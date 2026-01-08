@@ -14,10 +14,11 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Users, Clock, Wallet, TrendingUp } from "lucide-react";
+import { Users, Clock, Wallet, TrendingUp, PlusCircle } from "lucide-react";
 import { getCompanyAnalysis, getAvailableMonths } from "./analysisactions";
 import { format } from "date-fns";
 import MonthlyProfitTable from "./MonthlyProfitTable";
+import Link from "next/link";
 
 function formatHours(hoursFloat: number) {
   const hours = Math.floor(hoursFloat);
@@ -87,19 +88,30 @@ export default function CompanyAnalysisClient({
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Company Analysis</h1>
-          <p className="text-gray-500">
-            Daily-based time, salary & tips overview
-          </p>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* ACTION LINKS */}
+        <div className="flex gap-3">
+          <Link
+            href="/company/additionalcost"
+            className="text-teal-900 px-4 py-1 rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
+          >
+            <PlusCircle className="h-4 w-4"/> Add Cost
+          </Link>
+
+          <Link
+            href="/company/sales"
+            className="text-teal-900 px-4 py-1 rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
+          >
+            <PlusCircle className="h-4 w-4"/> Add
+            Sales
+          </Link>
         </div>
 
         {/* MONTH FILTER */}
         <select
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="border rounded px-3 py-2"
+          className="border border-teal-100 rounded-xs px-3 py-1"
         >
           {availableMonths.map((m) => (
             <option key={m.value} value={m.value}>
