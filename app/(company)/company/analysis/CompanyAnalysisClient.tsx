@@ -203,7 +203,7 @@ export default function CompanyAnalysisClient({
 
       {/* TABS */}
       <Tabs defaultValue="hours" className="border border-teal-100 shadow-lg shadow-teal-800">
-        <TabsList className="rounded-xs bg-teal-200 text-gray-100 flex flex-wrap mb-8 h-auto">
+        <TabsList className="rounded-xs bg-teal-200 text-gray-100 flex flex-wrap mb-8 h-auto m-4">
           <TabsTrigger value="hours" className="rounded-xs">
             Worked Hours
           </TabsTrigger>
