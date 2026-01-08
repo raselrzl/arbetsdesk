@@ -381,7 +381,7 @@ export default function CompanyCostsClient({
       <div className="bg-white flex justify-between gap-3 items-start md:items-center">
         <Link
           href="/company/analysis"
-          className="text-teal-900 bg-teal-200 hover:bg-teal-100 px-4 py-2 text-[12px] font-semibold uppercase rounded-xs border border-teal-200 transition flex items-center gap-2"
+          className="text-teal-100 bg-teal-900 hover:bg-teal-700 px-4 py-2 text-[12px] font-semibold uppercase rounded-xs border border-teal-200 transition flex items-center gap-2"
         >
           Go to analysis <span>➠</span>
         </Link>
