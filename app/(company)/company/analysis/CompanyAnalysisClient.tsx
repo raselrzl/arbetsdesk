@@ -93,14 +93,14 @@ export default function CompanyAnalysisClient({
         <div className="flex gap-3">
           <Link
             href="/company/additionalcost"
-            className="text-teal-900 px-4 py-1 rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
+            className="text-teal-900 px-4 py-1 text-[14px] font-semibold uppercase rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
           >
             <PlusCircle className="h-4 w-4"/> Add Cost
           </Link>
 
           <Link
             href="/company/sales"
-            className="text-teal-900 px-4 py-1 rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
+            className="text-teal-900 px-4 py-1 text-[14px] font-semibold uppercase rounded-xs border border-teal-200  hover:bg-teal-200 transition flex items-center gap-2"
           >
             <PlusCircle className="h-4 w-4"/> Add
             Sales
