@@ -202,7 +202,10 @@ export default function CompanyAnalysisClient({
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="hours" className="border border-teal-100 shadow-lg shadow-teal-800">
+      <Tabs
+        defaultValue="hours"
+        className="border border-teal-100 shadow-lg shadow-teal-800"
+      >
         <TabsList className="rounded-xs bg-teal-200 text-gray-100 flex flex-wrap mb-8 h-auto m-4">
           <TabsTrigger value="hours" className="rounded-xs">
             Worked Hours
@@ -332,13 +335,18 @@ export default function CompanyAnalysisClient({
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={profitRows.map((row) => ({
-                    date: row.date,
-                    additionalCost: Object.values(
+                  data={profitRows.map((row) => {
+                    const dailyAdditionalCost = Object.values(
                       row.costBreakdown.categories || {}
-                    ).reduce((sum: number, v: any) => sum + Number(v), 0),
-                    categories: row.costBreakdown.categories || {},
-                  }))}
+                    ).reduce((sum: number, v: any) => sum + Number(v), 0);
+
+                    return {
+                      date: row.date,
+                      salary: row.costBreakdown.salary || 0, // daily salary
+                      additionalCost: dailyAdditionalCost,
+                      categories: row.costBreakdown.categories || {},
+                    };
+                  })}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -352,7 +360,14 @@ export default function CompanyAnalysisClient({
 
                       return (
                         <div className="bg-white border rounded-xs p-3 shadow text-sm">
-                          <p className="font-semibold mb-1">Additional Costs</p>
+                          <p className="font-semibold mb-1">Daily Costs</p>
+
+                          <div className="flex justify-between gap-4">
+                            <span>Salary</span>
+                            <span className="font-medium">
+                              {data.salary.toFixed(0)}
+                            </span>
+                          </div>
 
                           {Object.entries(categories).map(([name, value]) => (
                             <div
@@ -368,7 +383,9 @@ export default function CompanyAnalysisClient({
 
                           <div className="border-t mt-2 pt-1 flex justify-between font-semibold">
                             <span>Total</span>
-                            <span>{data.additionalCost.toFixed(0)}</span>
+                            <span>
+                              {(data.salary + data.additionalCost).toFixed(0)}
+                            </span>
                           </div>
                         </div>
                       );
