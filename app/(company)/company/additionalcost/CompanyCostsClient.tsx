@@ -418,7 +418,7 @@ export default function CompanyCostsClient({
                   </div>
 
                   {/* Category breakdown */}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {items.map((i, idx) => (
                       <div
                         key={idx}
