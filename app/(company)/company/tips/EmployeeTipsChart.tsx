@@ -47,7 +47,7 @@ export function EmployeeTipsChart({
 
   return (
     <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
-      <h2 className="text-lg md:text-xl font-semibold mb-3">
+      <h2 className="text-lg md:text-xl font-semibold mb-3 text-teal-900">
         Monthly Tips by Employee
       </h2>
 

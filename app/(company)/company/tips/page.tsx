@@ -118,7 +118,7 @@ function TipsCalendar({
 }) {
   return (
     <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
-      <h2 className="text-xl font-semibold mb-2">Calendar</h2>
+      <h2 className="text-xl font-semibold mb-2 text-teal-900">Tips Calendar</h2>
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = String(i + 1).padStart(2, "0");
@@ -161,7 +161,7 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
 
   return (
     <div className="bg-white rounded-xs shadow p-4 mb-4 border border-teal-100">
-      <h2 className="text-xl font-semibold mb-2">
+      <h2 className="text-xl font-semibold mb-2 text-teal-900">
         Tip Distribution – {dailyTip.date}
       </h2>
 
@@ -222,7 +222,7 @@ function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
 
   return (
     <div className="bg-white rounded-xs w-full">
-      <h2 className="text-xl font-semibold mb-3">
+      <h2 className="text-xl font-semibold mb-3 text-teal-900">
         Monthly Tip Distribution (Per Employee)
       </h2>
 
@@ -348,7 +348,32 @@ export default function CompanyTipsPage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-      <h1 className="text-3xl font-bold">Tips Management</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-teal-800 uppercase">Tips Distribution</h1>
+
+        <div className="flex gap-3">
+          <a
+            href="/company/analysis"
+            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+          >
+            Analysis ➠
+          </a>
+
+          <a
+            href="/company/additionalcost"
+            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+          >
+            Cost ➠
+          </a>
+
+          <a
+            href="/company/sales"
+            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+          >
+            Sales ➠
+          </a>
+        </div>
+      </div>
 
       <AddTipForm
         newDate={newDate}
