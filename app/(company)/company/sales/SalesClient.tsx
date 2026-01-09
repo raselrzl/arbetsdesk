@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
 import { addDailySale, getMonthlySalesByCompany } from "./salesactions";
 import Link from "next/link";
+import MonthlySalesGraph from "./MonthlySalesGraph";
 
 type Sale = {
   id: string;
@@ -118,6 +119,15 @@ export default function SalesClient({
     return map;
   }, [sales]);
 
+  const chartData = useMemo(() => {
+    return Object.entries(groupedByDate).map(([date, values]) => ({
+      date,
+      cash: values.cash,
+      card: values.card,
+      total: values.total,
+    }));
+  }, [groupedByDate]);
+
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-6 my-20">
       {/* Add sale */}
@@ -226,6 +236,8 @@ export default function SalesClient({
           <div>{formatNumber(summary.total)}</div>
         </div>
       </div>
+
+      <MonthlySalesGraph data={chartData} />
     </div>
   );
 }
