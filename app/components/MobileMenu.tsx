@@ -1,27 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import UserMenu from "./UserMenu";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Loader2 } from "lucide-react";
 
 export default function MobileMenu({ user }: { user: any }) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  // helper function to close dropdown
   const handleLinkClick = () => setOpen(false);
 
   return (
     <div className="md:hidden flex items-center gap-2">
-      {/* Show Login/Register next to hamburger if user not logged in */}
-      {!user && (
-        <Link
-          href="/login"
-          className="py-1 px-3 bg-teal-900 text-white rounded-3xl hover:bg-teal-700 text-sm"
-        >
-          Login
-        </Link>
-      )}
       {/* Hamburger Button */}
       <button
         onClick={() => setOpen(!open)}
@@ -76,9 +69,26 @@ export default function MobileMenu({ user }: { user: any }) {
             Contact
           </Link>
 
-          {/* Inside dropdown, no need to show login again */}
-          {user && <UserMenu user={user} />}
+          {/* User login/logout menu inside dropdown */}
+          <div className="pt-2 mt-4">
+            <UserMenu user={user} />
+          </div>
         </div>
+      )}
+
+      {/* Show Login button outside dropdown if user not logged in, with loader */}
+      {!user && (
+        <button
+          onClick={() =>
+            startTransition(() => {
+              router.push("/login");
+            })
+          }
+          disabled={isPending}
+          className="py-1 px-3 bg-teal-900 text-white rounded-3xl hover:bg-teal-700 text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+        >
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Login"}
+        </button>
       )}
     </div>
   );
