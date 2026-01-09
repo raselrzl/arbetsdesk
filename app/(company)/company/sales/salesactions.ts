@@ -36,3 +36,20 @@ export async function getMonthlySalesByCompany(companyId: string, month: string)
     orderBy: { date: "asc" },
   });
 }
+
+
+
+export async function getYearlySalesByCompany(companyId: string, year: number) {
+  const sales = await prisma.sale.findMany({
+    where: {
+      companyId,
+      date: {
+        gte: new Date(year, 0, 1),
+        lt: new Date(year + 1, 0, 1),
+      },
+    },
+    orderBy: { date: "asc" },
+  });
+
+  return sales;
+}

@@ -2,9 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
-import { addDailySale, getMonthlySalesByCompany } from "./salesactions";
+import {
+  addDailySale,
+  getMonthlySalesByCompany,
+  getYearlySalesByCompany,
+} from "./salesactions";
 import Link from "next/link";
 import MonthlySalesGraph from "./MonthlySalesGraph";
+import YearlySalesGraph from "./YearlySalesGraph";
 
 type Sale = {
   id: string;
@@ -26,13 +31,28 @@ function formatNumber(value: number) {
   }).format(value);
 }
 
+const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 export default function SalesClient({
   companyId,
   initialMonths,
   initialYears,
 }: Props) {
   // Filter only years >= 2026
-  const filteredYears = initialYears.filter((y) => y >= 2026);
+  const filteredYears = initialYears.sort((a, b) => b - a);
 
   const [months, setMonths] = useState(initialMonths);
   const [month, setMonth] = useState(initialMonths[0] || "");
@@ -46,6 +66,11 @@ export default function SalesClient({
 
   const [loadingMonth, setLoadingMonth] = useState(false);
   const [addingSale, setAddingSale] = useState(false);
+
+  // Yearly state
+  const [yearlyYear, setYearlyYear] = useState(filteredYears[0] || 2026);
+  const [yearlySales, setYearlySales] = useState<Sale[]>([]);
+  const [loadingYear, setLoadingYear] = useState(false);
 
   /* -------- Load monthly sales -------- */
   useEffect(() => {
@@ -127,6 +152,72 @@ export default function SalesClient({
       total: values.total,
     }));
   }, [groupedByDate]);
+
+  // Load yearly sales
+  useEffect(() => {
+    if (!yearlyYear) return;
+    setLoadingYear(true);
+    getYearlySalesByCompany(companyId, yearlyYear).then((data) => {
+      setYearlySales(
+        data.map((s) => ({
+          id: s.id,
+          date: s.date.toISOString(),
+          amount: s.amount,
+          method: s.method,
+        }))
+      );
+      setLoadingYear(false);
+    });
+  }, [yearlyYear, companyId]);
+
+  // Group yearly sales by month
+  const groupedByMonth = useMemo(() => {
+    const map: Record<string, { cash: number; card: number; total: number }> =
+      {};
+
+    yearlySales.forEach((s) => {
+      const d = new Date(s.date);
+      const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`;
+      if (!map[month]) map[month] = { cash: 0, card: 0, total: 0 };
+      if (s.method === "CASH") map[month].cash += s.amount;
+      if (s.method === "CARD") map[month].card += s.amount;
+      map[month].total += s.amount;
+    });
+
+    // Ensure all 12 months exist
+    for (let m = 1; m <= 12; m++) {
+      const key = `${yearlyYear}-${String(m).padStart(2, "0")}`;
+      if (!map[key]) map[key] = { cash: 0, card: 0, total: 0 };
+    }
+
+    return map;
+  }, [yearlySales, yearlyYear]);
+
+  // Prepare chart data
+  const yearlyChartData = useMemo(() => {
+    return Object.entries(groupedByMonth)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, values]) => ({
+        month,
+        cash: values.cash,
+        card: values.card,
+        total: values.total,
+      }));
+  }, [groupedByMonth]);
+
+  // Yearly summary
+  const yearlySummary = useMemo(() => {
+    let cash = 0,
+      card = 0;
+    Object.values(groupedByMonth).forEach((v) => {
+      cash += v.cash;
+      card += v.card;
+    });
+    return { cash, card, total: cash + card };
+  }, [groupedByMonth]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-6 my-20">
@@ -238,6 +329,88 @@ export default function SalesClient({
       </div>
 
       <MonthlySalesGraph data={chartData} />
+
+      {/* Yearly Sales Section */}
+      <div className="space-y-6 mt-10">
+        <h2 className="text-xl font-semibold">Yearly Sales</h2>
+
+        {/* Year selector */}
+        <div className="flex items-center gap-2 mb-4">
+          <span>Year:</span>
+          <select
+            value={yearlyYear}
+            onChange={(e) => setYearlyYear(Number(e.target.value))}
+            className="border p-2"
+          >
+            {filteredYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+
+          {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
+        </div>
+
+        {/* Yearly table */}
+        <div className="overflow-x-auto border rounded-xs">
+          <table className="min-w-[700px] w-full border">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-2 border text-left">Month</th>
+                <th className="p-2 border text-right">Cash</th>
+                <th className="p-2 border text-right">Card</th>
+                <th className="p-2 border text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 12 }).map((_, i) => {
+                const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
+                const values = groupedByMonth[key] || {
+                  cash: 0,
+                  card: 0,
+                  total: 0,
+                };
+                const monthName = MONTH_NAMES[i]; // fixed, no toLocaleString
+
+                return (
+                  <tr key={key}>
+                    <td className="p-2 border">{monthName}</td>
+                    <td className="p-2 border text-right">
+                      {formatNumber(values.cash)}
+                    </td>
+                    <td className="p-2 border text-right">
+                      {formatNumber(values.card)}
+                    </td>
+                    <td className="p-2 border text-right font-semibold">
+                      {formatNumber(values.total)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Yearly summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Cash</strong>
+            <div>{formatNumber(yearlySummary.cash)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Card</strong>
+            <div>{formatNumber(yearlySummary.card)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center font-bold">
+            <strong>Total</strong>
+            <div>{formatNumber(yearlySummary.total)}</div>
+          </div>
+        </div>
+
+        {/* Yearly Graph */}
+        <YearlySalesGraph data={yearlyChartData} />
+      </div>
     </div>
   );
 }
