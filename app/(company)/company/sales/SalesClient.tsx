@@ -257,12 +257,21 @@ export default function SalesClient({
       {/* Month selector + Analysis link */}
       <div className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-xs border">
         {/* Link to Analysis */}
-        <Link
+       <div className="flex gap-2">
+         <Link
           href="/company/analysis"
           className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
         >
           Go to Analysis ➠
         </Link>
+
+         <Link
+          href="/company/additionalcost"
+          className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+        >
+          Go to Cost ➠
+        </Link>
+       </div>
 
         {/* Month selector */}
         <div className="flex items-center gap-2">

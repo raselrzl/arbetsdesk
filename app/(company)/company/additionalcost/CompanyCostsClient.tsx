@@ -379,12 +379,21 @@ export default function CompanyCostsClient({
 
       {/* Top-level Month Selector */}
       <div className="bg-white flex justify-between gap-3 items-start md:items-center">
-        <Link
+       <div className="flex gap-2">
+         <Link
           href="/company/analysis"
           className="text-teal-100 bg-teal-900 hover:bg-teal-700 px-4 py-2 text-[12px] font-semibold uppercase rounded-xs border border-teal-200 transition flex items-center gap-2"
         >
           Go to analysis <span>➠</span>
         </Link>
+
+         <Link
+          href="/company/sales"
+          className="text-teal-100 bg-teal-900 hover:bg-teal-700 px-4 py-2 text-[12px] font-semibold uppercase rounded-xs border border-teal-200 transition flex items-center gap-2"
+        >
+          Go to Sales <span>➠</span>
+        </Link>
+       </div>
         <div className="flex items-center gap-1 py-0.5 flex-wrap text-teal-900 border border-teal-200 px-1">
           <Calendar />
           <select
