@@ -324,15 +324,76 @@ export default function CompanyTipsPage() {
 
   /* -------- Add tip -------- */
   const addTipHandler = async () => {
-    if (!newDate || !newAmount) return;
+  if (!newDate || !newAmount) return;
+
+  try {
     await addDailyTip({
       date: newDate,
       amount: Number(newAmount),
     });
+
+    alert("Tip added successfully!"); // ✅ show success alert
+
+    // Clear input fields
     setNewDate("");
     setNewAmount("");
-    setMonth((m) => m); // trigger reload
-  };
+
+    // Refetch tips for the current month
+    if (!month) return;
+
+    const employees = await getCompanyEmployees();
+    setEmployeesList(employees);
+    if (!employees.length) return;
+
+    const companyId = employees[0].companyId;
+    const data = await getMonthlyTips(companyId, month);
+
+    const daily: DailyTip[] = data.tips.map((tip: any) => {
+      const logsForDay = data.timeLogs.filter(
+        (l: any) =>
+          l.logDate.toISOString().slice(0, 10) ===
+          tip.date.toISOString().slice(0, 10)
+      );
+
+      return {
+        date: tip.date.toISOString().slice(0, 10),
+        totalTip: tip.amount,
+        employees: Object.values(
+          logsForDay
+            .filter((l: any) => l.logoutTime && l.totalMinutes)
+            .reduce((acc: any, log: any) => {
+              const empId = log.employee.id;
+
+              if (!acc[empId]) {
+                acc[empId] = {
+                  id: empId,
+                  name: log.employee.name,
+                  hours: 0,
+                  loggedOutTime: log.logoutTime,
+                  status: log.employee.status,
+                };
+              }
+
+              acc[empId].hours += log.totalMinutes / 60;
+
+              // keep latest logout time
+              if (acc[empId].loggedOutTime < log.logoutTime) {
+                acc[empId].loggedOutTime = log.logoutTime;
+              }
+
+              return acc;
+            }, {})
+        ),
+      };
+    });
+
+    setDailyTips(daily); // ✅ update calendar
+  } catch (error) {
+    console.error(error);
+    alert("Failed to add tip. Please try again.");
+  }
+};
+
 
   /* -------- Derived -------- */
   const dailyTipsForMonth = useMemo(
