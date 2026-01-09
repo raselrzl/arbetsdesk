@@ -8,6 +8,9 @@ import {
   getCompanyEmployees,
   getAvailableTipMonths,
 } from "@/app/actions";
+import { DailyTipsChart } from "./DailyTipsChart";
+import { EmployeeTipsChart } from "./EmployeeTipsChart";
+import { MonthlyTipPivotTable } from "./MonthlyTipPivotTable";
 
 /* ---------------- TYPES ---------------- */
 
@@ -132,7 +135,7 @@ function TipsCalendar({
               {tipForDay && (
                 <span className="text-sm flex items-center gap-1">
                   <Wallet className="w-4 h-4 text-teal-600" />
-                  {tipForDay.totalTip} 
+                  {tipForDay.totalTip}
                 </span>
               )}
             </div>
@@ -178,19 +181,12 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
   );
 }
 
-
 /* ---------------- MONTHLY EMPLOYEE SUMMARY ---------------- */
 
-function MonthlyEmployeeTipSummary({
-  dailyTips,
-}: {
-  dailyTips: DailyTip[];
-}) {
+function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
   const monthlyTotals = useMemo(() => {
-    const acc: Record<
-      string,
-      { id: string; name: string; totalTip: number }
-    > = {};
+    const acc: Record<string, { id: string; name: string; totalTip: number }> =
+      {};
 
     for (const day of dailyTips) {
       const finished = day.employees.filter(
@@ -219,28 +215,26 @@ function MonthlyEmployeeTipSummary({
       }
     }
 
-    return Object.values(acc).sort(
-      (a, b) => b.totalTip - a.totalTip
-    );
+    return Object.values(acc).sort((a, b) => b.totalTip - a.totalTip);
   }, [dailyTips]);
 
   if (!monthlyTotals.length) return null;
 
   return (
-    <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
+    <div className="bg-white rounded-xs w-full">
       <h2 className="text-xl font-semibold mb-3">
-        Monthly Tip Summary (Per Employee)
+        Monthly Tip Distribution (Per Employee)
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         {monthlyTotals.map((emp) => (
           <div
             key={emp.id}
-            className="border rounded p-4 bg-teal-50 flex flex-col items-center"
+            className="border border-teal-200 rounded p-4 bg-teal-50 flex flex-col items-center"
           >
             <span className="font-semibold">{emp.name}</span>
             <span className="text-lg font-bold text-teal-700">
-              {emp.totalTip.toFixed(2)} 
+              {emp.totalTip.toFixed(2)}
             </span>
           </div>
         ))}
@@ -356,8 +350,6 @@ export default function CompanyTipsPage() {
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <h1 className="text-3xl font-bold">Tips Management</h1>
 
-      <MonthSelector month={month} setMonth={setMonth} months={months} />
-
       <AddTipForm
         newDate={newDate}
         setNewDate={setNewDate}
@@ -366,25 +358,29 @@ export default function CompanyTipsPage() {
         onAddTip={addTipHandler}
       />
 
-      <div className="bg-white p-4 rounded-xs shadow border border-teal-100 flex items-center gap-3">
-        <Wallet className="w-5 h-5 text-teal-600" />
-        <span className="font-semibold">
-          Total Tips: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
-          
-        </span>
+      <div className="flex flex-col bg-white text-teal-800 p-4 rounded-xs shadow border border-teal-100 gap-3">
+        <div className="flex gap-2 text-3xl mb-10">
+          {" "}
+          <Wallet className="w-10 h-10 " />
+          <span className="font-semibold">
+            Total Tips: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
+          </span>
+        </div>
+        <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
       </div>
-
+      <MonthSelector month={month} setMonth={setMonth} months={months} />
+      <MonthlyTipPivotTable dailyTips={dailyTipsForMonth} />
       <TipsCalendar
         dailyTipsForMonth={dailyTipsForMonth}
         daysInMonth={daysInMonth}
       />
+      <DailyTipsChart dailyTips={dailyTipsForMonth} />
 
-      <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
+      <EmployeeTipsChart dailyTips={dailyTipsForMonth} />
 
-
-      {dailyTipsForMonth.map((d) => (
+      {/* {dailyTipsForMonth.map((d) => (
         <DailyDistribution key={d.date} dailyTip={d} />
-      ))}
+      ))} */}
     </div>
   );
 }
