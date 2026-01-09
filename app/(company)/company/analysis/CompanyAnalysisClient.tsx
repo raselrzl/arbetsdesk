@@ -330,11 +330,11 @@ export default function CompanyAnalysisClient({
                     formatter={(value: number) => `${value.toFixed(0)} `}
                   />
 
-                  <Bar
+                 {/*  <Bar
                     dataKey="salesBreakdown.cash"
                     name="Cash"
                     fill="#22c55e"
-                  />
+                  /> */}
                   <Bar dataKey="salesBreakdown.cash" name="Cash" fill="#22c55e">
                     <LabelList
                       dataKey="salesBreakdown.cash"
