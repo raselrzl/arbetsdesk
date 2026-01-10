@@ -65,6 +65,7 @@ model Company {
   costs           Cost[]
 
   sales Sale[]
+  messages Message[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +104,7 @@ model Employee {
   schedules      Schedule[]
   timeLogs       TimeLog[]
   salarySlips    SalarySlip[]
+  messages Message[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -224,3 +226,26 @@ enum SaleMethod {
   CASH
   CARD
 }
+
+
+model Message {
+  id          String   @id @default(cuid())
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+
+  employeeId  String?
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+
+  title       String?
+  content     String
+
+  isBroadcast Boolean  @default(false)
+  isRead      Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+
+  @@index([companyId])
+  @@index([employeeId])
+}
+

@@ -302,3 +302,98 @@ export async function getEmployeeAvailableMonths(): Promise<string[]> {
 
   return Array.from(monthsSet).sort();
 }
+
+
+
+
+
+export async function getEmployeeMessages(limit?: number) {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+  if (!employeeId) throw new Error("Unauthorized");
+
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { companyId: true },
+  });
+
+  if (!employee) throw new Error("Employee not found");
+
+  const messages = await prisma.message.findMany({
+    where: {
+      companyId: employee.companyId,
+      OR: [{ employeeId }, { isBroadcast: true }],
+    },
+    include: {
+      company: { select: { name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+
+  // ✅ SERIALIZE DATES
+  return messages.map((m) => ({
+    ...m,
+    createdAt: m.createdAt.toISOString(),
+  }));
+}
+
+
+export async function markMessageRead(messageId: string) {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+  if (!employeeId) throw new Error("Unauthorized");
+
+  await prisma.message.update({
+    where: { id: messageId },
+    data: { isRead: true },
+  });
+}
+
+
+
+function getWeekRange(weekOffset = 0) {
+  const now = new Date();
+  const day = now.getDay() || 7; // Sunday = 7
+  now.setDate(now.getDate() - day + 1 + weekOffset * 7); // Monday
+
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 7);
+
+  return { start, end };
+}
+
+
+export async function getEmployeeWeeklyMessages(weekOffset = 0) {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+  if (!employeeId) throw new Error("Unauthorized");
+
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { companyId: true },
+  });
+  if (!employee) throw new Error("Employee not found");
+
+  const { start, end } = getWeekRange(weekOffset);
+
+  const messages = await prisma.message.findMany({
+    where: {
+      companyId: employee.companyId,
+      createdAt: { gte: start, lt: end },
+      OR: [{ employeeId }, { isBroadcast: true }],
+    },
+    include: {
+      company: { select: { name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    ...m,
+    createdAt: m.createdAt.toISOString(),
+  }));
+}

@@ -6,6 +6,7 @@ import {
   getEmployeeSchedule,
   getEmployeeMonthlyHours,
 } from "./employeeactions";
+import EmployeeWeeklyMessages from "./EmployeeMessages";
 
 /* ---------------- TYPES ---------------- */
 
@@ -78,16 +79,20 @@ export default function EmployeeDashboard() {
       {/* LEFT COLUMN */}
       <div className="p-4">
         <h2 className="text-sm font-semibold mb-4">Upcoming Sessions</h2>
+        <div className="md:col-span-2 bg-white p-4 shadow rounded">
+          <h2 className="text-sm font-semibold mb-3">Latest Notification</h2>
+          <EmployeeWeeklyMessages  />
+        </div>
 
-        {loadingSessions && (
+       {/*  {loadingSessions && (
           <p className="text-sm text-gray-400">Loading schedule...</p>
-        )}
+        )} */}
 
-        {!loadingSessions && sessions.length === 0 && (
+       {/*  {!loadingSessions && sessions.length === 0 && (
           <p className="text-sm text-gray-400">No upcoming sessions.</p>
-        )}
+        )} */}
 
-        <ul className="space-y-3">
+       {/*  <ul className="space-y-3">
           {sessions.map((session) => (
             <li
               key={session.id}
@@ -105,7 +110,7 @@ export default function EmployeeDashboard() {
               </div>
             </li>
           ))}
-        </ul>
+        </ul> */}
       </div>
 
       {/* RIGHT COLUMN */}
@@ -156,9 +161,7 @@ export default function EmployeeDashboard() {
                     <td className="py-2">
                       {formatTime(log.start)} – {formatTime(log.end)}
                     </td>
-                    <td className="py-2">
-                      {formatMinutes(log.minutes)}
-                    </td>
+                    <td className="py-2">{formatMinutes(log.minutes)}</td>
                   </tr>
                 ))}
               </tbody>
