@@ -561,6 +561,7 @@ export async function getCompanyTimeReports() {
 
     map[date].push({
       name: log.employee.name,
+      personalNumber: log.employee.personalNumber,
       status: log.loginTime && !log.logoutTime ? "Working" : "Not working",
       startTime: log.loginTime
         ? log.loginTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
