@@ -143,6 +143,7 @@ export default function CompanyTimePage() {
 
     return total;
   }, [filteredReports]);
+  
 
   /* LOADING */
   if (loading) {
