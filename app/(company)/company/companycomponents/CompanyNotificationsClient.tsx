@@ -9,9 +9,7 @@ function getWeekLabel(offset: number) {
   if (offset === 0) return "This week";
   if (offset === -1) return "Last week";
   if (offset === 1) return "Next week";
-  return offset > 0
-    ? `${offset} weeks ahead`
-    : `${Math.abs(offset)} weeks ago`;
+  return offset > 0 ? `${offset} weeks ahead` : `${Math.abs(offset)} weeks ago`;
 }
 
 export default function CompanyNotificationsClient({
@@ -37,40 +35,36 @@ export default function CompanyNotificationsClient({
   };
 
   return (
-    <div className="space-y-8 px-6 pb-20">
+    <div className="space-y-8 px-2 my-12 py-2 bg-teal-100">
       {/* Header */}
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-gray-800">
-            Company Notifications
-          </h1>
-          <p className="text-sm text-gray-500">
-            {getWeekLabel(weekOffset)}
-          </p>
+          <h1 className="text-xl font-semibold text-gray-800">Notice</h1>
         </div>
-
+        <p className="text-sm text-gray-500">{getWeekLabel(weekOffset)}</p>
         {/* Navigation */}
         <div className="flex gap-2">
           <button
             onClick={() => setWeek(weekOffset - 1)}
             disabled={isPending}
-            className="px-4 py-2 text-sm rounded-md border bg-white hover:bg-gray-50 disabled:opacity-50"
+            className="h-8 px-4 text-sm flex items-center justify-center rounded-xs border border-teal-200 bg-white hover:bg-gray-50 disabled:opacity-50"
           >
-            ← Previous
+            ← Prev
           </button>
 
           <button
             onClick={() => setWeek(0)}
             disabled={isPending || weekOffset === 0}
-            className="px-4 py-2 text-sm rounded-md border bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50"
+            className="h-8 px-4 text-sm flex items-center justify-center rounded-xs border border-teal-200 bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50"
           >
-            Current
+            Curr
           </button>
 
           <button
             onClick={() => setWeek(weekOffset + 1)}
             disabled={isPending || weekOffset >= 0}
-            className="px-4 py-2 text-sm rounded-md border bg-white hover:bg-gray-50 disabled:opacity-40"
+            className="h-8 px-4 text-sm flex items-center justify-center rounded-xs border border-teal-200 bg-white hover:bg-gray-50 disabled:opacity-40"
           >
             Next →
           </button>
@@ -87,9 +81,7 @@ export default function CompanyNotificationsClient({
 
       {/* Employee messages */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Messages Sent by Employees
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-800">From Employees</h2>
 
         {isPending ? (
           <SkeletonList />
@@ -100,9 +92,7 @@ export default function CompanyNotificationsClient({
 
       {/* Company messages */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Messages Sent by Company
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-800">From Company</h2>
 
         {isPending ? (
           <SkeletonList />
@@ -120,10 +110,7 @@ function SkeletonList() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div
-          key={i}
-          className="p-4 rounded-md bg-gray-100 animate-pulse"
-        >
+        <div key={i} className="p-4 rounded-md bg-gray-100 animate-pulse">
           <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
           <div className="h-3 bg-gray-200 rounded w-1/3" />
         </div>

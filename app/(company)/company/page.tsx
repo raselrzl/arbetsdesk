@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import CompanyPageClient from "./companycomponents/CompanyPageClient";
 import WorkComparisonCard from "./companycomponents/HourComparison";
-import { ChartNoAxesCombined } from "lucide-react";
 import CostComparisonCard from "./companycomponents/CostComparisonCard";
 import WeeklySalesComparisonCard from "./companycomponents/WeeklySalesComparisonCard";
 import CompanyNotifications from "./companycomponents/CompanyNotifications";
@@ -44,20 +43,23 @@ export default async function CompanyPageServer() {
   if (!company) redirect("/login");
 
   return (
-    <div className="grid grid-cols-2 max-w-7xl mx-auto">
-      <div className="col-span-2 p-2 mb-20">
-        <div className="col-span-2 mb-10">
-          <CompanyPageClient companyData={company} />
+    <div className="max-w-7xl mx-auto px-2 mb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Right column (2/3) – appears FIRST on mobile */}
+        <div className="order-1 lg:order-2 lg:col-span-2 space-y-10">
+          <div>
+            <CompanyPageClient companyData={company} />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 gap-y-6">
+            <WorkComparisonCard />
+            <CostComparisonCard />
+            <WeeklySalesComparisonCard />
+          </div>
         </div>
-        {/*  <div className="flex flex-row mb-4 items-center justify-center text-2xl font-bold uppercase text-teal-900 border-t border-teal-100 pt-4">
-          <ChartNoAxesCombined className="h-8 w-8" />{" "}
-          <h2>Current Week vs Last Week</h2>
-        </div> */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 gap-y-6">
-          <WorkComparisonCard /> <CostComparisonCard />{" "}
-          <WeeklySalesComparisonCard />
-        </div>
-        <div className="my-20 border-t-4 border-teal-800">
+
+        {/* Left column (1/3) – appears LAST on mobile, FIRST on desktop */}
+        <div className="order-2 lg:order-1 lg:col-span-1 my-20">
           <CompanyNotifications />
         </div>
       </div>
