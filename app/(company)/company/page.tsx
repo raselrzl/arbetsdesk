@@ -7,6 +7,7 @@ import WorkComparisonCard from "./companycomponents/HourComparison";
 import { ChartNoAxesCombined } from "lucide-react";
 import CostComparisonCard from "./companycomponents/CostComparisonCard";
 import WeeklySalesComparisonCard from "./companycomponents/WeeklySalesComparisonCard";
+import CompanyNotifications from "./companycomponents/CompanyNotifications";
 
 export default async function CompanyPageServer() {
   const jar = await cookies();
@@ -55,6 +56,9 @@ export default async function CompanyPageServer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 gap-y-6">
           <WorkComparisonCard /> <CostComparisonCard />{" "}
           <WeeklySalesComparisonCard />
+        </div>
+        <div className="my-20 border-t-4 border-teal-800">
+          <CompanyNotifications />
         </div>
       </div>
     </div>

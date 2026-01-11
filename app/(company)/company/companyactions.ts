@@ -319,3 +319,113 @@ export async function deleteEmployee(employeeId: string) {
 
   return { success: true };
 }
+
+
+export async function getEmployeeMessages() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const messages = await prisma.employeeMessage.findMany({
+    where: { companyId },
+    include: {
+      employee: { select: { id: true, name: true, email: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+
+  // normalize null email
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: {
+      id: m.employee.id,
+      name: m.employee.name,
+      email: m.employee.email ?? undefined,
+    },
+    isRead: m.isRead,
+  }));
+}
+
+// Fetch messages sent by the company
+export async function getCompanyMessages() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const messages = await prisma.message.findMany({
+    where: { companyId, isBroadcast: true },
+    include: {
+      company: { select: { id: true, name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+  }));
+}
+
+
+export async function getEmployeeMessagesForCompany() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const messages = await prisma.employeeMessage.findMany({
+    where: { companyId },
+    include: {
+      employee: { select: { id: true, name: true, email: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: {
+      id: m.employee.id,
+      name: m.employee.name,
+      email: m.employee.email ?? undefined,
+    },
+    isRead: m.isRead,
+  }));
+}
+
+export type CompanyMessage = {
+  id: string;
+  content: string;
+  createdAt: string;
+  isBroadcast: boolean;
+  companyName: string;
+  employeeName?: string; // optional if broadcast
+};
+
+// Fetch company messages (for all employees)
+export async function getCompanyMessagesForCompany(): Promise<CompanyMessage[]> {
+  const messages = await prisma.message.findMany({
+    include: {
+      company: { select: { name: true } },
+      employee: { select: { name: true } }, // include employee info if specific
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    isBroadcast: m.isBroadcast,
+    companyName: m.company.name,
+    employeeName: m.employee?.name, // undefined if broadcast
+  }));
+}
+
+
