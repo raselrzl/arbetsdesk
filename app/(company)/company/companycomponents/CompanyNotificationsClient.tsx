@@ -35,7 +35,7 @@ export default function CompanyNotificationsClient({
   };
 
   return (
-    <div className="space-y-8 px-2 my-12 py-2 bg-teal-100">
+    <div className="space-y-8 px-2 my-12 py-4 bg-teal-100">
       {/* Header */}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
