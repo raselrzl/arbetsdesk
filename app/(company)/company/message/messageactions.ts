@@ -27,3 +27,27 @@ export async function sendMessage(formData: FormData) {
     },
   });
 }
+
+
+export async function getCompanyMessages() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  // Fetch all messages sent by employees for this company
+  const messages = await prisma.employeeMessage.findMany({
+    where: { companyId },
+    include: {
+      employee: { select: { id: true, name: true, email: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: m.employee,
+    isRead: m.isRead,
+  }));
+}

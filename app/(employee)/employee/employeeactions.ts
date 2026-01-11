@@ -208,6 +208,7 @@ export async function getEmployeeProfile() {
       createdAt: true,
       company: {
         select: {
+          id: true,
           name: true,
           email: true,
         },
@@ -396,4 +397,36 @@ export async function getEmployeeWeeklyMessages(weekOffset = 0) {
     ...m,
     createdAt: m.createdAt.toISOString(),
   }));
+}
+
+
+export async function sendEmployeeMessage({
+  title,
+  content,
+  companyId,
+}: {
+  title?: string;
+  content: string;
+  companyId: string;
+}) {
+  const jar = await cookies();
+  const employeeId = jar.get("employee_session")?.value;
+
+  if (!employeeId) throw new Error("Unauthorized");
+  if (!content) throw new Error("Message content cannot be empty");
+
+  const message = await prisma.employeeMessage.create({
+    data: {
+      employeeId,
+      companyId,
+      title,
+      content,
+    },
+  });
+
+  // Serialize dates before returning
+  return {
+    ...message,
+    createdAt: message.createdAt.toISOString(),
+  };
 }

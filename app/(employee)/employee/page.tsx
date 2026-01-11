@@ -5,8 +5,10 @@ import { ChevronRight } from "lucide-react";
 import {
   getEmployeeSchedule,
   getEmployeeMonthlyHours,
+  getEmployeeProfile,
 } from "./employeeactions";
 import EmployeeWeeklyMessages from "./EmployeeMessages";
+import SendMessageForm from "./SendMessageForm";
 
 /* ---------------- TYPES ---------------- */
 
@@ -35,6 +37,8 @@ export default function EmployeeDashboard() {
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [loadingHours, setLoadingHours] = useState(true);
 
+  const [companyId, setCompanyId] = useState<string>(""); // ✅ NEW: store companyId
+
   /* ---------------- FETCH SCHEDULE ---------------- */
   useEffect(() => {
     getEmployeeSchedule()
@@ -52,6 +56,13 @@ export default function EmployeeDashboard() {
       })
       .catch(console.error)
       .finally(() => setLoadingHours(false));
+  }, []);
+
+  /* ---------------- FETCH COMPANY ID ---------------- */
+  useEffect(() => {
+    getEmployeeProfile()
+      .then((emp) => setCompanyId(emp.company?.id || ""))
+      .catch(console.error);
   }, []);
 
   /* ---------------- HELPERS ---------------- */
@@ -81,18 +92,21 @@ export default function EmployeeDashboard() {
         <h2 className="text-sm font-semibold mb-4">Upcoming Sessions</h2>
         <div className="md:col-span-2 bg-white p-4 shadow rounded">
           <h2 className="text-sm font-semibold mb-3">Latest Notification</h2>
-          <EmployeeWeeklyMessages  />
+          <EmployeeWeeklyMessages />
+          {/* ✅ Pass companyId only when available */}
+          {companyId && <SendMessageForm companyId={companyId} />}
         </div>
 
-       {/*  {loadingSessions && (
+        {/* Uncomment these if needed */}
+        {/* {loadingSessions && (
           <p className="text-sm text-gray-400">Loading schedule...</p>
-        )} */}
+        )}
 
-       {/*  {!loadingSessions && sessions.length === 0 && (
+        {!loadingSessions && sessions.length === 0 && (
           <p className="text-sm text-gray-400">No upcoming sessions.</p>
-        )} */}
+        )}
 
-       {/*  <ul className="space-y-3">
+        <ul className="space-y-3">
           {sessions.map((session) => (
             <li
               key={session.id}

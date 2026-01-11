@@ -2,6 +2,7 @@
 import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 import CompanyMessageForm from "./CompanyMessageForm";
+import CompanyMessagesList from "./CompanyMessagesList";
 
 export default async function CompanyMessagePage() {
   const jar = await cookies();
@@ -26,6 +27,7 @@ export default async function CompanyMessagePage() {
       </p>
 
       <CompanyMessageForm employees={employees} />
+      <CompanyMessagesList />
     </div>
   );
 }
