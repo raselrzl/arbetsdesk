@@ -205,7 +205,7 @@ export async function loginEmployeeWithPinByNumber(
   return { status: "LOGGED_OUT" };
 } */
 
-  export async function logoutEmployeeWithPin(
+export async function logoutEmployeeWithPin(
   employeeId: string,
   personalNumber: string
 ) {
@@ -281,10 +281,8 @@ export async function forceLogoutEmployee(employeeId: string) {
   });
 }
 
-
-
 export async function deleteEmployee(employeeId: string) {
-  const jar =await cookies();
+  const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
 
   if (!companyId) {
@@ -319,7 +317,6 @@ export async function deleteEmployee(employeeId: string) {
 
   return { success: true };
 }
-
 
 export async function getEmployeeMessages() {
   const jar = await cookies();
@@ -371,19 +368,43 @@ export async function getCompanyMessages() {
   }));
 }
 
+function getWeekRange(weekOffset = 0) {
+  const now = new Date();
 
-export async function getEmployeeMessagesForCompany() {
+  // Normalize to start of today
+  now.setHours(0, 0, 0, 0);
+
+  const day = now.getDay(); // 0 = Sunday
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday + weekOffset * 7);
+
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 7);
+
+  return { weekStart: monday, weekEnd: sunday };
+}
+
+export async function getEmployeeMessagesForCompany(weekOffset = 0) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
 
+  const { weekStart, weekEnd } = getWeekRange(weekOffset);
+
   const messages = await prisma.employeeMessage.findMany({
-    where: { companyId },
+    where: {
+      companyId,
+      createdAt: {
+        gte: weekStart,
+        lt: weekEnd,
+      },
+    },
     include: {
       employee: { select: { id: true, name: true, email: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: 50,
   });
 
   return messages.map((m) => ({
@@ -409,11 +430,26 @@ export type CompanyMessage = {
 };
 
 // Fetch company messages (for all employees)
-export async function getCompanyMessagesForCompany(): Promise<CompanyMessage[]> {
+export async function getCompanyMessagesForCompany(
+  weekOffset = 0
+): Promise<CompanyMessage[]> {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const { weekStart, weekEnd } = getWeekRange(weekOffset);
+
   const messages = await prisma.message.findMany({
+    where: {
+      companyId,
+      createdAt: {
+        gte: weekStart,
+        lt: weekEnd,
+      },
+    },
     include: {
       company: { select: { name: true } },
-      employee: { select: { name: true } }, // include employee info if specific
+      employee: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -424,8 +460,6 @@ export async function getCompanyMessagesForCompany(): Promise<CompanyMessage[]> 
     createdAt: m.createdAt.toISOString(),
     isBroadcast: m.isBroadcast,
     companyName: m.company.name,
-    employeeName: m.employee?.name, // undefined if broadcast
+    employeeName: m.employee?.name,
   }));
 }
-
-
