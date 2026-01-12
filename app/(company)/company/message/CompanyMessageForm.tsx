@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 type Employee = {
   id: string;
@@ -16,6 +17,13 @@ export default function CompanyMessageForm({
   onSubmit: (formData: FormData) => void;
 }) {
   const [sendToAll, setSendToAll] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  function handleSubmit(formData: FormData) {
+    startTransition(async () => {
+      await onSubmit(formData);
+    });
+  }
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md shadow-teal-800 rounded-xs border border-teal-100">
@@ -23,7 +31,7 @@ export default function CompanyMessageForm({
         Send Company Message
       </h2>
 
-      <form action={onSubmit} className="space-y-4">
+      <form action={handleSubmit} className="space-y-4">
         {/* Checkbox */}
         <label className="flex items-center gap-3 text-gray-700">
           <input
@@ -36,7 +44,7 @@ export default function CompanyMessageForm({
           Send to all employees
         </label>
 
-        {/* Employee selector (always mounted) */}
+        {/* Employee selector */}
         <div
           className={`transition-opacity duration-200 ${
             sendToAll ? "opacity-50 pointer-events-none" : "opacity-100"
@@ -66,11 +74,14 @@ export default function CompanyMessageForm({
           className="w-full border p-3 resize-none"
         />
 
+        {/* Submit button with loader */}
         <button
           type="submit"
-          className="w-full bg-teal-800 text-white py-2"
+          disabled={isPending}
+          className="w-full bg-teal-800 text-white py-2 flex items-center justify-center gap-2 disabled:opacity-70"
         >
-          Send Message
+          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isPending ? "Sending..." : "Send Message"}
         </button>
       </form>
     </div>
