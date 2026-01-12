@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import CompanyMessagesList from "./CompanyMessagesList";
-import EmployeeMessagesList from "./EmployeeMessagesList";
-import { fetchAllMessagesForDate } from "../message/messageactions";
+import AllEmployeeMessagesList from "./AllCompanyMessagesList";
+import AllCompanyMessagesList from "./AllCompanyMessagesList";
+import { fetchAllMessagesForDate } from "./messageactions";
 
-export default function CompanyNotificationsClient({
+export default function AllMessagesClient({
   initialEmployeeMessages,
   initialCompanyMessages,
   initialDate,
@@ -15,14 +15,19 @@ export default function CompanyNotificationsClient({
   initialDate: string;
 }) {
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [employeeMessages, setEmployeeMessages] = useState(initialEmployeeMessages);
-  const [companyMessages, setCompanyMessages] = useState(initialCompanyMessages);
+  const [employeeMessages, setEmployeeMessages] = useState(
+    initialEmployeeMessages
+  );
+  const [companyMessages, setCompanyMessages] = useState(
+    initialCompanyMessages
+  );
   const [isPending, startTransition] = useTransition();
 
   const handleDateChange = (date: string) => {
     startTransition(async () => {
       setSelectedDate(date);
-      const { employeeMessages, companyMessages } = await fetchAllMessagesForDate(date);
+      const { employeeMessages, companyMessages } =
+        await fetchAllMessagesForDate(date);
       setEmployeeMessages(employeeMessages);
       setCompanyMessages(companyMessages);
     });
@@ -42,15 +47,16 @@ export default function CompanyNotificationsClient({
 
       {isPending && <p>Loading messages…</p>}
 
-      <section>
-        <h2 className="font-semibold">Employee Messages</h2>
-        <EmployeeMessagesList messages={employeeMessages} />
-      </section>
-
-      <section>
-        <h2 className="font-semibold">Company Messages</h2> 
-        <CompanyMessagesList messages={companyMessages} />
-      </section>
+      <div className="grid grid-cols-2 gap-4 mb-20">
+        <section>
+          <h2 className="font-semibold">Message Sent</h2>
+          <AllCompanyMessagesList messages={companyMessages} />
+        </section>
+        <section>
+          <h2 className="font-semibold">Messages Received</h2>
+          <AllEmployeeMessagesList messages={employeeMessages} />
+        </section>
+      </div>
     </div>
   );
 }
