@@ -50,7 +50,7 @@ export default function AllMessagesClient({
   };
 
   return (
-    <div className="space-y-6 p-4 bg-teal-100 rounded mt-12">
+    <div className=" flex flex-col space-y-6 p-4 rounded mt-12">
       <CompanyMessageForm
         employees={employees}
         onSubmit={handleSend}
@@ -69,6 +69,7 @@ export default function AllMessagesClient({
       {isPending && <p>Loading messages…</p>}
 
       <div className="grid grid-cols-2 gap-4 mb-20">
+        
         <section>
           <h2 className="font-semibold">Message Sent</h2>
           <AllCompanyMessagesList messages={companyMessages} />
