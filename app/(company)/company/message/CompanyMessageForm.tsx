@@ -24,6 +24,7 @@ export default function CompanyMessageForm({
       </h2>
 
       <form action={onSubmit} className="space-y-4">
+        {/* Checkbox */}
         <label className="flex items-center gap-3 text-gray-700">
           <input
             type="checkbox"
@@ -35,11 +36,17 @@ export default function CompanyMessageForm({
           Send to all employees
         </label>
 
-        {!sendToAll && (
+        {/* Employee selector (always mounted) */}
+        <div
+          className={`transition-opacity duration-200 ${
+            sendToAll ? "opacity-50 pointer-events-none" : "opacity-100"
+          }`}
+        >
           <select
             name="employeeId"
-            required
-            className="w-full border p-2"
+            required={!sendToAll}
+            disabled={sendToAll}
+            className="w-full border p-2 bg-white"
           >
             <option value="">Select employee</option>
             {employees?.map((emp) => (
@@ -48,8 +55,9 @@ export default function CompanyMessageForm({
               </option>
             ))}
           </select>
-        )}
+        </div>
 
+        {/* Message */}
         <textarea
           name="content"
           required
