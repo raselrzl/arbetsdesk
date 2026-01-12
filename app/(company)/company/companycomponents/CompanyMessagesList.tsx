@@ -1,7 +1,14 @@
 "use client";
 
-import { CompanyMessage } from "../companyactions";
 import ClientDate from "./ClientDate";
+export type CompanyMessage = {
+  id: string;
+  content: string;
+  createdAt: string;
+  isBroadcast: boolean;
+  companyName: string;
+  employeeName?: string;
+};
 
 export default function CompanyMessagesList({
   messages,
@@ -17,8 +24,8 @@ export default function CompanyMessagesList({
           key={msg.id}
           className={`p-3 shadow rounded-md border-l-4 ${
             msg.isBroadcast
-              ? "bg-amber-50 border-amber-400" // Broadcast message styling
-              : "bg-white border-teal-900"     // Normal message styling
+              ? "bg-amber-50 border-amber-400"
+              : "bg-white border-teal-900"
           }`}
         >
           <p className="text-gray-700">{msg.content}</p>

@@ -42,6 +42,8 @@ export default async function CompanyPageServer() {
 
   if (!company) redirect("/login");
 
+  
+
   return (
     <div className="max-w-7xl mx-auto px-2 mb-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

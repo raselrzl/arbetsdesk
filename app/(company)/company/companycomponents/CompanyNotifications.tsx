@@ -1,24 +1,20 @@
-import {
-  getCompanyMessagesForCompany,
-  getEmployeeMessagesForCompany,
-} from "../companyactions";
+import { getCompanyMessagesForCompany, getEmployeeMessagesForCompany } from "../companyactions";
 import CompanyNotificationsClient from "./CompanyNotificationsClient";
 
-type Props = {
-  searchParams?: { week?: string };
-};
 
-export default async function CompanyNotifications({ searchParams }: Props) {
-  const weekOffset = Number(searchParams?.week ?? 0);
 
-  const employeeMessages = await getEmployeeMessagesForCompany(weekOffset);
-  const companyMessages = await getCompanyMessagesForCompany(weekOffset);
+
+export default async function CompanyNotifications({ date }: { date?: string }) {
+  const selectedDate = date ?? new Date().toISOString().split("T")[0]; // default today
+
+  const employeeMessages = await getEmployeeMessagesForCompany(selectedDate);
+  const companyMessages = await getCompanyMessagesForCompany(selectedDate);
 
   return (
     <CompanyNotificationsClient
-      employeeMessages={employeeMessages}
-      companyMessages={companyMessages}
-      weekOffset={weekOffset}
+      initialEmployeeMessages={employeeMessages}
+      initialCompanyMessages={companyMessages}
+      initialDate={selectedDate}
     />
   );
 }
