@@ -28,7 +28,7 @@ export default function CompanyMessageForm({
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md shadow-teal-800 rounded-xs border border-teal-100">
       <h2 className="text-xl font-semibold mb-4 text-teal-800">
-        Send Company Message
+        Send Message / Notification
       </h2>
 
       <form action={handleSubmit} className="space-y-4">
@@ -41,7 +41,7 @@ export default function CompanyMessageForm({
             onChange={(e) => setSendToAll(e.target.checked)}
             className="w-4 h-4 text-teal-600"
           />
-          Send to all employees
+          Mark it to send Notification to all employee
         </label>
 
         {/* Employee selector */}
