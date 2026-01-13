@@ -48,7 +48,7 @@ export default function CompanyNotificationsClient({
       {isPending && <p>Loading messages…</p>}
 
       <section className="bg-amber-100 rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-4">
+      {/*   <div className="flex items-center gap-2 mb-4">
           <img
             src="/icons/bellicon.png"
             alt="Notification"
@@ -57,7 +57,7 @@ export default function CompanyNotificationsClient({
           <span className="text-lg font-medium">
             From Company
           </span>
-        </div>
+        </div> */}
 
 
         <CompanyMessagesList messages={companyMessages} />
@@ -69,7 +69,7 @@ export default function CompanyNotificationsClient({
             alt="Notification"
             className="h-10 w-10"
           />
-          <span className="text-sm font-medium">
+          <span className="text-lg font-medium text-teal-950">
             From Employee
           </span>
         </div>

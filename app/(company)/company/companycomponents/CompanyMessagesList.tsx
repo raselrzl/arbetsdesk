@@ -17,10 +17,8 @@ export default function CompanyMessagesList({
 }: {
   messages: CompanyMessage[];
 }) {
-  // ✅ Only broadcasted messages
-  const broadcastMessages = messages.filter(
-    (msg) => msg.isBroadcast === true
-  );
+  // Only broadcasted messages
+  const broadcastMessages = messages.filter((msg) => msg.isBroadcast === true);
 
   if (broadcastMessages.length === 0) {
     return (
@@ -32,23 +30,52 @@ export default function CompanyMessagesList({
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {broadcastMessages.map((msg) => (
-        <div
-          key={msg.id}
-          className="p-3 shadow rounded-md border-l-4 bg-amber-50 border-amber-400"
-        >
-          <p className="text-gray-700">{msg.content}</p>
+  // 🔹 Group messages by company name
+  const groupedByCompany = broadcastMessages.reduce(
+    (acc: Record<string, CompanyMessage[]>, msg) => {
+      acc[msg.companyName] = acc[msg.companyName] || [];
+      acc[msg.companyName].push(msg);
+      return acc;
+    },
+    {}
+  );
 
-          <div className="text-xs text-gray-500 mt-1 flex justify-between">
-            <span>
-              {msg.companyName}
-            </span>
-            <div className="bg-teal-800 p-1 rounded text-gray-100"><ClientDate date={msg.createdAt} /></div>
+  return (
+    <div className="space-y-8">
+      {Object.entries(groupedByCompany).map(
+        ([companyName, companyMessages]) => (
+          <div key={companyName} className="space-y-3">
+            {/* 🏢 Company Heading */}
+            {/*   <h2 className="text-lg font-semibold text-teal-900 border-b border-teal-200 pb-1">
+              {companyName}
+            </h2> */}
+
+            <div className="flex items-center gap-2 mb-4">
+              <img
+                src="/icons/bellicon.png"
+                alt="Notification"
+                className="h-10 w-10"
+              />
+              <span className="text-lg font-medium">{companyName}</span>
+            </div>
+
+            {companyMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className="p-3 shadow rounded-md border-l-4 bg-amber-50 border-amber-400"
+              >
+                <p className="text-gray-700">{msg.content}</p>
+
+                <div className="text-xs text-gray-500 mt-1 flex justify-end">
+                  <div className="bg-teal-800 px-2 py-1 rounded text-gray-100">
+                    <ClientDate date={msg.createdAt} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 }
