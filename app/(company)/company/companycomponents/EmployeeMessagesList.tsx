@@ -1,5 +1,7 @@
 "use client";
 
+import { CircleOff } from "lucide-react";
+
 type Employee = {
   id: string;
   name: string;
@@ -19,7 +21,14 @@ export default function EmployeeMessagesList({
 }: {
   messages: EmployeeMessage[];
 }) {
-  if (messages.length === 0) return <p>No messages sent by employees.</p>;
+  if (messages.length === 0)
+    return (
+      <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center bg-gray-50 h-20 w-20 rounded-full border-2 border-red-200">
+          <CircleOff className="h-10 w-10 text-red-300" />
+        </div>
+      </div>
+    );
 
   return (
     <div className="space-y-3">

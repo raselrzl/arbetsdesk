@@ -61,7 +61,7 @@ export default async function CompanyPageServer() {
         </div>
 
         {/* Left column (1/3) – appears LAST on mobile, FIRST on desktop */}
-        <div className="order-2 lg:order-1 lg:col-span-1 my-20">
+        <div className="order-2 lg:order-1 lg:col-span-1 my-18">
           <CompanyNotifications />
         </div>
       </div>
