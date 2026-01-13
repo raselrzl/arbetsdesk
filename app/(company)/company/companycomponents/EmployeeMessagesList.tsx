@@ -38,10 +38,14 @@ export default function EmployeeMessagesList({
           className="p-3 bg-white shadow rounded-md border-l-4 border-teal-600"
         >
           <p className="text-gray-700">{msg.content}</p>
-          <div className="text-xs text-gray-500 mt-1">
-            <span className="bg-gray-200 px-2 py-0.5 rounded">From:</span> {msg.employee.name}{" "}
-            {msg.employee.email && `(${msg.employee.email})`} {" "}
-            <span className="text-[10px] ml-4 px-2 bg-amber-300 rounded">{new Date(msg.createdAt).toLocaleString("en-GB")}</span>
+          <div className="text-xs text-gray-500 mt-1 flex justify-between">
+            <span className="bg-gray-200 px-2 py-0.5 rounded">
+              From:{msg.employee.name}{" "}
+              {msg.employee.email && `(${msg.employee.email})`}
+            </span>{" "}
+            <span className="flex items-center justify-center text-[10px] px-2 bg-amber-300 rounded">
+              {new Date(msg.createdAt).toLocaleString("en-GB")}
+            </span>
           </div>
         </div>
       ))}
