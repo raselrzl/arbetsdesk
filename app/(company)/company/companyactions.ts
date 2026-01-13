@@ -132,23 +132,21 @@ export async function loginEmployeeWithPinByNumber(
   });
 
   // ⏰ EARLY LOGIN CHECK (10 minutes before schedule)
-if (schedule) {
-  const now = new Date();
-  const startTime = new Date(schedule.startTime);
+  if (schedule) {
+    const now = new Date();
+    const startTime = new Date(schedule.startTime);
 
-  const diffMinutes =
-    (startTime.getTime() - now.getTime()) / 60000;
+    const diffMinutes = (startTime.getTime() - now.getTime()) / 60000;
 
-  if (diffMinutes > 0 && diffMinutes <= 10) {
-    return {
-      status: "EARLY_LOGIN_CHOICE_REQUIRED",
-      employeeId: employee.id, // 👈 needed for next step
-      employeeName: employee.name,
-      schedule,
-    };
+    if (diffMinutes > 0 && diffMinutes <= 10) {
+      return {
+        status: "EARLY_LOGIN_CHOICE_REQUIRED",
+        employeeId: employee.id,
+        employeeName: employee.name,
+        schedule,
+      };
+    }
   }
-}
-
 
   // 🔹 Create login
   await prisma.timeLog.create({
@@ -173,7 +171,6 @@ if (schedule) {
     schedule,
   };
 }
-
 
 export async function confirmEarlyStartNow(
   employeeId: string,
@@ -462,7 +459,6 @@ export async function getCompanyMessages() {
   }));
 }
 
-
 function getDateRangeFromDate(date: string) {
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
@@ -496,7 +492,11 @@ export async function getEmployeeMessagesForCompany(date: string) {
     id: m.id,
     content: m.content,
     createdAt: m.createdAt.toISOString(),
-    employee: { id: m.employee.id, name: m.employee.name, email: m.employee.email ?? undefined },
+    employee: {
+      id: m.employee.id,
+      name: m.employee.name,
+      email: m.employee.email ?? undefined,
+    },
     isRead: m.isRead,
   }));
 }
@@ -510,7 +510,10 @@ export async function getCompanyMessagesForCompany(date: string) {
 
   const messages = await prisma.message.findMany({
     where: { companyId, createdAt: { gte: start, lte: end } },
-    include: { company: { select: { name: true } }, employee: { select: { name: true } } },
+    include: {
+      company: { select: { name: true } },
+      employee: { select: { name: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -523,7 +526,6 @@ export async function getCompanyMessagesForCompany(date: string) {
     employeeName: m.employee?.name,
   }));
 }
-
 
 export async function fetchMessagesForDate(date: string) {
   const jar = await cookies();
@@ -572,4 +574,3 @@ export async function fetchMessagesForDate(date: string) {
 
   return { employeeMessages, companyMessages };
 }
-
