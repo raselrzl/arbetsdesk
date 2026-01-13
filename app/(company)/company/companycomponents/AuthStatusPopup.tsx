@@ -5,7 +5,8 @@ import { CheckCircle, AlertTriangle, Info, LogOut } from "lucide-react";
 type Status =
   | "ALREADY_LOGGED_IN"
   | "LOGGED_IN_NO_SCHEDULE"
-  | "LOGGED_IN_WITH_SCHEDULE";
+  | "LOGGED_IN_WITH_SCHEDULE"
+  | "EARLY_LOGIN_CHOICE_REQUIRED";
 
 export default function AuthStatusPopup({
   status,

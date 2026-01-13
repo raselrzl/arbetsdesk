@@ -146,8 +146,10 @@ model TimeLog {
   logoutTime   DateTime?
   totalMinutes Int?
 
-  createdAt DateTime @default(now())
+  isScheduled  Boolean  @default(false)
+  activatedAt  DateTime?
 
+  createdAt DateTime @default(now())
   @@index([companyId, logDate])
 }
 

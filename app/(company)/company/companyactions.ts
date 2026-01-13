@@ -131,6 +131,25 @@ export async function loginEmployeeWithPinByNumber(
     },
   });
 
+  // ⏰ EARLY LOGIN CHECK (10 minutes before schedule)
+if (schedule) {
+  const now = new Date();
+  const startTime = new Date(schedule.startTime);
+
+  const diffMinutes =
+    (startTime.getTime() - now.getTime()) / 60000;
+
+  if (diffMinutes > 0 && diffMinutes <= 10) {
+    return {
+      status: "EARLY_LOGIN_CHOICE_REQUIRED",
+      employeeId: employee.id, // 👈 needed for next step
+      employeeName: employee.name,
+      schedule,
+    };
+  }
+}
+
+
   // 🔹 Create login
   await prisma.timeLog.create({
     data: {
@@ -153,6 +172,80 @@ export async function loginEmployeeWithPinByNumber(
     employeeName: employee.name,
     schedule,
   };
+}
+
+
+export async function confirmEarlyStartNow(
+  employeeId: string,
+  companyId: string
+) {
+  // Safety: prevent double login
+  const active = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
+    },
+  });
+
+  if (active) {
+    return { status: "ALREADY_LOGGED_IN" };
+  }
+
+  await prisma.timeLog.create({
+    data: {
+      employeeId,
+      companyId,
+      loginTime: new Date(),
+      logDate: new Date(),
+      isScheduled: false,
+      activatedAt: new Date(),
+    },
+  });
+
+  return { status: "LOGGED_IN" };
+}
+
+export async function confirmEarlyStartAtSchedule(
+  employeeId: string,
+  companyId: string,
+  startTime: Date
+) {
+  const active = await prisma.timeLog.findFirst({
+    where: {
+      employeeId,
+      logoutTime: null,
+    },
+  });
+
+  if (active) {
+    return { status: "ALREADY_LOGGED_IN" };
+  }
+
+  await prisma.timeLog.create({
+    data: {
+      employeeId,
+      companyId,
+      loginTime: startTime,
+      logDate: startTime,
+      isScheduled: true,
+    },
+  });
+
+  return { status: "SCHEDULED" };
+}
+
+export async function activateScheduledLogins() {
+  await prisma.timeLog.updateMany({
+    where: {
+      isScheduled: true,
+      activatedAt: null,
+      loginTime: { lte: new Date() },
+    },
+    data: {
+      isScheduled: false,
+      activatedAt: new Date(),
+    },
+  });
 }
 
 /* ----------------------------------------

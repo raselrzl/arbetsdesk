@@ -2,9 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { loginEmployeeWithPinByNumber } from "../companyactions";
+import {
+  confirmEarlyStartAtSchedule,
+  confirmEarlyStartNow,
+  loginEmployeeWithPinByNumber,
+} from "../companyactions";
 import { useRouter } from "next/navigation";
 import AuthStatusPopup from "./AuthStatusPopup";
+import EarlyLoginChoicePopup from "./EarlyLoginChoicePopup";
 
 export default function PersonnummerLoginModal({
   open,
@@ -20,6 +25,7 @@ export default function PersonnummerLoginModal({
   const [time, setTime] = useState(new Date());
   const [statusPopup, setStatusPopup] = useState<null | any>(null);
   const [authResult, setAuthResult] = useState<any>(null);
+  const [earlyLoginData, setEarlyLoginData] = useState<any>(null);
 
   const router = useRouter();
 
@@ -55,7 +61,11 @@ export default function PersonnummerLoginModal({
         company.id
       );
 
-      setAuthResult(result);
+      if (result.status === "EARLY_LOGIN_CHOICE_REQUIRED") {
+        setEarlyLoginData(result);
+      } else {
+        setAuthResult(result);
+      }
       router.refresh();
     } finally {
       setLoading(false);
@@ -75,9 +85,11 @@ export default function PersonnummerLoginModal({
         </button>
 
         {/* 🕒 CLOCK */}
-        <div className="mb-8 text-center text-white">          
+        <div className="mb-8 text-center text-white">
           <div className="text-6xl md:text-7xl font-bold">{clockTime}</div>
-          <div className="text-md text-gray-300 text-right">{dayName}, <span className="mr-2">{fullDate}</span></div>
+          <div className="text-md text-gray-300 text-right">
+            {dayName}, <span className="mr-2">{fullDate}</span>
+          </div>
           <div className="mt-2 text-xl font-semibold text-right"></div>
         </div>
 
@@ -142,6 +154,39 @@ export default function PersonnummerLoginModal({
           {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Enter"}
         </button>
       </div>
+
+      {earlyLoginData && (
+        <EarlyLoginChoicePopup
+          employeeName={earlyLoginData.employeeName}
+          schedule={earlyLoginData.schedule}
+          onStartNow={async () => {
+            await confirmEarlyStartNow(earlyLoginData.employeeId, company!.id);
+
+            setEarlyLoginData(null);
+            setAuthResult({
+              status: "LOGGED_IN_WITH_SCHEDULE",
+              employeeName: earlyLoginData.employeeName,
+              schedule: earlyLoginData.schedule,
+            });
+            setPersonalNumber("");
+          }}
+          onStartAtSchedule={async () => {
+            await confirmEarlyStartAtSchedule(
+              earlyLoginData.employeeId,
+              company!.id,
+              new Date(earlyLoginData.schedule.startTime)
+            );
+
+            setEarlyLoginData(null);
+            setAuthResult({
+              status: "LOGGED_IN_WITH_SCHEDULE",
+              employeeName: earlyLoginData.employeeName,
+              schedule: earlyLoginData.schedule,
+            });
+            setPersonalNumber("");
+          }}
+        />
+      )}
 
       {authResult && (
         <AuthStatusPopup
