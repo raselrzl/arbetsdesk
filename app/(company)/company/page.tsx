@@ -47,12 +47,12 @@ export default async function CompanyPageServer() {
     <div className="max-w-7xl mx-auto px-2 mb-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Right column (2/3) – appears FIRST on mobile */}
-        <div className="order-1 lg:order-2 lg:col-span-2 space-y-10">
+        <div className="order-1 lg:order-2 lg:col-span-2">
           <div>
             <CompanyPageClient companyData={company} />
           </div>
 
-          <div>
+          <div className="flex flex-col">
             <div className="flex items-end justify-end m-2">
               <Link
                 href="/company/analysis"
