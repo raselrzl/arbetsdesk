@@ -31,7 +31,7 @@ export default function AuthStatusPopup({
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
       <div className="bg-white w-[250px] rounded shadow-xl text-center">
-        <h2 className="text-xl font-bold text-gray-200 bg-teal-500 pb-4">Hi, {employeeName} <br/><span className="text-xs">You are sucessfully logged in</span></h2>
+        <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4">Welcome, {employeeName}</h2>
 
         {status === "LOGGED_IN_WITH_SCHEDULE" && schedule && (
           <div className="p-6">
