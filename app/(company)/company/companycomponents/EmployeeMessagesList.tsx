@@ -39,9 +39,9 @@ export default function EmployeeMessagesList({
         >
           <p className="text-gray-700">{msg.content}</p>
           <div className="text-xs text-gray-500 mt-1">
-            From: {msg.employee.name}{" "}
-            {msg.employee.email && `(${msg.employee.email})`} –{" "}
-            {new Date(msg.createdAt).toLocaleString("en-GB")}
+            <span className="bg-gray-200 px-2 py-0.5 rounded">From:</span> {msg.employee.name}{" "}
+            {msg.employee.email && `(${msg.employee.email})`} {" "}
+            <span className="text-[10px] ml-4 px-2 bg-amber-300 rounded">{new Date(msg.createdAt).toLocaleString("en-GB")}</span>
           </div>
         </div>
       ))}
