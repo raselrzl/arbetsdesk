@@ -41,7 +41,7 @@ export default function CompanyNotificationsClient({
           type="date"
           value={selectedDate}
           onChange={(e) => handleDateChange(e.target.value)}
-          className="border px-2 py-1 h-8 rounded-xs border-amber-300"
+          className="border px-2 py-1 h-8 rounded-xs border-amber-300 bg-amber-50"
         />
       </div>
 
@@ -67,7 +67,7 @@ export default function CompanyNotificationsClient({
           <img
             src="/icons/bellicon3.gif"
             alt="Notification"
-            className="h-10 w-10"
+            className="h-10 w-10 border-2 rounded-full border-amber-300 bg-white"
           />
           <span className="text-lg font-medium text-teal-950">
             From Employee

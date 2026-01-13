@@ -7,6 +7,7 @@ import WorkComparisonCard from "./companycomponents/HourComparison";
 import CostComparisonCard from "./companycomponents/CostComparisonCard";
 import WeeklySalesComparisonCard from "./companycomponents/WeeklySalesComparisonCard";
 import CompanyNotifications from "./companycomponents/CompanyNotifications";
+import Link from "next/link";
 
 export default async function CompanyPageServer() {
   const jar = await cookies();
@@ -42,8 +43,6 @@ export default async function CompanyPageServer() {
 
   if (!company) redirect("/login");
 
-  
-
   return (
     <div className="max-w-7xl mx-auto px-2 mb-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -53,10 +52,20 @@ export default async function CompanyPageServer() {
             <CompanyPageClient companyData={company} />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 gap-y-6">
-            <WorkComparisonCard />
-            <CostComparisonCard />
-            <WeeklySalesComparisonCard />
+          <div>
+            <div className="flex items-end justify-end m-2">
+              <Link
+                href="/company/analysis"
+                className="border px-2 py-1 text-xs md:text-sm bg-teal-800 hover:bg-teal-100 text-gray-100"
+              >
+                Go To Analysis →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 gap-y-6">
+              <WorkComparisonCard />
+              <CostComparisonCard />
+              <WeeklySalesComparisonCard />
+            </div>
           </div>
         </div>
 
