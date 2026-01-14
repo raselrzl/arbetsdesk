@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import {
   confirmEarlyStartAtSchedule,
   confirmEarlyStartNow,
+  confirmLoginWithoutSchedule,
   loginEmployeeWithPinByNumber,
 } from "../companyactions";
 import { useRouter } from "next/navigation";
@@ -155,13 +156,13 @@ export default function PersonnummerLoginModal({
         </button>
       </div>
 
-      {earlyLoginData && (
+      {/* Show Early Login choice only if authResult is null */}
+      {earlyLoginData && !authResult && (
         <EarlyLoginChoicePopup
           employeeName={earlyLoginData.employeeName}
           schedule={earlyLoginData.schedule}
           onStartNow={async () => {
             await confirmEarlyStartNow(earlyLoginData.employeeId, company!.id);
-
             setEarlyLoginData(null);
             setAuthResult({
               status: "LOGGED_IN_WITH_SCHEDULE",
@@ -169,6 +170,7 @@ export default function PersonnummerLoginModal({
               schedule: earlyLoginData.schedule,
             });
             setPersonalNumber("");
+            router.refresh(); // refresh UI immediately
           }}
           onStartAtSchedule={async () => {
             await confirmEarlyStartAtSchedule(
@@ -176,7 +178,6 @@ export default function PersonnummerLoginModal({
               company!.id,
               new Date(earlyLoginData.schedule.startTime)
             );
-
             setEarlyLoginData(null);
             setAuthResult({
               status: "LOGGED_IN_WITH_SCHEDULE",
@@ -184,17 +185,28 @@ export default function PersonnummerLoginModal({
               schedule: earlyLoginData.schedule,
             });
             setPersonalNumber("");
+            router.refresh(); // refresh UI immediately
           }}
         />
       )}
 
-      {authResult && (
+      {/* Show AuthStatusPopup only if earlyLoginData is null */}
+      {authResult && !earlyLoginData && (
         <AuthStatusPopup
           status={authResult.status}
           employeeName={authResult.employeeName}
           schedule={authResult.schedule}
+          onConfirmLogin={async () => {
+            await confirmLoginWithoutSchedule(
+              authResult.employeeId,
+              company!.id
+            );
+            setAuthResult(null);
+            setPersonalNumber("");
+            router.refresh(); // refresh UI immediately
+          }}
           onClose={() => {
-            setAuthResult(null); // 👈 hides popup
+            setAuthResult(null);
             setPersonalNumber("");
           }}
         />

@@ -2,6 +2,7 @@
 
 import { getWeekRange } from "@/app/utils/date";
 import { prisma } from "@/app/utils/db";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 /* ----------------------------------------
@@ -132,39 +133,41 @@ export async function loginEmployeeWithPinByNumber(
   });
 
   // ⏰ EARLY LOGIN CHECK (10 minutes before schedule)
-  if (schedule) {
-    const now = new Date();
-    const startTime = new Date(schedule.startTime);
+ if (schedule) {
+  const now = new Date();
+  const startTime = new Date(schedule.startTime);
+  const diffMinutes = (startTime.getTime() - now.getTime()) / 60000;
 
-    const diffMinutes = (startTime.getTime() - now.getTime()) / 60000;
-
-    if (diffMinutes > 0 && diffMinutes <= 10) {
-      return {
-        status: "EARLY_LOGIN_CHOICE_REQUIRED",
-        employeeId: employee.id,
-        employeeName: employee.name,
-        schedule,
-      };
-    }
-  }
-
-  // 🔹 Create login
-  await prisma.timeLog.create({
-    data: {
-      employeeId: employee.id,
-      companyId,
-      loginTime: new Date(),
-      logDate: new Date(),
-    },
-  });
-
-  if (!schedule) {
+  // Only prompt for early login without creating a timelog yet
+  if (diffMinutes > 0 && diffMinutes <= 240) {
     return {
-      status: "LOGGED_IN_NO_SCHEDULE",
+      status: "EARLY_LOGIN_CHOICE_REQUIRED",
+      employeeId: employee.id,
       employeeName: employee.name,
+      schedule,
     };
   }
+}
 
+
+// ❗ NO schedule → ASK frontend, DO NOT LOGIN YET
+if (!schedule) {
+  return {
+    status: "LOGGED_IN_NO_SCHEDULE",
+    employeeId: employee.id,
+    employeeName: employee.name,
+  };
+}
+
+await prisma.timeLog.create({
+  data: {
+    employeeId: employee.id,
+    companyId,
+    loginTime: new Date(),
+    logDate: new Date(),
+  },
+});
+revalidatePath("/company");
   return {
     status: "LOGGED_IN_WITH_SCHEDULE",
     employeeName: employee.name,
@@ -244,6 +247,33 @@ export async function activateScheduledLogins() {
     },
   });
 }
+
+
+export async function confirmLoginWithoutSchedule(
+  employeeId: string,
+  companyId: string
+) {
+  const active = await prisma.timeLog.findFirst({
+    where: { employeeId, logoutTime: null },
+  });
+
+  if (active) {
+    return { status: "ALREADY_LOGGED_IN" };
+  }
+
+  await prisma.timeLog.create({
+    data: {
+      employeeId,
+      companyId,
+      loginTime: new Date(),
+      logDate: new Date(),
+    },
+  });
+
+  revalidatePath("/company");
+  return { status: "LOGGED_IN_NO_SCHEDULE" };
+}
+
 
 /* ----------------------------------------
    LOGOUT WITH PERSONAL NUMBER
