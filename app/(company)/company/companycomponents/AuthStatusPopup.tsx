@@ -46,11 +46,11 @@ export default function AuthStatusPopup({
             <p className="text-lg font-bold mt-1">
               {formatTime(schedule.startTime)} – {formatTime(schedule.endTime)}
             </p>
-           {loginTime && (
+         {/*   {loginTime && (
               <p className="text-sm text-gray-500 mt-2">
                 Logged in at: {formatTime(loginTime)}
               </p>
-            )}
+            )} */}
             <button
               onClick={onClose}
               className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"

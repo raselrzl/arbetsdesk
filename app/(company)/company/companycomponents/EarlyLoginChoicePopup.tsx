@@ -30,11 +30,11 @@ export default function EarlyLoginChoicePopup({
         <p className="text-sm text-gray-600 mb-4">
           Your shift starts at <b>{formatTime(schedule.startTime)}</b>
         </p>
-        {loginTime && (
+       {/*  {loginTime && (
           <p className="text-sm text-gray-500 mt-2">
             login now: {formatTime(loginTime)}
           </p>
-        )}
+        )} */}
         <button
           onClick={onStartNow}
           className="w-full bg-teal-600 text-white py-3 font-bold mb-2 hover:bg-teal-700"
