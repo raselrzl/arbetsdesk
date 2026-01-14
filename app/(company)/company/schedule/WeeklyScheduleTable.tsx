@@ -5,12 +5,17 @@ import { useState } from "react";
 /* ---------------- HELPERS ---------------- */
 function formatDate(d: Date | string) {
   const date = typeof d === "string" ? new Date(d) : d;
-  return date.toISOString().slice(0, 10); // YYYY-MM-DD
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`; // Local time YYYY-MM-DD
 }
 
 function formatTime(d: Date | string) {
   const date = typeof d === "string" ? new Date(d) : d;
-  return date.toTimeString().slice(0, 5); // HH:MM 24-hour
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
 }
 
 function getWeekRange(offset = 0) {
@@ -50,13 +55,13 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   const { start, end } = getWeekRange(weekOffset);
   const weekNumber = getWeekNumber(start);
 
-  // Filter selected week only
+  // Filter schedules for this week
   const weekSchedules = schedules.filter((sch) => {
     const d = new Date(sch.date);
     return d >= start && d <= end;
   });
 
-  // Build week days (Mon–Sun)
+  // Build week days array (Mon–Sun)
   const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
@@ -109,21 +114,16 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
       </div>
 
       {/* TABLE */}
-      {/* TABLE */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
             <tr className="bg-teal-100">
-              {/* Employee Column */}
               <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Schedule
               </th>
 
               {daysOfWeek.map((day) => (
-                <th
-                  key={formatDate(day)}
-                  className="p-3 border text-center w-28"
-                >
+                <th key={formatDate(day)} className="p-3 border text-center w-28">
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
                   <p className="text-xs text-gray-600">{formatDate(day)}</p>
                 </th>
@@ -136,7 +136,7 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
               <tr key={emp.id} className="border-t">
                 <td
                   className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
-                  title={emp.name} // tooltip on hover for full name
+                  title={emp.name}
                 >
                   {emp.name}
                 </td>
@@ -144,22 +144,16 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                 {daysOfWeek.map((day) => {
                   const dayKey = formatDate(day);
                   const empSchedules =
-                    schedulesByDay[dayKey]?.filter(
-                      (s) => s.employee.id === emp.id
-                    ) || [];
+                    schedulesByDay[dayKey]?.filter((s) => s.employee.id === emp.id) || [];
 
                   return (
-                    <td
-                      key={dayKey}
-                      className="p-3 border text-xs text-center w-28"
-                    >
+                    <td key={dayKey} className="p-3 border text-xs text-center w-28">
                       {empSchedules.length === 0 ? (
                         <span className="text-gray-400">—</span>
                       ) : (
                         empSchedules.map((sch) => (
                           <div key={sch.id}>
-                            {formatTime(sch.startTime)} –{" "}
-                            {formatTime(sch.endTime)}
+                            {formatTime(sch.startTime)} – {formatTime(sch.endTime)}
                           </div>
                         ))
                       )}
