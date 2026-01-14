@@ -12,6 +12,7 @@ export default function AuthStatusPopup({
   status,
   employeeName,
   schedule,
+  loginTime,
   onClose,
   onConfirmLogin,
 }: {
@@ -21,6 +22,7 @@ export default function AuthStatusPopup({
     startTime: string | Date;
     endTime: string | Date;
   };
+  loginTime?: string;
   onClose: () => void;
   onConfirmLogin?: () => void;
 }) {
@@ -39,11 +41,22 @@ export default function AuthStatusPopup({
 
         {status === "LOGGED_IN_WITH_SCHEDULE" && schedule && (
           <div className="p-6">
-            <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+            <CheckCircle className="w-10 h-10 text-green-600 mx-auto mb-2" />
             <p className="font-semibold">You have a schedule today</p>
             <p className="text-lg font-bold mt-1">
               {formatTime(schedule.startTime)} – {formatTime(schedule.endTime)}
             </p>
+           {loginTime && (
+              <p className="text-sm text-gray-500 mt-2">
+                Logged in at: {formatTime(loginTime)}
+              </p>
+            )}
+            <button
+              onClick={onClose}
+              className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
+            >
+              OK
+            </button>
           </div>
         )}
 

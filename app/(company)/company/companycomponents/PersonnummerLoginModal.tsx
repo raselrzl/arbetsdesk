@@ -28,6 +28,8 @@ export default function PersonnummerLoginModal({
   const [authResult, setAuthResult] = useState<any>(null);
   const [earlyLoginData, setEarlyLoginData] = useState<any>(null);
 
+  const [loginTime, setLoginTime] = useState<string | null>(null);
+
   const router = useRouter();
 
   // Update time every second
@@ -56,7 +58,6 @@ export default function PersonnummerLoginModal({
 
     try {
       setLoading(true);
-
       const result = await loginEmployeeWithPinByNumber(
         personalNumber,
         company.id
@@ -66,6 +67,7 @@ export default function PersonnummerLoginModal({
         setEarlyLoginData(result);
       } else {
         setAuthResult(result);
+        setLoginTime(new Date().toISOString());
       }
       router.refresh();
     } finally {
@@ -161,6 +163,7 @@ export default function PersonnummerLoginModal({
         <EarlyLoginChoicePopup
           employeeName={earlyLoginData.employeeName}
           schedule={earlyLoginData.schedule}
+          loginTime={loginTime || undefined}
           onStartNow={async () => {
             await confirmEarlyStartNow(earlyLoginData.employeeId, company!.id);
             setEarlyLoginData(null);
@@ -196,6 +199,7 @@ export default function PersonnummerLoginModal({
           status={authResult.status}
           employeeName={authResult.employeeName}
           schedule={authResult.schedule}
+          loginTime={loginTime || undefined}
           onConfirmLogin={async () => {
             await confirmLoginWithoutSchedule(
               authResult.employeeId,

@@ -4,9 +4,11 @@ export default function EarlyLoginChoicePopup({
   employeeName,
   schedule,
   onStartNow,
+  loginTime,
   onStartAtSchedule,
 }: {
   employeeName: string;
+  loginTime?: string;
   schedule: {
     startTime: string | Date;
     endTime: string | Date;
@@ -23,15 +25,16 @@ export default function EarlyLoginChoicePopup({
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
       <div className="bg-white w-[280px] rounded shadow-xl text-center p-6">
-        <h2 className="text-lg font-bold mb-1">
-          Hi, {employeeName}
-        </h2>
+        <h2 className="text-lg font-bold mb-1">Hi, {employeeName}</h2>
 
         <p className="text-sm text-gray-600 mb-4">
-          Your shift starts at{" "}
-          <b>{formatTime(schedule.startTime)}</b>
+          Your shift starts at <b>{formatTime(schedule.startTime)}</b>
         </p>
-
+        {loginTime && (
+          <p className="text-sm text-gray-500 mt-2">
+            login now: {formatTime(loginTime)}
+          </p>
+        )}
         <button
           onClick={onStartNow}
           className="w-full bg-teal-600 text-white py-3 font-bold mb-2 hover:bg-teal-700"
