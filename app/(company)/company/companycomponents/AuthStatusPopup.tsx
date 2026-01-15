@@ -2,6 +2,8 @@
 
 import { CheckCircle, AlertTriangle, Info, LogOut } from "lucide-react";
 import { logoutEmployeeWithPin } from "../companyactions";
+import { useState } from "react";
+import LogoutThankYouPopup from "./LogoutThankYouPopup";
 
 type Status =
   | "ALREADY_LOGGED_IN"
@@ -36,6 +38,21 @@ export default function AuthStatusPopup({
       hour: "2-digit",
       minute: "2-digit",
     });
+
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [logoutTime, setLogoutTime] = useState<string | null>(null);
+
+  const handleLogout = async () => {
+    try {
+      await logoutEmployeeWithPin(employeeId, personalNumber);
+      const now = new Date().toISOString();
+      setLogoutTime(now);
+      setShowLogoutPopup(true);
+    } catch (err: any) {
+      console.error(err);
+      alert("Logout failed: " + err.message); // fallback
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
@@ -101,16 +118,7 @@ export default function AuthStatusPopup({
               {employeeId}
             </p>
             <button
-              onClick={async () => {
-                try {
-                  await logoutEmployeeWithPin(employeeId, personalNumber);
-                  alert("Logged out successfully!");
-                  onClose();
-                } catch (err: any) {
-                  console.error(err);
-                  alert("Logout failed: " + err.message);
-                }
-              }}
+              onClick={handleLogout}
               className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
             >
               OK
@@ -118,6 +126,17 @@ export default function AuthStatusPopup({
           </div>
         )}
       </div>
+
+      <LogoutThankYouPopup
+        open={showLogoutPopup}
+        employeeName={employeeName}
+        loginTime={loginTime}
+        logoutTime={logoutTime}
+        onClose={() => {
+          setShowLogoutPopup(false);
+          onClose(); // also close the main popup
+        }}
+      />
     </div>
   );
 }
