@@ -8,7 +8,10 @@ type SendMessageFormProps = {
   onSuccess?: () => void;
 };
 
-export default function SendMessageForm({ companyId, onSuccess }: SendMessageFormProps) {
+export default function SendMessageForm({
+  companyId,
+  onSuccess,
+}: SendMessageFormProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,8 +37,11 @@ export default function SendMessageForm({ companyId, onSuccess }: SendMessageFor
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded max-w-md">
-      <h2 className="text-lg font-semibold mb-2">Send Message to Company</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 border rounded max-w-md bg-black text-white"
+    >
+      <h2 className="text-lg font-semibold mb-2">Send Message</h2>
 
       <label className="block mb-2">
         Title (optional)
@@ -43,7 +49,7 @@ export default function SendMessageForm({ companyId, onSuccess }: SendMessageFor
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full border px-2 py-1 rounded"
+          className="w-full border px-2 py-1 rounded-xs"
         />
       </label>
 
@@ -52,7 +58,7 @@ export default function SendMessageForm({ companyId, onSuccess }: SendMessageFor
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full border px-2 py-1 rounded"
+          className="w-full border px-2 py-1 rounded-xs"
           rows={4}
           required
         />
@@ -60,13 +66,15 @@ export default function SendMessageForm({ companyId, onSuccess }: SendMessageFor
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-      >
-        {loading ? "Sending..." : "Send Message"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-teal-500 text-sm text-white px-2 py-0.5 rounded-xs hover:bg-teal-600 disabled:opacity-50"
+        >
+          {loading ? "Sending..." : "Send Message"}
+        </button>
+      </div>
     </form>
   );
 }

@@ -99,7 +99,7 @@ export default function MySchedulePage() {
   const todayKey = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="mt-20 max-w-7xl mx-auto space-y-6 mb-20">
+    <div className="mt-20 max-w-7xl mx-auto space-y-6 pb-20">
       {/* HEADER */}
       <div>
         <h1 className="text-xl font-bold uppercase text-teal-900">

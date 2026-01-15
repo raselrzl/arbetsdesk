@@ -37,14 +37,18 @@ export default function EmployeeWeeklyMessages() {
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
 
-    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
-    return `${monday.toLocaleDateString("en-GB", options)} - ${sunday.toLocaleDateString("en-GB", options)}`;
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+    };
+    return `${monday.toLocaleDateString(
+      "en-GB",
+      options
+    )} - ${sunday.toLocaleDateString("en-GB", options)}`;
   };
 
   return (
-    <div className="bg-white p-4 shadow rounded space-y-3">
-      
-
+    <div className="bg-teal-50 p-4 shadow rounded space-y-3">
       {/* CONTENT */}
       {loading && <p className="text-sm text-gray-400">Loading…</p>}
 
@@ -56,11 +60,15 @@ export default function EmployeeWeeklyMessages() {
         {messages.map((m) => (
           <li
             key={m.id}
-            className={`border p-2 rounded ${m.isRead ? "bg-white" : "bg-amber-50"}`}
+            className={`border border-amber-300 p-2 rounded-xs ${
+              m.isRead ? "bg-white" : "bg-amber-50"
+            }`}
           >
             <div className="flex justify-between text-xs text-gray-500">
-              <span>{m.company.name}</span>
-              <span>
+              <p className="text-sm mt-1">
+                {m.content}
+              </p>
+              <span className="text-[8px] px-2 h-4 flex items-center justify-center bg-amber-900 text-white">
                 {new Date(m.createdAt).toLocaleString("en-GB", {
                   weekday: "short",
                   hour: "2-digit",
@@ -68,22 +76,24 @@ export default function EmployeeWeeklyMessages() {
                 })}
               </span>
             </div>
-            <p className="text-sm mt-1">{m.content}</p>
+            <span className="text-[10px] bg-amber-200 px-1 py-0.5">
+              {m.company.name}
+            </span>
           </li>
         ))}
       </ul>
 
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-sm">
-          Messages – Week: {getWeekRangeLabel()}
+        <h2 className="font-semibold text-sm text-teal-900">
+          Week: {getWeekRangeLabel()}
         </h2>
 
         <div className="flex gap-2">
           {/* Previous Week */}
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
-            className="p-1 border rounded hover:bg-teal-50"
+            className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
           >
             <ChevronLeft size={16} />
           </button>
@@ -91,7 +101,7 @@ export default function EmployeeWeeklyMessages() {
           {/* Today */}
           <button
             onClick={() => setWeekOffset(0)}
-            className="p-1 border rounded hover:bg-teal-50"
+            className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
           >
             Today
           </button>
@@ -99,7 +109,7 @@ export default function EmployeeWeeklyMessages() {
           {/* Next Week */}
           <button
             onClick={() => setWeekOffset((w) => w + 1)}
-            className="p-1 border rounded hover:bg-teal-50"
+            className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
             disabled={weekOffset >= 0} // Optional: disable future weeks
           >
             <ChevronRight size={16} />
