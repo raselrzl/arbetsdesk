@@ -198,6 +198,8 @@ export default function PersonnummerLoginModal({
         <AuthStatusPopup
           status={authResult.status}
           employeeName={authResult.employeeName}
+          personalNumber={authResult.personalNumber}
+          employeeId={authResult.employeeId}
           schedule={authResult.schedule}
           loginTime={loginTime || undefined}
           onConfirmLogin={async () => {

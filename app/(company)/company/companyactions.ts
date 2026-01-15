@@ -114,6 +114,8 @@ export async function loginEmployeeWithPinByNumber(
     return {
       status: "ALREADY_LOGGED_IN",
       employeeName: employee.name,
+      personalNumber: employee.personalNumber,
+      employeeId: employee.id,
     };
   }
 
@@ -133,41 +135,40 @@ export async function loginEmployeeWithPinByNumber(
   });
 
   // ⏰ EARLY LOGIN CHECK (10 minutes before schedule)
- if (schedule) {
-  const now = new Date();
-  const startTime = new Date(schedule.startTime);
-  const diffMinutes = (startTime.getTime() - now.getTime()) / 60000;
+  if (schedule) {
+    const now = new Date();
+    const startTime = new Date(schedule.startTime);
+    const diffMinutes = (startTime.getTime() - now.getTime()) / 60000;
 
-  // Only prompt for early login without creating a timelog yet
-  if (diffMinutes > 0 && diffMinutes <= 240) {
+    // Only prompt for early login without creating a timelog yet
+    if (diffMinutes > 0 && diffMinutes <= 240) {
+      return {
+        status: "EARLY_LOGIN_CHOICE_REQUIRED",
+        employeeId: employee.id,
+        employeeName: employee.name,
+        schedule,
+      };
+    }
+  }
+
+  // ❗ NO schedule → ASK frontend, DO NOT LOGIN YET
+  if (!schedule) {
     return {
-      status: "EARLY_LOGIN_CHOICE_REQUIRED",
+      status: "LOGGED_IN_NO_SCHEDULE",
       employeeId: employee.id,
       employeeName: employee.name,
-      schedule,
     };
   }
-}
 
-
-// ❗ NO schedule → ASK frontend, DO NOT LOGIN YET
-if (!schedule) {
-  return {
-    status: "LOGGED_IN_NO_SCHEDULE",
-    employeeId: employee.id,
-    employeeName: employee.name,
-  };
-}
-
-await prisma.timeLog.create({
-  data: {
-    employeeId: employee.id,
-    companyId,
-    loginTime: new Date(),
-    logDate: new Date(),
-  },
-});
-revalidatePath("/company");
+  await prisma.timeLog.create({
+    data: {
+      employeeId: employee.id,
+      companyId,
+      loginTime: new Date(),
+      logDate: new Date(),
+    },
+  });
+  revalidatePath("/company");
   return {
     status: "LOGGED_IN_WITH_SCHEDULE",
     employeeName: employee.name,
@@ -248,7 +249,6 @@ export async function activateScheduledLogins() {
   });
 }
 
-
 export async function confirmLoginWithoutSchedule(
   employeeId: string,
   companyId: string
@@ -273,7 +273,6 @@ export async function confirmLoginWithoutSchedule(
   revalidatePath("/company");
   return { status: "LOGGED_IN_NO_SCHEDULE" };
 }
-
 
 /* ----------------------------------------
    LOGOUT WITH PERSONAL NUMBER
@@ -364,6 +363,8 @@ export async function logoutEmployeeWithPin(
       totalMinutes,
     },
   });
+
+  revalidatePath("/company");
 
   return { status: "LOGGED_OUT" };
 }

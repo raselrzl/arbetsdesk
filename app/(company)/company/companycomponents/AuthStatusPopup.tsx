@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle, AlertTriangle, Info, LogOut } from "lucide-react";
+import { logoutEmployeeWithPin } from "../companyactions";
 
 type Status =
   | "ALREADY_LOGGED_IN"
@@ -13,11 +14,15 @@ export default function AuthStatusPopup({
   employeeName,
   schedule,
   loginTime,
+  employeeId,
   onClose,
   onConfirmLogin,
+  personalNumber,
 }: {
   status: Status;
   employeeName: string;
+  employeeId: string;
+  personalNumber: string;
   schedule?: {
     startTime: string | Date;
     endTime: string | Date;
@@ -46,7 +51,7 @@ export default function AuthStatusPopup({
             <p className="text-lg font-bold mt-1">
               {formatTime(schedule.startTime)} – {formatTime(schedule.endTime)}
             </p>
-         {/*   {loginTime && (
+            {/*   {loginTime && (
               <p className="text-sm text-gray-500 mt-2">
                 Logged in at: {formatTime(loginTime)}
               </p>
@@ -91,10 +96,21 @@ export default function AuthStatusPopup({
             <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
             <p className="font-semibold">Already logged in</p>
             <p className="text-sm text-gray-600">
-              If you want to log out, please use your logout button
+              If you want to log out, click on ok {employeeName}
+              {personalNumber}
+              {employeeId}
             </p>
             <button
-              onClick={onClose}
+              onClick={async () => {
+                try {
+                  await logoutEmployeeWithPin(employeeId, personalNumber);
+                  alert("Logged out successfully!");
+                  onClose();
+                } catch (err: any) {
+                  console.error(err);
+                  alert("Logout failed: " + err.message);
+                }
+              }}
               className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
             >
               OK
