@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleOff } from "lucide-react";
+import { CircleOff, Mail, MessageCircle } from "lucide-react";
 
 type Employee = {
   id: string;
@@ -36,16 +36,17 @@ export default function EmployeeMessagesList({
         <div
           key={msg.id}
           className="p-3 bg-white shadow rounded-md border-l-4 border-teal-600"
-        >
-          <p className="text-gray-700">{msg.content}</p>
+        ><span className="uppercase font-bold text-[10px] flex items-center">{msg.employee.name}{" "}<MessageCircle className="pl-1"/></span>
+          <p className="text-gray-700 flex mr-2"><span className="text-xs"></span>{msg.content}</p>
           <div className="text-xs text-gray-500 mt-1 flex justify-between">
-            <span className="bg-gray-200 px-2 py-0.5 rounded">
-              From:{msg.employee.name}{" "}
-              {msg.employee.email && `(${msg.employee.email})`}
+            <span className="flex bg-gray-200 px-2 py-0.5 rounded-xs">
+             
+              <Mail className="h-4 w-4 mr-2"/>{msg.employee.email && `${msg.employee.email}`}
             </span>{" "}
-            <span className="flex items-center justify-center text-[10px] px-2 bg-amber-300 rounded">
+            <span className="flex items-center justify-end text-[10px] px-2 text-gray-100 bg-teal-800 rounded-xs">
               {new Date(msg.createdAt).toLocaleString("en-GB")}
             </span>
+            
           </div>
         </div>
       ))}

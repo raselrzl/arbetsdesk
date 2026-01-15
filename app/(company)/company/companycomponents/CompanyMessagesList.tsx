@@ -66,8 +66,8 @@ export default function CompanyMessagesList({
               >
                 <p className="text-gray-700">{msg.content}</p>
 
-                <div className="text-[10px] text-gray-500 mt-1 flex justify-end">
-                  <div className="bg-teal-800 px-2 py-1 rounded text-gray-100">
+                <div className="text-[10px] text-gray-800 mt-1 flex justify-end">
+                  <div className="bg-amber-300 px-2 py-0.5 rounded text-gray-800">
                     <ClientDate date={msg.createdAt} />
                   </div>
                 </div>
