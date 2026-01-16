@@ -14,11 +14,11 @@ import {
 } from "../actions";
 import { HomeLoginButton } from "./HomeLoginButton";
 
-type Tab = "USER" | "COMPANY" | "EMPLOYEE";
+type Tab = "USER" | "COMPANY" | "EMPLOYEE" | null;
 
 export default function LoginForm() {
   const search = useSearchParams();
-  const [tab, setTab] = useState<Tab>("USER");
+  const [tab, setTab] = useState<Tab>(null);
 
   // shared personal number
   const [personalNumber, setPersonalNumber] = useState("");
@@ -80,21 +80,30 @@ export default function LoginForm() {
         </h1>
 
         {/* TABS */}
-        <div className="flex mb-6 rounded overflow-hidden border border-gray-100">
-          {(["USER", "COMPANY", "EMPLOYEE"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex-1 py-2 text-sm font-bold ${
-                tab === t
-                  ? "bg-teal-900 text-white"
-                  : "bg-teal-600 text-teal-100 border"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
+       <div className="flex mb-6 rounded overflow-hidden border border-gray-100">
+  {(["USER", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map((t) => (
+    <button
+      key={t}
+      type="button"
+      onClick={() => setTab(t)}
+      className={`flex-1 py-2 text-sm font-bold transition
+        ${
+          tab === t
+            ? "bg-teal-900 text-white"
+            : "bg-teal-600 text-teal-100 hover:bg-teal-700"
+        }`}
+    >
+      {t}
+    </button>
+  ))}
+</div>
+{!tab && (
+  <p className="text-center text-teal-100 text-sm">
+    Please select a login type above
+  </p>
+)}
+
+
 
         {/* ================= USER LOGIN ================= */}
         {tab === "USER" && (
