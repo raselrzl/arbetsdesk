@@ -56,15 +56,14 @@ export default function AuthStatusPopup({
 
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
-      <div className="bg-white w-[250px] rounded shadow-xl text-center">
-        <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4">
-          Welcome, {employeeName}
-        </h2>
-
+      <div className="bg-white w-full max-w-[250px] h-[260px] rounded-xs shadow-xl text-center relative">
         {status === "LOGGED_IN_WITH_SCHEDULE" && schedule && (
-          <div className="p-6">
-            <CheckCircle className="w-10 h-10 text-green-600 mx-auto mb-2" />
-            <p className="font-semibold">You have a schedule today</p>
+          <div className="">
+            <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
+              Hi, {employeeName}
+            </h2>
+            <CheckCircle className="w-10 h-10 text-green-600 mx-auto my-4" />
+            <p className="font-semibold">Schedule time</p>
             <p className="text-lg font-bold mt-1">
               {formatTime(schedule.startTime)} – {formatTime(schedule.endTime)}
             </p>
@@ -75,7 +74,7 @@ export default function AuthStatusPopup({
             )} */}
             <button
               onClick={onClose}
-              className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
+              className="mt-5 w-full py-4 bg-teal-800 text-white font-bold hover:bg-teal-700"
             >
               OK
             </button>
@@ -84,6 +83,9 @@ export default function AuthStatusPopup({
 
         {status === "LOGGED_IN_NO_SCHEDULE" && (
           <div className="p-6">
+            <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4">
+              Hi, {employeeName}
+            </h2>
             <Info className="w-10 h-10 text-blue-500 mx-auto mb-2" />
             <p className="font-semibold">You don’t have a schedule today</p>
             <p className="text-sm text-gray-600 mt-1">
@@ -109,19 +111,33 @@ export default function AuthStatusPopup({
         )}
 
         {status === "ALREADY_LOGGED_IN" && (
-          <div className="p-6">
-            <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
+          <div className="relative">
+            {/* Close (cross) button */}
+            <button
+              onClick={onClose}
+              className="absolute top-2 right-2 text-gray-300 hover:text-white"
+            >
+              ✕
+            </button>
+
+            <div className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
+              <p>Hi, {employeeName}</p>
+              <span className="text-xs font-light text-gray-400">
+                id: {personalNumber}
+              </span>
+            </div>
+
+            <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto my-2" />
             <p className="font-semibold">Already logged in</p>
             <p className="text-sm text-gray-600">
-              If you want to log out, click on ok {employeeName}
-              {personalNumber}
-              {employeeId}
+              If you want to log out, click on Yes
             </p>
+
             <button
               onClick={handleLogout}
-              className="mt-5 w-full py-3 bg-teal-600 text-white font-bold hover:bg-teal-700"
+              className="mt-5 w-full py-4 bg-teal-800 text-white font-bold hover:bg-teal-700"
             >
-              OK
+              Yes
             </button>
           </div>
         )}

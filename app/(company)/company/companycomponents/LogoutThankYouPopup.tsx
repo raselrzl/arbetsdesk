@@ -30,19 +30,18 @@ export default function LogoutThankYouPopup({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex justify-center pt-30">
-      <div className="bg-white w-full max-w-[250px] h-[260px] rounded p-5 shadow-xl text-center relative">
-        <h3 className="text-lg font-bold text-teal-700 mb-2">
+    <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
+      <div className="bg-white w-full max-w-[250px] h-[260px] rounded-xs shadow-xl text-center relative">
+        <div className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
           Thank you For Today
-        </h3>
+          {employeeName && (
+            <p className="text-sm mb-2 font-semibold">
+              {employeeName}
+            </p>
+          )}
+        </div>
 
-        {employeeName && (
-          <p className="text-sm text-gray-700 mb-2 font-semibold">
-            {employeeName}
-          </p>
-        )}
-
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 my-4">
           You have successfully logged out.
         </p>
 
@@ -59,7 +58,7 @@ export default function LogoutThankYouPopup({
 
         <button
           onClick={onClose}
-          className="w-full py-2 bg-teal-600 text-white font-semibold"
+          className="w-full py-4 bg-teal-800 text-white font-semibold"
         >
           OK
         </button>

@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 export default function EarlyLoginChoicePopup({
   employeeName,
@@ -16,37 +17,70 @@ export default function EarlyLoginChoicePopup({
   onStartNow: () => void;
   onStartAtSchedule: () => void;
 }) {
+  const [loading, setLoading] = useState<"now" | "scheduled" | null>(null);
+  const [visible, setVisible] = useState(true);
+
   const formatTime = (v: string | Date) =>
     new Date(v).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     });
 
+  const handleStartNow = async () => {
+    setLoading("now");
+    await onStartNow();
+  };
+
+  const handleStartAtSchedule = async () => {
+    setLoading("scheduled");
+    await onStartAtSchedule();
+  };
+
+  if (!visible) return null;
+
   return (
-    <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
-      <div className="bg-white w-[280px] rounded shadow-xl text-center p-6">
-        <h2 className="text-lg font-bold mb-1">Hi, {employeeName}</h2>
+    <div className="fixed inset-0 z-9999 bg-black/50 flex items-center justify-center">
+      <div className="relative bg-white max-w-[250px] h-[260px] rounded-xs shadow-xl text-center p-6 border-t-8 border-teal-800">
+        
+        {/* Close button */}
+        <button
+          onClick={() => setVisible(false)}
+          disabled={!!loading}
+          className="absolute top-1 right-2 text-gray-500 hover:text-gray-800"
+        >
+          x
+        </button>
+
+        <h2 className="text-lg font-bold mb-1 uppercase">Hi, {employeeName}</h2>
 
         <p className="text-sm text-gray-600 mb-4">
           Your shift starts at <b>{formatTime(schedule.startTime)}</b>
         </p>
-       {/*  {loginTime && (
-          <p className="text-sm text-gray-500 mt-2">
-            login now: {formatTime(loginTime)}
-          </p>
-        )} */}
+
         <button
-          onClick={onStartNow}
-          className="w-full bg-teal-600 text-white py-3 font-bold mb-2 hover:bg-teal-700"
+          onClick={handleStartNow}
+          disabled={!!loading}
+          className={`w-full py-3 font-bold mt-10 mb-2 text-white ${
+            loading === "now"
+              ? "bg-teal-400 cursor-not-allowed"
+              : "bg-teal-800 hover:bg-teal-700"
+          }`}
         >
-          Start now
+          {loading === "now" ? "Starting..." : "Start now"}
         </button>
 
         <button
-          onClick={onStartAtSchedule}
-          className="w-full bg-gray-200 py-3 font-bold hover:bg-gray-300"
+          onClick={handleStartAtSchedule}
+          disabled={!!loading}
+          className={`w-full py-3 font-bold ${
+            loading === "scheduled"
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
         >
-          Start at scheduled time
+          {loading === "scheduled"
+            ? "Please wait..."
+            : "Start at scheduled time"}
         </button>
       </div>
     </div>

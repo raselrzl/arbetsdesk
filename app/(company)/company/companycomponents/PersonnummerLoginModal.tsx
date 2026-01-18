@@ -154,7 +154,7 @@ export default function PersonnummerLoginModal({
           disabled={loading || personalNumber.length < 12}
           className="mt-6 bg-teal-600 py-4 text-white text-xl font-bold hover:bg-teal-700 transition w-full max-w-sm flex items-center justify-center disabled:opacity-70"
         >
-          {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Enter"}
+          {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Login / Logout"}
         </button>
       </div>
 
