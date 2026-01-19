@@ -261,6 +261,17 @@ export async function createEmployeeAction(prevState: any, formData: FormData) {
 
       workingStatus: formData.get("workingStatus"),
 
+      insurance: formData.get("insurance"),
+  insuranceCompany: formData.get("insuranceCompany"),
+
+  financialSupport: formData.get("financialSupport"),
+  companyCar: formData.get("companyCar"),
+  mealAllowance: formData.get("mealAllowance"),
+  unionFees: formData.get("unionFees"),
+  netDeduction: formData.get("netDeduction"),
+
+  jobStartDate: formData.get("jobStartDate"),
+  jobEndDate: formData.get("jobEndDate"),
     });
 
     await prisma.employee.create({

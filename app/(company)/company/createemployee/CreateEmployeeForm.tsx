@@ -44,6 +44,15 @@ export default function CreateEmployeeForm({ company }: Props) {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [workingStatus, setWorkingStatus] = useState("");
 
+const [insurance, setInsurance] = useState(true); // default true
+const [financialSupport, setFinancialSupport] = useState(false);
+const [companyCar, setCompanyCar] = useState(false);
+const [mealAllowance, setMealAllowance] = useState(false);
+const [unionFees, setUnionFees] = useState(false);
+const [netDeduction, setNetDeduction] = useState(false);
+
+
+
   paymentMethod;
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
@@ -308,8 +317,8 @@ export default function CreateEmployeeForm({ company }: Props) {
             />
           </div>
 
-          <div>
-            <Label>Account Number</Label>
+          <div> 
+            <Label>Account Number</Label> 
             <Input
               name="accountNumber"
               placeholder="Account Number"
@@ -344,6 +353,68 @@ export default function CreateEmployeeForm({ company }: Props) {
               <option value="OTHER">OTHER</option>
             </select>
           </div>
+<h1 className="text-xl font-bold">Benefits & Deductions</h1>
+
+{/* Insurance */}
+<div className="flex items-center gap-2">
+  <input
+    type="checkbox"
+    name="insurance"
+    checked={insurance}
+    onChange={(e) => setInsurance(e.target.checked)}
+  />
+  <Label>Insurance</Label>
+</div>
+
+{insurance && (
+  <div>
+    <Label>Insurance Company</Label>
+    <Input
+      name="insuranceCompany"
+      placeholder="Insurance provider"
+      className="rounded-xs"
+    />
+  </div>
+)}
+
+{/* Other benefits */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+  <label className="flex items-center gap-2">
+    <input type="checkbox" name="financialSupport" />
+    Financial Support
+  </label>
+
+  <label className="flex items-center gap-2">
+    <input type="checkbox" name="companyCar" />
+    Company Car
+  </label>
+
+  <label className="flex items-center gap-2">
+    <input type="checkbox" name="mealAllowance" />
+    Meal Allowance
+  </label>
+
+  <label className="flex items-center gap-2">
+    <input type="checkbox" name="unionFees" />
+    Union Fees
+  </label>
+
+  <label className="flex items-center gap-2">
+    <input type="checkbox" name="netDeduction" />
+    Net Deduction
+  </label>
+</div>
+
+{/* Job Start and End Date */}
+<div>
+  <Label>Job Start Date</Label>
+  <Input type="date" name="jobStartDate" className="rounded-xs" />
+</div>
+
+<div>
+  <Label>Job End Date</Label>
+  <Input type="date" name="jobEndDate" className="rounded-xs" />
+</div>
 
           {/* Message */}
           {state.message && (

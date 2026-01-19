@@ -50,6 +50,21 @@ export const createEmployeeSchema = z.object({
    workingStatus: z
     .enum(["ACTIVE", "TERMINATED", "LEAVE", "PENDING", "OTHER"])
     .optional(),
+
+
+  insuranceCompany: z.string().optional(),
+insurance: z.preprocess((val) => val === "on", z.boolean()).default(true),
+financialSupport: z.preprocess((val) => val === "on", z.boolean()).default(false),
+companyCar: z.preprocess((val) => val === "on", z.boolean()).default(false),
+mealAllowance: z.preprocess((val) => val === "on", z.boolean()).default(false),
+unionFees: z.preprocess((val) => val === "on", z.boolean()).default(false),
+netDeduction: z.preprocess((val) => val === "on", z.boolean()).default(false),
+
+jobStartDate: z.preprocess((val) => val ? new Date(val as string) : undefined, z.date().optional()),
+jobEndDate: z.preprocess((val) => val ? new Date(val as string) : undefined, z.date().optional()),
+
+
+
 });
 
 export const loginSchema = z.object({

@@ -113,6 +113,17 @@ model Employee {
   clearingNumber String?
   accountNumber  String?
 
+  insurance        Boolean @default(true)
+  insuranceCompany String?
+  financialSupport Boolean @default(false)
+  companyCar       Boolean @default(false)
+  mealAllowance    Boolean @default(false)
+  unionFees        Boolean @default(false)
+  netDeduction     Boolean @default(false)
+  jobStartDate DateTime?
+  jobEndDate   DateTime?
+
+
   email            String?
   phone            String?
   personalNumber   String?
