@@ -1,7 +1,11 @@
-"use server"
+"use server";
 import { redirect } from "next/navigation";
 import { prisma } from "./utils/db";
-import { companyRegisterSchema, createEmployeeSchema, createUserSchema } from "./utils/schemas";
+import {
+  companyRegisterSchema,
+  createEmployeeSchema,
+  createUserSchema,
+} from "./utils/schemas";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { SalaryStatus } from "@prisma/client";
@@ -17,7 +21,7 @@ export async function createUserAction(prevState: any, formData: FormData) {
       personalNumber: data.personalNumber,
       address: data.address,
       pinNumber: data.pinNumber, // <-- added pinNumber in schema
-      role: data.role,           // <-- optional
+      role: data.role, // <-- optional
     });
 
     const existing = await prisma.user.findUnique({
@@ -71,7 +75,6 @@ export async function loginUserAction(formData: FormData) {
   });
 
   switch (user.role) {
-
     case "ADMIN":
       return redirect("/admin");
 
@@ -82,7 +85,6 @@ export async function loginUserAction(formData: FormData) {
       return redirect("/");
   }
 }
-
 
 const TTL = 60 * 60 * 24;
 
@@ -100,8 +102,7 @@ export async function loginCompanyAction(formData: FormData) {
   });
 
   if (!company) redirect("/login?error=notfound");
-  if (company.loginCode !== loginCode)
-    redirect("/login?error=invalid");
+  if (company.loginCode !== loginCode) redirect("/login?error=invalid");
 
   const jar = await cookies();
 
@@ -114,7 +115,6 @@ export async function loginCompanyAction(formData: FormData) {
 
   redirect("/company");
 }
-
 
 export async function loginEmployeeAction(formData: FormData) {
   const personalNumber = formData.get("personalNumber") as string;
@@ -130,8 +130,7 @@ export async function loginEmployeeAction(formData: FormData) {
   });
 
   if (!employee) redirect("/login?error=notfound");
-  if (employee.pinCode !== pinCode)
-    redirect("/login?error=invalid");
+  if (employee.pinCode !== pinCode) redirect("/login?error=invalid");
 
   const jar = await cookies();
 
@@ -145,7 +144,6 @@ export async function loginEmployeeAction(formData: FormData) {
   redirect("/employee/profile");
 }
 
-  
 export async function logoutUserAction() {
   const jar = await cookies();
   jar.delete({
@@ -157,7 +155,7 @@ export async function logoutUserAction() {
 
 export async function registerCompanyAction(
   prevState: { success: boolean; message: string },
-  formData: FormData
+  formData: FormData,
 ) {
   try {
     // ✅ MUST await cookies()
@@ -218,10 +216,7 @@ export async function getLoggedInUser() {
   });
 }
 
-export async function createEmployeeAction(
-  prevState: any,
-  formData: FormData
-) {
+export async function createEmployeeAction(prevState: any, formData: FormData) {
   try {
     const jar = await cookies();
     const companyId = jar.get("company_session")?.value;
@@ -247,6 +242,25 @@ export async function createEmployeeAction(
       contractType: formData.get("contractType"),
       hourlyRate: formData.get("hourlyRate"),
       monthlySalary: formData.get("monthlySalary"),
+
+      address: formData.get("address"),
+      postalCode: formData.get("postalCode"),
+      city: formData.get("city"),
+      country: formData.get("country"),
+
+      employmentType: formData.get("employmentType"),
+      employementPercentage: formData.get("employementPercentage"),
+      workplace: formData.get("workplace"),
+      jobTitle: formData.get("jobTitle"),
+
+      paymentMethod: formData.get("paymentMethod"),
+      tax: formData.get("tax"),
+      bankName: formData.get("bankName"),
+      clearingNumber: formData.get("clearingNumber"),
+      accountNumber: formData.get("accountNumber"),
+
+      workingStatus: formData.get("workingStatus"),
+
     });
 
     await prisma.employee.create({
@@ -309,7 +323,6 @@ export async function loginEmployeeToday(employeeId: string) {
   return log;
 }
 
-
 export async function logoutEmployeeToday(employeeId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -322,7 +335,9 @@ export async function logoutEmployeeToday(employeeId: string) {
 
   const loginTime = log.loginTime ?? new Date();
   const logoutTime = new Date();
-  const totalMinutes = Math.floor((logoutTime.getTime() - loginTime.getTime()) / 60000);
+  const totalMinutes = Math.floor(
+    (logoutTime.getTime() - loginTime.getTime()) / 60000,
+  );
 
   return await prisma.timeLog.update({
     where: { id: log.id },
@@ -343,9 +358,6 @@ export async function getEmployeeStatus(companyId: string) {
     },
   });
 }
-
-
-
 
 // ------------------- LOGIN -------------------
 export async function loginEmployee(employeeId: string) {
@@ -377,7 +389,6 @@ export async function loginEmployee(employeeId: string) {
   return log;
 }
 
-
 // ------------------- LOGOUT -------------------
 export async function logoutEmployee(employeeId: string) {
   "use server";
@@ -393,7 +404,7 @@ export async function logoutEmployee(employeeId: string) {
   const logoutTime = new Date();
   const loginTime = log.loginTime!;
   const totalMinutes = Math.floor(
-    (logoutTime.getTime() - loginTime.getTime()) / 60000
+    (logoutTime.getTime() - loginTime.getTime()) / 60000,
   );
 
   return await prisma.timeLog.update({
@@ -401,7 +412,6 @@ export async function logoutEmployee(employeeId: string) {
     data: { logoutTime, totalMinutes },
   });
 }
-
 
 export async function logoutCompanyAction() {
   "use server";
@@ -415,8 +425,6 @@ export async function logoutCompanyAction() {
 
   redirect("/");
 }
-
-
 
 export async function getCompanyEmployees() {
   const jar = await cookies();
@@ -461,9 +469,13 @@ export async function getCompanyEmployees() {
   });
 }
 
-
-
-export async function addDailyTip({ date, amount }: { date: string | Date; amount: number }) {
+export async function addDailyTip({
+  date,
+  amount,
+}: {
+  date: string | Date;
+  amount: number;
+}) {
   // ✅ Get company id from cookie
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
@@ -484,7 +496,6 @@ export async function addDailyTip({ date, amount }: { date: string | Date; amoun
   });
 }
 
-
 // app/actions/getAvailableTipMonths.ts
 export async function getAvailableTipMonths() {
   const jar = await cookies();
@@ -500,15 +511,15 @@ export async function getAvailableTipMonths() {
   // Convert to YYYY-MM and remove duplicates
   const months = Array.from(
     new Set(
-      tips.map(t =>
-        `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`
-      )
-    )
+      tips.map(
+        (t) =>
+          `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`,
+      ),
+    ),
   );
 
   return months;
 }
-
 
 export async function getMonthlyTips(companyId: string, month: string) {
   const start = new Date(`${month}-01`);
@@ -534,8 +545,6 @@ export async function getMonthlyTips(companyId: string, month: string) {
 
   return { tips, timeLogs };
 }
-
-
 
 export async function getCompanyTimeReports() {
   const jar = await cookies();
@@ -564,10 +573,16 @@ export async function getCompanyTimeReports() {
       personalNumber: log.employee.personalNumber,
       status: log.loginTime && !log.logoutTime ? "Working" : "Not working",
       startTime: log.loginTime
-        ? log.loginTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+        ? log.loginTime.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
         : "—",
       endTime: log.logoutTime
-        ? log.logoutTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+        ? log.logoutTime.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
         : "—",
       costCenter: `CC-${log.employee.id.slice(0, 4)}`,
       totalMinutes: log.totalMinutes ?? 0,
@@ -579,7 +594,6 @@ export async function getCompanyTimeReports() {
     employees,
   }));
 }
-
 
 export type SalaryRow = {
   employeeId: string;
@@ -685,8 +699,9 @@ export type SalaryRow = {
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 } */
 
-
-export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[]> {
+export async function getCompanyMonthlySalary(
+  month: string,
+): Promise<SalaryRow[]> {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -710,21 +725,20 @@ export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[
     },
   });
 
-const timeLogs = await prisma.timeLog.findMany({
-  where: {
-    companyId,
-    loginTime: { gte: startOfMonth, lte: endOfMonth },
-    logoutTime: { not: null },
-    totalMinutes: { not: null }, 
-  },
-  select: {
-    employeeId: true,
-    loginTime: true,
-    logoutTime: true,
-    totalMinutes: true,
-  },
-});
-
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      loginTime: { gte: startOfMonth, lte: endOfMonth },
+      logoutTime: { not: null },
+      totalMinutes: { not: null },
+    },
+    select: {
+      employeeId: true,
+      loginTime: true,
+      logoutTime: true,
+      totalMinutes: true,
+    },
+  });
 
   // 3️⃣ Aggregate total minutes
   const minutesMap: Record<string, number> = {};
@@ -736,10 +750,14 @@ const timeLogs = await prisma.timeLog.findMany({
     if (log.totalMinutes != null) {
       minutesMap[log.employeeId] += log.totalMinutes;
     } else if (log.loginTime && log.logoutTime) {
-      const diff = Math.floor((log.logoutTime.getTime() - log.loginTime.getTime()) / 60000);
+      const diff = Math.floor(
+        (log.logoutTime.getTime() - log.loginTime.getTime()) / 60000,
+      );
       minutesMap[log.employeeId] += diff;
     } else if (log.loginTime && !log.logoutTime) {
-      const diff = Math.floor((now.getTime() - log.loginTime.getTime()) / 60000);
+      const diff = Math.floor(
+        (now.getTime() - log.loginTime.getTime()) / 60000,
+      );
       minutesMap[log.employeeId] += diff;
     }
   });
@@ -760,7 +778,8 @@ const timeLogs = await prisma.timeLog.findMany({
     const totalMinutes = minutesMap[e.id] || 0;
     let salary = 0;
 
-    if (e.contractType === "HOURLY") salary = (totalMinutes / 60) * (e.hourlyRate || 0);
+    if (e.contractType === "HOURLY")
+      salary = (totalMinutes / 60) * (e.hourlyRate || 0);
     else salary = e.monthlySalary || 0;
 
     return {

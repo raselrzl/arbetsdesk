@@ -17,14 +17,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
       disabled={disabled || pending}
       className="w-full bg-teal-600 hover:bg-teal-700 rounded-xs disabled:opacity-50 flex items-center justify-center gap-2"
     >
-      {pending && (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      )}
+      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
       {pending ? "Creating..." : "Create Employee"}
     </Button>
   );
 }
-
 
 type Props = {
   company: {
@@ -39,10 +36,15 @@ const initialState = { success: false, message: "" };
 export default function CreateEmployeeForm({ company }: Props) {
   const [state, formAction] = React.useActionState(
     createEmployeeAction,
-    initialState
+    initialState,
   );
 
   const [contractType, setContractType] = useState("");
+  const [employmentType, setEmploymentType] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [workingStatus, setWorkingStatus] = useState("");
+
+  paymentMethod;
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
 
@@ -51,7 +53,7 @@ export default function CreateEmployeeForm({ company }: Props) {
   const canSubmit = isPinValid && isPinMatch;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-teal-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-teal-50 px-4 py-20">
       <div className="w-full max-w-lg bg-white p-6 rounded-xs border border-teal-100 shadow shadow-teal-100">
         <h1 className="text-2xl font-bold text-teal-700 text-center mb-1 uppercase">
           {company.name}
@@ -61,11 +63,8 @@ export default function CreateEmployeeForm({ company }: Props) {
           Add a New Employee
         </p>
 
-        <form
-          action={formAction}
-          autoComplete="off"
-          className="space-y-4"
-        >
+        <form action={formAction} autoComplete="off" className="space-y-4">
+          <h1 className="text-xl font-bold">Identity</h1>
           {/* Name */}
           <div>
             <Label>Name</Label>
@@ -144,20 +143,48 @@ export default function CreateEmployeeForm({ company }: Props) {
 
           {/* PIN errors */}
           {!isPinValid && pin.length > 0 && (
-            <p className="text-xs text-red-500">
-              PIN must be exactly 4 digits
-            </p>
+            <p className="text-xs text-red-500">PIN must be exactly 4 digits</p>
           )}
 
           {isPinValid && !isPinMatch && confirmPin.length > 0 && (
-            <p className="text-xs text-red-500">
-              PINs do not match
-            </p>
+            <p className="text-xs text-red-500">PINs do not match</p>
           )}
+
+          <div>
+            <Label>Address</Label>
+            <Input
+              name="address"
+              placeholder="Smedjegatan 35"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>City</Label>
+            <Input
+              name="city"
+              placeholder="Norrköping"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Postal Code</Label>
+            <Input
+              name="postalCode"
+              placeholder="602 19"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Country</Label>
+            <Input name="country" placeholder="Sweden" className="rounded-xs" />
+          </div>
 
           {/* Contract Type */}
           <div>
-            <Label>Contract Type</Label>
+            <Label>Salary Type</Label>
             <select
               name="contractType"
               value={contractType}
@@ -165,7 +192,7 @@ export default function CreateEmployeeForm({ company }: Props) {
               required
               className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
             >
-              <option value="">Select contract type</option>
+              <option value="">Select salary type</option>
               <option value="HOURLY">Hourly</option>
               <option value="MONTHLY">Monthly</option>
             </select>
@@ -199,6 +226,124 @@ export default function CreateEmployeeForm({ company }: Props) {
               />
             </div>
           )}
+
+          <h1 className="text-xl font-bold">Employment</h1>
+          <div>
+            <Label>Employment Type</Label>
+            <select
+              name="employmentType"
+              value={employmentType}
+              onChange={(e) => setEmploymentType(e.target.value)}
+              required
+              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
+            >
+              <option value="">Select employment type</option>
+              <option value="PERMANENT">PERMANENT</option>
+              <option value="INTERN">INTERN</option>
+              <option value="TEMPORARY">TEMPORARY</option>
+              <option value="PROVISIONARY">PROVISIONARY</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
+          <div>
+            <Label>Employement Percentage</Label>
+            <Input
+              name="employementPercentage"
+              type="number"
+              step="0.01"
+              placeholder="70"
+              required
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Workplace</Label>
+            <Input
+              name="workplace"
+              placeholder="Work plac ename"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Job Title</Label>
+            <Input
+              name="jobTitle"
+              placeholder="Job title"
+              className="rounded-xs"
+            />
+          </div>
+          <div>
+            <Label>Payment Method</Label>
+            <select
+              name="paymentMethod"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
+            >
+              <option value="">Select Payment Method</option>
+              <option value="BANKTRANSFER">BANKTRANSFER</option>
+              <option value="PAYROLLFILE">PAYROLLFILE</option>
+              <option value="MANUAL">MANUAL</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
+
+          <div>
+            <Label>Bank Name</Label>
+            <Input
+              name="bankName"
+              placeholder="Bank Name"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Clearing Number</Label>
+            <Input
+              name="clearingNumber"
+              placeholder="Clearing Number"
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Account Number</Label>
+            <Input
+              name="accountNumber"
+              placeholder="Account Number"
+              className="rounded-xs"
+            />
+          </div>
+          <div>
+            <Label>Tax Percentage</Label>
+            <Input
+              name="tax"
+              type="number"
+              step="0.01"
+              placeholder="30"
+              required
+              className="rounded-xs"
+            />
+          </div>
+
+          <div>
+            <Label>Working Status</Label>
+            <select
+              name="workingStatus"
+              value={workingStatus}
+              onChange={(e) => setWorkingStatus(e.target.value)}
+              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
+            >
+              <option value="">Select Working Status</option>
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="TERMINATED">TERMINATED</option>
+              <option value="PENDING">PENDING</option>
+              <option value="LEAVE">LEAVE</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
 
           {/* Message */}
           {state.message && (

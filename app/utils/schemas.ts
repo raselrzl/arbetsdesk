@@ -1,5 +1,5 @@
 // Define the schema outside of "use server"
-import { z } from 'zod'
+import { z } from "zod";
 export const createUserSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
@@ -7,8 +7,7 @@ export const createUserSchema = z.object({
   personalNumber: z.string().min(5),
   address: z.string().min(1),
   pinNumber: z.string().min(4),
-})
-
+});
 
 export const companyRegisterSchema = z.object({
   companyName: z.string().min(2),
@@ -17,7 +16,6 @@ export const companyRegisterSchema = z.object({
   loginCode: z.string().min(4),
   price: z.number(),
 });
-
 
 export const createEmployeeSchema = z.object({
   name: z.string().min(2),
@@ -28,6 +26,30 @@ export const createEmployeeSchema = z.object({
   contractType: z.enum(["HOURLY", "MONTHLY"]),
   hourlyRate: z.coerce.number().optional(),
   monthlySalary: z.coerce.number().optional(),
+
+  address: z.string().optional(),
+  postalCode: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+
+  employmentType: z
+    .enum(["PERMANENT", "INTERN", "TEMPORARY", "PROVISIONARY", "OTHER"])
+    .optional(),
+  workplace: z.string().optional(),
+  jobTitle: z.string().optional(),
+  employementPercentage: z.coerce.number().optional(),
+
+  paymentMethod: z
+    .enum(["BANKTRANSFER", "PAYROLLFILE", "MANUAL", "OTHER"])
+    .optional(),
+  bankName: z.string().optional(),
+  clearingNumber: z.string().optional(),
+  accountNumber: z.string().optional(),
+  tax: z.coerce.number().optional(),
+
+   workingStatus: z
+    .enum(["ACTIVE", "TERMINATED", "LEAVE", "PENDING", "OTHER"])
+    .optional(),
 });
 
 export const loginSchema = z.object({
@@ -37,6 +59,3 @@ export const loginSchema = z.object({
   organizationNo: z.string().optional(),
   loginCode: z.string().optional(),
 });
-
-
-

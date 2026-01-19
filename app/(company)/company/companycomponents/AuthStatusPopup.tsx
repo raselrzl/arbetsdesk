@@ -82,7 +82,7 @@ export default function AuthStatusPopup({
         )}
 
         {status === "LOGGED_IN_NO_SCHEDULE" && (
-          <div className="p-6">
+          <div className="">
             <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4">
               Hi, {employeeName}
             </h2>
@@ -92,7 +92,7 @@ export default function AuthStatusPopup({
               Do you want to log in anyway?
             </p>
 
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-5 px-3">
               <button
                 onClick={onConfirmLogin}
                 className="flex-1 py-2 bg-teal-600 text-white font-bold hover:bg-teal-700 rounded"
