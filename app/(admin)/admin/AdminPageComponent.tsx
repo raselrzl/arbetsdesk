@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function AdminPage({ user }: { user: any }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="items-center justify-center flex px-4 m-10">
       <div className="w-full max-w-md bg-white p-8 rounded-xs shadow-lg border border-teal-200 space-y-6">
         {/* Header */}
         <div className="text-center text-teal-800">

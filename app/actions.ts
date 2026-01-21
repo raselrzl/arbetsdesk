@@ -45,7 +45,7 @@ const loginSchema = z.object({
   pinNumber: z.string().min(4).max(4, "PIN must be 4 digits"),
 });
 
-const SESSION_TTL_SECONDS = 60 * 20;
+/* const SESSION_TTL_SECONDS = 60 * 20; */
 
 export async function loginUserAction(formData: FormData) {
   const data = Object.fromEntries(formData.entries()) as {
@@ -71,7 +71,7 @@ export async function loginUserAction(formData: FormData) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: SESSION_TTL_SECONDS,
+    /* maxAge: SESSION_TTL_SECONDS, */
   });
 
   switch (user.role) {
@@ -110,7 +110,7 @@ export async function loginCompanyAction(formData: FormData) {
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    maxAge: TTL,
+    /* maxAge: TTL, */
   });
 
   redirect("/company");
@@ -138,7 +138,7 @@ export async function loginEmployeeAction(formData: FormData) {
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    maxAge: TTL,
+   /*  maxAge: TTL, */
   });
 
   redirect("/employee/profile");
