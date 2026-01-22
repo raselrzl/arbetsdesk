@@ -5,16 +5,17 @@ import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function getEmployeeSchedule() {
+export async function getEmployeeSchedule(companyId?: string) {
   const jar = await cookies();
   const employeeId = jar.get("employee_session")?.value;
 
-  if (!employeeId) {
-    throw new Error("Unauthorized");
-  }
+  if (!employeeId) throw new Error("Unauthorized");
 
   const schedules = await prisma.schedule.findMany({
-    where: { employeeId },
+    where: {
+      employeeId,
+      ...(companyId ? { companyId } : {}), // filter by company if given
+    },
     orderBy: [{ date: "asc" }, { startTime: "asc" }],
     select: {
       id: true,
@@ -40,13 +41,12 @@ export async function getEmployeeSchedule() {
   }));
 }
 
-export async function getEmployeeMonthlyHours() {
+
+export async function getEmployeeMonthlyHours(companyId?: string) {
   const jar = await cookies();
   const employeeId = jar.get("employee_session")?.value;
 
-  if (!employeeId) {
-    throw new Error("Unauthorized");
-  }
+  if (!employeeId) throw new Error("Unauthorized");
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -55,10 +55,8 @@ export async function getEmployeeMonthlyHours() {
   const logs = await prisma.timeLog.findMany({
     where: {
       employeeId,
-      logDate: {
-        gte: startOfMonth,
-        lte: endOfMonth,
-      },
+      ...(companyId ? { companyId } : {}),
+      logDate: { gte: startOfMonth, lte: endOfMonth },
       loginTime: { not: null },
       logoutTime: { not: null },
     },
@@ -83,11 +81,9 @@ export async function getEmployeeMonthlyHours() {
     };
   });
 
-  return {
-    totalMinutes,
-    daily,
-  };
+  return { totalMinutes, daily };
 }
+
 
 export async function getEmployeeMonthlySchedule(month: string) {
   const jar = await cookies();

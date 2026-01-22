@@ -20,13 +20,12 @@ type UserInfo = {
   role: string;
 };
 
-export default function UserMenu({
-  user,
-  companies,
-}: {
+type UserMenuProps = {
   user: UserInfo | null;
-  companies: string[];
-}) {
+  companies: { id: string; name: string }[];
+};
+
+export default function UserMenu({ user, companies }: UserMenuProps) {
   return (
     <Sheet>
       <SheetTrigger className="p-2 rounded-full hover:bg-teal-500 transition">

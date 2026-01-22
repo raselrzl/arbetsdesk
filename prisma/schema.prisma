@@ -138,6 +138,8 @@ model Employee {
   employeeMessages EmployeeMessage[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
+
+  @@unique([companyId, personalNumber])
 }
 
 enum WorkingStatus {

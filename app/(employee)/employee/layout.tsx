@@ -14,25 +14,36 @@ export default async function EmployeeLayout({
 
   if (!employeeId) redirect("/");
 
-  const employee = await prisma.employee.findUnique({
+  // Step 1: Get employee by ID (personalNumber for cross-company lookup)
+  const employeeRow = await prisma.employee.findUnique({
     where: { id: employeeId },
+    select: { personalNumber: true, name: true, email: true },
+  });
+
+  if (!employeeRow) redirect("/login");
+
+  const { personalNumber, name, email } = employeeRow;
+
+  // Step 2: Find all companies for this personalNumber
+  const employeeRecords = await prisma.employee.findMany({
+    where: { personalNumber },
     select: {
-      id: true,
-      name: true,
-      email: true,
-      company: {
-        select: {
-          name: true,
-        },
-      },
+      company: { select: { id: true, name: true } },
     },
   });
 
-  if (!employee) redirect("/login");
+  // Step 3: Map to objects {id, name}
+  const companies = employeeRecords.map((e) => ({
+    id: e.company.id,
+    name: e.company.name,
+  }));
 
+  // Step 4: Pass employee info with all companies to navbar
   return (
     <div className="min-h-screen">
-      <EmployeeNavbar employee={employee} />
+      <EmployeeNavbar
+        employee={{ id: employeeId, name, email, companies }}
+      />
       <div className="px-2 pt-4 sm:pt-10">{children}</div>
     </div>
   );

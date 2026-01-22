@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Clock, Home, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import UserMenu from "./UserInfoMenu";
 import CompanySelect from "./CompanySelect";
@@ -11,14 +10,14 @@ type Employee = {
   id: string;
   name: string;
   email: string | null;
-  company: {
-    name: string;
-  };
+  companies: { id: string; name: string }[];
 };
 
 export default function EmployeeNavbar({ employee }: { employee: Employee }) {
   const pathname = usePathname();
-  const companies = [employee.company.name];
+
+  // Pass full objects
+  const companies = employee.companies;
 
   const links = [
     { href: "/employee/schedule", label: "My Schedule" },
@@ -28,10 +27,8 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
 
   return (
     <>
-      {/* TOP NAV */}
       <nav className="w-full bg-teal-500 px-4 py-3 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
-          {/* LEFT */}
           <div className="flex items-center flex-wrap gap-4 md:gap-8">
             <div className="text-xl font-bold tracking-wide">
               <Link href="/employee" className="uppercase">
@@ -57,7 +54,6 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
             </div>
           </div>
 
-          {/* RIGHT */}
           <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
             <div className="hidden md:block">
               <CompanySelect companies={companies} />
@@ -69,7 +65,7 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
                 email: employee.email,
                 role: "EMPLOYEE",
               }}
-              companies={companies}
+              companies={employee.companies}// keep as {id, name}[]
             />
           </div>
         </div>
@@ -79,3 +75,4 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
     </>
   );
 }
+
