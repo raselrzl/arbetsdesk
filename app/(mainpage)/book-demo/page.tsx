@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createBooking } from "./DemoBooking";
 
 const mockShifts = [
   "09:00 - 10:00",
@@ -71,7 +72,7 @@ export default function BookDemoPopup() {
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -81,28 +82,33 @@ export default function BookDemoPopup() {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log({
+ const handleSubmit = async () => {
+  try {
+    await createBooking({
+      ...formData,
       trainingType,
       selectedDate,
       selectedTime,
-      ...formData,
     });
-    alert("Booking submitted!");
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   // Step validation: Step 2 requires date & time, Step 3 requires name, email, phone, company
   const isStepValid = () => {
     if (step === 2) return selectedDate && selectedTime;
     if (step === 3)
-      return formData.name && formData.email && formData.phone && formData.company;
+      return (
+        formData.name && formData.email && formData.phone && formData.company
+      );
     return true;
   };
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg">
-
         {/* HEADING */}
         <div className="w-full bg-teal-600 text-white text-center py-4 sm:py-6 uppercase text-xl sm:text-2xl font-bold">
           ARBET DESK
@@ -113,7 +119,6 @@ export default function BookDemoPopup() {
         </div>
 
         <div className="p-4 sm:p-6">
-
           {/* Step Header - single row */}
           <div className="flex justify-between mb-6">
             {steps.map((label, index) => {
@@ -121,7 +126,10 @@ export default function BookDemoPopup() {
               const isCompleted =
                 stepNum === 1 ||
                 (stepNum === 2 && trainingType) ||
-                (stepNum === 3 && trainingType && selectedDate && selectedTime) ||
+                (stepNum === 3 &&
+                  trainingType &&
+                  selectedDate &&
+                  selectedTime) ||
                 (stepNum === 4 &&
                   trainingType &&
                   selectedDate &&
@@ -140,8 +148,8 @@ export default function BookDemoPopup() {
                     stepNum === step
                       ? "bg-teal-600 text-white"
                       : isCompleted
-                      ? "bg-teal-100 text-teal-700"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        ? "bg-teal-100 text-teal-700"
+                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }`}
                 >
                   {label}
@@ -197,8 +205,8 @@ export default function BookDemoPopup() {
                         selectedTime === time
                           ? "bg-teal-600 text-white border-teal-600"
                           : disabled
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-white hover:border-teal-400"
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white hover:border-teal-400"
                       }`}
                     >
                       {time}

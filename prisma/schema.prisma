@@ -329,3 +329,19 @@ model EmployeeMessage {
   @@index([companyId])
   @@index([employeeId])
 }
+
+
+model BookingRequest {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  phone        String
+  company      String
+  notes        String?
+  consent      Boolean  @default(false)
+  trainingType String
+  date         DateTime
+  startTime    DateTime
+  endTime      DateTime
+  createdAt    DateTime @default(now())
+}
