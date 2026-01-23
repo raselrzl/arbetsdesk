@@ -6,15 +6,15 @@ import { getCompanyMessages } from "./messageactions";
 type Employee = {
   id: string;
   name: string;
-  email?: string; // Keep undefined
+  email?: string;
 };
 
 type EmployeeMessage = {
   id: string;
   content: string;
   createdAt: string;
-  employee: Employee;
   isRead: boolean;
+  employee: Employee | null;
 };
 
 export default function CompanyMessagesList() {
@@ -24,14 +24,10 @@ export default function CompanyMessagesList() {
   useEffect(() => {
     getCompanyMessages()
       .then((msgs) =>
-        // ✅ normalize null to undefined for employee.email
         setMessages(
           msgs.map((m) => ({
             ...m,
-            employee: {
-              ...m.employee,
-              email: m.employee.email ?? undefined,
-            },
+            employee: m.employee ?? null, // normalize undefined → null
           }))
         )
       )
@@ -49,7 +45,8 @@ export default function CompanyMessagesList() {
     });
 
   if (loading) return <p>Loading messages...</p>;
-  if (messages.length === 0) return <p>No messages sent by employees yet.</p>;
+  if (messages.length === 0)
+    return <p>No messages sent by employees yet.</p>;
 
   return (
     <div className="space-y-4">
@@ -59,11 +56,13 @@ export default function CompanyMessagesList() {
           className="p-4 bg-white shadow rounded-md border-l-4 border-teal-600"
         >
           <p className="text-gray-700">{msg.content}</p>
+
           <div className="text-xs text-gray-500 mt-1 flex justify-between">
             <span>
-              From: {msg.employee.name}{" "}
-              {msg.employee.email && `(${msg.employee.email})`}
+              From: {msg.employee?.name ?? "Former employee"}
+              {msg.employee?.email && ` (${msg.employee.email})`}
             </span>
+
             <span>{formatDate(msg.createdAt)}</span>
           </div>
         </div>
