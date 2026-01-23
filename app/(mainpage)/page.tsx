@@ -60,15 +60,18 @@ export default function HomePage() {
       <FeaturesSection />
 
       {/* ================= VIDEO ================= */}
-      <section className="py-10 bg-teal-50 border-t border-teal-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="rounded-xl overflow-hidden border border-teal-200 shadow-md bg-white">
+      <section className="py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="rounded-xl overflow-hidden shadow-md bg-white">
             <video
-              src="/vedio.mp4"
-              controls
+              src="/restu1.mp4"
+              autoPlay
+              muted
+              loop
               playsInline
               preload="metadata"
-              className="w-full h-auto rounded-xl"
+              controls
+              className="w-full h-auto"
             />
           </div>
         </div>
