@@ -8,18 +8,27 @@ interface EmployeeDetailsPageProps {
 }
 
 async function getEmployeeById(employeeId: string) {
-  const jar =await cookies();
+  const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
 
   if (!companyId) throw new Error("Unauthorized");
 
   return prisma.employee.findFirst({
-    where: { id: employeeId, companyId },
-    include: { company: true, schedules: true },
+    where: {
+      id: employeeId,
+      companyId,
+    },
+    include: {
+      company: true,
+      schedules: true,
+      person: true, // ✅ NEW
+    },
   });
 }
 
-export default async function EmployeeDetailsPage({ params }: EmployeeDetailsPageProps) {
+export default async function EmployeeDetailsPage({
+  params,
+}: EmployeeDetailsPageProps) {
   // ✅ unwrap the promise
   const { id } = await params;
 
@@ -30,7 +39,9 @@ export default async function EmployeeDetailsPage({ params }: EmployeeDetailsPag
     employee = await getEmployeeById(id);
   } catch (err) {
     console.error(err);
-    return <div className="p-6 mt-20">Unauthorized or error fetching employee.</div>;
+    return (
+      <div className="p-6 mt-20">Unauthorized or error fetching employee.</div>
+    );
   }
 
   if (!employee) return <div className="p-6 mt-20">Employee not found.</div>;
@@ -43,20 +54,47 @@ export default async function EmployeeDetailsPage({ params }: EmployeeDetailsPag
 
       <div className="bg-white border border-teal-100 rounded-xs shadow shadow-teal-100 p-6 space-y-4">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <User className="w-5 h-5 text-teal-600" /> {employee.name}
+          <User className="w-5 h-5 text-teal-600" />
+          {employee.person.name}
         </h1>
 
         <div className="space-y-2">
-          <p><span className="font-semibold">Email:</span> {employee.email ?? "-"}</p>
-          <p><span className="font-semibold">Phone:</span> {employee.phone ?? "-"}</p>
-          <p><span className="font-semibold">Contract Type:</span> {employee.contractType ?? "-"}</p>
-          <p><span className="font-semibold">Hourly Rate:</span> {employee.hourlyRate ?? "-"}</p>
-          <p><span className="font-semibold">Monthly Salary:</span> {employee.monthlySalary ?? "-"}</p>
-          <p><span className="font-semibold">Company:</span> {employee.company?.name ?? "-"}</p>
+          <p>
+            <span className="font-semibold">Email:</span>{" "}
+            {employee.person.email ?? "-"}
+          </p>
+
+          <p>
+            <span className="font-semibold">Phone:</span>{" "}
+            {employee.person.phone ?? "-"}
+          </p>
+
+          <p>
+            <span className="font-semibold">Contract Type:</span>{" "}
+            {employee.contractType ?? "-"}
+          </p>
+
+          <p>
+            <span className="font-semibold">Hourly Rate:</span>{" "}
+            {employee.hourlyRate ?? "-"}
+          </p>
+
+          <p>
+            <span className="font-semibold">Monthly Salary:</span>{" "}
+            {employee.monthlySalary ?? "-"}
+          </p>
+
+          <p>
+            <span className="font-semibold">Company:</span>{" "}
+            {employee.company?.name ?? "-"}
+          </p>
+
           <p>
             <span className="font-semibold">Schedules:</span>{" "}
             {employee.schedules.length > 0
-              ? employee.schedules.map((s) => new Date(s.date).toLocaleDateString()).join(", ")
+              ? employee.schedules
+                  .map((s) => new Date(s.date).toLocaleDateString())
+                  .join(", ")
               : "No schedules"}
           </p>
         </div>
