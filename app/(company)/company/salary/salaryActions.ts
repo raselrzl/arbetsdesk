@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 import { SalaryStatus } from "@prisma/client";
 import { SalaryRow } from "./salarypagecomponent";
 
-export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[]> {
+export async function getCompanyMonthlySalary(
+  month: string,
+): Promise<SalaryRow[]> {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -22,28 +24,31 @@ export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[
     },
     select: {
       id: true,
-      name: true,
       contractType: true,
       hourlyRate: true,
       monthlySalary: true,
+      person: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
-const timeLogs = await prisma.timeLog.findMany({
-  where: {
-    companyId,
-    loginTime: { gte: startOfMonth, lte: endOfMonth },
-    logoutTime: { not: null },
-    totalMinutes: { not: null }, 
-  },
-  select: {
-    employeeId: true,
-    loginTime: true,
-    logoutTime: true,
-    totalMinutes: true,
-  },
-});
-
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      loginTime: { gte: startOfMonth, lte: endOfMonth },
+      logoutTime: { not: null },
+      totalMinutes: { not: null },
+    },
+    select: {
+      employeeId: true,
+      loginTime: true,
+      logoutTime: true,
+      totalMinutes: true,
+    },
+  });
 
   // 3️⃣ Aggregate total minutes
   const minutesMap: Record<string, number> = {};
@@ -55,10 +60,14 @@ const timeLogs = await prisma.timeLog.findMany({
     if (log.totalMinutes != null) {
       minutesMap[log.employeeId] += log.totalMinutes;
     } else if (log.loginTime && log.logoutTime) {
-      const diff = Math.floor((log.logoutTime.getTime() - log.loginTime.getTime()) / 60000);
+      const diff = Math.floor(
+        (log.logoutTime.getTime() - log.loginTime.getTime()) / 60000,
+      );
       minutesMap[log.employeeId] += diff;
     } else if (log.loginTime && !log.logoutTime) {
-      const diff = Math.floor((now.getTime() - log.loginTime.getTime()) / 60000);
+      const diff = Math.floor(
+        (now.getTime() - log.loginTime.getTime()) / 60000,
+      );
       minutesMap[log.employeeId] += diff;
     }
   });
@@ -79,12 +88,13 @@ const timeLogs = await prisma.timeLog.findMany({
     const totalMinutes = minutesMap[e.id] || 0;
     let salary = 0;
 
-    if (e.contractType === "HOURLY") salary = (totalMinutes / 60) * (e.hourlyRate || 0);
+    if (e.contractType === "HOURLY")
+      salary = (totalMinutes / 60) * (e.hourlyRate || 0);
     else salary = e.monthlySalary || 0;
 
     return {
       employeeId: e.id,
-      name: e.name,
+      name: e.person.name,
       contractType: e.contractType,
       totalMinutes,
       hourlyRate: e.hourlyRate,
@@ -123,19 +133,19 @@ export async function getAvailableSalaryMonths(): Promise<string[]> {
   timeLogMonths.forEach((t) => {
     if (t.loginTime)
       monthsSet.add(
-        `${t.loginTime.getFullYear()}-${String(t.loginTime.getMonth() + 1).padStart(2, "0")}`
+        `${t.loginTime.getFullYear()}-${String(t.loginTime.getMonth() + 1).padStart(2, "0")}`,
       );
   });
 
   tipMonths.forEach((t) => {
     if (t.date)
       monthsSet.add(
-        `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`
+        `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`,
       );
   });
 
   salaryMonths.forEach((s) =>
-    monthsSet.add(`${s.year}-${String(s.month).padStart(2, "0")}`)
+    monthsSet.add(`${s.year}-${String(s.month).padStart(2, "0")}`),
   );
 
   return Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
