@@ -29,7 +29,7 @@ import { cookies } from "next/headers";
   });
   revalidatePath("/company/message");
 } */
-export async function sendMessage(formData: FormData) {
+/* export async function sendMessage(formData: FormData) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -59,8 +59,51 @@ export async function sendMessage(formData: FormData) {
     companyName: message.company.name,
     employeeName: message.employee?.name,
   };
+} */
+
+//latest
+
+export async function sendMessage(formData: FormData) {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const content = formData.get("content") as string;
+  const employeeId = formData.get("employeeId") as string | null;
+  const sendToAll = formData.get("sendToAll") === "on";
+
+  const message = await prisma.message.create({
+    data: {
+      companyId,
+      content,
+      isBroadcast: sendToAll,
+      employeeId: sendToAll ? null : employeeId,
+    },
+    include: {
+      company: { select: { name: true } },
+      employee: {
+        select: {
+          person: {
+            select: { name: true },
+          },
+        },
+      },
+    },
+  });
+
+  return {
+    id: message.id,
+    content: message.content,
+    createdAt: message.createdAt.toISOString(),
+    isBroadcast: message.isBroadcast,
+    companyName: message.company.name,
+    employeeName: message.employee?.person?.name ?? undefined,
+  };
 }
-export async function getCompanyMessages() {
+
+
+
+/* export async function getCompanyMessages() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -81,7 +124,50 @@ export async function getCompanyMessages() {
     employee: m.employee,
     isRead: m.isRead,
   }));
+} */
+
+export async function getCompanyMessages() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  // Fetch all messages sent by employees for this company
+  const messages = await prisma.employeeMessage.findMany({
+    where: { companyId },
+    include: {
+      employee: {
+        select: {
+          id: true,
+          person: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: m.employee
+      ? {
+          id: m.employee.id,
+          name: m.employee.person?.name,
+          email: m.employee.person?.email ?? undefined,
+        }
+      : undefined,
+    isRead: m.isRead,
+  }));
 }
+
+
+
+
 
 function getDateRangeFromDate(date: string) {
   const start = new Date(date);
@@ -93,7 +179,7 @@ function getDateRangeFromDate(date: string) {
   return { start, end };
 }
 
-export async function getEmployeeMessagesForCompany(date: string) {
+/* export async function getEmployeeMessagesForCompany(date: string) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -123,9 +209,57 @@ export async function getEmployeeMessagesForCompany(date: string) {
     },
     isRead: m.isRead,
   }));
+} */
+//latest
+export async function getEmployeeMessagesForCompany(date: string) {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const { start, end } = getDateRangeFromDate(date);
+
+  const messages = await prisma.employeeMessage.findMany({
+    where: {
+      companyId,
+      createdAt: {
+        gte: start,
+        lte: end,
+      },
+    },
+    include: {
+      employee: {
+        select: {
+          id: true,
+          person: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: {
+      id: m.employee.id,
+      name: m.employee.person.name,
+      email: m.employee.person.email ?? undefined,
+    },
+    isRead: m.isRead,
+  }));
 }
 
-export async function getCompanyMessagesForCompany(date: string) {
+
+
+
+
+/* export async function getCompanyMessagesForCompany(date: string) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -149,9 +283,43 @@ export async function getCompanyMessagesForCompany(date: string) {
     companyName: m.company.name,
     employeeName: m.employee?.name, // only filled for private messages
   }));
+} */
+//latest
+
+export async function getCompanyMessagesForCompany(date: string) {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const { start, end } = getDateRangeFromDate(date);
+
+  const messages = await prisma.message.findMany({
+    where: { companyId, createdAt: { gte: start, lte: end } },
+    include: {
+      company: { select: { name: true } },
+      employee: {
+        select: {
+          person: {
+            select: { name: true },
+          },
+        },
+      }, // will be null for broadcasts
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return messages.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    isBroadcast: m.isBroadcast,
+    companyName: m.company.name,
+    employeeName: m.employee?.person?.name ?? undefined, // only filled for private messages
+  }));
 }
 
-export async function fetchAllMessagesForDate(date: string) {
+
+/* export async function fetchAllMessagesForDate(date: string) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -196,4 +364,75 @@ export async function fetchAllMessagesForDate(date: string) {
     })),
     companyMessages,
   };
+} */
+
+export async function fetchAllMessagesForDate(date: string) {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+  if (!companyId) throw new Error("Unauthorized");
+
+  const { start, end } = getDateRangeFromDate(date);
+
+  // Employee messages
+  const employeeMessagesRaw = await prisma.employeeMessage.findMany({
+    where: { companyId, createdAt: { gte: start, lte: end } },
+    include: {
+      employee: {
+        select: {
+          id: true,
+          person: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Company messages
+  const companyMessagesRaw = await prisma.message.findMany({
+    where: { companyId, createdAt: { gte: start, lte: end } },
+    include: {
+      company: { select: { name: true } },
+      employee: {
+        select: {
+          id: true,
+          person: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const employeeMessages = employeeMessagesRaw.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    employee: m.employee
+      ? {
+          id: m.employee.id,
+          name: m.employee.person?.name,
+          email: m.employee.person?.email ?? undefined,
+        }
+      : undefined,
+    isRead: m.isRead,
+  }));
+
+  const companyMessages = companyMessagesRaw.map((m) => ({
+    id: m.id,
+    content: m.content,
+    createdAt: m.createdAt.toISOString(),
+    isBroadcast: m.isBroadcast,
+    companyName: m.company.name,
+    employeeName: m.employee?.person?.name, // may be null if broadcast
+  }));
+
+  return { employeeMessages, companyMessages };
 }

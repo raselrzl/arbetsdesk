@@ -15,10 +15,11 @@ function safeTime(value?: string | Date | null) {
 type Props = {
   open: boolean;
   employeeName?: string;
-  loginTime?: string | Date | null;
-  logoutTime?: string | Date | null;
+  loginTime: string | null;
+  logoutTime: string | null;
   onClose: () => void;
 };
+
 
 export default function LogoutThankYouPopup({
   open,

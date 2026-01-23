@@ -13,45 +13,45 @@ type Message = {
   company: { name: string };
 };
 
-export default function EmployeeWeeklyMessages() {
+type EmployeeWeeklyMessagesProps = {
+  companyId?: string;
+};
+
+export default function EmployeeWeeklyMessages({ companyId }: EmployeeWeeklyMessagesProps) {
   const [weekOffset, setWeekOffset] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch weekly messages based on weekOffset
   useEffect(() => {
+    if (!companyId) return; // don't fetch if no company selected
     setLoading(true);
-    getEmployeeWeeklyMessages(weekOffset)
+    getEmployeeWeeklyMessages(weekOffset, companyId)
       .then(setMessages)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [weekOffset]);
+  }, [weekOffset, companyId]);
 
-  // Calculate start and end of current week (Monday-Sunday)
   const getWeekRangeLabel = () => {
     const today = new Date();
     today.setDate(today.getDate() + weekOffset * 7);
-    const day = today.getDay() || 7; // Sunday = 7
+    const day = today.getDay() || 7;
     const monday = new Date(today);
     monday.setDate(today.getDate() - day + 1);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
 
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "short",
-    };
-    return `${monday.toLocaleDateString(
+    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
+    return `${monday.toLocaleDateString("en-GB", options)} - ${sunday.toLocaleDateString(
       "en-GB",
       options
-    )} - ${sunday.toLocaleDateString("en-GB", options)}`;
+    )}`;
   };
+
+  if (!companyId) return null; // hide component if no company selected
 
   return (
     <div className="bg-teal-50 p-4 shadow rounded space-y-3">
-      {/* CONTENT */}
       {loading && <p className="text-sm text-gray-400">Loading…</p>}
-
       {!loading && messages.length === 0 && (
         <p className="text-sm text-gray-400">No messages this week.</p>
       )}
@@ -65,9 +65,7 @@ export default function EmployeeWeeklyMessages() {
             }`}
           >
             <div className="flex justify-between text-xs text-gray-500">
-              <p className="text-sm mt-1">
-                {m.content}
-              </p>
+              <p className="text-sm mt-1">{m.content}</p>
               <span className="text-[8px] px-2 h-4 flex items-center justify-center bg-amber-900 text-white">
                 {new Date(m.createdAt).toLocaleString("en-GB", {
                   weekday: "short",
@@ -76,21 +74,17 @@ export default function EmployeeWeeklyMessages() {
                 })}
               </span>
             </div>
-            <span className="text-[10px] bg-amber-200 px-1 py-0.5">
-              {m.company.name}
-            </span>
+            <span className="text-[10px] bg-amber-200 px-1 py-0.5">{m.company.name}</span>
           </li>
         ))}
       </ul>
 
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-sm text-teal-900">
           Week: {getWeekRangeLabel()}
         </h2>
 
         <div className="flex gap-2">
-          {/* Previous Week */}
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
             className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
@@ -98,7 +92,6 @@ export default function EmployeeWeeklyMessages() {
             <ChevronLeft size={16} />
           </button>
 
-          {/* Today */}
           <button
             onClick={() => setWeekOffset(0)}
             className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
@@ -106,11 +99,10 @@ export default function EmployeeWeeklyMessages() {
             Today
           </button>
 
-          {/* Next Week */}
           <button
             onClick={() => setWeekOffset((w) => w + 1)}
             className="px-2 h-8 py-0.5 border border-amber-200 rounded-xs hover:bg-teal-50"
-            disabled={weekOffset >= 0} // Optional: disable future weeks
+            disabled={weekOffset >= 0}
           >
             <ChevronRight size={16} />
           </button>

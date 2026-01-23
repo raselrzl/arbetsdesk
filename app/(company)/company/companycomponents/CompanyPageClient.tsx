@@ -26,14 +26,14 @@ function safeTime(value?: string | Date | null, mounted?: boolean) {
   });
 }
 
-// Start of day is 5:00 AM
+// Start of day: 05:00
 function startOfToday() {
   const d = new Date();
   d.setHours(5, 0, 0, 0);
   return d.getTime();
 }
 
-// End of day is 5:00 AM next day
+// End of day: next day 05:00
 function endOfToday() {
   return startOfToday() + 24 * 60 * 60 * 1000;
 }
@@ -52,15 +52,10 @@ export default function CompanyPageClient({ companyData }: any) {
   const [personalNumber, setPersonalNumber] = useState("");
 
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const [logoutTimes, setLogoutTimes] = useState<{
-    loginTime?: string | Date | null;
-    logoutTime?: string | Date | null;
-  } | null>(null);
+  const [logoutTimes, setLogoutTimes] = useState<any>(null);
 
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [loginTimes, setLoginTimes] = useState<{
-    loginTime?: string | Date | null;
-  } | null>(null);
+  const [loginTimes, setLoginTimes] = useState<any>(null);
 
   const todayStart = startOfToday();
   const todayEnd = endOfToday();
@@ -142,32 +137,13 @@ export default function CompanyPageClient({ companyData }: any) {
               const lastLog = todayLogs[todayLogs.length - 1];
               const isLoggedIn = lastLog ? !lastLog.logoutTime : false;
 
-              const todaysSchedule = emp.schedules?.length
-                ? emp.schedules.map((s: any, i: number) => (
-                    <div key={i} className="flex items-center text-xs">
-                      <CalendarDays className="w-3 h-3 text-teal-800" />
-                      <span>
-                        {new Date(s.startTime).toLocaleTimeString("en-GB", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {new Date(s.endTime).toLocaleTimeString("en-GB", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  ))
-                : "—";
-
               return (
                 <div
                   key={emp.id}
                   className={`cursor-pointer flex p-2 relative rounded-xs ${
                     isLoggedIn
                       ? "bg-teal-300"
-                      : "bg-gray-200 border border-teal-200"
+                      : "bg-gray-100"
                   }`}
                 >
                   <div className="flex flex-col gap-1">
@@ -181,12 +157,31 @@ export default function CompanyPageClient({ companyData }: any) {
                           isLoggedIn ? "text-teal-900" : "text-gray-500"
                         }`}
                       >
-                        {emp.name}
+                        {emp.person.name}
                       </div>
                     </div>
 
                     <div className="flex flex-col text-sm">
-                      {todaysSchedule}
+                      {emp.schedules?.length ? (
+                        emp.schedules.map((s: any, i: number) => (
+                          <div key={i} className="flex items-center text-xs">
+                            <CalendarDays className="w-3 h-3 text-teal-800" />
+                            <span>
+                              {new Date(s.startTime).toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}{" "}
+                              -{" "}
+                              {new Date(s.endTime).toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-500">—</span>
+                      )}
 
                       {todayLogs.length === 0 && (
                         <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
@@ -217,14 +212,14 @@ export default function CompanyPageClient({ companyData }: any) {
                     {isLoggedIn ? (
                       <button
                         onClick={() => openAuth(emp, "logout")}
-                        className="cursor-pointer text-green-700"
+                        className="text-green-700"
                       >
                         <ClockCheck className="h-4 w-4" />
                       </button>
                     ) : (
                       <button
                         onClick={() => openAuth(emp, "login")}
-                        className="cursor-pointer text-black"
+                        className="text-black"
                       >
                         <ClockAlert className="h-4 w-4" />
                       </button>
@@ -250,7 +245,7 @@ export default function CompanyPageClient({ companyData }: any) {
 
             <h3 className="text-lg font-bold mb-3 text-center">
               {authMode === "login" ? "Login" : "Logout"} –{" "}
-              {selectedEmployee.name}
+              {selectedEmployee.person.name}
             </h3>
 
             <input
@@ -309,11 +304,11 @@ export default function CompanyPageClient({ companyData }: any) {
         </div>
       )}
 
-      {/* ---------- LOGOUT THANK YOU POPUP ---------- */}
+      {/* ---------- LOGOUT THANK YOU ---------- */}
       <LogoutThankYouPopup
         open={showLogoutPopup}
+        employeeName={selectedEmployee?.person?.name}
         loginTime={logoutTimes?.loginTime}
-        employeeName={selectedEmployee?.name}
         logoutTime={logoutTimes?.logoutTime}
         onClose={() => {
           setShowLogoutPopup(false);
@@ -322,10 +317,10 @@ export default function CompanyPageClient({ companyData }: any) {
         }}
       />
 
-      {/* ---------- LOGIN THANK YOU POPUP ---------- */}
+      {/* ---------- LOGIN THANK YOU ---------- */}
       <LoginThankYouPopup
         open={showLoginPopup}
-        employeeName={selectedEmployee?.name}
+        employeeName={selectedEmployee?.person?.name}
         loginTime={loginTimes?.loginTime}
         onClose={() => {
           setShowLoginPopup(false);

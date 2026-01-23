@@ -1,8 +1,57 @@
-import { getEmployeeProfile, updateName, updateEmail, updatePhone, updatePin } from "../employeeactions";
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  getEmployeeProfile,
+  updateName,
+  updateEmail,
+  updatePhone,
+  updatePin,
+  getEmployeeCompanies,
+} from "../employeeactions";
 import EditableField from "./EditableField";
 
-export default async function ProfilePage() {
-  const employee = await getEmployeeProfile();
+type Company = {
+  companyId: string;
+  companyName: string;
+};
+
+export default function ProfilePage() {
+  const [employee, setEmployee] = useState<any>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+
+  /* ---------------- FETCH EMPLOYEE ---------------- */
+  useEffect(() => {
+    async function fetchEmployee() {
+      try {
+        const data = await getEmployeeProfile();
+        setEmployee(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchEmployee();
+  }, []);
+
+  /* ---------------- FETCH COMPANIES ---------------- */
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const data = await getEmployeeCompanies();
+        setCompanies(data);
+        if (data.length) setSelectedCompanyId(data[0].companyId);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchCompanies();
+  }, []);
+
+  if (!employee) return <p>Loading profile…</p>;
+
+  /* ---------------- SELECTED COMPANY ---------------- */
+  const selectedCompany = companies.find((c) => c.companyId === selectedCompanyId);
 
   return (
     <div className="max-w-7xl mx-auto my-24 p-6 bg-teal-500 text-white rounded-md shadow">
@@ -16,32 +65,17 @@ export default async function ProfilePage() {
         <EditableField label="ID" value={employee.personalNumber} disabled />
       </Section>
 
-      {/* CONTRACT INFO */}
-      <Section title="Contract">
-        <Item label="Contract Type" value={employee.contractType} />
-        {employee.contractType === "HOURLY" && <Item label="Hourly Rate" value={`${employee.hourlyRate} / hour`} />}
-        {employee.contractType === "MONTHLY" && <Item label="Monthly Salary" value={`${employee.monthlySalary} / month`} />}
-      </Section>
-
-      {/* COMPANY INFO */}
-      <Section title="Company">
-        <Item label="Company Name" value={employee.company.name} />
-        <Item label="Company Email" value={employee.company.email} />
-      </Section>
-
-      {/* SECURITY */}
+     {/* SECURITY */}
       <Section title="Security">
         <EditableField label="Login PIN" value={employee.pinCode} masked onSave={updatePin} />
       </Section>
 
-      <p className="text-xs text-gray-500 mt-6">Employee ID: {employee.id}</p>
+      <p className="text-xs text-gray-200 mt-6">Employee ID: {employee.id}</p>
     </div>
   );
 }
 
-
 /* ---------------- COMPONENTS ---------------- */
-
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-6">
@@ -51,11 +85,3 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Item({ label, value }: { label: string; value?: string | number | null }) {
-  return (
-    <div className="border border-teal-100 rounded-xs px-2 py-0.5">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-medium">{value ?? "-"}</p>
-    </div>
-  );
-}

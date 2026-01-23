@@ -1,4 +1,4 @@
-// app/(employee)/layout.tsx
+"use server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/app/utils/db";
@@ -10,39 +10,49 @@ export default async function EmployeeLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const employeeId = cookieStore.get("employee_session")?.value;
 
-  if (!employeeId) redirect("/");
+  // ✅ NEW: read personal number, NOT employee id
+  const personalNumber = cookieStore.get("employee_personal")?.value;
 
-  // Step 1: Get employee by ID (personalNumber for cross-company lookup)
-  const employeeRow = await prisma.employee.findUnique({
-    where: { id: employeeId },
-    select: { personalNumber: true, name: true, email: true },
-  });
+  if (!personalNumber) redirect("/login");
 
-  if (!employeeRow) redirect("/login");
-
-  const { personalNumber, name, email } = employeeRow;
-
-  // Step 2: Find all companies for this personalNumber
+  // 1️⃣ Get ALL employee records for this person
   const employeeRecords = await prisma.employee.findMany({
-    where: { personalNumber },
+    where: { person: { personalNumber } },
     select: {
-      company: { select: { id: true, name: true } },
+      id: true,
+      person: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      company: {
+        select: { id: true, name: true },
+      },
     },
   });
 
-  // Step 3: Map to objects {id, name}
+  if (employeeRecords.length === 0) redirect("/login");
+
+  // 2️⃣ Base info (same person, any row is fine)
+  const baseEmployee = employeeRecords[0];
+
+  // 3️⃣ Collect companies
   const companies = employeeRecords.map((e) => ({
     id: e.company.id,
     name: e.company.name,
   }));
 
-  // Step 4: Pass employee info with all companies to navbar
   return (
     <div className="min-h-screen">
       <EmployeeNavbar
-        employee={{ id: employeeId, name, email, companies }}
+        employee={{
+          personalNumber,
+          name: baseEmployee.person.name,
+          email: baseEmployee.person.email ?? null,
+          companies,
+        }}
       />
       <div className="px-2 pt-4 sm:pt-10">{children}</div>
     </div>

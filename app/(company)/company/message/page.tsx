@@ -13,11 +13,22 @@ export default async function CompanyMessagePage() {
     where: { companyId },
     select: {
       id: true,
-      name: true,
-      email: true,
+      person: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
     },
-    orderBy: { name: "asc" },
+    orderBy: { person: { name: "asc" } },
   });
+
+  // Map to match old structure expected by AllMessages
+  const employeeList = employees.map((emp) => ({
+    id: emp.id,
+    name: emp.person.name,
+    email: emp.person.email,
+  }));
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto">
@@ -26,7 +37,7 @@ export default async function CompanyMessagePage() {
       </h1>
       <p className="mb-10">Note: For Notification Select All employee</p>
 
-      <AllMessages employees={employees} />
+      <AllMessages employees={employeeList} />
     </div>
   );
 }

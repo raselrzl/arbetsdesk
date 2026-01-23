@@ -22,24 +22,35 @@ export default async function CompanyPageServer() {
   todayEnd.setHours(23, 59, 59, 999);
 
   const company = await prisma.company.findUnique({
-    where: { id: companyId },
-    include: {
-      user: { select: { name: true, email: true } },
-      employees: {
-        include: {
-          timeLogs: { orderBy: { createdAt: "desc" }, take: 1 },
-          schedules: {
-            where: {
-              date: {
-                gte: todayStart,
-                lte: todayEnd,
-              },
+  where: { id: companyId },
+  include: {
+    user: { select: { name: true, email: true } },
+    employees: {
+      include: {
+        person: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        timeLogs: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+        schedules: {
+          where: {
+            date: {
+              gte: todayStart,
+              lte: todayEnd,
             },
           },
         },
       },
     },
-  });
+  },
+});
+
 
   if (!company) redirect("/login");
 
@@ -56,7 +67,7 @@ export default async function CompanyPageServer() {
             <div className="flex items-end justify-end m-2">
               <Link
                 href="/company/analysis"
-                className="border px-2 py-1 text-xs md:text-sm bg-teal-800 hover:bg-teal-100 text-gray-100"
+                className="border px-2 py-1 text-xs md:text-sm bg-teal-800 hover:bg-teal-900 text-gray-100"
               >
                 Go To Analysis →
               </Link>

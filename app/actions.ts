@@ -116,7 +116,7 @@ export async function loginCompanyAction(formData: FormData) {
   redirect("/company");
 }
 
-export async function loginEmployeeAction(formData: FormData) {
+/* export async function loginEmployeeAction(formData: FormData) {
   const personalNumber = formData.get("personalNumber") as string;
   const pinCode = formData.get("pinCode") as string;
 
@@ -138,11 +138,66 @@ export async function loginEmployeeAction(formData: FormData) {
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-   /*  maxAge: TTL, */
+   // maxAge: TTL,
+  });
+
+  redirect("/employee/profile");
+} */
+
+/* export async function loginEmployeeAction(formData: FormData) {
+  const personalNumber = formData.get("personalNumber") as string;
+  const pinCode = formData.get("pinCode") as string;
+
+  const employee = await prisma.employee.findFirst({
+    where: { personalNumber },
+    select: { pinCode: true },
+  });
+
+  if (!employee || employee.pinCode !== pinCode) {
+    redirect("/login?error=invalid");
+  }
+
+  const jar = await cookies();
+  jar.set("employee_personal", personalNumber, {
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+  });
+
+  redirect("/employee/profile");
+} */
+
+//latest
+export async function loginEmployeeAction(formData: FormData) {
+  const personalNumber = formData.get("personalNumber") as string;
+  const pinCode = formData.get("pinCode") as string;
+
+  // Find employee via related Person
+  const employee = await prisma.employee.findFirst({
+    where: { person: { personalNumber } },
+    select: {
+      person: {
+        select: {
+          pinCode: true,
+        },
+      },
+    },
+  });
+
+  if (!employee || employee.person?.pinCode !== pinCode) {
+    redirect("/login?error=invalid");
+  }
+
+  const jar = await cookies();
+  jar.set("employee_personal", personalNumber, {
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
   });
 
   redirect("/employee/profile");
 }
+
 
 export async function logoutUserAction() {
   const jar = await cookies();
@@ -216,7 +271,7 @@ export async function getLoggedInUser() {
   });
 }
 
-export async function createEmployeeAction(prevState: any, formData: FormData) {
+/* export async function createEmployeeAction(prevState: any, formData: FormData) {
   try {
     const jar = await cookies();
     const companyId = jar.get("company_session")?.value;
@@ -288,7 +343,7 @@ export async function createEmployeeAction(prevState: any, formData: FormData) {
       message: error?.errors?.[0]?.message || "Something went wrong",
     };
   }
-}
+} */
 
 export async function loginEmployeeToday(employeeId: string) {
   const today = new Date();
@@ -437,7 +492,7 @@ export async function logoutCompanyAction() {
   redirect("/");
 }
 
-export async function getCompanyEmployees() {
+/* export async function getCompanyEmployees() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
 
@@ -453,7 +508,7 @@ export async function getCompanyEmployees() {
       email: true,
       phone: true,
       contractType: true,
-      companyId: true, // ✅ include companyId
+      companyId: true,
       timeLogs: {
         orderBy: { logDate: "desc" },
         take: 1,
@@ -474,11 +529,60 @@ export async function getCompanyEmployees() {
       email: emp.email,
       phone: emp.phone,
       role: emp.contractType,
+      companyId: emp.companyId,
+      status,
+    };
+  });
+} */
+
+//latest
+export async function getCompanyEmployees() {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) {
+    throw new Error("Unauthorized");
+  }
+
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    select: {
+      id: true,
+      contractType: true,
+      companyId: true, // ✅ include companyId
+      person: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+      timeLogs: {
+        orderBy: { logDate: "desc" },
+        take: 1,
+      },
+    },
+  });
+
+  return employees.map((emp) => {
+    const log = emp.timeLogs[0];
+    let status: "Working" | "Off" | "On Break" = "Off";
+
+    if (log?.loginTime && !log.logoutTime) status = "Working";
+    if (log?.loginTime && log.logoutTime) status = "Off";
+
+    return {
+      id: emp.id,
+      name: emp.person.name,
+      email: emp.person.email,
+      phone: emp.person.phone,
+      role: emp.contractType,
       companyId: emp.companyId, // ✅ include companyId here too
       status,
     };
   });
 }
+
 
 export async function addDailyTip({
   date,
@@ -566,7 +670,11 @@ export async function getCompanyTimeReports() {
   const logs = await prisma.timeLog.findMany({
     where: { companyId },
     include: {
-      employee: true,
+      employee: {
+        include: {
+          person: true, // ✅ include person table
+        },
+      },
     },
     orderBy: { logDate: "desc" },
   });
@@ -580,8 +688,8 @@ export async function getCompanyTimeReports() {
     if (!map[date]) map[date] = [];
 
     map[date].push({
-      name: log.employee.name,
-      personalNumber: log.employee.personalNumber,
+      name: log.employee.person.name, // updated
+      personalNumber: log.employee.person.personalNumber, // updated
       status: log.loginTime && !log.logoutTime ? "Working" : "Not working",
       startTime: log.loginTime
         ? log.loginTime.toLocaleTimeString("en-GB", {
@@ -605,6 +713,7 @@ export async function getCompanyTimeReports() {
     employees,
   }));
 }
+
 
 export type SalaryRow = {
   employeeId: string;
@@ -722,19 +831,21 @@ export async function getCompanyMonthlySalary(
   const endOfMonth = new Date(year, monthNum, 0, 23, 59, 59); // last day of month
 
   // 1️⃣ Fetch employees hired on or before end of month
-  const employees = await prisma.employee.findMany({
-    where: {
-      companyId,
-      createdAt: { lte: endOfMonth }, // only include employees hired before month ends
+ const employees = await prisma.employee.findMany({
+  where: { companyId, createdAt: { lte: endOfMonth } },
+  select: {
+    id: true,
+    contractType: true,
+    hourlyRate: true,
+    monthlySalary: true,
+    person: {
+      select: {
+        name: true,
+      },
     },
-    select: {
-      id: true,
-      name: true,
-      contractType: true,
-      hourlyRate: true,
-      monthlySalary: true,
-    },
-  });
+  },
+});
+
 
   const timeLogs = await prisma.timeLog.findMany({
     where: {
@@ -785,25 +896,25 @@ export async function getCompanyMonthlySalary(
   });
 
   // 5️⃣ Build final rows
-  const rows: SalaryRow[] = employees.map((e) => {
-    const totalMinutes = minutesMap[e.id] || 0;
-    let salary = 0;
+ const rows: SalaryRow[] = employees.map((e) => {
+  const totalMinutes = minutesMap[e.id] || 0;
+  let salary = 0;
 
-    if (e.contractType === "HOURLY")
-      salary = (totalMinutes / 60) * (e.hourlyRate || 0);
-    else salary = e.monthlySalary || 0;
+  if (e.contractType === "HOURLY") salary = (totalMinutes / 60) * (e.hourlyRate || 0);
+  else salary = e.monthlySalary || 0;
 
-    return {
-      employeeId: e.id,
-      name: e.name,
-      contractType: e.contractType,
-      totalMinutes,
-      hourlyRate: e.hourlyRate,
-      monthlySalary: e.monthlySalary,
-      salary: Math.round(salary),
-      status: statusMap[e.id] || "PENDING",
-    };
-  });
+  return {
+    employeeId: e.id,
+    name: e.person.name, // ✅ now from person
+    contractType: e.contractType,
+    totalMinutes,
+    hourlyRate: e.hourlyRate,
+    monthlySalary: e.monthlySalary,
+    salary: Math.round(salary),
+    status: statusMap[e.id] || "PENDING",
+  };
+});
+
 
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 }

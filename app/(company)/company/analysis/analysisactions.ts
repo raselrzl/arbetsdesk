@@ -72,7 +72,7 @@ export async function getCompanyAnalysis({
     },
   }); */
 
-  const employees = await prisma.employee.findMany({
+  /* const employees = await prisma.employee.findMany({
     where: { companyId },
     include: {
       timeLogs: {
@@ -83,9 +83,27 @@ export async function getCompanyAnalysis({
         },
       },
     },
+  }); */
+
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    include: {
+      person: {
+        select: {
+          name: true,
+        },
+      },
+      timeLogs: {
+        where: {
+          logDate: { gte: monthStart, lte: monthEnd },
+          logoutTime: { not: null },
+          totalMinutes: { not: null },
+        },
+      },
+    },
   });
 
-  const salaryData = employees.map((emp) => {
+  /*  const salaryData = employees.map((emp) => {
     const hoursWorked = emp.timeLogs.reduce((sum, log) => {
       if (!log.logoutTime || log.totalMinutes == null) return sum;
       return sum + log.totalMinutes / 60;
@@ -100,6 +118,26 @@ export async function getCompanyAnalysis({
     }
 
     return { name: emp.name, hours: hoursWorked, salary: salarySoFar };
+  }); */
+  const salaryData = employees.map((emp) => {
+    const hoursWorked = emp.timeLogs.reduce((sum, log) => {
+      if (!log.logoutTime || log.totalMinutes == null) return sum;
+      return sum + log.totalMinutes / 60;
+    }, 0);
+
+    let salarySoFar = 0;
+    if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
+      const monthlyHours = 160;
+      salarySoFar = (hoursWorked / monthlyHours) * emp.monthlySalary;
+    } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
+      salarySoFar = hoursWorked * emp.hourlyRate;
+    }
+
+    return {
+      name: emp.person.name, // ✅ FIXED
+      hours: hoursWorked,
+      salary: salarySoFar,
+    };
   });
 
   // 4️⃣ Employees count
@@ -138,26 +176,24 @@ export async function getAvailableMonths(companyId: string) {
     monthsSet.add(
       `${t.logDate.getFullYear()}-${String(t.logDate.getMonth() + 1).padStart(
         2,
-        "0"
-      )}`
-    )
+        "0",
+      )}`,
+    ),
   );
   tipMonths.forEach((t) =>
     monthsSet.add(
       `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(
         2,
-        "0"
-      )}`
-    )
+        "0",
+      )}`,
+    ),
   );
   salaryMonths.forEach((s) =>
-    monthsSet.add(`${s.year}-${String(s.month).padStart(2, "0")}`)
+    monthsSet.add(`${s.year}-${String(s.month).padStart(2, "0")}`),
   );
 
   return Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
 }
-
-
 
 /* export async function getMonthlyProfitability(companyId: string, month: string) {
   const [year, monthNum] = month.split("-").map(Number);
@@ -247,7 +283,10 @@ export async function getAvailableMonths(companyId: string) {
   return { rows, totals };
 } */
 
-export async function getMonthlyProfitability(companyId: string, month: string) {
+export async function getMonthlyProfitability(
+  companyId: string,
+  month: string,
+) {
   const [year, monthNum] = month.split("-").map(Number);
   const monthStart = startOfMonth(new Date(year, monthNum - 1));
   const monthEnd = endOfMonth(monthStart);
@@ -260,7 +299,7 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
   // Group sales by day and method (CASH or CARD)
   const salesMap: Record<number, { cash: number; card: number }> = {};
 
-  salesRecords.forEach(s => {
+  salesRecords.forEach((s) => {
     const day = s.date.getDate();
     if (!salesMap[day]) salesMap[day] = { cash: 0, card: 0 };
 
@@ -277,7 +316,7 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
   const costMap: Record<number, number> = {};
   const costBreakdownMap: Record<number, Record<string, number>> = {};
 
-  costRecords.forEach(c => {
+  costRecords.forEach((c) => {
     const day = c.date.getDate();
     costMap[day] = (costMap[day] || 0) + c.amount;
 
@@ -302,8 +341,8 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
 
   const salaryMap: Record<number, number> = {};
 
-  employees.forEach(emp => {
-    emp.timeLogs.forEach(log => {
+  employees.forEach((emp) => {
+    emp.timeLogs.forEach((log) => {
       const day = log.logDate.getDate();
       const hours = log.totalMinutes! / 60;
 
@@ -327,7 +366,7 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
 
   const rows = Array.from(availableDays)
     .sort((a, b) => a - b)
-    .map(day => {
+    .map((day) => {
       const salesBreakdown = salesMap[day] || { cash: 0, card: 0 };
       const sales = salesBreakdown.cash + salesBreakdown.card;
 
@@ -367,5 +406,3 @@ export async function getMonthlyProfitability(companyId: string, month: string) 
     },
   };
 }
-
-

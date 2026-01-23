@@ -6,18 +6,20 @@ import UserMenu from "./UserInfoMenu";
 import CompanySelect from "./CompanySelect";
 import MobileBottomNav from "./MobileBottomNav ";
 
-type Employee = {
+type Company = {
   id: string;
   name: string;
+};
+
+type Employee = {
+  personalNumber: string; // ✅ ADD THIS
+  name: string;
   email: string | null;
-  companies: { id: string; name: string }[];
+  companies: Company[];
 };
 
 export default function EmployeeNavbar({ employee }: { employee: Employee }) {
   const pathname = usePathname();
-
-  // Pass full objects
-  const companies = employee.companies;
 
   const links = [
     { href: "/employee/schedule", label: "My Schedule" },
@@ -43,7 +45,7 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
                   <Link
                     key={href}
                     href={href}
-                    className={`flex items-center gap-2 px-3 py-0.5 rounded-full transition-colors ${
+                    className={`px-3 py-0.5 rounded-full transition-colors ${
                       active ? "bg-teal-700" : "hover:bg-teal-600"
                     }`}
                   >
@@ -56,7 +58,7 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
 
           <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
             <div className="hidden md:block">
-              <CompanySelect companies={companies} />
+              <CompanySelect companies={employee.companies} />
             </div>
 
             <UserMenu
@@ -65,7 +67,7 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
                 email: employee.email,
                 role: "EMPLOYEE",
               }}
-              companies={employee.companies}// keep as {id, name}[]
+              companies={employee.companies}
             />
           </div>
         </div>
@@ -75,4 +77,3 @@ export default function EmployeeNavbar({ employee }: { employee: Employee }) {
     </>
   );
 }
-

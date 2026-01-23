@@ -8,10 +8,7 @@ type SendMessageFormProps = {
   onSuccess?: () => void;
 };
 
-export default function SendMessageForm({
-  companyId,
-  onSuccess,
-}: SendMessageFormProps) {
+export default function SendMessageForm({ companyId, onSuccess }: SendMessageFormProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);

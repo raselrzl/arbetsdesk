@@ -1,7 +1,10 @@
 "use client";
 
 import { CheckCircle, AlertTriangle, Info, LogOut } from "lucide-react";
-import { logoutEmployeeWithPin } from "../companyactions";
+import {
+  getEmployeeCurrentLoginTime,
+  logoutEmployeeWithPin,
+} from "../companyactions";
 import { useState } from "react";
 import LogoutThankYouPopup from "./LogoutThankYouPopup";
 
@@ -42,15 +45,29 @@ export default function AuthStatusPopup({
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [logoutTime, setLogoutTime] = useState<string | null>(null);
 
+ const [currentLoginTime, setCurrentLoginTime] = useState<string | null>(
+  loginTime ?? null
+);
+
+
   const handleLogout = async () => {
     try {
+      // Fetch real login time from the backend
+      const loginTimeFromDb = await getEmployeeCurrentLoginTime(employeeId);
+      setCurrentLoginTime(loginTimeFromDb);
+
+      // Logout
       await logoutEmployeeWithPin(employeeId, personalNumber);
+
+      // Set logout time
       const now = new Date().toISOString();
       setLogoutTime(now);
+
+      // Show popup
       setShowLogoutPopup(true);
     } catch (err: any) {
       console.error(err);
-      alert("Logout failed: " + err.message); // fallback
+      alert("Logout failed: " + err.message);
     }
   };
 
@@ -146,11 +163,11 @@ export default function AuthStatusPopup({
       <LogoutThankYouPopup
         open={showLogoutPopup}
         employeeName={employeeName}
-        loginTime={loginTime}
-        logoutTime={logoutTime}
+        loginTime={currentLoginTime ?? null} // <-- guaranteed string | null
+        logoutTime={logoutTime ?? null} // <-- also string | null
         onClose={() => {
           setShowLogoutPopup(false);
-          onClose(); // also close the main popup
+          onClose();
         }}
       />
     </div>

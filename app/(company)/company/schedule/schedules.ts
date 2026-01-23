@@ -124,15 +124,29 @@ export async function getCompanyEmployees() {
     where: { companyId },
     select: {
       id: true,
-      name: true,
       contractType: true,
       hourlyRate: true,
       monthlySalary: true,
+      person: {
+        select: {
+          name: true,            // ✅ get the name from Person
+          personalNumber: true,  // if needed
+        },
+      },
     },
   });
 
-  return employees;
+  // Optional: map to flatten structure
+  return employees.map(emp => ({
+    id: emp.id,
+    contractType: emp.contractType,
+    hourlyRate: emp.hourlyRate,
+    monthlySalary: emp.monthlySalary,
+    name: emp.person.name,              // flatten name
+    personalNumber: emp.person.personalNumber,
+  }));
 }
+
 
 
 export async function getSchedulesForCompany() {

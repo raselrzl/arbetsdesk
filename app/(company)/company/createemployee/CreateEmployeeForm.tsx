@@ -1,27 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { createEmployeeAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
-import { useFormStatus } from "react-dom";
-
-function SubmitButton({ disabled }: { disabled: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      disabled={disabled || pending}
-      className="w-full bg-teal-600 hover:bg-teal-700 rounded-xs disabled:opacity-50 flex items-center justify-center gap-2"
-    >
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      {pending ? "Creating..." : "Create Employee"}
-    </Button>
-  );
-}
+import { createEmployeeAction } from "./createEmployeeFormAction";
+import { ContractType, EmploymentType, WorkingStatus } from "@prisma/client";
 
 type Props = {
   company: {
@@ -31,29 +15,27 @@ type Props = {
   };
 };
 
-const initialState = { success: false, message: "" };
+type FormState = {
+  success: boolean;
+  message: string;
+};
 
 export default function CreateEmployeeForm({ company }: Props) {
-  const [state, formAction] = React.useActionState(
-    createEmployeeAction,
-    initialState,
-  );
+  const [state, setState] = useState<FormState>({ success: false, message: "" });
+  const [loading, setLoading] = useState(false);
 
-  const [contractType, setContractType] = useState("");
-  const [employmentType, setEmploymentType] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [workingStatus, setWorkingStatus] = useState("");
+  // Local state for selects and checkboxes
+  const [contractType, setContractType] = useState<ContractType | "">("");
+  const [employmentType, setEmploymentType] = useState<EmploymentType | "">("");
+  const [workingStatus, setWorkingStatus] = useState<WorkingStatus | "">("");
+  const [insurance, setInsurance] = useState(true);
+  const [financialSupport, setFinancialSupport] = useState(false);
+  const [companyCar, setCompanyCar] = useState(false);
+  const [mealAllowance, setMealAllowance] = useState(false);
+  const [unionFees, setUnionFees] = useState(false);
+  const [netDeduction, setNetDeduction] = useState(false);
 
-const [insurance, setInsurance] = useState(true); // default true
-const [financialSupport, setFinancialSupport] = useState(false);
-const [companyCar, setCompanyCar] = useState(false);
-const [mealAllowance, setMealAllowance] = useState(false);
-const [unionFees, setUnionFees] = useState(false);
-const [netDeduction, setNetDeduction] = useState(false);
-
-
-
-  paymentMethod;
+  // PIN
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
 
@@ -61,192 +43,179 @@ const [netDeduction, setNetDeduction] = useState(false);
   const isPinMatch = pin === confirmPin;
   const canSubmit = isPinValid && isPinMatch;
 
+  const handleSubmit = async (formData: FormData) => {
+    setLoading(true);
+
+    try {
+      const form = Object.fromEntries(formData.entries()) as Record<string, string>;
+
+      const data = {
+        companyId: form.companyId,
+        name: form.name,
+        email: form.email || undefined,
+        phone: form.phone || undefined,
+        personalNumber: form.personalNumber,
+        pinCode: form.pinCode || undefined,
+        address: form.address || undefined,
+        city: form.city || undefined,
+        postalCode: form.postalCode || undefined,
+        country: form.country || undefined,
+        contractType: contractType as ContractType,
+        hourlyRate: contractType === "HOURLY" ? form.hourlyRate : undefined,
+        monthlySalary: contractType === "MONTHLY" ? form.monthlySalary : undefined,
+        jobTitle: form.jobTitle || undefined,
+        workplace: form.workplace || undefined,
+        employmentType: employmentType || undefined,
+        workingStatus: workingStatus || undefined,
+        insurance,
+        insuranceCompany: form.insuranceCompany || undefined,
+        financialSupport,
+        companyCar,
+        mealAllowance,
+        unionFees,
+        netDeduction,
+        bankName: form.bankName || undefined,
+        clearingNumber: form.clearingNumber || undefined,
+        accountNumber: form.accountNumber || undefined,
+        jobStartDate: form.jobStartDate || undefined,
+        jobEndDate: form.jobEndDate || undefined,
+      };
+
+      const result = await createEmployeeAction(data);
+      setState(result);
+
+      if (result.success) {
+        alert("Employee created successfully!");
+      }
+    } catch (err: any) {
+      setState({ success: false, message: err.message || "Failed to create employee" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-teal-50 px-4 py-20">
       <div className="w-full max-w-lg bg-white p-6 rounded-xs border border-teal-100 shadow shadow-teal-100">
         <h1 className="text-2xl font-bold text-teal-700 text-center mb-1 uppercase">
           {company.name}
         </h1>
-
         <p className="text-sm text-teal-600 text-center mb-6">
           Add a New Employee
         </p>
 
-        <form action={formAction} autoComplete="off" className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(new FormData(e.currentTarget));
+          }}
+          autoComplete="off"
+          className="space-y-4"
+        >
+          <input type="hidden" name="companyId" value={company.id} />
+
+          {/* Identity */}
           <h1 className="text-xl font-bold">Identity</h1>
-          {/* Name */}
           <div>
             <Label>Name</Label>
-            <Input
-              name="name"
-              placeholder="John Doe"
-              required
-              className="rounded-xs"
-            />
+            <Input name="name" placeholder="John Doe" required />
           </div>
-
-          {/* Email */}
           <div>
             <Label>Email</Label>
-            <Input
-              name="email"
-              type="email"
-              placeholder="john@example.com"
-              className="rounded-xs"
-            />
+            <Input name="email" type="email" placeholder="john@example.com" />
           </div>
-
-          {/* Phone */}
           <div>
             <Label>Phone</Label>
-            <Input
-              name="phone"
-              placeholder="9876543210"
-              className="rounded-xs"
-            />
+            <Input name="phone" placeholder="9876543210" />
           </div>
-
-          {/* Personal Number */}
           <div>
             <Label>Personal Number</Label>
-            <Input
-              name="personalNumber"
-              placeholder="Employee ID / Personal No."
-              className="rounded-xs"
-            />
+            <Input name="personalNumber" placeholder="ID / Personal No." required />
           </div>
 
-          {/* PIN + Confirm PIN */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* PIN */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>4-Digit PIN</Label>
+              <Label>PIN</Label>
               <Input
                 name="pinCode"
                 type="password"
                 inputMode="numeric"
                 maxLength={4}
-                pattern="\d{4}"
-                placeholder="••••"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="rounded-xs tracking-widest"
                 required
               />
             </div>
-
             <div>
               <Label>Confirm PIN</Label>
               <Input
                 type="password"
                 inputMode="numeric"
                 maxLength={4}
-                pattern="\d{4}"
-                placeholder="••••"
                 value={confirmPin}
                 onChange={(e) => setConfirmPin(e.target.value)}
-                className="rounded-xs tracking-widest"
                 required
               />
             </div>
           </div>
-
-          {/* PIN errors */}
           {!isPinValid && pin.length > 0 && (
-            <p className="text-xs text-red-500">PIN must be exactly 4 digits</p>
+            <p className="text-red-500 text-xs">PIN must be 4 digits</p>
           )}
-
           {isPinValid && !isPinMatch && confirmPin.length > 0 && (
-            <p className="text-xs text-red-500">PINs do not match</p>
+            <p className="text-red-500 text-xs">PINs do not match</p>
           )}
 
+          {/* Address */}
           <div>
             <Label>Address</Label>
-            <Input
-              name="address"
-              placeholder="Smedjegatan 35"
-              className="rounded-xs"
-            />
+            <Input name="address" />
           </div>
-
           <div>
             <Label>City</Label>
-            <Input
-              name="city"
-              placeholder="Norrköping"
-              className="rounded-xs"
-            />
+            <Input name="city" />
           </div>
-
           <div>
             <Label>Postal Code</Label>
-            <Input
-              name="postalCode"
-              placeholder="602 19"
-              className="rounded-xs"
-            />
+            <Input name="postalCode" />
           </div>
-
           <div>
             <Label>Country</Label>
-            <Input name="country" placeholder="Sweden" className="rounded-xs" />
+            <Input name="country" />
           </div>
 
-          {/* Contract Type */}
+          {/* Contract */}
           <div>
             <Label>Salary Type</Label>
             <select
               name="contractType"
               value={contractType}
-              onChange={(e) => setContractType(e.target.value)}
+              onChange={(e) => setContractType(e.target.value as ContractType)}
               required
-              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
             >
               <option value="">Select salary type</option>
               <option value="HOURLY">Hourly</option>
               <option value="MONTHLY">Monthly</option>
             </select>
           </div>
-
-          {/* Conditional Pay Inputs (REQUIRED when visible) */}
           {contractType === "HOURLY" && (
-            <div>
-              <Label>Hourly Rate</Label>
-              <Input
-                name="hourlyRate"
-                type="number"
-                step="0.01"
-                placeholder="e.g. 15.50"
-                required
-                className="rounded-xs"
-              />
-            </div>
+            <Input name="hourlyRate" type="text" placeholder="Hourly rate" required />
           )}
-
           {contractType === "MONTHLY" && (
-            <div>
-              <Label>Monthly Salary</Label>
-              <Input
-                name="monthlySalary"
-                type="number"
-                step="0.01"
-                placeholder="e.g. 2500"
-                required
-                className="rounded-xs"
-              />
-            </div>
+            <Input name="monthlySalary" type="text" placeholder="Monthly salary" required />
           )}
 
+          {/* Employment */}
           <h1 className="text-xl font-bold">Employment</h1>
           <div>
             <Label>Employment Type</Label>
             <select
               name="employmentType"
               value={employmentType}
-              onChange={(e) => setEmploymentType(e.target.value)}
+              onChange={(e) => setEmploymentType(e.target.value as EmploymentType)}
               required
-              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
             >
-              <option value="">Select employment type</option>
+              <option value="">Select</option>
               <option value="PERMANENT">PERMANENT</option>
               <option value="INTERN">INTERN</option>
               <option value="TEMPORARY">TEMPORARY</option>
@@ -255,180 +224,129 @@ const [netDeduction, setNetDeduction] = useState(false);
             </select>
           </div>
           <div>
-            <Label>Employement Percentage</Label>
-            <Input
-              name="employementPercentage"
-              type="number"
-              step="0.01"
-              placeholder="70"
-              required
-              className="rounded-xs"
-            />
+            <Label>Job Title</Label>
+            <Input name="jobTitle" />
           </div>
-
           <div>
             <Label>Workplace</Label>
-            <Input
-              name="workplace"
-              placeholder="Work plac ename"
-              className="rounded-xs"
-            />
+            <Input name="workplace" />
           </div>
-
-          <div>
-            <Label>Job Title</Label>
-            <Input
-              name="jobTitle"
-              placeholder="Job title"
-              className="rounded-xs"
-            />
-          </div>
-          <div>
-            <Label>Payment Method</Label>
-            <select
-              name="paymentMethod"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
-            >
-              <option value="">Select Payment Method</option>
-              <option value="BANKTRANSFER">BANKTRANSFER</option>
-              <option value="PAYROLLFILE">PAYROLLFILE</option>
-              <option value="MANUAL">MANUAL</option>
-              <option value="OTHER">OTHER</option>
-            </select>
-          </div>
-
-          <div>
-            <Label>Bank Name</Label>
-            <Input
-              name="bankName"
-              placeholder="Bank Name"
-              className="rounded-xs"
-            />
-          </div>
-
-          <div>
-            <Label>Clearing Number</Label>
-            <Input
-              name="clearingNumber"
-              placeholder="Clearing Number"
-              className="rounded-xs"
-            />
-          </div>
-
-          <div> 
-            <Label>Account Number</Label> 
-            <Input
-              name="accountNumber"
-              placeholder="Account Number"
-              className="rounded-xs"
-            />
-          </div>
-          <div>
-            <Label>Tax Percentage</Label>
-            <Input
-              name="tax"
-              type="number"
-              step="0.01"
-              placeholder="30"
-              required
-              className="rounded-xs"
-            />
-          </div>
-
           <div>
             <Label>Working Status</Label>
             <select
               name="workingStatus"
               value={workingStatus}
-              onChange={(e) => setWorkingStatus(e.target.value)}
-              className="w-full h-10 px-3 border border-teal-200 rounded-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
+              onChange={(e) => setWorkingStatus(e.target.value as WorkingStatus)}
+              required
             >
-              <option value="">Select Working Status</option>
+              <option value="">Select</option>
               <option value="ACTIVE">ACTIVE</option>
               <option value="TERMINATED">TERMINATED</option>
-              <option value="PENDING">PENDING</option>
               <option value="LEAVE">LEAVE</option>
+              <option value="PENDING">PENDING</option>
               <option value="OTHER">OTHER</option>
             </select>
           </div>
-<h1 className="text-xl font-bold">Benefits & Deductions</h1>
 
-{/* Insurance */}
-<div className="flex items-center gap-2">
-  <input
-    type="checkbox"
-    name="insurance"
-    checked={insurance}
-    onChange={(e) => setInsurance(e.target.checked)}
-  />
-  <Label>Insurance</Label>
-</div>
+          {/* Benefits */}
+          <h1 className="text-xl font-bold">Benefits & Deductions</h1>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="insurance"
+              checked={insurance}
+              onChange={(e) => setInsurance(e.target.checked)}
+            />
+            <Label>Insurance</Label>
+          </div>
+          {insurance && <Input name="insuranceCompany" placeholder="Insurance company" />}
+          <div className="grid grid-cols-2 gap-2">
+            <label>
+              <input
+                type="checkbox"
+                name="financialSupport"
+                checked={financialSupport}
+                onChange={(e) => setFinancialSupport(e.target.checked)}
+              />{" "}
+              Financial Support
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="companyCar"
+                checked={companyCar}
+                onChange={(e) => setCompanyCar(e.target.checked)}
+              />{" "}
+              Company Car
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="mealAllowance"
+                checked={mealAllowance}
+                onChange={(e) => setMealAllowance(e.target.checked)}
+              />{" "}
+              Meal Allowance
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="unionFees"
+                checked={unionFees}
+                onChange={(e) => setUnionFees(e.target.checked)}
+              />{" "}
+              Union Fees
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="netDeduction"
+                checked={netDeduction}
+                onChange={(e) => setNetDeduction(e.target.checked)}
+              />{" "}
+              Net Deduction
+            </label>
+          </div>
 
-{insurance && (
-  <div>
-    <Label>Insurance Company</Label>
-    <Input
-      name="insuranceCompany"
-      placeholder="Insurance provider"
-      className="rounded-xs"
-    />
-  </div>
-)}
+          {/* Bank */}
+          <div>
+            <Label>Bank Name</Label>
+            <Input name="bankName" />
+          </div>
+          <div>
+            <Label>Clearing Number</Label>
+            <Input name="clearingNumber" />
+          </div>
+          <div>
+            <Label>Account Number</Label>
+            <Input name="accountNumber" />
+          </div>
 
-{/* Other benefits */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-  <label className="flex items-center gap-2">
-    <input type="checkbox" name="financialSupport" />
-    Financial Support
-  </label>
-
-  <label className="flex items-center gap-2">
-    <input type="checkbox" name="companyCar" />
-    Company Car
-  </label>
-
-  <label className="flex items-center gap-2">
-    <input type="checkbox" name="mealAllowance" />
-    Meal Allowance
-  </label>
-
-  <label className="flex items-center gap-2">
-    <input type="checkbox" name="unionFees" />
-    Union Fees
-  </label>
-
-  <label className="flex items-center gap-2">
-    <input type="checkbox" name="netDeduction" />
-    Net Deduction
-  </label>
-</div>
-
-{/* Job Start and End Date */}
-<div>
-  <Label>Job Start Date</Label>
-  <Input type="date" name="jobStartDate" className="rounded-xs" />
-</div>
-
-<div>
-  <Label>Job End Date</Label>
-  <Input type="date" name="jobEndDate" className="rounded-xs" />
-</div>
+          {/* Job dates */}
+          <div>
+            <Label>Job Start Date</Label>
+            <Input type="date" name="jobStartDate" />
+          </div>
+          <div>
+            <Label>Job End Date</Label>
+            <Input type="date" name="jobEndDate" />
+          </div>
 
           {/* Message */}
           {state.message && (
-            <p
-              className={`text-sm ${
-                state.success ? "text-teal-600" : "text-red-600"
-              }`}
-            >
+            <p className={state.success ? "text-teal-600" : "text-red-600"}>
               {state.message}
             </p>
           )}
 
           {/* Submit */}
-          <SubmitButton disabled={!canSubmit} />
+          <Button
+            type="submit"
+            disabled={!canSubmit || loading}
+            className="w-full bg-teal-600 hover:bg-teal-700 flex items-center justify-center gap-2"
+          >
+            {loading ? "Creating..." : canSubmit ? "Create Employee" : "Invalid PIN"}
+          </Button>
         </form>
       </div>
     </div>

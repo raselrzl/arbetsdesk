@@ -90,29 +90,38 @@ model Invoice {
   createdAt DateTime      @default(now())
 }
 
-model Employee {
-  id        String  @id @default(cuid())
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
-  name      String
-
-  address    String?
-  postalCode String?
-  city       String?
-  country    String?
-
-  employmentType        EmploymentType?
-  employementPercentage Float?
-  workplace             String?
-  jobTitle              String?
-  workingStatus         WorkingStatus?
-
-  tax            Float?
-  paymentMethod  PaymentMethod?
+model Person {
+  id             String   @id @default(cuid())
+  name           String
+  email          String?
+  phone          String?
+  personalNumber String?  @unique
+  pinCode        String?
+  address        String?
+  postalCode     String?
+  city           String?
+  country        String?
   bankName       String?
   clearingNumber String?
   accountNumber  String?
 
+  employees Employee[]
+}
+
+model Employee {
+  id              String   @id @default(cuid())
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+  personId        String
+  person          Person   @relation(fields: [personId], references: [id])
+
+  contractType     ContractType
+  hourlyRate       Float?
+  monthlySalary    Float?
+  jobTitle         String?
+  workplace        String?
+  employmentType   EmploymentType?
+  workingStatus    WorkingStatus?
   insurance        Boolean @default(true)
   insuranceCompany String?
   financialSupport Boolean @default(false)
@@ -120,27 +129,21 @@ model Employee {
   mealAllowance    Boolean @default(false)
   unionFees        Boolean @default(false)
   netDeduction     Boolean @default(false)
-  jobStartDate DateTime?
-  jobEndDate   DateTime?
+  jobStartDate     DateTime?
+  jobEndDate       DateTime?
 
-
-  email            String?
-  phone            String?
-  personalNumber   String?
-  pinCode          String
-  contractType     ContractType
-  hourlyRate       Float?
-  monthlySalary    Float?
   schedules        Schedule[]
   timeLogs         TimeLog[]
   salarySlips      SalarySlip[]
   messages         Message[]
   employeeMessages EmployeeMessage[]
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
 
-  @@unique([companyId, personalNumber])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([companyId, personId])
 }
+
 
 enum WorkingStatus {
   ACTIVE

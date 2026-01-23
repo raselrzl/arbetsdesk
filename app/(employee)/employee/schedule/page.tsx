@@ -5,6 +5,7 @@ import { Calendar, Clock, List } from "lucide-react";
 import {
   getEmployeeMonthlySchedule,
   getEmployeeAvailableMonths,
+  getEmployeeCompanies,
 } from "../employeeactions";
 import DayPopup from "./DayPopup";
 
@@ -13,6 +14,7 @@ type DailySchedule = {
   startTime: string;
   endTime: string;
   hours: number;
+  companyId: string;
 };
 
 type ViewMode = "calendar" | "table";
@@ -26,14 +28,35 @@ export default function MySchedulePage() {
   const [view, setView] = useState<ViewMode>("calendar");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+  const [companies, setCompanies] = useState<{ companyId: string; companyName: string }[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+
+  /* ---------------- FETCH COMPANIES ---------------- */
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const result = await getEmployeeCompanies();
+        setCompanies(result);
+        if (result.length) setSelectedCompany(result[0].companyId);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchCompanies();
+  }, []);
+
   /* ---------------- AVAILABLE MONTHS ---------------- */
   useEffect(() => {
     async function fetchMonths() {
-      const months = await getEmployeeAvailableMonths();
-      if (months.length) {
-        const sorted = months.sort();
-        setAvailableMonths(sorted);
-        setMonth(sorted[sorted.length - 1]);
+      try {
+        const months = await getEmployeeAvailableMonths();
+        if (months.length) {
+          const sorted = months.sort();
+          setAvailableMonths(sorted);
+          setMonth(sorted[sorted.length - 1]);
+        }
+      } catch (err) {
+        console.error(err);
       }
     }
     fetchMonths();
@@ -41,45 +64,42 @@ export default function MySchedulePage() {
 
   /* ---------------- MONTHLY SCHEDULE ---------------- */
   useEffect(() => {
-    if (!month) return;
+    if (!month || !selectedCompany) return;
     setLoading(true);
-    getEmployeeMonthlySchedule(month)
+    getEmployeeMonthlySchedule(month, selectedCompany)
       .then(setScheduleData)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [month]);
+  }, [month, selectedCompany]);
 
   /* ---------------- TODAY SCHEDULE ---------------- */
   useEffect(() => {
+    if (!selectedCompany) return;
     const today = new Date();
     const todayKey = today.toISOString().slice(0, 10);
-    const currentMonth = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}`;
+    const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}`;
 
-    getEmployeeMonthlySchedule(currentMonth)
-      .then((data) => {
-        setTodaySchedules(data.filter((s) => s.date.slice(0, 10) === todayKey));
-      })
+    getEmployeeMonthlySchedule(currentMonth, selectedCompany)
+      .then((data) => setTodaySchedules(data.filter((s) => s.date === todayKey)))
       .catch(console.error);
-  }, []);
+  }, [selectedCompany]);
 
   /* ---------------- HELPERS ---------------- */
   const formatTime = (iso?: string) =>
     iso
-      ? new Date(iso).toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
+      ? new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
       : "—";
 
-  const [year, monthNum] = month.split("-").map(Number);
-  const daysInMonth = new Date(year, monthNum, 0).getDate();
+  const [year, monthNum] = month ? month.split("-").map(Number) : [0, 0];
+  const daysInMonth = monthNum ? new Date(year, monthNum, 0).getDate() : 30;
 
   /* ---------------- GROUP BY DATE ---------------- */
   const schedulesByDate = useMemo(() => {
     return scheduleData.reduce<Record<string, DailySchedule[]>>((acc, s) => {
-      const key = s.date.slice(0, 10);
+      const key = s.date;
       acc[key] = acc[key] || [];
       acc[key].push(s);
       return acc;
@@ -91,10 +111,7 @@ export default function MySchedulePage() {
     () => scheduleData.reduce((acc, s) => acc + s.hours, 0),
     [scheduleData]
   );
-
-  const totalDays = useMemo(() => {
-    return new Set(scheduleData.map((s) => s.date.slice(0, 10))).size;
-  }, [scheduleData]);
+  const totalDays = useMemo(() => new Set(scheduleData.map((s) => s.date)).size, [scheduleData]);
 
   const todayKey = new Date().toISOString().slice(0, 10);
 
@@ -102,16 +119,28 @@ export default function MySchedulePage() {
     <div className="mt-20 max-w-7xl mx-auto space-y-6 pb-20">
       {/* HEADER */}
       <div>
-        <h1 className="text-xl font-bold uppercase text-teal-900">
-          My Schedule
-        </h1>
+        <h1 className="text-xl font-bold uppercase text-teal-900">My Schedule</h1>
         <p className="text-sm text-teal-500">Monthly work schedule overview</p>
       </div>
 
-      {/* MONTH + VIEW */}
+      {/* FILTERS */}
       <div className="flex flex-wrap gap-3 items-center bg-white p-3 border border-teal-100">
-        <Calendar className="w-5 h-5 text-teal-600" />
+        {/* Company */}
+        <label className="font-semibold text-teal-900">Company:</label>
+        <select
+          value={selectedCompany || ""}
+          onChange={(e) => setSelectedCompany(e.target.value)}
+          className="border border-teal-100 p-2"
+        >
+          {companies.map((c) => (
+            <option key={c.companyId} value={c.companyId}>
+              {c.companyName}
+            </option>
+          ))}
+        </select>
 
+        {/* Month */}
+        <Calendar className="w-5 h-5 text-teal-600" />
         <select
           value={month}
           onChange={(e) => setMonth(e.target.value)}
@@ -124,20 +153,17 @@ export default function MySchedulePage() {
           ))}
         </select>
 
+        {/* View toggle */}
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setView("calendar")}
-            className={`p-2 border border-teal-100 ${
-              view === "calendar" ? "bg-teal-200" : ""
-            }`}
+            className={`p-2 border border-teal-100 ${view === "calendar" ? "bg-teal-200" : ""}`}
           >
             <Calendar className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView("table")}
-            className={`p-2 border border-teal-100 ${
-              view === "table" ? "bg-teal-200" : ""
-            }`}
+            className={`p-2 border border-teal-100 ${view === "table" ? "bg-teal-200" : ""}`}
           >
             <List className="w-4 h-4" />
           </button>
@@ -147,13 +173,10 @@ export default function MySchedulePage() {
       {/* TODAY BOX */}
       <div
         className={`border p-4 ${
-          todaySchedules.length
-            ? "bg-amber-100 border-amber-300"
-            : "bg-teal-50 border-teal-200"
+          todaySchedules.length ? "bg-amber-100 border-amber-300" : "bg-teal-50 border-teal-200"
         }`}
       >
         <div className="font-semibold mb-1">Today ({todayKey})</div>
-
         {todaySchedules.length ? (
           todaySchedules.map((s, i) => (
             <div key={i} className="text-sm">
@@ -175,9 +198,8 @@ export default function MySchedulePage() {
             const dateKey = `${month}-${day}`;
             const daySchedules = schedulesByDate[dateKey] || [];
 
-            // ---------------- WEEKEND CHECK ----------------
             const dateObj = new Date(year, monthNum - 1, i + 1);
-            const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 6 = Saturday
+            const dayOfWeek = dateObj.getDay();
 
             return (
               <div
@@ -223,7 +245,6 @@ export default function MySchedulePage() {
                 const day = (i + 1).toString().padStart(2, "0");
                 const dateKey = `${month}-${day}`;
                 const daySchedules = schedulesByDate[dateKey] || [];
-
                 const dateObj = new Date(year, monthNum - 1, i + 1);
                 const dayOfWeek = dateObj.getDay();
 
@@ -239,15 +260,12 @@ export default function MySchedulePage() {
                         : "even:bg-gray-50"
                     }`}
                   >
-                    <td className="p-2 border border-teal-100 text-gray-500 w-24">
-                      {dateKey}
-                    </td>
+                    <td className="p-2 border border-teal-100 text-gray-500 w-24">{dateKey}</td>
                     <td className="p-2 border border-teal-100 text-center font-semibold text-teal-900">
                       {daySchedules.length
                         ? daySchedules.map((s, idx) => (
                             <div key={idx}>
-                              {formatTime(s.startTime)} –{" "}
-                              {formatTime(s.endTime)}
+                              {formatTime(s.startTime)} – {formatTime(s.endTime)}
                             </div>
                           ))
                         : ""}
@@ -258,10 +276,7 @@ export default function MySchedulePage() {
                         return h > 0 ? (
                           <>
                             {h.toFixed(1)}
-                            <span className="text-gray-500 text-[8px] ml-0.5 font-light">
-                              {" "}
-                              H
-                            </span>
+                            <span className="text-gray-500 text-[8px] ml-0.5 font-light"> H</span>
                           </>
                         ) : (
                           ""
@@ -272,20 +287,14 @@ export default function MySchedulePage() {
                 );
               })}
 
-              {/* 🔹 TOTAL ROW */}
+              {/* TOTAL ROW */}
               <tr className="bg-teal-800 text-white font-bold uppercase">
-                <td
-                  className="p-2 border border-teal-200 text-right"
-                  colSpan={2}
-                >
+                <td className="p-2 border border-teal-200 text-right" colSpan={2}>
                   Total Working Days: {totalDays}
                 </td>
                 <td className="p-2 border border-teal-200 text-right">
                   {totalHours.toFixed(1)}
-                  <span className="text-gray-500 text-[8px] ml-0.5 font-light">
-                    {" "}
-                    H
-                  </span>
+                  <span className="text-gray-500 text-[8px] ml-0.5 font-light"> H</span>
                 </td>
               </tr>
             </tbody>
@@ -297,15 +306,11 @@ export default function MySchedulePage() {
       <div className="bg-teal-300 p-4 flex items-center gap-6">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5" />
-          <span className="font-semibold">
-            Total Hours: {totalHours.toFixed(1)}h
-          </span>
+          <span className="font-semibold">Total Hours: {totalHours.toFixed(1)}h</span>
         </div>
-
-        <div className="font-semibold text-teal-900">
-          Total Working Days: {totalDays}
-        </div>
+        <div className="font-semibold text-teal-900">Total Working Days: {totalDays}</div>
       </div>
+
       {selectedDate && (
         <DayPopup
           dateKey={selectedDate}
