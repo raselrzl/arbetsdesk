@@ -59,6 +59,30 @@ export default function EmployeeScheduleTable({
   const [localRows, setLocalRows] = useState(rows);
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
+  // ---------------- Overall Status ----------------
+  // ---------------- Overall Status ----------------
+  let overallStatus = "";
+  const hasPending = localRows.some((r) => r.status === "PENDING");
+  const hasRejected = localRows.some((r) => r.status === "REJECTED");
+  const hasApproved = localRows.every((r) => r.status === "APPROVED");
+
+  if (hasPending && hasRejected) overallStatus = "Pending / Rejected";
+  else if (hasPending) overallStatus = "Pending Approval";
+  else if (hasRejected) overallStatus = "Rejected";
+  else if (hasApproved) overallStatus = "All Approved";
+  else overallStatus = "Unknown";
+
+  const overallStatusColor =
+    overallStatus === "All Approved"
+      ? "bg-emerald-600 text-white"
+      : overallStatus === "Rejected"
+        ? "bg-rose-600 text-white"
+        : overallStatus === "Pending Approval"
+          ? "bg-amber-500 text-white"
+          : overallStatus === "Pending / Rejected"
+            ? "bg-orange-600 text-white"
+            : "bg-gray-400 text-white";
+
   const handleStatusChange = (index: number, status: Row["status"]) => {
     const row = localRows[index];
 
@@ -91,6 +115,8 @@ export default function EmployeeScheduleTable({
       </div>
 
       <p>Personal Number: {personalNumber}</p>
+
+      {/* ---------------- Overall Status ---------------- */}
 
       <h2 className="text-xl font-semibold mt-4 flex items-center gap-2">
         <Clock /> Time Logs
@@ -156,6 +182,12 @@ export default function EmployeeScheduleTable({
           </tbody>
         </table>
       )}
+
+      <div
+        className={`inline-block px-3 py-1 rounded ${overallStatusColor} mt-2 font-semibold`}
+      >
+        {overallStatus}
+      </div>
     </div>
   );
 }
