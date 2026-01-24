@@ -229,6 +229,8 @@ model SalarySlip {
   year       Int
   totalHours Float
   totalPay   Float
+  tax        Float
+  othersCost        Float?
   pdfUrl     String?
   status     SalaryStatus @default(DRAFT)
   createdAt  DateTime     @default(now())

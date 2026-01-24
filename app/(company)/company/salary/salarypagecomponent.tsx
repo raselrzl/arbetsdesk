@@ -115,7 +115,7 @@ export default function CompanySalaryPageComponent({
               <th className="p-3 text-left w-1/5">Worked Hours</th>
               <th className="p-3 text-left w-1/5">Salary</th>
               <th className="p-3 text-left w-1/5">Contract Type</th>
-              <th className="p-3 text-left w-1/5">Status</th>
+              <th className="p-3 text-left w-1/5">View Log</th>
             </tr>
           </thead>
 
@@ -134,14 +134,7 @@ export default function CompanySalaryPageComponent({
                       <span>{row.name}</span>
                     </div>
                     
-                      <button
-                        onClick={() =>
-                          (window.location.href = `/company/salary/${row.personalNumber}`)
-                        }
-                        className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
-                      >
-                        View Details
-                      </button>
+                      
                     
                   </td>
 
@@ -188,13 +181,21 @@ export default function CompanySalaryPageComponent({
 
                   {/* Status */}
                   <td className="p-3">
-                    <span
+                   {/*  <span
                       className={`px-2 py-1 rounded-xs text-xs font-medium ${
                         statusColors[row.status]
                       }`}
                     >
                       {row.status}
-                    </span>
+                    </span> */}
+                    <button
+                        onClick={() =>
+                          (window.location.href = `/company/salary/${row.personalNumber}`)
+                        }
+                        className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                      >
+                        View Details
+                      </button>
                   </td>
                 </tr>
               );
