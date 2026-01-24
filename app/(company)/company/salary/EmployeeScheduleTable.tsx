@@ -41,7 +41,7 @@ export default function EmployeeScheduleTable({
 }: Props) {
   const rows: Row[] = timeLogs.map((log) => {
     const schedule = schedules.find(
-      (s) => s.date.toDateString() === log.logDate.toDateString()
+      (s) => s.date.toDateString() === log.logDate.toDateString(),
     );
 
     return {
@@ -75,6 +75,12 @@ export default function EmployeeScheduleTable({
     startTransition(() => {
       updateTimeLogStatus(row.id, status);
     });
+  };
+
+  const statusColors: Record<"PENDING" | "APPROVED" | "REJECTED", string> = {
+    PENDING: "bg-amber-500 hover:bg-amber-600",
+    APPROVED: "bg-emerald-600 hover:bg-emerald-700",
+    REJECTED: "bg-rose-600 hover:bg-rose-700",
   };
 
   return (
@@ -119,7 +125,9 @@ export default function EmployeeScheduleTable({
                     onClick={() =>
                       setOpenMenuIndex(openMenuIndex === i ? null : i)
                     }
-                    className="px-2 py-1 rounded bg-gray-700 text-white flex gap-1 items-center"
+                    className={`px-2 py-1 rounded text-white flex gap-1 items-center ${
+                      statusColors[row.status]
+                    }`}
                   >
                     {row.status}
                     <MoreVertical size={14} />
@@ -136,14 +144,13 @@ export default function EmployeeScheduleTable({
                           >
                             {s}
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   )}
                 </td>
 
                 <td>{row.lastUpdated ? formatDate(row.lastUpdated) : "-"}</td>
-
               </tr>
             ))}
           </tbody>
