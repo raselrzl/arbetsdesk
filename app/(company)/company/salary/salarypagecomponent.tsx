@@ -133,6 +133,16 @@ export default function CompanySalaryPageComponent({
                       <User className="w-4 h-4 text-teal-600" />
                       <span>{row.name}</span>
                     </div>
+                    
+                      <button
+                        onClick={() =>
+                          (window.location.href = `/company/salary/${row.personalNumber}`)
+                        }
+                        className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                      >
+                        View Details
+                      </button>
+                    
                   </td>
 
                   <td className="p-3">

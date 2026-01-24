@@ -205,10 +205,17 @@ model TimeLog {
 
   isScheduled Boolean   @default(false)
   activatedAt DateTime?
+  status TimeLogStatus @default(PENDING)
 
   createdAt DateTime @default(now())
 
   @@index([companyId, logDate])
+}
+
+enum TimeLogStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model SalarySlip {
