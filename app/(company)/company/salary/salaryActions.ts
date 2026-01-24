@@ -154,3 +154,12 @@ export async function getAvailableSalaryMonths(): Promise<string[]> {
 
   return Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
 }
+
+
+
+export async function updateTimeLogStatus(timeLogId: string, newStatus: "PENDING" | "APPROVED" | "REJECTED") {
+  return prisma.timeLog.update({
+    where: { id: timeLogId },
+    data: { status: newStatus },
+  });
+}
