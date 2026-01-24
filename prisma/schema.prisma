@@ -222,13 +222,15 @@ model SalarySlip {
   totalHours Float
   totalPay   Float
   pdfUrl     String?
-  status     SalaryStatus @default(PENDING)
+  status     SalaryStatus @default(DRAFT)
   createdAt  DateTime     @default(now())
   totalTips  Float?       @default(0)
 }
 
 enum SalaryStatus {
+  DRAFT
   PENDING
+  APPROVED
   PAID
   REJECTED
 }

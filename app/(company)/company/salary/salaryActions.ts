@@ -27,9 +27,11 @@ export async function getCompanyMonthlySalary(
       contractType: true,
       hourlyRate: true,
       monthlySalary: true,
+      jobTitle: true,
       person: {
         select: {
           name: true,
+          personalNumber: true,
         },
       },
     },
@@ -95,7 +97,9 @@ export async function getCompanyMonthlySalary(
     return {
       employeeId: e.id,
       name: e.person.name,
+      personalNumber: e.person.personalNumber,
       contractType: e.contractType,
+      jobTitle: e.jobTitle,
       totalMinutes,
       hourlyRate: e.hourlyRate,
       monthlySalary: e.monthlySalary,

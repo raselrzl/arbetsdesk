@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 
 /* ---------------- TYPES ---------------- */
 type ContractType = "HOURLY" | "MONTHLY";
-type SalaryStatus = "PENDING" | "PAID" | "REJECTED";
+type SalaryStatus = "PENDING" | "PAID" | "REJECTED" | "DRAFT" | "APPROVED";
 
 export type SalaryRow = {
   employeeId: string;
   name: string;
+  personalNumber: string | null;
+  jobTitle: string | null;
   contractType: ContractType;
   totalMinutes: number;
   hourlyRate?: number | null;
@@ -27,9 +29,11 @@ const formatMinutes = (min: number) => {
 };
 
 const statusColors: Record<SalaryStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-700",
-  PAID: "bg-green-100 text-green-700",
-  REJECTED: "bg-red-100 text-red-700",
+  DRAFT: "bg-gray-100 text-gray-700",
+  PENDING: "bg-amber-100 text-amber-800",
+  APPROVED: "bg-blue-100 text-blue-800",
+  PAID: "bg-emerald-100 text-emerald-800",
+  REJECTED: "bg-rose-100 text-rose-800",
 };
 
 /* ---------------- PROPS ---------------- */
@@ -39,7 +43,10 @@ interface Props {
 }
 
 /* ---------------- COMPONENT ---------------- */
-export default function CompanySalaryPageComponent({ availableMonths, defaultMonth }: Props) {
+export default function CompanySalaryPageComponent({
+  availableMonths,
+  defaultMonth,
+}: Props) {
   const [month, setMonth] = useState(defaultMonth);
   const [rows, setRows] = useState<SalaryRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,18 +62,26 @@ export default function CompanySalaryPageComponent({ availableMonths, defaultMon
   }, [month]);
 
   // Totals (optional, can display elsewhere if needed)
-  const totalMinutes = rows.reduce((acc, row) => acc + (row.totalMinutes || 0), 0);
+  const totalMinutes = rows.reduce(
+    (acc, row) => acc + (row.totalMinutes || 0),
+    0,
+  );
   const totalSalary = rows.reduce((acc, row) => acc + (row.salary || 0), 0);
 
   if (loading) {
-    return <div className="p-6 mt-20 text-center text-gray-500">Calculating salaries...</div>;
+    return (
+      <div className="p-6 mt-20 text-center text-gray-500">
+        Calculating salaries...
+      </div>
+    );
   }
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold uppercase">Salary Overview</h1>
       <p className="text-gray-600">
-        View all employee salaries calculated from reported working hours. Track monthly earnings, contract types, and payment status at a glance.
+        View all employee salaries calculated from reported working hours. Track
+        monthly earnings, contract types, and payment status at a glance.
       </p>
 
       {/* Month Selector */}
@@ -94,7 +109,9 @@ export default function CompanySalaryPageComponent({ availableMonths, defaultMon
         <table className="w-full text-sm min-w-[600px] table-fixed">
           <thead className="bg-teal-100">
             <tr>
-              <th className="p-3 text-left w-1/4">Employee Name</th>
+              <th className="p-3 text-left w-1/4">EName</th>
+              <th className="p-3 text-left w-1/4">Id</th>
+              <th className="p-3 text-left w-1/4">Designation</th>
               <th className="p-3 text-left w-1/5">Worked Hours</th>
               <th className="p-3 text-left w-1/5">Salary</th>
               <th className="p-3 text-left w-1/5">Contract Type</th>
@@ -106,12 +123,27 @@ export default function CompanySalaryPageComponent({ availableMonths, defaultMon
             {rows.map((row) => {
               const hours = row.totalMinutes / 60;
               return (
-                <tr key={row.employeeId} className="border-t border-teal-100 hover:bg-teal-50">
+                <tr
+                  key={row.employeeId}
+                  className="border-t border-teal-100 hover:bg-teal-50"
+                >
                   {/* Employee Name */}
                   <td className="p-3">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-teal-600" />
                       <span>{row.name}</span>
+                    </div>
+                  </td>
+
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+                      <span>{row.personalNumber}</span>
+                    </div>
+                  </td>
+
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+                      <span>{row.jobTitle}</span>
                     </div>
                   </td>
 
@@ -135,7 +167,9 @@ export default function CompanySalaryPageComponent({ availableMonths, defaultMon
                       </div>
                     )}
                     {row.contractType === "MONTHLY" && (
-                      <div className="text-xs text-gray-500 ml-6">Monthly Salary</div>
+                      <div className="text-xs text-gray-500 ml-6">
+                        Monthly Salary
+                      </div>
                     )}
                   </td>
 

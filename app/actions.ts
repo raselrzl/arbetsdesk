@@ -198,7 +198,6 @@ export async function loginEmployeeAction(formData: FormData) {
   redirect("/employee/profile");
 }
 
-
 export async function logoutUserAction() {
   const jar = await cookies();
   jar.delete({
@@ -583,7 +582,6 @@ export async function getCompanyEmployees() {
   });
 }
 
-
 export async function addDailyTip({
   date,
   amount,
@@ -714,16 +712,17 @@ export async function getCompanyTimeReports() {
   }));
 }
 
-
 export type SalaryRow = {
   employeeId: string;
   name: string;
+  jobTitle: string | null;
+  personalNumber: string | null;
   contractType: "HOURLY" | "MONTHLY";
   totalMinutes: number;
   hourlyRate?: number | null;
   monthlySalary?: number | null;
   salary: number;
-  status: "PENDING" | "PAID" | "REJECTED";
+  status: "PENDING" | "PAID" | "REJECTED" | "DRAFT" | "APPROVED";
 };
 
 /* export async function getCompanyMonthlySalary(month: string): Promise<SalaryRow[]> {
@@ -831,21 +830,22 @@ export async function getCompanyMonthlySalary(
   const endOfMonth = new Date(year, monthNum, 0, 23, 59, 59); // last day of month
 
   // 1️⃣ Fetch employees hired on or before end of month
- const employees = await prisma.employee.findMany({
-  where: { companyId, createdAt: { lte: endOfMonth } },
-  select: {
-    id: true,
-    contractType: true,
-    hourlyRate: true,
-    monthlySalary: true,
-    person: {
-      select: {
-        name: true,
+  const employees = await prisma.employee.findMany({
+    where: { companyId, createdAt: { lte: endOfMonth } },
+    select: {
+      id: true,
+      contractType: true,
+      hourlyRate: true,
+      monthlySalary: true,
+      jobTitle: true,
+      person: {
+        select: {
+          name: true,
+          personalNumber: true,
+        },
       },
     },
-  },
-});
-
+  });
 
   const timeLogs = await prisma.timeLog.findMany({
     where: {
@@ -896,25 +896,27 @@ export async function getCompanyMonthlySalary(
   });
 
   // 5️⃣ Build final rows
- const rows: SalaryRow[] = employees.map((e) => {
-  const totalMinutes = minutesMap[e.id] || 0;
-  let salary = 0;
+  const rows: SalaryRow[] = employees.map((e) => {
+    const totalMinutes = minutesMap[e.id] || 0;
+    let salary = 0;
 
-  if (e.contractType === "HOURLY") salary = (totalMinutes / 60) * (e.hourlyRate || 0);
-  else salary = e.monthlySalary || 0;
+    if (e.contractType === "HOURLY")
+      salary = (totalMinutes / 60) * (e.hourlyRate || 0);
+    else salary = e.monthlySalary || 0;
 
-  return {
-    employeeId: e.id,
-    name: e.person.name, // ✅ now from person
-    contractType: e.contractType,
-    totalMinutes,
-    hourlyRate: e.hourlyRate,
-    monthlySalary: e.monthlySalary,
-    salary: Math.round(salary),
-    status: statusMap[e.id] || "PENDING",
-  };
-});
-
+    return {
+      employeeId: e.id,
+      name: e.person.name,
+      personalNumber: e.person.personalNumber,
+      contractType: e.contractType,
+      jobTitle: e.jobTitle,
+      totalMinutes,
+      hourlyRate: e.hourlyRate,
+      monthlySalary: e.monthlySalary,
+      salary: Math.round(salary),
+      status: statusMap[e.id] || "PENDING",
+    };
+  });
 
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 }
