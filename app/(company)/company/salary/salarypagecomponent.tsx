@@ -107,7 +107,7 @@ export default function CompanySalaryPageComponent({
       {/* Salary Table */}
       <div className="bg-white rounded-xs shadow border border-teal-100 overflow-x-auto">
         <table className="w-full text-sm min-w-[600px] table-fixed">
-       {/*    <thead className="bg-teal-100">
+          {/*    <thead className="bg-teal-100">
             <tr>
               <th className="p-3 text-left w-1/4">EName</th>
               <th className="p-3 text-left w-1/4">Id</th>
@@ -132,8 +132,7 @@ export default function CompanySalaryPageComponent({
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-teal-600" />
                       <span>{row.name}</span>
-                    </div>                  
-        
+                    </div>
                   </td>
 
                   <td className="p-3">
@@ -179,7 +178,7 @@ export default function CompanySalaryPageComponent({
 
                   {/* Status */}
                   <td className="p-3">
-                   {/*  <span
+                    {/*  <span
                       className={`px-2 py-1 rounded-xs text-xs font-medium ${
                         statusColors[row.status]
                       }`}
@@ -187,13 +186,13 @@ export default function CompanySalaryPageComponent({
                       {row.status}
                     </span> */}
                     <button
-                        onClick={() =>
-                          (window.location.href = `/company/salary/${row.personalNumber}`)
-                        }
-                        className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
-                      >
-                        View Details
-                      </button>
+                      onClick={() =>
+                        (window.location.href = `/company/salary/${row.personalNumber}`)
+                      }
+                      className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                    >
+                      View Details
+                    </button>
                   </td>
                 </tr>
               );
