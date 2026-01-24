@@ -143,6 +143,7 @@ export default function EmployeeScheduleTable({
                 </td>
 
                 <td>{row.lastUpdated ? formatDate(row.lastUpdated) : "-"}</td>
+
               </tr>
             ))}
           </tbody>

@@ -4,6 +4,7 @@ import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 import { SalaryStatus } from "@prisma/client";
 import { SalaryRow } from "./salarypagecomponent";
+import { revalidatePath } from "next/cache";
 
 export async function getCompanyMonthlySalary(
   month: string,
@@ -157,9 +158,27 @@ export async function getAvailableSalaryMonths(): Promise<string[]> {
 
 
 
-export async function updateTimeLogStatus(timeLogId: string, newStatus: "PENDING" | "APPROVED" | "REJECTED") {
+/* export async function updateTimeLogStatus(timeLogId: string, newStatus: "PENDING" | "APPROVED" | "REJECTED") {
   return prisma.timeLog.update({
     where: { id: timeLogId },
     data: { status: newStatus },
   });
+} */
+
+
+export async function updateTimeLogStatus(
+  timeLogId: string,
+  newStatus: "PENDING" | "APPROVED" | "REJECTED"
+) {
+  const updated = await prisma.timeLog.update({
+    where: { id: timeLogId },
+    data: { status: newStatus },
+  });
+
+  // Revalidate AFTER DB update
+  revalidatePath("/company/salary");
+
+  return updated;
 }
+
+

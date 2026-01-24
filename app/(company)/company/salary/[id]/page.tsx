@@ -11,7 +11,16 @@ async function getEmployeeData(personalNumber: string) {
     select: {
       person: { select: { name: true, personalNumber: true } },
       schedules: { select: { date: true, startTime: true, endTime: true } },
-      timeLogs: { select: { id: true, logDate: true, loginTime: true, logoutTime: true, status: true } },
+      timeLogs: {
+        select: {
+          id: true,
+          logDate: true,
+          loginTime: true,
+          logoutTime: true,
+          status: true,
+          updatedAt: true,
+        },
+      },
     },
   });
 
@@ -25,7 +34,11 @@ async function getEmployeeData(personalNumber: string) {
   };
 }
 
-export default async function EmployeeSchedulePage({ params }: { params: Promise<Params> }) {
+export default async function EmployeeSchedulePage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
   // Await params because App Router now gives a Promise
   const { id } = await params;
 
@@ -44,6 +57,7 @@ export default async function EmployeeSchedulePage({ params }: { params: Promise
     loginTime: t.loginTime ? new Date(t.loginTime) : undefined,
     logoutTime: t.logoutTime ? new Date(t.logoutTime) : undefined,
     status: t.status as "PENDING" | "APPROVED" | "REJECTED",
+    updatedAt: t.updatedAt ? new Date(t.updatedAt) : undefined,
   }));
 
   return (
