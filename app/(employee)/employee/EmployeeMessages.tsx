@@ -66,7 +66,7 @@ export default function EmployeeWeeklyMessages({ companyId }: EmployeeWeeklyMess
           >
             <div className="flex justify-between text-xs text-gray-500">
               <p className="text-sm mt-1">{m.content}</p>
-              <span className="text-[8px] px-2 h-4 flex items-center justify-center bg-amber-900 text-white">
+              <span className="text-[8px] px-1 rounded h-4 flex items-center justify-center bg-amber-900 text-white">
                 {new Date(m.createdAt).toLocaleString("en-GB", {
                   weekday: "short",
                   hour: "2-digit",
