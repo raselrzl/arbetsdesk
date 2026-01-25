@@ -132,7 +132,7 @@ export default function CompanySalaryPageComponent({
                     </div>
                     {row.contractType === "HOURLY" && row.hourlyRate && (
                       <div className="text-xs text-gray-500 ml-6">
-                        {hours.toFixed(6)}h × {row.hourlyRate} (matches DB)
+                        {hours.toFixed(6)}h × {row.hourlyRate}
                       </div>
                     )}
                     {row.contractType === "MONTHLY" && (
