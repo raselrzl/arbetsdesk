@@ -39,7 +39,7 @@ export default function EmployeeMessagesList({
         ><span className="uppercase font-bold text-[10px] flex items-center">{msg.employee.name}{" "}<MessageCircle className="pl-1"/></span>
           <p className="text-gray-700 flex mr-2"><span className="text-xs"></span>{msg.content}</p>
           <div className="text-xs text-gray-500 mt-1 flex justify-between">
-            <span className="flex bg-gray-200 px-2 py-0.5 rounded-xs">
+            <span className="flex bg-gray-200 px-1 py-xs rounded-xs">
              
               <Mail className="h-3 w-3 mt-0.75 mr-1"/>{msg.employee.email && `${msg.employee.email}`}
             </span>{" "}
