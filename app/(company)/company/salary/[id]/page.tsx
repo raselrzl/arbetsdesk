@@ -9,6 +9,7 @@ async function getEmployeeData(personalNumber: string) {
   const employee = await prisma.employee.findFirst({
     where: { person: { personalNumber } },
     select: {
+      id: true,
       person: { select: { name: true, personalNumber: true } },
       schedules: { select: { date: true, startTime: true, endTime: true } },
       timeLogs: {
@@ -27,6 +28,7 @@ async function getEmployeeData(personalNumber: string) {
   if (!employee || !employee.person) notFound();
 
   return {
+    employeeId: employee.id,
     name: employee.person.name,
     personalNumber: employee.person.personalNumber!,
     schedules: employee.schedules || [],
@@ -50,6 +52,9 @@ export default async function EmployeeSchedulePage({
     startTime: new Date(s.startTime),
     endTime: new Date(s.endTime),
   }));
+  const today = new Date();
+  const monthIndex = today.getMonth() + 1; // JS months: 0-11
+  const year = today.getFullYear();
 
   const timeLogsFormatted = employeeData.timeLogs.map((t) => ({
     id: t.id,
@@ -66,6 +71,9 @@ export default async function EmployeeSchedulePage({
       personalNumber={employeeData.personalNumber}
       schedules={schedulesFormatted}
       timeLogs={timeLogsFormatted}
+      employeeId={employeeData.employeeId} // add employeeId
+      month={monthIndex} // month number
+      year={year}
     />
   );
 }

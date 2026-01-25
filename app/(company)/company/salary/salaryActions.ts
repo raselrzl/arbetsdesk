@@ -3,8 +3,8 @@
 import { prisma } from "@/app/utils/db";
 import { cookies } from "next/headers";
 import { SalaryStatus } from "@prisma/client";
-import { SalaryRow } from "./salarypagecomponent";
 import { revalidatePath } from "next/cache";
+import { SalaryRow } from "@/app/actions";
 
 export async function getCompanyMonthlySalary(
   month: string,
@@ -181,4 +181,98 @@ export async function updateTimeLogStatus(
   return updated;
 }
 
+/* export async function createSalarySlipForEmployee(employeeId: string, month: number, year: number) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    include: { timeLogs: true },
+  });
 
+  if (!employee) throw new Error("Employee not found");
+
+  // Filter logs for given month/year and approved only
+  const logs = employee.timeLogs.filter(log => 
+    log.status === "APPROVED" &&
+    log.logDate.getMonth() + 1 === month &&
+    log.logDate.getFullYear() === year
+  );
+
+  // Calculate total time in hours
+  const totalMinutes = logs.reduce((acc, log) => {
+    if (log.loginTime && log.logoutTime) {
+      return acc + (log.logoutTime.getTime() - log.loginTime.getTime()) / (1000 * 60);
+    }
+    return acc;
+  }, 0);
+
+  const totalHours = totalMinutes / 60;
+
+  // Compute total pay
+  const totalPay = employee.contractType === "HOURLY"
+    ? (employee.hourlyRate || 0) * totalHours
+    : employee.monthlySalary || 0;
+
+  return prisma.salarySlip.create({
+    data: {
+      employeeId: employee.id,
+      companyId: employee.companyId,
+      month,
+      year,
+      totalHours,
+      totalPay,
+      tax: 0, // optional, can be updated later
+      status: "DRAFT",
+    },
+  });
+} */
+
+
+  export async function createSalarySlipForEmployee(
+  employeeId: string,
+  month: number,
+  year: number
+) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    include: { timeLogs: true },
+  });
+
+  if (!employee) throw new Error("Employee not found");
+
+  // ---------------- HERE ----------------
+  // Currently you are recalculating totalMinutes from loginTime/logoutTime
+  // Instead, use the stored shift totalMinutes and shift salary
+  const logs = employee.timeLogs.filter(
+    log =>
+      log.status === "APPROVED" &&
+      log.logDate.getMonth() + 1 === month &&
+      log.logDate.getFullYear() === year
+  );
+
+  // ✅ Update this part:
+  // Instead of recalculating from timestamps, sum shift totalMinutes
+  const totalMinutes = logs.reduce((acc, log) => acc + (log.totalMinutes || 0), 0);
+
+  // For HOURLY, calculate totalPay exactly as frontend does:
+  let totalPay = 0;
+  if (employee.contractType === "HOURLY") {
+    const hourlyRate = employee.hourlyRate || 0;
+    const totalHours = totalMinutes / 60; // e.g., 1h37m → 1.616667
+    totalPay = hourlyRate * totalHours; // same as frontend
+  } else if (employee.contractType === "MONTHLY") {
+    totalPay = employee.monthlySalary || 0;
+  }
+
+  return prisma.salarySlip.create({
+    data: {
+      employeeId: employee.id,
+      companyId: employee.companyId,
+      month,
+      year,
+      totalMinutes,                    // exact minutes from shifts
+      totalHours: totalMinutes / 60,   // exact hours
+      totalPay: parseFloat(totalPay.toFixed(2)), // round only for money
+      tax: 0,
+      status: "DRAFT",
+    },
+  });
+}

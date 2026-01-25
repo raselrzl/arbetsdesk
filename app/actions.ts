@@ -905,17 +905,20 @@ export async function getCompanyMonthlySalary(
     else salary = e.monthlySalary || 0;
 
     return {
-      employeeId: e.id,
-      name: e.person.name,
-      personalNumber: e.person.personalNumber,
-      contractType: e.contractType,
-      jobTitle: e.jobTitle,
-      totalMinutes,
-      hourlyRate: e.hourlyRate,
-      monthlySalary: e.monthlySalary,
-      salary: Math.round(salary),
-      status: statusMap[e.id] || "PENDING",
-    };
+  employeeId: e.id,
+  name: e.person.name,
+  personalNumber: e.person.personalNumber,
+  contractType: e.contractType,
+  jobTitle: e.jobTitle,
+  totalMinutes,
+  hourlyRate: e.hourlyRate,
+  monthlySalary: e.monthlySalary,
+  salary: e.contractType === "HOURLY"
+    ? (totalMinutes / 60) * (e.hourlyRate || 0)
+    : e.monthlySalary || 0,  // exact DB value
+  status: statusMap[e.id] || "PENDING",
+};
+
   });
 
   return rows.sort((a, b) => a.name.localeCompare(b.name));

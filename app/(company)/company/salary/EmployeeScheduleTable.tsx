@@ -2,7 +2,7 @@
 
 import React, { useState, startTransition } from "react";
 import { User2, Clock, MoreVertical } from "lucide-react";
-import { updateTimeLogStatus } from "./salaryActions";
+import { createSalarySlipForEmployee, updateTimeLogStatus } from "./salaryActions";
 
 type Row = {
   id: string;
@@ -27,9 +27,12 @@ interface Props {
     status: "PENDING" | "APPROVED" | "REJECTED";
     updatedAt?: Date;
   }[];
+  employeeId: string;
+  month: number;
+  year: number;
 }
 
-// hydration-safe
+// ---------------- Helper Functions ----------------
 const formatDate = (d: Date) => d.toISOString().split("T")[0];
 const formatTime = (d?: Date) => (d ? d.toTimeString().slice(0, 5) : "-");
 
@@ -38,7 +41,11 @@ export default function EmployeeScheduleTable({
   personalNumber,
   schedules = [],
   timeLogs = [],
+  employeeId,
+  month,
+  year,
 }: Props) {
+  // ---------------- State ----------------
   const rows: Row[] = timeLogs.map((log) => {
     const schedule = schedules.find(
       (s) => s.date.toDateString() === log.logDate.toDateString(),
@@ -58,8 +65,11 @@ export default function EmployeeScheduleTable({
 
   const [localRows, setLocalRows] = useState(rows);
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
+  const [salaryCreated, setSalaryCreated] = useState(false);
 
-  // ---------------- Overall Status ----------------
+  const allApproved =
+    localRows.length > 0 && localRows.every((r) => r.status === "APPROVED");
+
   // ---------------- Overall Status ----------------
   let overallStatus = "";
   const hasPending = localRows.some((r) => r.status === "PENDING");
@@ -76,13 +86,14 @@ export default function EmployeeScheduleTable({
     overallStatus === "All Approved"
       ? "bg-emerald-600 text-white"
       : overallStatus === "Rejected"
-        ? "bg-rose-600 text-white"
-        : overallStatus === "Pending Approval"
-          ? "bg-amber-500 text-white"
-          : overallStatus === "Pending / Rejected"
-            ? "bg-orange-600 text-white"
-            : "bg-gray-400 text-white";
+      ? "bg-rose-600 text-white"
+      : overallStatus === "Pending Approval"
+      ? "bg-amber-500 text-white"
+      : overallStatus === "Pending / Rejected"
+      ? "bg-orange-600 text-white"
+      : "bg-gray-400 text-white";
 
+  // ---------------- Handlers ----------------
   const handleStatusChange = (index: number, status: Row["status"]) => {
     const row = localRows[index];
 
@@ -101,12 +112,25 @@ export default function EmployeeScheduleTable({
     });
   };
 
+  const handleCreateSalary = async () => {
+    try {
+      const slip = await createSalarySlipForEmployee(employeeId, month, year);
+      console.log("Salary Slip Created:", slip);
+      setSalaryCreated(true); // Update UI
+      alert(`Salary Slip created for ${formatDate(new Date())}. Total Pay: ${slip.totalPay}`);
+    } catch (error: any) {
+      console.error("Error creating salary slip:", error.message || error);
+      alert("Failed to create salary slip. Check console.");
+    }
+  };
+
   const statusColors: Record<"PENDING" | "APPROVED" | "REJECTED", string> = {
     PENDING: "bg-amber-500 hover:bg-amber-600",
     APPROVED: "bg-emerald-600 hover:bg-emerald-700",
     REJECTED: "bg-rose-600 hover:bg-rose-700",
   };
 
+  // ---------------- Render ----------------
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6 mt-20">
       <div className="flex items-center gap-2 text-2xl font-bold">
@@ -115,8 +139,6 @@ export default function EmployeeScheduleTable({
       </div>
 
       <p>Personal Number: {personalNumber}</p>
-
-      {/* ---------------- Overall Status ---------------- */}
 
       <h2 className="text-xl font-semibold mt-4 flex items-center gap-2">
         <Clock /> Time Logs
@@ -188,6 +210,23 @@ export default function EmployeeScheduleTable({
       >
         {overallStatus}
       </div>
+
+      {allApproved && !salaryCreated && (
+        <div className="mt-4">
+          <button
+            onClick={handleCreateSalary}
+            className="bg-emerald-600 text-white px-4 py-2 rounded"
+          >
+            All Time Logs Approved - Create Salary Slip
+          </button>
+        </div>
+      )}
+
+      {salaryCreated && (
+        <div className="mt-4 bg-emerald-100 text-emerald-800 px-3 py-2 rounded">
+          Salary Slip Successfully Created ✅
+        </div>
+      )}
     </div>
   );
 }

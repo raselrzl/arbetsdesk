@@ -1,6 +1,6 @@
 "use client";
 
-import { getCompanyMonthlySalary } from "@/app/actions";
+import { getCompanyMonthlySalary, SalaryRow } from "@/app/actions";
 import { Wallet, User, Clock, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -8,23 +8,10 @@ import { useEffect, useState } from "react";
 type ContractType = "HOURLY" | "MONTHLY";
 type SalaryStatus = "PENDING" | "PAID" | "REJECTED" | "DRAFT" | "APPROVED";
 
-export type SalaryRow = {
-  employeeId: string;
-  name: string;
-  personalNumber: string | null;
-  jobTitle: string | null;
-  contractType: ContractType;
-  totalMinutes: number;
-  hourlyRate?: number | null;
-  monthlySalary?: number | null;
-  salary: number;
-  status: SalaryStatus;
-};
-
 /* ---------------- HELPERS ---------------- */
 const formatMinutes = (min: number) => {
   const h = Math.floor(min / 60);
-  const m = min % 60;
+  const m = Math.round(min % 60);
   return `${h}h ${m}m`;
 };
 
@@ -51,21 +38,21 @@ export default function CompanySalaryPageComponent({
   const [rows, setRows] = useState<SalaryRow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch salary rows whenever month changes
+  /* ---------------- FETCH SALARIES ---------------- */
   useEffect(() => {
     if (!month) return;
 
     setLoading(true);
     getCompanyMonthlySalary(month)
-      .then(setRows)
+      .then((data) => {
+        // Use backend salary directly
+        setRows(data);
+      })
       .finally(() => setLoading(false));
   }, [month]);
 
-  // Totals (optional, can display elsewhere if needed)
-  const totalMinutes = rows.reduce(
-    (acc, row) => acc + (row.totalMinutes || 0),
-    0,
-  );
+  /* ---------------- TOTALS ---------------- */
+  const totalMinutes = rows.reduce((acc, row) => acc + (row.totalMinutes || 0), 0);
   const totalSalary = rows.reduce((acc, row) => acc + (row.salary || 0), 0);
 
   if (loading) {
@@ -84,7 +71,7 @@ export default function CompanySalaryPageComponent({
         monthly earnings, contract types, and payment status at a glance.
       </p>
 
-      {/* Month Selector */}
+      {/* ---------------- MONTH SELECTOR ---------------- */}
       <div className="bg-white p-4 rounded-xs shadow border border-teal-100 flex items-center gap-3">
         <Calendar className="w-5 h-5 text-teal-600" />
         {availableMonths.length > 0 ? (
@@ -104,21 +91,9 @@ export default function CompanySalaryPageComponent({
         )}
       </div>
 
-      {/* Salary Table */}
+      {/* ---------------- SALARY TABLE ---------------- */}
       <div className="bg-white rounded-xs shadow border border-teal-100 overflow-x-auto">
         <table className="w-full text-sm min-w-[600px] table-fixed">
-          {/*    <thead className="bg-teal-100">
-            <tr>
-              <th className="p-3 text-left w-1/4">EName</th>
-              <th className="p-3 text-left w-1/4">Id</th>
-              <th className="p-3 text-left w-1/4">Designation</th>
-              <th className="p-3 text-left w-1/5">Worked Hours</th>
-              <th className="p-3 text-left w-1/5">Salary</th>
-              <th className="p-3 text-left w-1/5">Contract Type</th>
-              <th className="p-3 text-left w-1/5">View Log</th>
-            </tr>
-          </thead> */}
-
           <tbody>
             {rows.map((row) => {
               const hours = row.totalMinutes / 60;
@@ -135,17 +110,11 @@ export default function CompanySalaryPageComponent({
                     </div>
                   </td>
 
-                  <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      <span>{row.personalNumber}</span>
-                    </div>
-                  </td>
+                  {/* Personal Number */}
+                  <td className="p-3">{row.personalNumber}</td>
 
-                  <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      <span>{row.jobTitle}</span>
-                    </div>
-                  </td>
+                  {/* Job Title */}
+                  <td className="p-3">{row.jobTitle}</td>
 
                   {/* Worked Hours */}
                   <td className="p-3">
@@ -163,7 +132,7 @@ export default function CompanySalaryPageComponent({
                     </div>
                     {row.contractType === "HOURLY" && row.hourlyRate && (
                       <div className="text-xs text-gray-500 ml-6">
-                        {hours.toFixed(2)}h × {row.hourlyRate}
+                        {hours.toFixed(6)}h × {row.hourlyRate} (matches DB)
                       </div>
                     )}
                     {row.contractType === "MONTHLY" && (
@@ -176,15 +145,8 @@ export default function CompanySalaryPageComponent({
                   {/* Contract Type */}
                   <td className="p-3">{row.contractType}</td>
 
-                  {/* Status */}
+                  {/* View Details */}
                   <td className="p-3">
-                    {/*  <span
-                      className={`px-2 py-1 rounded-xs text-xs font-medium ${
-                        statusColors[row.status]
-                      }`}
-                    >
-                      {row.status}
-                    </span> */}
                     <button
                       onClick={() =>
                         (window.location.href = `/company/salary/${row.personalNumber}`)
@@ -199,7 +161,7 @@ export default function CompanySalaryPageComponent({
             })}
           </tbody>
 
-          {/* Optional: Totals row */}
+          {/* ---------------- TOTALS ROW ---------------- */}
           {rows.length > 0 && (
             <tfoot className="bg-teal-50 font-semibold">
               <tr>

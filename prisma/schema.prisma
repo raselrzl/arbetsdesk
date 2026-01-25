@@ -228,6 +228,7 @@ model SalarySlip {
   month      Int
   year       Int
   totalHours Float
+  totalMinutes Float
   totalPay   Float
   tax        Float
   othersCost        Float?
@@ -235,6 +236,7 @@ model SalarySlip {
   status     SalaryStatus @default(DRAFT)
   createdAt  DateTime     @default(now())
   totalTips  Float?       @default(0)
+  @@unique([employeeId, month, year])
 }
 
 enum SalaryStatus {
