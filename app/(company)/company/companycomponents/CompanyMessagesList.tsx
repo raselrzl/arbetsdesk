@@ -62,12 +62,12 @@ export default function CompanyMessagesList({
             {companyMessages.map((msg) => (
               <div
                 key={msg.id}
-                className="p-3 shadow rounded-md border-l-4 bg-amber-50 border-amber-400"
+                className="p-3 shadow rounded-md border-l-6 bg-white border-amber-400"
               >
                 <p className="text-gray-700">{msg.content}</p>
 
-                <div className="text-[10px] text-gray-800 mt-1 flex justify-end">
-                  <div className="bg-amber-300 px-2 py-0.5 rounded text-gray-800">
+                <div className="text-[9px] text-gray-800 mt-1 flex justify-end">
+                  <div className="bg-amber-300 px-1 py-px rounded-xs text-gray-500">
                     <ClientDate date={msg.createdAt} />
                   </div>
                 </div>

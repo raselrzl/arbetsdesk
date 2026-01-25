@@ -41,13 +41,13 @@ export default function CompanyNotificationsClient({
           type="date"
           value={selectedDate}
           onChange={(e) => handleDateChange(e.target.value)}
-          className="border px-2 py-1 h-8 rounded-xs border-amber-300 bg-amber-50"
+          className="border px-2 py-1 h-8 rounded-xs border-yellow-300 bg-white"
         />
       </div>
 
       {isPending && <p>Loading messages…</p>}
 
-      <section className="bg-amber-100 rounded-lg p-4">
+      <section className="bg-yellow-100 rounded-xs p-4">
       {/*   <div className="flex items-center gap-2 mb-4">
           <img
             src="/icons/bellicon.png"
@@ -62,7 +62,7 @@ export default function CompanyNotificationsClient({
 
         <CompanyMessagesList messages={companyMessages} />
       </section>
-      <section className="bg-amber-50 rounded-lg p-4">
+      <section className="bg-amber-50 rounded p-4">
          <div className="flex items-center gap-2 mb-4">
           <img
             src="/icons/bellicon3.gif"
