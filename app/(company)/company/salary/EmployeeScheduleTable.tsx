@@ -2,7 +2,10 @@
 
 import React, { useState, startTransition } from "react";
 import { User2, Clock, MoreVertical } from "lucide-react";
-import { createSalarySlipForEmployee, updateTimeLogStatus } from "./salaryActions";
+import {
+  createSalarySlipForEmployee,
+  updateTimeLogStatus,
+} from "./salaryActions";
 
 type Row = {
   id: string;
@@ -86,12 +89,12 @@ export default function EmployeeScheduleTable({
     overallStatus === "All Approved"
       ? "bg-emerald-600 text-white"
       : overallStatus === "Rejected"
-      ? "bg-rose-600 text-white"
-      : overallStatus === "Pending Approval"
-      ? "bg-amber-500 text-white"
-      : overallStatus === "Pending / Rejected"
-      ? "bg-orange-600 text-white"
-      : "bg-gray-400 text-white";
+        ? "bg-rose-600 text-white"
+        : overallStatus === "Pending Approval"
+          ? "bg-amber-500 text-white"
+          : overallStatus === "Pending / Rejected"
+            ? "bg-orange-600 text-white"
+            : "bg-gray-400 text-white";
 
   // ---------------- Handlers ----------------
   const handleStatusChange = (index: number, status: Row["status"]) => {
@@ -117,7 +120,9 @@ export default function EmployeeScheduleTable({
       const slip = await createSalarySlipForEmployee(employeeId, month, year);
       console.log("Salary Slip Created:", slip);
       setSalaryCreated(true); // Update UI
-      alert(`Salary Slip created for ${formatDate(new Date())}. Total Pay: ${slip.totalPay}`);
+      alert(
+        `Salary Slip created for ${formatDate(new Date())}. Total Pay: ${slip.totalPay}`,
+      );
     } catch (error: any) {
       console.error("Error creating salary slip:", error.message || error);
       alert("Failed to create salary slip. Check console.");
