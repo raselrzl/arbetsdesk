@@ -276,3 +276,17 @@ export async function updateTimeLogStatus(
     },
   });
 }
+
+
+
+export async function getLatestSalarySlipForEmployee(employeeId: string) {
+  return prisma.salarySlip.findFirst({
+    where: { employeeId },
+    orderBy: [{ year: "desc" }, { month: "desc" }],
+    include: {
+      employee: { include: { person: true } },
+      company: true,
+    },
+  });
+}
+

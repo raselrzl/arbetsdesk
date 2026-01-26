@@ -1,7 +1,7 @@
 "use client";
 
 import { getCompanyMonthlySalary, SalaryRow } from "@/app/actions";
-import { Wallet, User, Clock, Calendar } from "lucide-react";
+import { Wallet, User, Clock, Calendar, MoreVertical } from "lucide-react";
 import { useEffect, useState } from "react";
 
 /* ---------------- TYPES ---------------- */
@@ -37,6 +37,8 @@ export default function CompanySalaryPageComponent({
   const [month, setMonth] = useState(defaultMonth);
   const [rows, setRows] = useState<SalaryRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [year, monthNumber] = month.split("-").map(Number);
 
   /* ---------------- FETCH SALARIES ---------------- */
   useEffect(() => {
@@ -156,6 +158,19 @@ export default function CompanySalaryPageComponent({
                       View Details
                     </button>
                   </td>
+
+                  <td className="relative">
+  <button
+    onClick={() =>
+      (window.location.href =
+        `/company/salary/salary-slip/${row.employeeId}?month=${monthNumber}&year=${year}`)
+    }
+    className="p-1 rounded hover:bg-gray-100"
+  >
+    <MoreVertical size={18} />
+  </button>
+</td>
+
                 </tr>
               );
             })}
