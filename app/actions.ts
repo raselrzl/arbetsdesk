@@ -634,7 +634,7 @@ export async function getAvailableTipMonths() {
   return months;
 }
 
-export async function getMonthlyTips(companyId: string, month: string) {
+/* export async function getMonthlyTips(companyId: string, month: string) {
   const start = new Date(`${month}-01`);
   const end = new Date(start);
   end.setMonth(end.getMonth() + 1);
@@ -653,6 +653,39 @@ export async function getMonthlyTips(companyId: string, month: string) {
     },
     include: {
       employee: true,
+    },
+  });
+
+  return { tips, timeLogs };
+} */
+//latest
+export async function getMonthlyTips(companyId: string, month: string) {
+  const start = new Date(`${month}-01`);
+  const end = new Date(start);
+  end.setMonth(end.getMonth() + 1);
+
+  const tips = await prisma.dailyTip.findMany({
+    where: {
+      companyId,
+      date: { gte: start, lt: end },
+    },
+  });
+
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      employee: { companyId },
+      logDate: { gte: start, lt: end },
+    },
+    include: {
+      employee: {
+        include: {
+          person: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 

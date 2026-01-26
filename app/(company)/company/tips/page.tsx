@@ -296,7 +296,7 @@ export default function CompanyTipsPage() {
                 if (!acc[empId]) {
                   acc[empId] = {
                     id: empId,
-                    name: log.employee.name,
+                    name: log.employee.person.name,
                     hours: 0,
                     loggedOutTime: log.logoutTime,
                     status: log.employee.status,
