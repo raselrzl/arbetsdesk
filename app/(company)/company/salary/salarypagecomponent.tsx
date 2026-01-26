@@ -39,6 +39,7 @@ export default function CompanySalaryPageComponent({
   const [loading, setLoading] = useState(true);
 
   const [year, monthNumber] = month.split("-").map(Number);
+  const [openRowId, setOpenRowId] = useState<string | null>(null);
 
   /* ---------------- FETCH SALARIES ---------------- */
   useEffect(() => {
@@ -54,7 +55,10 @@ export default function CompanySalaryPageComponent({
   }, [month]);
 
   /* ---------------- TOTALS ---------------- */
-  const totalMinutes = rows.reduce((acc, row) => acc + (row.totalMinutes || 0), 0);
+  const totalMinutes = rows.reduce(
+    (acc, row) => acc + (row.totalMinutes || 0),
+    0,
+  );
   const totalSalary = rows.reduce((acc, row) => acc + (row.salary || 0), 0);
 
   if (loading) {
@@ -160,17 +164,68 @@ export default function CompanySalaryPageComponent({
                   </td>
 
                   <td className="relative">
-  <button
-    onClick={() =>
-      (window.location.href =
-        `/company/salary/salary-slip/${row.employeeId}?month=${monthNumber}&year=${year}`)
-    }
-    className="p-1 rounded hover:bg-gray-100"
-  >
-    <MoreVertical size={18} />
-  </button>
-</td>
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setOpenRowId(
+                            openRowId === row.employeeId
+                              ? null
+                              : row.employeeId,
+                          )
+                        }
+                        className="p-1 rounded hover:bg-gray-100"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
 
+                      {openRowId === row.employeeId && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-xs z-50">
+                          <ul className="flex flex-col">
+                            <li>
+                              <a
+                                href={`/company/salary/salary-slip/${row.employeeId}?month=${monthNumber}&year=${year}`}
+                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                              >
+                                View Salary Slip
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href={`/company/salary/salary-slip/download/${row.employeeId}?month=${monthNumber}&year=${year}`}
+                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                              >
+                                Download Slip
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href={`/company/salary/salary-slip/send-email/${row.employeeId}?month=${monthNumber}&year=${year}`}
+                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                              >
+                                Send Slip to Email
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href={`/company/salary/salary-slip/update/${row.employeeId}?month=${monthNumber}&year=${year}`}
+                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                              >
+                                Update Slip
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href={`/company/salary/salary-slip/send-employee/${row.employeeId}?month=${monthNumber}&year=${year}`}
+                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                              >
+                                Send to Employee
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -181,8 +236,11 @@ export default function CompanySalaryPageComponent({
             <tfoot className="bg-teal-50 font-semibold">
               <tr>
                 <td className="p-3">Totals</td>
+                <td className="p-3"></td>
+                <td className="p-3"></td>
                 <td className="p-3">{formatMinutes(totalMinutes)}</td>
                 <td className="p-3">{totalSalary.toFixed(2)}</td>
+                <td className="p-3"></td>
                 <td className="p-3"></td>
                 <td className="p-3"></td>
               </tr>
