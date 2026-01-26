@@ -285,8 +285,13 @@ export async function getLatestSalarySlipForEmployee(employeeId: string) {
     orderBy: [{ year: "desc" }, { month: "desc" }],
     include: {
       employee: { include: { person: true } },
-      company: true,
+      company: {
+        include: {
+          user: true, // <-- Include admin info
+        },
+      },
     },
   });
 }
+
 
