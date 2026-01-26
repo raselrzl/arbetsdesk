@@ -5,8 +5,6 @@ interface PageProps {
   params: Promise<{ employeeId: string }>;
 }
 
-
-
 interface PageProps {
   params: Promise<{ employeeId: string }>; // Note the Promise
 }
@@ -33,9 +31,16 @@ export default async function SalarySlipPage({ params }: PageProps) {
       <section className="border border-gray-200 p-4 rounded">
         <h2 className="font-semibold mb-3">Employee Information</h2>
         <div className="space-y-1 text-sm">
-          <p><strong>Name:</strong> {slip.employee.person.name}</p>
-          <p><strong>Personal Number:</strong> {slip.employee.person.personalNumber}</p>
-          <p><strong>Company:</strong> {slip.company.name}</p>
+          <p>
+            <strong>Name:</strong> {slip.employee.person.name}
+          </p>
+          <p>
+            <strong>Personal Number:</strong>{" "}
+            {slip.employee.person.personalNumber}
+          </p>
+          <p>
+            <strong>Company:</strong> {slip.company.name}
+          </p>
         </div>
       </section>
 
@@ -54,9 +59,16 @@ export default async function SalarySlipPage({ params }: PageProps) {
       </section>
 
       <section className="border border-gray-200 p-4 rounded text-sm">
-        <p><strong>Status:</strong> {slip.status}</p>
-        <p><strong>Period:</strong> {slip.month}/{slip.year}</p>
-        <p><strong>Created:</strong> {new Date(slip.createdAt).toLocaleDateString()}</p>
+        <p>
+          <strong>Status:</strong> {slip.status}
+        </p>
+        <p>
+          <strong>Period:</strong> {slip.month}/{slip.year}
+        </p>
+        <p>
+          <strong>Created:</strong>{" "}
+          {new Date(slip.createdAt).toLocaleDateString()}
+        </p>
       </section>
     </div>
   );
