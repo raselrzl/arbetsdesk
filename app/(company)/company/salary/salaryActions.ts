@@ -226,7 +226,7 @@ export async function updateTimeLogStatus(
 } */
 
 
-  export async function createSalarySlipForEmployee(
+/*   export async function createSalarySlipForEmployee(
   employeeId: string,
   month: number,
   year: number
@@ -275,8 +275,80 @@ export async function updateTimeLogStatus(
       status: "DRAFT",
     },
   });
-}
+} */
 
+//latest with yes and no
+export async function createSalarySlipForEmployee(
+  employeeId: string,
+  month: number,
+  year: number,
+  forceUpdate = false // 👈 NEW
+) {
+  const existingSlip = await prisma.salarySlip.findUnique({
+    where: {
+      employeeId_month_year: {
+        employeeId,
+        month,
+        year,
+      },
+    },
+  });
+
+  // 🚫 Salary already exists
+  if (existingSlip && !forceUpdate) {
+    throw new Error("SALARY_EXISTS");
+  }
+
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    include: { timeLogs: true },
+  });
+
+  if (!employee) throw new Error("Employee not found");
+
+  const logs = employee.timeLogs.filter(
+    (log) =>
+      log.status === "APPROVED" &&
+      log.logDate.getMonth() + 1 === month &&
+      log.logDate.getFullYear() === year
+  );
+
+  const totalMinutes = logs.reduce(
+    (acc, log) => acc + (log.totalMinutes || 0),
+    0
+  );
+
+  let totalPay = 0;
+  if (employee.contractType === "HOURLY") {
+    const hourlyRate = employee.hourlyRate || 0;
+    totalPay = (totalMinutes / 60) * hourlyRate;
+  } else if (employee.contractType === "MONTHLY") {
+    totalPay = employee.monthlySalary || 0;
+  }
+
+  const data = {
+    employeeId: employee.id,
+    companyId: employee.companyId,
+    month,
+    year,
+    totalMinutes,
+    totalHours: totalMinutes / 60,
+    totalPay: parseFloat(totalPay.toFixed(2)),
+    tax: 0,
+    status: "DRAFT" as const,
+  };
+
+  // 🔁 UPDATE
+  if (existingSlip) {
+    return prisma.salarySlip.update({
+      where: { id: existingSlip.id },
+      data,
+    });
+  }
+
+  // 🆕 CREATE
+  return prisma.salarySlip.create({ data });
+}
 
 
 export async function getLatestSalarySlipForEmployee(employeeId: string) {

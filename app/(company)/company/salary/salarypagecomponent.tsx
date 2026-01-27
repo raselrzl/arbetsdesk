@@ -159,7 +159,7 @@ export default function CompanySalaryPageComponent({
                       }
                       className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
                     >
-                      View Details
+                      Create Salary
                     </button>
                   </td>
 

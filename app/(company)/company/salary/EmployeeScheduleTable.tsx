@@ -78,6 +78,8 @@ export default function EmployeeScheduleTable({
   const hasPending = localRows.some((r) => r.status === "PENDING");
   const hasRejected = localRows.some((r) => r.status === "REJECTED");
   const hasApproved = localRows.every((r) => r.status === "APPROVED");
+  const [isCreatingSalary, setIsCreatingSalary] = useState(false);
+
 
   if (hasPending && hasRejected) overallStatus = "Pending / Rejected";
   else if (hasPending) overallStatus = "Pending Approval";
@@ -115,7 +117,7 @@ export default function EmployeeScheduleTable({
     });
   };
 
-  const handleCreateSalary = async () => {
+  /* const handleCreateSalary = async () => {
     try {
       const slip = await createSalarySlipForEmployee(employeeId, month, year);
       console.log("Salary Slip Created:", slip);
@@ -127,7 +129,47 @@ export default function EmployeeScheduleTable({
       console.error("Error creating salary slip:", error.message || error);
       alert("Failed to create salary slip. Check console.");
     }
-  };
+  }; */
+
+const handleCreateSalary = async () => {
+  if (isCreatingSalary) return; // STOP duplicates
+
+  setIsCreatingSalary(true);
+
+  try {
+    const slip = await createSalarySlipForEmployee(employeeId, month, year);
+    setSalaryCreated(true);
+    alert(`Salary slip created. Total Pay: ${slip.totalPay}`);
+  } catch (error: any) {
+    if (error.message === "SALARY_EXISTS") {
+      const confirmUpdate = confirm(
+        "Salary slip already exists for this employee this month.\n\nDo you want to UPDATE it?"
+      );
+
+      if (!confirmUpdate) {
+        setIsCreatingSalary(false);
+        return;
+      }
+
+      const updatedSlip = await createSalarySlipForEmployee(
+        employeeId,
+        month,
+        year,
+        true
+      );
+
+      setSalaryCreated(true);
+      alert(`Salary slip UPDATED. Total Pay: ${updatedSlip.totalPay}`);
+    } else {
+      console.error(error);
+      alert("Failed to create salary slip.");
+    }
+  } finally {
+    setIsCreatingSalary(false); // ✅ always release lock
+  }
+};
+
+
 
   const statusColors: Record<"PENDING" | "APPROVED" | "REJECTED", string> = {
     PENDING: "bg-amber-500 hover:bg-amber-600",
