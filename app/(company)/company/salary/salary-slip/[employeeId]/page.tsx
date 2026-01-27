@@ -121,8 +121,12 @@ export default async function SalarySlipPage({ params }: PageProps) {
             <thead>
               <tr className="bg-teal-200">
                 <th className="border border-teal-200 p-2 text-left">Type</th>
-                <th className="border border-teal-200  p-2 text-right">Monthly Salary</th>
-                <th className="border border-teal-200  p-2 text-right">Payment</th>
+                <th className="border border-teal-200  p-2 text-right">
+                  Monthly Salary
+                </th>
+                <th className="border border-teal-200  p-2 text-right">
+                  Payment
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -141,55 +145,6 @@ export default async function SalarySlipPage({ params }: PageProps) {
           </table>
         )}
       </section>
-
-      {/* ================= EMPLOYEE INFORMATION ================= */}
-      <section className="border border-gray-200 p-4 rounded">
-        <h2 className="font-semibold mb-3 text-lg">Employee Information</h2>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <span>Postal Code:</span>
-          <span>{person.postalCode || "-"}</span>
-
-          <span>City:</span>
-          <span>{person.city || "-"}</span>
-
-          <span>Country:</span>
-          <span>{person.country || "-"}</span>
-
-          <span>Job Title:</span>
-          <span>{employee.jobTitle || "-"}</span>
-
-          <span>Contract Type:</span>
-          <span>{employee.contractType}</span>
-
-          <span>Employment Type:</span>
-          <span>{employee.employmentType || "-"}</span>
-
-          <span>Hourly Rate:</span>
-          <span>{employee.hourlyRate?.toFixed(2) || "-"}</span>
-
-          <span>Monthly Salary:</span>
-          <span>{employee.monthlySalary?.toFixed(2) || "-"}</span>
-        </div>
-      </section>
-
-      {/* ================= COMPANY INFORMATION ================= */}
-      <section className="border border-teal-200 p-4 rounded">
-        <h2 className="font-semibold mb-3 text-lg">Company Information</h2>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <span>Company Name:</span>
-          <span>{company.name}</span>
-
-          <span>Email:</span>
-          <span>{company.email || "-"}</span>
-
-          <span>Organization Number:</span>
-          <span>{company.organizationNo}</span>
-
-          <span>Contract Details:</span>
-          <span>{company.contractDetails || "-"}</span>
-        </div>
-      </section>
-
       {/* ================= SALARY DETAILS ================= */}
       <section className="border border-teal-200 p-4 rounded">
         <h2 className="font-semibold mb-3 text-lg">Salary Details</h2>
@@ -210,6 +165,9 @@ export default async function SalarySlipPage({ params }: PageProps) {
           <span className="font-semibold">{netPay.toFixed(2)}</span>
         </div>
       </section>
+      <section>
+        
+      </section>
 
       {/* ================= STATUS ================= */}
       <section className="border border-gray-200 p-4 rounded text-sm">
@@ -220,6 +178,19 @@ export default async function SalarySlipPage({ params }: PageProps) {
           <strong>Created At:</strong>{" "}
           {new Date(slip.createdAt).toLocaleDateString()}
         </p>
+      </section>
+
+      <section className="border-t grid grid-cols-3 mt-10 pt-2">
+        <div className="">
+          <h2 className="uppercase font-medium">Company Info</h2>
+          <span>{company.name}</span>
+          <span>{company.organizationNo}</span>
+        </div>
+        <div className="">
+          <h2 className="uppercase font-medium">ADDRESS</h2>
+          <span>{company.contractDetails || "Platensgatan 5 Linköping"}</span>
+        </div>
+        <div className=""></div>
       </section>
     </div>
   );
