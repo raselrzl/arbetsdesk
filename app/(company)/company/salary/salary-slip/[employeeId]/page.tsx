@@ -1,5 +1,4 @@
 import { getLatestSalarySlipForEmployee } from "../../salaryActions";
-import { cookies } from "next/headers";
 
 /* ---------------- TYPES ---------------- */
 interface PageProps {
