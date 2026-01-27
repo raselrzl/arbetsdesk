@@ -8,7 +8,6 @@ interface PageProps {
 export default async function SalarySlipPage({ params }: PageProps) {
   const { employeeId } = await params;
 
-  // Fetch latest salary slip for this employee (company checked via cookie inside action)
   const slip = await getLatestSalarySlipForEmployee(employeeId);
 
   if (!slip) {
@@ -19,34 +18,117 @@ export default async function SalarySlipPage({ params }: PageProps) {
     );
   }
 
-  const netPay = slip.totalPay - slip.tax;
-
   const { employee, company } = slip;
   const { person } = employee;
 
-  return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold uppercase text-center">Salary Slip</h1>
+  const netPay = slip.totalPay - slip.tax;
 
-      {/* ---------------- Employee Information ---------------- */}
+  const monthName = new Date(slip.year, slip.month - 1).toLocaleString(
+    "default",
+    { month: "long" },
+  );
+
+  const periodStart = new Date(slip.year, slip.month - 1, 1);
+  const periodEnd = new Date(slip.year, slip.month, 0);
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-6 my-20">
+      {/* ================= HEADER ================= */}
+      <section className="flex justify-between items-start pb-4">
+        <div className="mb-20">
+          <h2 className="text-xl font-bold">{company.name}</h2>
+        </div>
+
+        <div className="text-left items-start">
+          <h1 className="text-2xl font-bold uppercase">Salary Slip</h1>
+          <p className="text-sm text-gray-600">
+            {monthName} {slip.year}
+          </p>
+        </div>
+      </section>
+
+      <section className="flex justify-between items-start pb-4 mb-20">
+  {/* LEFT SIDE */}
+  <div className="flex flex-col gap-1 text-left">
+    
+    <span>Personal Number: {person.personalNumber || "-"}</span>
+    <span>Email: {person.email || "-"}</span>
+    <span>Phone: {person.phone || "-"}</span>
+    <span>Address: {person.address || "-"}</span>
+  </div>
+
+  {/* RIGHT SIDE */}
+  <div className="flex flex-col gap-1 items-start">
+    <span>Name: {person.name}</span>
+    <div className="flex gap-2 text-left">
+      <span>Bank Name:</span>
+      <span>{person.bankName || "-"}</span>
+    </div>
+
+    <div className="flex gap-2">
+      <span>Clearing Number:</span>
+      <span>{person.clearingNumber || "-"}</span>
+    </div>
+
+    <div className="flex gap-2">
+      <span>Account Number:</span>
+      <span>{person.accountNumber || "-"}</span>
+    </div>
+  </div>
+</section>
+
+
+      {/* ================= PERIOD ================= */}
+      <section className="mb-20">
+        <h2 className="font-semibold text-lg">Salary Period</h2>
+        <div className="flex gap-2 text-sm">
+          <span>{periodStart.toLocaleDateString()}</span>-
+          <span>{periodEnd.toLocaleDateString()}</span>
+        </div>
+      </section>
+
+      {/* ================= WORK SUMMARY ================= */}
+      <section className="border border-gray-200 rounded p-4">
+        <h2 className="font-semibold text-lg mb-3">Work & Salary Summary</h2>
+
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2 text-left">Working Category</th>
+              <th className="border p-2 text-right">Hours</th>
+              <th className="border p-2 text-left">Contract Type</th>
+              <th className="border p-2 text-right">Hourly Rate</th>
+              <th className="border p-2 text-right">Payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="border p-2">{employee.jobTitle || "General"}</td>
+
+              <td className="border p-2 text-right">
+                {slip.totalHours.toFixed(2)}
+              </td>
+
+              <td className="border p-2">{employee.contractType}</td>
+
+              <td className="border p-2 text-right">
+                {employee.contractType === "HOURLY"
+                  ? employee.hourlyRate?.toFixed(2)
+                  : "—"}
+              </td>
+
+              <td className="border p-2 text-right font-semibold">
+                {slip.totalPay.toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* ================= EMPLOYEE INFORMATION ================= */}
       <section className="border border-gray-200 p-4 rounded">
         <h2 className="font-semibold mb-3 text-lg">Employee Information</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <span>Name:</span>
-          <span>{person.name}</span>
-
-          <span>Personal Number:</span>
-          <span>{person.personalNumber || "-"}</span>
-
-          <span>Email:</span>
-          <span>{person.email || "-"}</span>
-
-          <span>Phone:</span>
-          <span>{person.phone || "-"}</span>
-
-          <span>Address:</span>
-          <span>{person.address || "-"}</span>
-
           <span>Postal Code:</span>
           <span>{person.postalCode || "-"}</span>
 
@@ -55,15 +137,6 @@ export default async function SalarySlipPage({ params }: PageProps) {
 
           <span>Country:</span>
           <span>{person.country || "-"}</span>
-
-          <span>Bank Name:</span>
-          <span>{person.bankName || "-"}</span>
-
-          <span>Account Number:</span>
-          <span>{person.accountNumber || "-"}</span>
-
-          <span>Clearing Number:</span>
-          <span>{person.clearingNumber || "-"}</span>
 
           <span>Job Title:</span>
           <span>{employee.jobTitle || "-"}</span>
@@ -79,43 +152,10 @@ export default async function SalarySlipPage({ params }: PageProps) {
 
           <span>Monthly Salary:</span>
           <span>{employee.monthlySalary?.toFixed(2) || "-"}</span>
-
-          <span>Workplace:</span>
-          <span>{employee.workplace || "-"}</span>
-
-          <span>Working Status:</span>
-          <span>{employee.workingStatus || "-"}</span>
-
-          <span>Insurance:</span>
-          <span>{employee.insurance ? "Yes" : "No"}</span>
-
-          <span>Insurance Company:</span>
-          <span>{employee.insuranceCompany || "-"}</span>
-
-          <span>Financial Support:</span>
-          <span>{employee.financialSupport ? "Yes" : "No"}</span>
-
-          <span>Company Car:</span>
-          <span>{employee.companyCar ? "Yes" : "No"}</span>
-
-          <span>Meal Allowance:</span>
-          <span>{employee.mealAllowance ? "Yes" : "No"}</span>
-
-          <span>Union Fees:</span>
-          <span>{employee.unionFees ? "Yes" : "No"}</span>
-
-          <span>Net Deduction:</span>
-          <span>{employee.netDeduction ? "Yes" : "No"}</span>
-
-          <span>Job Start Date:</span>
-          <span>{employee.jobStartDate ? new Date(employee.jobStartDate).toLocaleDateString() : "-"}</span>
-
-          <span>Job End Date:</span>
-          <span>{employee.jobEndDate ? new Date(employee.jobEndDate).toLocaleDateString() : "-"}</span>
         </div>
       </section>
 
-      {/* ---------------- Company Information ---------------- */}
+      {/* ================= COMPANY INFORMATION ================= */}
       <section className="border border-gray-200 p-4 rounded">
         <h2 className="font-semibold mb-3 text-lg">Company Information</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
@@ -130,25 +170,10 @@ export default async function SalarySlipPage({ params }: PageProps) {
 
           <span>Contract Details:</span>
           <span>{company.contractDetails || "-"}</span>
-
-          <span>Price:</span>
-          <span>{company.price.toFixed(2)}</span>
-
-          <span>Payment Status:</span>
-          <span>{company.paymentStatus}</span>
-
-          <span>Payment Info:</span>
-          <span>{company.paymentInfo || "-"}</span>
-
-          <span>Admin Name:</span>
-          <span>{company.user.name}</span>
-
-          <span>Admin Email:</span>
-          <span>{company.user.email}</span>
         </div>
       </section>
 
-      {/* ---------------- Salary Details ---------------- */}
+      {/* ================= SALARY DETAILS ================= */}
       <section className="border border-gray-200 p-4 rounded">
         <h2 className="font-semibold mb-3 text-lg">Salary Details</h2>
         <div className="grid grid-cols-2 gap-y-2 text-sm">
@@ -164,36 +189,20 @@ export default async function SalarySlipPage({ params }: PageProps) {
           <span>Tax</span>
           <span>{slip.tax.toFixed(2)}</span>
 
-          <span>Other Costs</span>
-          <span>{slip.othersCost?.toFixed(2) || "-"}</span>
-
           <span className="font-semibold">Net Salary</span>
           <span className="font-semibold">{netPay.toFixed(2)}</span>
-
-          <span>Total Tips</span>
-          <span>{slip.totalTips?.toFixed(2) || "0"}</span>
         </div>
       </section>
 
-      {/* ---------------- Status & Metadata ---------------- */}
+      {/* ================= STATUS ================= */}
       <section className="border border-gray-200 p-4 rounded text-sm">
         <p>
           <strong>Status:</strong> {slip.status}
         </p>
         <p>
-          <strong>Period:</strong> {slip.month}/{slip.year}
+          <strong>Created At:</strong>{" "}
+          {new Date(slip.createdAt).toLocaleDateString()}
         </p>
-        <p>
-          <strong>Created At:</strong> {new Date(slip.createdAt).toLocaleDateString()}
-        </p>
-        {slip.pdfUrl && (
-          <p>
-            <strong>PDF:</strong>{" "}
-            <a href={slip.pdfUrl} className="text-blue-600 underline" target="_blank">
-              Download
-            </a>
-          </p>
-        )}
       </section>
     </div>
   );
