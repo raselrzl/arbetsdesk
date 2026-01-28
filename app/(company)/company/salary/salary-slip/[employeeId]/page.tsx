@@ -21,7 +21,22 @@ export default async function SalarySlipPage({ params }: PageProps) {
   const { employee, company } = slip;
   const { person } = employee;
 
-  const netPay = slip.totalPay - slip.tax;
+  const isHourly = employee.contractType === "HOURLY";
+
+  /* ---------------- CALCULATIONS ---------------- */
+  const grossSalary = slip.totalPay;
+  const tax = slip.tax;
+  const netSalary = grossSalary - tax;
+
+  const totalHours = isHourly ? slip.totalHours : 0;
+  const hourlyRate = isHourly ? employee.hourlyRate ?? 0 : 0;
+  const monthlySalary = !isHourly ? employee.monthlySalary ?? 0 : 0;
+
+  const yearlyGross = isHourly
+    ? grossSalary * 12
+    : monthlySalary * 12;
+
+  const yearlyNet = yearlyGross - tax * 12;
 
   const monthName = new Date(slip.year, slip.month - 1).toLocaleString(
     "default",
@@ -32,9 +47,9 @@ export default async function SalarySlipPage({ params }: PageProps) {
   const periodEnd = new Date(slip.year, slip.month, 0);
 
   return (
-    <div className="py-30 max-w-7xl mx-auto">
+    <div className="py-30 max-w-4xl mx-auto p-4">
       {/* ================= STATUS ================= */}
-      <section className="border border-gray-200 p-4 rounded text-sm">
+      <section className="border border-gray-200 p-4 text-sm">
         <p>
           <strong>Status:</strong> {slip.status}
         </p>
@@ -43,11 +58,12 @@ export default async function SalarySlipPage({ params }: PageProps) {
           {new Date(slip.createdAt).toLocaleDateString()}
         </p>
       </section>
-      <div className="max-w-4xl mx-auto p-6 space-y-6 mt-20 mb-18">
+
+      <div className="max-w-4xl mx-auto p-6 space-y-6 mt-20 border">
+        {/* ================= HEADER ================= */}
         <section className="flex justify-between items-start mb-20">
-          <div className="">
-            <h2 className="text-xl font-bold">{company.name}</h2>
-          </div>
+          <h2 className="text-xl font-bold">{company.name}</h2>
+
           <div className="flex flex-col gap-1 items-start pr-24">
             <h1 className="text-2xl font-bold uppercase">Salary Slip</h1>
             <p className="text-sm text-gray-600">
@@ -55,8 +71,9 @@ export default async function SalarySlipPage({ params }: PageProps) {
             </p>
           </div>
         </section>
+
+        {/* ================= EMPLOYEE / BANK ================= */}
         <section className="flex justify-between items-start mb-20">
-          {/* LEFT SIDE */}
           <div className="flex flex-col text-left">
             <span>Name: {person.name}</span>
             <span>Personal Number: {person.personalNumber || "-"}</span>
@@ -64,9 +81,9 @@ export default async function SalarySlipPage({ params }: PageProps) {
             <span>Phone: {person.phone || "-"}</span>
             <span>Address: {person.address || "-"}</span>
           </div>
-          {/* RIGHT SIDE */}
+
           <div className="flex flex-col items-start">
-            <div className="flex gap-2 text-left">
+            <div className="flex gap-2">
               <span>Bank Name:</span>
               <span>{person.bankName || "-"}</span>
             </div>
@@ -76,11 +93,13 @@ export default async function SalarySlipPage({ params }: PageProps) {
               <span>{periodStart.toLocaleDateString()}</span>-
               <span>{periodEnd.toLocaleDateString()}</span>
             </div>
+
             <div className="flex gap-2">
-              <span>Winthdraw:</span>
+              <span>Withdraw:</span>
               <span>{periodStart.toLocaleDateString()}</span>
             </div>
-            <div className="flex flex-row gap-2">
+
+            <div className="flex gap-2">
               <span>Account Number:</span>
               <span>
                 {person.clearingNumber || ""}-{person.accountNumber || ""}
@@ -89,155 +108,156 @@ export default async function SalarySlipPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="">
+        {/* ================= SALARY TABLE ================= */}
+        <section>
           <div className="flex gap-2 mb-2 text-sm font-bold">
             <span>Period:</span>
             <span>{periodStart.toLocaleDateString()}</span>-
             <span>{periodEnd.toLocaleDateString()}</span>
           </div>
 
-          {/* ================= HOURLY TABLE ================= */}
-          {employee.contractType === "HOURLY" && (
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-teal-200">
-                  <th className="border p-2 text-left">Type</th>
-                  <th className="border p-2 text-right">Hours</th>
-                  <th className="border p-2 text-right">Hourly Rate</th>
-                  <th className="border p-2 text-right">Payment</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-teal-200 p-2">
-                    {employee.contractType}
-                  </td>
-                  <td className="border border-teal-200 p-2 text-right">
-                    {slip.totalHours.toFixed(2)}
-                  </td>
-                  <td className="border border-teal-200 p-2 text-right">
-                    {employee.hourlyRate?.toFixed(2)}
-                  </td>
-                  <td className="border border-teal-200 p-2 text-right font-semibold">
-                    {slip.totalPay.toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          )}
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-teal-200">
+                <th className="border p-2 text-left">Type</th>
 
-          {/* ================= MONTHLY TABLE ================= */}
-          {employee.contractType === "MONTHLY" && (
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-teal-200">
-                  <th className="border border-teal-200 p-2 text-left">Type</th>
-                  <th className="border border-teal-200  p-2 text-right">
-                    Monthly Salary
-                  </th>
-                  <th className="border border-teal-200  p-2 text-right">
-                    Payment
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-teal-200 p-2">
-                    {employee.contractType}
-                  </td>
+                {isHourly ? (
+                  <>
+                    <th className="border p-2 text-right">Hours</th>
+                    <th className="border p-2 text-right">Hourly Rate</th>
+                  </>
+                ) : (
+                  <th className="border p-2 text-right">Monthly Salary</th>
+                )}
+
+                <th className="border p-2 text-right">Payment</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td className="border border-teal-200 p-2">
+                  {employee.contractType}
+                </td>
+
+                {isHourly ? (
+                  <>
+                    <td className="border border-teal-200 p-2 text-right">
+                      {totalHours.toFixed(2)}
+                    </td>
+                    <td className="border border-teal-200 p-2 text-right">
+                      {hourlyRate.toFixed(2)}
+                    </td>
+                  </>
+                ) : (
                   <td className="border border-teal-200 p-2 text-right">
-                    {employee.monthlySalary?.toFixed(2)}
+                    {monthlySalary.toFixed(2)}
                   </td>
-                  <td className="border border-teal-200 p-2 text-right font-semibold">
-                    {slip.totalPay.toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          )}
+                )}
+
+                <td className="border border-teal-200 p-2 text-right font-semibold">
+                  {grossSalary.toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </section>
-        <section className="grid grid-cols-3 mt-20 border-t pt-2">
-          <div className=" flex flex-col">
-            <div>
-              {" "}
-              <h2>Hours</h2>
-              <div className="flex justify-between pr-3">
-                <p>Working Hours:</p>
-                <p>{slip.totalHours.toFixed(2)}</p>
-              </div>
+
+        {/* ================= FOOTER SUMMARY ================= */}
+        <section className="grid grid-cols-3 mt-40 border-t pt-2 text-sm">
+          {/* LEFT */}
+          <div>
+            <h2>Hours</h2>
+
+            <div className="flex justify-between pr-3">
+              <p>{isHourly ? "Working Hours" : "Monthly Salary"}</p>
+              <p>
+                {isHourly
+                  ? totalHours.toFixed(2)
+                  : monthlySalary.toFixed(2)}
+              </p>
             </div>
+
+            {isHourly && (
+              <div className="flex justify-between pr-3">
+                <p>Hourly Rate</p>
+                <p>{hourlyRate.toFixed(2)}</p>
+              </div>
+            )}
+
             <div className="mt-6">
               <h2>Offer</h2>
-              <div className="flex justify-between pr-3">
-                <p>Saved days</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between pr-3">
-                <p>Free days</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between pr-3">
-                <p>Payment days</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between pr-3">
-                <p>Semester Days</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
-              </div>
+              {["Saved days", "Free days", "Payment days", "Semester Days"].map(
+                (label) => (
+                  <div key={label} className="flex justify-between pr-3">
+                    <p>{label}</p>
+                    <p>{grossSalary.toFixed(2)}</p>
+                  </div>
+                ),
+              )}
             </div>
           </div>
+
+          {/* MIDDLE */}
           <div className="pr-6">
-            <div>
-              <h2>Tax</h2>
+            <h2>Tax</h2>
+
+            <div className="flex justify-between pr-3">
+              <p>Salary before tax</p>
+              <p>{grossSalary.toFixed(2)}</p>
+            </div>
+
+            <div className="flex justify-between pr-3">
+              <p>Primary tax</p>
+              <p>{tax.toFixed(2)}</p>
+            </div>
+
+            <div className="mt-6">
+              <h2>Total in Year</h2>
+
               <div className="flex justify-between pr-3">
-                <p>Salary brfore tax</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
+                <p>Salary before tax</p>
+                <p>{yearlyGross.toFixed(2)}</p>
               </div>
 
               <div className="flex justify-between pr-3">
-                <p>Primary tax</p>
-                <p>{slip.tax.toFixed(2)}</p>
-              </div>
-            </div>
-            <div>
-              <h2>Total in Year</h2>
-              <div className="flex justify-between pr-3">
-                <p>Salary brfore tax</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between pr-3">
-                <p>Salary After tax</p>
-                <p>{slip.totalPay.toFixed(2)}</p>
+                <p>Salary after tax</p>
+                <p>{yearlyNet.toFixed(2)}</p>
               </div>
             </div>
           </div>
-          <div className="">
+
+          {/* RIGHT */}
+          <div>
             <div className="flex justify-between pr-3">
-              <p>Salary brfore tax</p>
-              <p>{slip.totalPay.toFixed(2)}</p>
+              <p>Salary before tax</p>
+              <p>{grossSalary.toFixed(2)}</p>
             </div>
+
             <div className="flex justify-between pr-3">
               <p>Tax</p>
-              <p>{slip.totalPay.toFixed(2)}</p>
+              <p>{tax.toFixed(2)}</p>
             </div>
-            <div className="flex justify-between pr-3">
+
+            <div className="flex justify-between pr-3 font-semibold">
               <p>Salary</p>
-              <p>{slip.totalPay.toFixed(2)}</p>
+              <p>{netSalary.toFixed(2)}</p>
             </div>
           </div>
         </section>
 
-        <section className="border-t grid grid-cols-3 mt-10 pt-2">
-          <div className="">
+        {/* ================= COMPANY INFO ================= */}
+        <section className="border-t grid grid-cols-3 mt-10 pt-2 text-sm">
+          <div>
             <h2 className="uppercase font-medium">Company Info</h2>
             <span>{company.name}</span>
             <span>{company.organizationNo}</span>
           </div>
-          <div className="">
-            <h2 className="uppercase font-medium">ADDRESS</h2>
+
+          <div>
+            <h2 className="uppercase font-medium">Address</h2>
             <span>{company.contractDetails || "Platensgatan 5 Linköping"}</span>
           </div>
-          <div className=""></div>
         </section>
       </div>
     </div>
