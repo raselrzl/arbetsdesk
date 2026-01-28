@@ -67,7 +67,7 @@ export default async function CompanyPageServer() {
             <div className="flex items-end justify-end m-2">
               <Link
                 href="/company/analysis"
-                className="border px-2 py-1 text-xs md:text-sm bg-teal-800 hover:bg-teal-900 text-gray-100"
+                className="border px-2 py-1 text-xs md:text-sm bg-teal-300 hover:bg-teal-200 text-teal-800"
               >
                 Go To Analysis →
               </Link>
