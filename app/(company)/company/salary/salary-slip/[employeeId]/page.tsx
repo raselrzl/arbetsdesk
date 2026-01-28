@@ -29,12 +29,10 @@ export default async function SalarySlipPage({ params }: PageProps) {
   const netSalary = grossSalary - tax;
 
   const totalHours = isHourly ? slip.totalHours : 0;
-  const hourlyRate = isHourly ? employee.hourlyRate ?? 0 : 0;
-  const monthlySalary = !isHourly ? employee.monthlySalary ?? 0 : 0;
+  const hourlyRate = isHourly ? (employee.hourlyRate ?? 0) : 0;
+  const monthlySalary = !isHourly ? (employee.monthlySalary ?? 0) : 0;
 
-  const yearlyGross = isHourly
-    ? grossSalary * 12
-    : monthlySalary * 12;
+  const yearlyGross = isHourly ? grossSalary * 12 : monthlySalary * 12;
 
   const yearlyNet = yearlyGross - tax * 12;
 
@@ -45,6 +43,7 @@ export default async function SalarySlipPage({ params }: PageProps) {
 
   const periodStart = new Date(slip.year, slip.month - 1, 1);
   const periodEnd = new Date(slip.year, slip.month, 0);
+  const isDraft = slip.status === "DRAFT";
 
   return (
     <div className="py-30 max-w-4xl mx-auto p-4">
@@ -59,7 +58,15 @@ export default async function SalarySlipPage({ params }: PageProps) {
         </p>
       </section>
 
-      <div className="max-w-4xl mx-auto p-6 space-y-6 mt-20 border">
+      <div className="relative max-w-4xl mx-auto p-6 space-y-6 mt-20 border overflow-hidden">
+        {isDraft && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="text-[120px] font-extrabold text-gray-300 opacity-50 rotate-[-30deg] select-none">
+              DRAFT
+            </span>
+          </div>
+        )}
+
         {/* ================= HEADER ================= */}
         <section className="flex justify-between items-start mb-20">
           <h2 className="text-xl font-bold">{company.name}</h2>
@@ -172,9 +179,7 @@ export default async function SalarySlipPage({ params }: PageProps) {
             <div className="flex justify-between pr-3">
               <p>{isHourly ? "Working Hours" : "Monthly Salary"}</p>
               <p>
-                {isHourly
-                  ? totalHours.toFixed(2)
-                  : monthlySalary.toFixed(2)}
+                {isHourly ? totalHours.toFixed(2) : monthlySalary.toFixed(2)}
               </p>
             </div>
 
