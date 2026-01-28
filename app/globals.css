@@ -127,3 +127,38 @@
 .scrollbar-hide {
   scrollbar-width: none;
 }
+
+
+@media print {
+  /* Page size */
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+
+  /* Hide everything */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only salary slip */
+  #salary-slip-print,
+  #salary-slip-print * {
+    visibility: visible;
+  }
+
+  /* Position correctly */
+  #salary-slip-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+  }
+
+  /* No shadows / borders */
+  .no-print {
+    display: none !important;
+  }
+}
