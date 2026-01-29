@@ -132,42 +132,50 @@ export default function EmployeeScheduleTable({
   }; */
 
 const handleCreateSalary = async () => {
-  if (isCreatingSalary) return; // STOP duplicates
-
+  if (isCreatingSalary) return;
   setIsCreatingSalary(true);
 
   try {
-    const slip = await createSalarySlipForEmployee(employeeId, month, year);
-    setSalaryCreated(true);
-    alert(`Salary slip created. Total Pay: ${slip.totalPay}`);
-  } catch (error: any) {
-    if (error.message === "SALARY_EXISTS") {
+    const result = await createSalarySlipForEmployee(
+      employeeId,
+      month,
+      year
+    );
+
+    if (result.status === "EXISTS") {
       const confirmUpdate = confirm(
         "Salary slip already exists for this employee this month.\n\nDo you want to UPDATE it?"
       );
 
-      if (!confirmUpdate) {
-        setIsCreatingSalary(false);
-        return;
-      }
+      if (!confirmUpdate) return;
 
-      const updatedSlip = await createSalarySlipForEmployee(
+      const updated = await createSalarySlipForEmployee(
         employeeId,
         month,
         year,
         true
       );
 
-      setSalaryCreated(true);
-      alert(`Salary slip UPDATED. Total Pay: ${updatedSlip.totalPay}`);
-    } else {
-      console.error(error);
-      alert("Failed to create salary slip.");
+      if (updated.status === "OK") {
+        setSalaryCreated(true);
+        alert(`Salary slip UPDATED. Total Pay: ${updated.slip.totalPay}`);
+      }
+
+      return;
     }
+
+    if (result.status === "OK") {
+      setSalaryCreated(true);
+      alert(`Salary slip created. Total Pay: ${result.slip.totalPay}`);
+      return;
+    }
+
+    alert(result.message);
   } finally {
-    setIsCreatingSalary(false); // ✅ always release lock
+    setIsCreatingSalary(false);
   }
 };
+
 
 
 

@@ -278,7 +278,7 @@ export async function updateTimeLogStatus(
 } */
 
 //latest with yes and no
-export async function createSalarySlipForEmployee(
+/* export async function createSalarySlipForEmployee(
   employeeId: string,
   month: number,
   year: number,
@@ -348,6 +348,90 @@ export async function createSalarySlipForEmployee(
 
   // 🆕 CREATE
   return prisma.salarySlip.create({ data });
+} */
+type CreateSalaryResult =
+  | { status: "OK"; slip: any }
+  | { status: "EXISTS" }
+  | { status: "ERROR"; message: string };
+
+export async function createSalarySlipForEmployee(
+  employeeId: string,
+  month: number,
+  year: number,
+  forceUpdate = false
+): Promise<CreateSalaryResult> {
+  try {
+    const existingSlip = await prisma.salarySlip.findUnique({
+      where: {
+        employeeId_month_year: {
+          employeeId,
+          month,
+          year,
+        },
+      },
+    });
+
+    // 🚫 Already exists
+    if (existingSlip && !forceUpdate) {
+      return { status: "EXISTS" };
+    }
+
+    const employee = await prisma.employee.findUnique({
+      where: { id: employeeId },
+      include: { timeLogs: true },
+    });
+
+    if (!employee) {
+      return { status: "ERROR", message: "Employee not found" };
+    }
+
+    // ✅ PROD-SAFE date filtering (no getMonth bugs)
+    const start = new Date(Date.UTC(year, month - 1, 1));
+    const end = new Date(Date.UTC(year, month, 1));
+
+    const logs = employee.timeLogs.filter(
+      (log) =>
+        log.status === "APPROVED" &&
+        log.logDate >= start &&
+        log.logDate < end
+    );
+
+    const totalMinutes = logs.reduce(
+      (acc, log) => acc + (log.totalMinutes || 0),
+      0
+    );
+
+    let totalPay = 0;
+    if (employee.contractType === "HOURLY") {
+      totalPay = (totalMinutes / 60) * (employee.hourlyRate || 0);
+    } else {
+      totalPay = employee.monthlySalary || 0;
+    }
+
+    const data = {
+      employeeId: employee.id,
+      companyId: employee.companyId,
+      month,
+      year,
+      totalMinutes,
+      totalHours: totalMinutes / 60,
+      totalPay: parseFloat(totalPay.toFixed(2)),
+      tax: 0,
+      status: "DRAFT" as const,
+    };
+
+    const slip = existingSlip
+      ? await prisma.salarySlip.update({
+          where: { id: existingSlip.id },
+          data,
+        })
+      : await prisma.salarySlip.create({ data });
+
+    return { status: "OK", slip };
+  } catch (err) {
+    console.error("CREATE SALARY FAILED:", err);
+    return { status: "ERROR", message: "Internal server error" };
+  }
 }
 
 
