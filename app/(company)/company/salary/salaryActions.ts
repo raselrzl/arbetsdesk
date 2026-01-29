@@ -302,7 +302,7 @@ export async function createSalarySlipForEmployee(
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
     include: { timeLogs: true },
-  });
+  }); 
 
   if (!employee) throw new Error("Employee not found");
 
