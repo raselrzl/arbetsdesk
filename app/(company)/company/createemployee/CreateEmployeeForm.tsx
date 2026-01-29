@@ -122,35 +122,57 @@ export default function CreateEmployeeForm({ company }: Props) {
           autoComplete="off"
           className="space-y-4 grid grid-cols-1 md:grid-cols-2 "
         >
-          <div className="border p-6 max-w-lg gap-2 bg-white">
-            {" "}
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-5">
             <input type="hidden" name="companyId" value={company.id} />
+
             {/* Identity */}
-            <h1 className="text-xl font-bold">Identity</h1>
-            <div>
-              <Label>Name</Label>
-              <Input name="name" placeholder="John Doe" required />
+            <h1 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Identity
+            </h1>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Name</Label>
+              <Input
+                name="name"
+                placeholder="John Doe"
+                required
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Email</Label>
-              <Input name="email" type="email" placeholder="john@example.com" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Email</Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="john@example.com"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Phone</Label>
-              <Input name="phone" placeholder="9876543210" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Phone</Label>
+              <Input
+                name="phone"
+                placeholder="9876543210"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Personal Number</Label>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Personal Number</Label>
               <Input
                 name="personalNumber"
                 placeholder="ID / Personal No."
                 required
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
               />
             </div>
+
             {/* PIN */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>PIN</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <Label className="text-sm text-gray-600">PIN</Label>
                 <Input
                   name="pinCode"
                   type="password"
@@ -159,10 +181,12 @@ export default function CreateEmployeeForm({ company }: Props) {
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
                   required
+                  className="rounded-none border-gray-300 focus:border-black focus:ring-0"
                 />
               </div>
-              <div>
-                <Label>Confirm PIN</Label>
+
+              <div className="flex flex-col gap-1">
+                <Label className="text-sm text-gray-600">Confirm PIN</Label>
                 <Input
                   type="password"
                   inputMode="numeric"
@@ -170,43 +194,67 @@ export default function CreateEmployeeForm({ company }: Props) {
                   value={confirmPin}
                   onChange={(e) => setConfirmPin(e.target.value)}
                   required
+                  className="rounded-none border-gray-300 focus:border-black focus:ring-0"
                 />
               </div>
             </div>
+
             {!isPinValid && pin.length > 0 && (
-              <p className="text-red-500 text-xs">PIN must be 4 digits</p>
+              <p className="text-red-500 text-xs mt-1">PIN must be 4 digits</p>
             )}
+
             {isPinValid && !isPinMatch && confirmPin.length > 0 && (
-              <p className="text-red-500 text-xs">PINs do not match</p>
+              <p className="text-red-500 text-xs mt-1">PINs do not match</p>
             )}
           </div>
 
-          <div className="border p-6 max-w-lg bg-white">
-            {" "}
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-4">
             {/* Address */}
-            <div>
-              <Label>Address</Label>
-              <Input name="address" />
+            <h1 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Address
+            </h1>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Address</Label>
+              <Input
+                name="address"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>City</Label>
-              <Input name="city" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">City</Label>
+              <Input
+                name="city"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Postal Code</Label>
-              <Input name="postalCode" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Postal Code</Label>
+              <Input
+                name="postalCode"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Country</Label>
-              <Input name="country" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Country</Label>
+              <Input
+                name="country"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
           </div>
 
-          <div className="border p-6 max-w-lg bg-white">
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-4">
             {/* Employment */}
-            <h1 className="text-xl font-bold">Employment</h1>
-            <div>
-              <Label>Employment Type</Label>
+            <h1 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Employment
+            </h1>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Employment Type</Label>
               <select
                 name="employmentType"
                 value={employmentType}
@@ -214,6 +262,7 @@ export default function CreateEmployeeForm({ company }: Props) {
                   setEmploymentType(e.target.value as EmploymentType)
                 }
                 required
+                className="border border-gray-300 bg-white px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
                 <option value="">Select</option>
                 <option value="PERMANENT">PERMANENT</option>
@@ -222,10 +271,11 @@ export default function CreateEmployeeForm({ company }: Props) {
                 <option value="PROVISIONARY">PROVISIONARY</option>
                 <option value="OTHER">OTHER</option>
               </select>
-            </div>{" "}
+            </div>
+
             {/* Contract */}
-            <div>
-              <Label>Salary Type</Label>
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Salary Type</Label>
               <select
                 name="contractType"
                 value={contractType}
@@ -233,38 +283,52 @@ export default function CreateEmployeeForm({ company }: Props) {
                   setContractType(e.target.value as ContractType)
                 }
                 required
+                className="border border-gray-300 bg-white px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
                 <option value="">Select salary type</option>
                 <option value="HOURLY">Hourly</option>
                 <option value="MONTHLY">Monthly</option>
               </select>
             </div>
+
             {contractType === "HOURLY" && (
               <Input
                 name="hourlyRate"
                 type="text"
                 placeholder="Hourly rate"
                 required
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
               />
             )}
+
             {contractType === "MONTHLY" && (
               <Input
                 name="monthlySalary"
                 type="text"
                 placeholder="Monthly salary"
                 required
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
               />
             )}
-            <div>
-              <Label>Job Title</Label>
-              <Input name="jobTitle" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Job Title</Label>
+              <Input
+                name="jobTitle"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Workplace</Label>
-              <Input name="workplace" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Workplace</Label>
+              <Input
+                name="workplace"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Working Status</Label>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Working Status</Label>
               <select
                 name="workingStatus"
                 value={workingStatus}
@@ -272,6 +336,7 @@ export default function CreateEmployeeForm({ company }: Props) {
                   setWorkingStatus(e.target.value as WorkingStatus)
                 }
                 required
+                className="border border-gray-300 bg-white px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
                 <option value="">Select</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -283,96 +348,142 @@ export default function CreateEmployeeForm({ company }: Props) {
             </div>
           </div>
 
-          <div className="border p-6 max-w-lg bg-white">
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-4">
             {/* Benefits */}
-            <h1 className="text-xl font-bold">Benefits & Deductions</h1>
+            <h1 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Benefits & Deductions
+            </h1>
+
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 name="insurance"
                 checked={insurance}
                 onChange={(e) => setInsurance(e.target.checked)}
+                className="accent-black"
               />
-              <Label>Insurance</Label>
+              <Label className="text-sm text-gray-700">Insurance</Label>
             </div>
+
             {insurance && (
-              <Input name="insuranceCompany" placeholder="Insurance company" />
+              <Input
+                name="insuranceCompany"
+                placeholder="Insurance company"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             )}
-            <div className="grid grid-cols-2 gap-2">
-              <label>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   name="financialSupport"
                   checked={financialSupport}
                   onChange={(e) => setFinancialSupport(e.target.checked)}
-                />{" "}
+                  className="accent-black"
+                />
                 Financial Support
               </label>
-              <label>
+
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   name="companyCar"
                   checked={companyCar}
                   onChange={(e) => setCompanyCar(e.target.checked)}
-                />{" "}
+                  className="accent-black"
+                />
                 Company Car
               </label>
-              <label>
+
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   name="mealAllowance"
                   checked={mealAllowance}
                   onChange={(e) => setMealAllowance(e.target.checked)}
-                />{" "}
+                  className="accent-black"
+                />
                 Meal Allowance
               </label>
-              <label>
+
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   name="unionFees"
                   checked={unionFees}
                   onChange={(e) => setUnionFees(e.target.checked)}
-                />{" "}
+                  className="accent-black"
+                />
                 Union Fees
               </label>
-              <label>
+
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   name="netDeduction"
                   checked={netDeduction}
                   onChange={(e) => setNetDeduction(e.target.checked)}
-                />{" "}
+                  className="accent-black"
+                />
                 Net Deduction
               </label>
             </div>
           </div>
 
-          <div className="border p-6 max-w-lg bg-white">
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-4">
             {/* Bank */}
-            <div>
-              <Label>Bank Name</Label>
-              <Input name="bankName" />
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Bank Details
+            </h2>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Bank Name</Label>
+              <Input
+                name="bankName"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Clearing Number</Label>
-              <Input name="clearingNumber" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Clearing Number</Label>
+              <Input
+                name="clearingNumber"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Account Number</Label>
-              <Input name="accountNumber" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Account Number</Label>
+              <Input
+                name="accountNumber"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
           </div>
 
           {/* Job dates */}
-          <div className="border p-6 max-w-lg bg-white">
-            {" "}
-            <div>
-              <Label>Job Start Date</Label>
-              <Input type="date" name="jobStartDate" />
+          <div className="border border-gray-200 p-6 max-w-lg bg-white space-y-4">
+            <h1 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Job Dates
+            </h1>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Job Start Date</Label>
+              <Input
+                type="date"
+                name="jobStartDate"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
-            <div>
-              <Label>Job End Date</Label>
-              <Input type="date" name="jobEndDate" />
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-sm text-gray-600">Job End Date</Label>
+              <Input
+                type="date"
+                name="jobEndDate"
+                className="rounded-none border-gray-300 focus:border-black focus:ring-0"
+              />
             </div>
           </div>
 
