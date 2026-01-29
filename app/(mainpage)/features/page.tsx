@@ -65,7 +65,7 @@ export default function FeaturesPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.7 }}
-            className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-4"
+            className="text-3xl font-extrabold text-teal-900 mb-4 uppercase"
           >
             Arbetsdesk Features
           </motion.h2>
@@ -132,7 +132,7 @@ export default function FeaturesPage() {
         transition={{ duration: 0.6 }}
         className=" bg-teal-100 px-6 py-14 text-center shadow-lg"
       >
-        <h3 className="text-2xl md:text-4xl font-extrabold text-teal-900 mb-4">
+        <h3 className="text-3xl uppercase font-extrabold text-teal-900 mb-4">
           Ready to simplify your workforce management?
         </h3>
 
@@ -146,7 +146,7 @@ export default function FeaturesPage() {
 
         <p className="text-teal-800 max-w-2xl mx-auto mb-8 text-lg">
           Arbetsdesk helps you save time, reduce errors, and gain full control
-          over scheduling, time tracking, payroll, and communication – all in
+          over scheduling, time tracking, payroll, and communication all in
           one platform. Book a demo and see how it works for your business.
         </p>
 
