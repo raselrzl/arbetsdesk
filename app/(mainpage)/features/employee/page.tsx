@@ -1,8 +1,11 @@
 export default function EmployeePage() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">EmployeePage</h1>
-      <p>Welcome to the EmployeePage.</p>
+    <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <h1 className="text-3xl font-bold mb-4 text-teal-900">Employee</h1>
+      <p className="text-gray-700 text-lg">
+        This page is currently under development. <br />
+        As soon as it’s ready, you will be able to see the full explanation and use it.
+      </p>
     </div>
   );
 }
