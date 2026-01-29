@@ -61,8 +61,8 @@ export default function HomePage() {
 
       {/* ================= VIDEO ================= */}
       <section className="py-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="rounded-xl overflow-hidden shadow-md bg-white">
+        <div className="max-w-7xl mx-auto px-2">
+          <div className="overflow-hidden bg-white">
             <video
               src="/restu1.mp4"
               autoPlay
@@ -71,7 +71,7 @@ export default function HomePage() {
               playsInline
               preload="metadata"
               controls
-              className="w-full h-auto"
+              className="w-full h-[500px]"
             />
           </div>
         </div>

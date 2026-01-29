@@ -14,7 +14,7 @@ import {
 } from "../actions";
 import { HomeLoginButton } from "./HomeLoginButton";
 
-type Tab = "USER" | "COMPANY" | "EMPLOYEE" | null;
+type Tab = "ADMIN" | "COMPANY" | "EMPLOYEE" | null;
 
 export default function LoginForm() {
   const search = useSearchParams();
@@ -81,7 +81,7 @@ export default function LoginForm() {
 
         {/* TABS */}
        <div className="flex mb-6 rounded overflow-hidden border border-gray-100">
-  {(["USER", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map((t) => (
+  {(["ADMIN", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map((t) => (
     <button
       key={t}
       type="button"
@@ -106,7 +106,7 @@ export default function LoginForm() {
 
 
         {/* ================= USER LOGIN ================= */}
-        {tab === "USER" && (
+        {tab === "ADMIN" && (
           <form action={loginUserAction} className="grid gap-6">
             <div>
               <Label className="text-white mb-2">Personal Number</Label>
