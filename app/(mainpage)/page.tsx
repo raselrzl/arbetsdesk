@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FeaturesSection } from "../components/FearuresSection";
 import BookDemoButton from "../components/BookDemoButton";
 import { TailoredSolutionsSection } from "../components/TailoredSolutionsSection";
+import { TrustBenefitsSection } from "../components/TrustBenefitsSection";
 
 export default function HomePage() {
   return (
@@ -17,17 +18,17 @@ export default function HomePage() {
             Workforce Management Platform
           </span> */}
 
-          <h1 className="text-3xl mt-20 font-extrabold text-teal-900 leading-snug mb-6 uppercase">
+          <h1 className="text-3xl mt-20 font-extrabold text-teal-900 leading-snug mb-6 uppercase text-center">
             Manage your workforce <br />
             <span className="text-teal-600">smarter and faster</span>
           </h1>
 
-          <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-8">
+          <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-8 text-center">
             Arbets-desk helps companies track time, manage schedules, payroll,
             and employees all from one powerful, easy-to-use platform.
           </p>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 items-center justify-center">
             <Link
               href="/book-demo"
               className="bg-teal-900 hover:bg-teal-700 text-white px-6 py-3 rounded-full font-semibold shadow-md transition"
@@ -108,6 +109,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <TrustBenefitsSection />
 
       {/* ================= FEATURES ================= */}
       <FeaturesSection />
@@ -131,32 +133,8 @@ export default function HomePage() {
       </section> */}
 
       {/* ================= COMPANY EXPENSES MARKETING ================= */}
-      <section className="py-24 bg-white border-t mb-20 border-teal-100">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Text */}
-          <div className="space-y-6">
-            <h2 className="text-3xl font-extrabold text-teal-900 leading-tight uppercase">
-              Track and manage <br />
-              <span className="text-teal-600">
-                company expenses effortlessly
-              </span>
-            </h2>
-
-            <p className="text-gray-600 text-lg max-w-lg">
-              Keep all your business expenses organized in one place. Quickly
-              monitor spending by category, stay on top of budgets, and gain
-              insights to make smarter financial decisions.
-            </p>
-
-            <Link
-              href="/features/costoptimization"
-              className="border border-teal-300 hover:border-teal-100 px-7 py-3 rounded-3xl font-semibold text-gray-700 hover:text-teal-600 transition"
-            >
-              Learn More
-            </Link>
-          </div>
-
-          <div className="flex justify-center relative">
+      <section className="max-w-3xl mx-auto px-4">
+           <div className="flex justify-center relative">
             <div className="relative w-full">
               {/* Card */}
               <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
@@ -175,7 +153,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
+        
       </section>
       <TailoredSolutionsSection />
       <BookDemoButton />
