@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FeaturesSection } from "../components/FearuresSection";
 import BookDemoButton from "../components/BookDemoButton";
+import { TailoredSolutionsSection } from "../components/TailoredSolutionsSection";
 
 export default function HomePage() {
   return (
@@ -12,13 +13,13 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-6 pt-10 pb-6 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div>
-          <span className="inline-flex items-center shadow shadow-teal-200 uppercase rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
+          {/*  <span className="inline-flex items-center shadow shadow-teal-200 uppercase rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
             Workforce Management Platform
-          </span>
+          </span> */}
 
-          <h1 className="text-3xl sm:text-4xl uppercase md:text-5xl lg:text-6xl font-extrabold text-teal-900 leading-snug mb-6">
+          <h1 className="text-3xl mt-20 font-extrabold text-teal-900 leading-snug mb-6 uppercase">
             Manage your workforce <br />
-            <span className="text-teal-600">smarter & faster</span>
+            <span className="text-teal-600">smarter and faster</span>
           </h1>
 
           <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-8">
@@ -44,65 +45,7 @@ export default function HomePage() {
         </div>
 
         {/* Right */}
-        <div className="relative flex justify-center">
-          <Image
-            src="/h11.png"
-            alt="Arbets-desk dashboard preview"
-            width={560}
-            height={380}
-            priority
-            className="object-contain drop-shadow-xl max-w-full h-auto"
-          />
-        </div>
-      </section>
-
-      {/* ================= FEATURES ================= */}
-      <FeaturesSection />
-
-      {/* ================= VIDEO ================= */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-2">
-          <div className="overflow-hidden bg-white">
-            <video
-              src="/restu1.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              controls
-              className="w-full h-[500px]"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ================= COMPANY EXPENSES MARKETING ================= */}
-      <section className="py-24 bg-white border-t mb-20 border-teal-100">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Text */}
-          <div className="space-y-6">
-            <h2 className="text-2xl md:text-4xl font-extrabold text-teal-900 leading-tight uppercase">
-              Track & manage <br />
-              <span className="text-teal-600">
-                company expenses effortlessly
-              </span>
-            </h2>
-
-            <p className="text-gray-600 text-lg max-w-lg">
-              Keep all your business expenses organized in one place. Quickly
-              monitor spending by category, stay on top of budgets, and gain
-              insights to make smarter financial decisions.
-            </p>
-
-            <Link
-              href="/features/costoptimization"
-              className="border border-teal-300 hover:border-teal-100 px-7 py-3 rounded-3xl font-semibold text-gray-700 hover:text-teal-600 transition"
-            >
-              Learn More
-            </Link>
-          </div>
-
+        <div className="relative flex justify-center mt-20 pb-6">
           <div className="flex justify-center relative">
             <div className="relative w-full max-w-md">
               {/* Background Circles */}
@@ -165,6 +108,76 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ================= FEATURES ================= */}
+      <FeaturesSection />
+
+      {/* ================= VIDEO ================= */}
+      {/*   <section className="py-10">
+        <div className="max-w-7xl mx-auto px-2">
+          <div className="overflow-hidden bg-white">
+            <video
+              src="/restu1.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              controls
+              className="w-full h-[500px]"
+            />
+          </div>
+        </div>
+      </section> */}
+
+      {/* ================= COMPANY EXPENSES MARKETING ================= */}
+      <section className="py-24 bg-white border-t mb-20 border-teal-100">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Text */}
+          <div className="space-y-6">
+            <h2 className="text-3xl font-extrabold text-teal-900 leading-tight uppercase">
+              Track and manage <br />
+              <span className="text-teal-600">
+                company expenses effortlessly
+              </span>
+            </h2>
+
+            <p className="text-gray-600 text-lg max-w-lg">
+              Keep all your business expenses organized in one place. Quickly
+              monitor spending by category, stay on top of budgets, and gain
+              insights to make smarter financial decisions.
+            </p>
+
+            <Link
+              href="/features/costoptimization"
+              className="border border-teal-300 hover:border-teal-100 px-7 py-3 rounded-3xl font-semibold text-gray-700 hover:text-teal-600 transition"
+            >
+              Learn More
+            </Link>
+          </div>
+
+          <div className="flex justify-center relative">
+            <div className="relative w-full">
+              {/* Card */}
+              <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
+                <div className="overflow-hidden bg-white">
+                  <video
+                    src="/restu1.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    controls
+                    className="w-full h-[500px]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <TailoredSolutionsSection />
       <BookDemoButton />
     </main>
   );
