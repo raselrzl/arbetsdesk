@@ -23,7 +23,7 @@ export default function HomePage() {
 
           <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-8">
             Arbets-desk helps companies track time, manage schedules, payroll,
-            and employees — all from one powerful, easy-to-use platform.
+            and employees all from one powerful, easy-to-use platform.
           </p>
 
           <div className="flex flex-wrap gap-4">
