@@ -8,6 +8,7 @@ import CostComparisonCard from "./companycomponents/CostComparisonCard";
 import WeeklySalesComparisonCard from "./companycomponents/WeeklySalesComparisonCard";
 import CompanyNotifications from "./companycomponents/CompanyNotifications";
 import Link from "next/link";
+import ProductCostComparisonCard from "./companycomponents/ProductCostComparisonCard";
 
 export default async function CompanyPageServer() {
   const jar = await cookies();
@@ -76,6 +77,7 @@ export default async function CompanyPageServer() {
               <WorkComparisonCard />
               <CostComparisonCard />
               <WeeklySalesComparisonCard />
+              <ProductCostComparisonCard />
             </div>
           </div>
         </div>
