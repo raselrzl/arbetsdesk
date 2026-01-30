@@ -91,7 +91,7 @@ export default function PersonnummerLoginModal({
    
 
         {/* 🕒 CLOCK */}
-        <div className="mb-8 text-center  text-teal-500">
+        <div className="mb-8 text-center  text-teal-800">
           <div className="text-3xl sm:text-7xl font-[1000] tracking-widest">
             {clockTime}
           </div>
@@ -158,7 +158,7 @@ export default function PersonnummerLoginModal({
         <button
           onClick={submitLogin}
           disabled={loading || personalNumber.length < 12}
-          className="mt-4 bg-teal-600 py-4 text-white text-xl font-bold hover:bg-teal-700 transition w-full max-w-sm flex items-center justify-center disabled:opacity-70"
+          className="mt-4 bg-teal-600 py-4 text-white text-xl uppercase font-bold hover:bg-teal-700 transition w-full max-w-sm flex items-center justify-center disabled:opacity-70"
         >
           {loading ? (
             <Loader2 className="w-6 h-6 animate-spin" />
