@@ -392,6 +392,22 @@ export async function fetchAllMessagesForDate(date: string) {
     orderBy: { createdAt: "desc" },
   });
 
+  const employeeRegisteredRaw = await prisma.notification.findMany({
+    where: {
+      companyId,
+      type: "EMPLOYEE_REGISTERED",
+      createdAt: { gte: start, lte: end },
+    },
+    include: {
+      employee: {
+        include: {
+          person: { select: { name: true, email: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
   // Company messages
   const companyMessagesRaw = await prisma.message.findMany({
     where: { companyId, createdAt: { gte: start, lte: end } },
@@ -434,5 +450,21 @@ export async function fetchAllMessagesForDate(date: string) {
     employeeName: m.employee?.person?.name, // may be null if broadcast
   }));
 
-  return { employeeMessages, companyMessages };
+
+  const employeeRegisteredNotifications = employeeRegisteredRaw.map((n) => ({
+    id: n.id,
+    title: n.title,
+    body: n.body,
+    createdAt: n.createdAt.toISOString(),
+    employee: n.employee
+      ? {
+          id: n.employee.id,
+          name: n.employee.person?.name,
+          email: n.employee.person?.email,
+        }
+      : undefined,
+  }));
+
+
+  return { employeeMessages, companyMessages, employeeRegisteredNotifications };
 }

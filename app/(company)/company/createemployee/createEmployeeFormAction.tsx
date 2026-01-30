@@ -35,7 +35,7 @@ type EmployeeFormData = {
   jobEndDate?: string;
 };
 
-export async function createEmployeeAction(form: EmployeeFormData) {
+/* export async function createEmployeeAction(form: EmployeeFormData) {
   "use server";
 
   try {
@@ -123,5 +123,116 @@ export async function createEmployeeAction(form: EmployeeFormData) {
   } catch (error: any) {
     console.error(error);
     return { success: false, message: error.message || "Failed to create employee" };
+  }
+} */
+
+
+
+export async function createEmployeeAction(form: EmployeeFormData) {
+  "use server";
+
+  try {
+    const {
+      companyId,
+      name,
+      email,
+      phone,
+      personalNumber,
+      pinCode,
+      address,
+      city,
+      postalCode,
+      country,
+      contractType,
+      hourlyRate,
+      monthlySalary,
+      jobTitle,
+      workplace,
+      employmentType,
+      workingStatus,
+      insurance,
+      insuranceCompany,
+      financialSupport,
+      companyCar,
+      mealAllowance,
+      unionFees,
+      netDeduction,
+      bankName,
+      clearingNumber,
+      accountNumber,
+      jobStartDate,
+      jobEndDate,
+    } = form;
+
+    // 1️⃣ Check if Person exists
+    let person = await prisma.person.findUnique({
+      where: { personalNumber },
+    });
+
+    if (!person) {
+      person = await prisma.person.create({
+        data: {
+          name,
+          email,
+          phone,
+          personalNumber,
+          pinCode,
+          address,
+          city,
+          postalCode,
+          country,
+          bankName,
+          clearingNumber,
+          accountNumber,
+        },
+      });
+    }
+
+    // 2️⃣ Create Employee  ✅ FIX: store result in variable
+    const employee = await prisma.employee.create({
+      data: {
+        companyId,
+        personId: person.id,
+        contractType,
+        hourlyRate: hourlyRate ? parseFloat(hourlyRate) : null,
+        monthlySalary: monthlySalary ? parseFloat(monthlySalary) : null,
+        jobTitle,
+        workplace,
+        employmentType,
+        workingStatus,
+        insurance: !!insurance,
+        insuranceCompany,
+        financialSupport: !!financialSupport,
+        companyCar: !!companyCar,
+        mealAllowance: !!mealAllowance,
+        unionFees: !!unionFees,
+        netDeduction: !!netDeduction,
+        jobStartDate: jobStartDate ? new Date(jobStartDate) : null,
+        jobEndDate: jobEndDate ? new Date(jobEndDate) : null,
+      },
+    });
+
+    // 3️⃣ Create Notification (NEW, minimal)
+    await prisma.notification.create({
+      data: {
+        companyId,
+        employeeId: employee.id,
+        type: "EMPLOYEE_REGISTERED",
+        title: "Welcome",
+        body: `${person.name} has been added as a team member.`,
+        data: {
+          employeeId: employee.id,
+          personId: person.id,
+        },
+      },
+    });
+
+    return { success: true, message: "Employee created successfully" };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      success: false,
+      message: error.message || "Failed to create employee",
+    };
   }
 }
