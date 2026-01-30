@@ -99,7 +99,7 @@ export default async function CostComparisonCard() {
 
         <div>
           <p className="text-sm text-gray-400 font-semibold">
-            Costs (this week)
+            Person Costs (this week)
           </p>
           <p className="text-2xl font-extrabold">
             {formatNumber(thisWeekCost)}
