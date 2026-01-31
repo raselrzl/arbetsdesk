@@ -225,7 +225,7 @@ export async function getTimeLogsForCompany() {
 }
 
 
-export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
+/* export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
   const scheduleA = await prisma.schedule.findUnique({ where: { id: scheduleIdA } });
   const scheduleB = await prisma.schedule.findUnique({ where: { id: scheduleIdB } });
 
@@ -252,5 +252,32 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
   ]);
 
   revalidatePath("/company/schedule");
-}
+} */
 
+export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
+  const scheduleA = await prisma.schedule.findUnique({ where: { id: scheduleIdA } });
+  const scheduleB = await prisma.schedule.findUnique({ where: { id: scheduleIdB } });
+
+  if (!scheduleA || !scheduleB) throw new Error("One or both schedules not found");
+
+  // Swap only startTime and endTime
+  await prisma.$transaction([
+    prisma.schedule.update({
+      where: { id: scheduleA.id },
+      data: {
+        startTime: scheduleB.startTime,
+        endTime: scheduleB.endTime,
+      },
+    }),
+    prisma.schedule.update({
+      where: { id: scheduleB.id },
+      data: {
+        startTime: scheduleA.startTime,
+        endTime: scheduleA.endTime,
+      },
+    }),
+  ]);
+
+  // Live update the page (Next.js 13+ server actions)
+  revalidatePath("/company/schedule");
+}
