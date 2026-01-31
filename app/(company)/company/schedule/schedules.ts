@@ -278,6 +278,5 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
     }),
   ]);
 
-  // Live update the page (Next.js 13+ server actions)
   revalidatePath("/company/schedule");
 }

@@ -58,7 +58,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
   const { start, end } = getMonthRange(monthOffset);
   const daysInMonth = Array.from(
     { length: end.getDate() },
-    (_, i) => new Date(start.getFullYear(), start.getMonth(), i + 1)
+    (_, i) => new Date(start.getFullYear(), start.getMonth(), i + 1),
   );
 
   const monthSchedules = schedules.filter((sch) => {
@@ -104,7 +104,10 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
       {/* MONTH FILTER */}
       <div className="flex items-center justify-between">
         <div className="font-semibold text-gray-100 bg-teal-500 px-2 py-1 uppercase">
-          {start.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+          {start.toLocaleDateString(undefined, {
+            month: "long",
+            year: "numeric",
+          })}
         </div>
         <div className="flex gap-2">
           <button
@@ -137,7 +140,10 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                 Employee
               </th>
               {daysInMonth.map((day) => (
-                <th key={day.toDateString()} className="p-2 border text-center min-w-[60px]">
+                <th
+                  key={day.toDateString()}
+                  className="p-2 border text-center min-w-[60px]"
+                >
                   {day.getDate()}
                   <p className="text-[10px] text-gray-600">
                     {day.toLocaleDateString(undefined, { weekday: "short" })}
@@ -159,9 +165,9 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
               return (
                 <tr key={emp.id} className="border-t border-teal-100">
                   <td
-                    className={`p-2 border border-teal-100 font-medium sticky left-0 z-10 w-52 ${getEmployeeColor(
-                      emp.id
-                    ).split(" ")[0]} ${getEmployeeColor(emp.id).split(" ")[1]} text-black`}
+                    className={`p-2 border border-teal-100 font-medium sticky left-0 z-10 w-52 ${
+                      getEmployeeColor(emp.id).split(" ")[0]
+                    } ${getEmployeeColor(emp.id).split(" ")[1]} text-black`}
                   >
                     {emp.name}
                   </td>
@@ -169,15 +175,24 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                   {daysInMonth.map((day) => {
                     const dayKey = day.toDateString();
                     const empSchedules =
-                      schedulesByDay[dayKey]?.filter((s) => s.employee.id === emp.id) || [];
+                      schedulesByDay[dayKey]?.filter(
+                        (s) => s.employee.id === emp.id,
+                      ) || [];
                     return (
-                      <td key={dayKey} className="p-2 border border-teal-100 text-center min-w-[60px]">
+                      <td
+                        key={dayKey}
+                        className="p-2 border border-teal-100 text-center min-w-[60px]"
+                      >
                         {empSchedules.length === 0 ? (
                           <span className="text-gray-300">—</span>
                         ) : (
                           empSchedules.map((sch) => {
-                            const { bg, border } = getEmployeeColorClasses(emp.id);
-                            const isSelected = selectedSchedules.find((s) => s.id === sch.id);
+                            const { bg, border } = getEmployeeColorClasses(
+                              emp.id,
+                            );
+                            const isSelected = selectedSchedules.find(
+                              (s) => s.id === sch.id,
+                            );
                             return (
                               <div
                                 key={sch.id}
@@ -186,19 +201,27 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                                 } ${border} text-left`}
                                 onClick={() => toggleScheduleSelection(sch)}
                               >
-                                <div className="font-semibold text-[12px] truncate">{emp.name}</div>
+                                <div className="font-semibold text-[12px] truncate">
+                                  {emp.name}
+                                </div>
                                 <div className="text-[10px]">
-                                  {new Date(sch.startTime).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false,
-                                  })}
+                                  {new Date(sch.startTime).toLocaleTimeString(
+                                    [],
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false,
+                                    },
+                                  )}
                                   –
-                                  {new Date(sch.endTime).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false,
-                                  })}
+                                  {new Date(sch.endTime).toLocaleTimeString(
+                                    [],
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false,
+                                    },
+                                  )}
                                 </div>
                               </div>
                             );
@@ -220,67 +243,73 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
 
       {/* POPUP MODAL */}
       {/* POPUP MODAL */}
-{showPopup && (
-  <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
-      <button
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-        onClick={handleClosePopup}
-      >
-        ✕
-      </button>
-      <h3 className="font-semibold text-lg mb-2">Selected Schedules</h3>
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+              onClick={handleClosePopup}
+            >
+              ✕
+            </button>
+            <h3 className="font-semibold text-lg mb-2">Selected Schedules</h3>
 
-      {selectedSchedules.map((sch) => {
-        const { border } = getEmployeeColorClasses(sch.employeeId);
-        return (
-          <div key={sch.id} className={`mb-2 p-2 rounded border-l-4 bg-teal-200 ${border}`}>
-            <p className="font-medium">
-              {employees.find((e) => e.id === sch.employeeId)?.name || "Unknown"}
-            </p>
-            <p>
-              {new Date(sch.startTime).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}
-              –
-              {new Date(sch.endTime).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}
-            </p>
-            <p className="text-[10px] text-gray-500">
-              {new Date(sch.date).toLocaleDateString()}
-            </p>
+            {selectedSchedules.map((sch) => {
+              const { border } = getEmployeeColorClasses(sch.employeeId);
+              return (
+                <div
+                  key={sch.id}
+                  className={`mb-2 p-2 rounded border-l-4 bg-teal-200 ${border}`}
+                >
+                  <p className="font-medium">
+                    {employees.find((e) => e.id === sch.employeeId)?.name ||
+                      "Unknown"}
+                  </p>
+                  <p>
+                    {new Date(sch.startTime).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                    –
+                    {new Date(sch.endTime).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                  </p>
+                  <p className="text-[10px] text-gray-500">
+                    {new Date(sch.date).toLocaleDateString()}
+                  </p>
+                </div>
+              );
+            })}
+
+            {/* SWAP BUTTON */}
+            <button
+              onClick={async () => {
+                if (selectedSchedules.length !== 2) return;
+
+                try {
+                  await swapSchedules(
+                    selectedSchedules[0].id,
+                    selectedSchedules[1].id,
+                  );
+                  alert("Shifts swapped successfully!");
+                  handleClosePopup();
+                  // Optionally, trigger a re-fetch of schedules from the server here
+                } catch (err) {
+                  console.error(err);
+                  alert("Failed to swap shifts");
+                }
+              }}
+              className="mt-2 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Swap Shifts
+            </button>
           </div>
-        );
-      })}
-
-      {/* SWAP BUTTON */}
-      <button
-        onClick={async () => {
-          if (selectedSchedules.length !== 2) return;
-
-          try {
-            await swapSchedules(selectedSchedules[0].id, selectedSchedules[1].id);
-            alert("Shifts swapped successfully!");
-            handleClosePopup();
-            // Optionally, trigger a re-fetch of schedules from the server here
-          } catch (err) {
-            console.error(err);
-            alert("Failed to swap shifts");
-          }
-        }}
-        className="mt-2 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Swap Shifts
-      </button>
-    </div>
-  </div>
-)}
-
+        </div>
+      )}
     </div>
   );
 }
