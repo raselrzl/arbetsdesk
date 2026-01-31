@@ -36,7 +36,7 @@ function getWeekRange(offset = 0) {
 
 function getWeekNumber(date: Date) {
   const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
   );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -81,11 +81,44 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
     }
   });
 
+  /* ---------------- COLOR HELPERS ---------------- */
+
+  // Tailwind-safe palette (can be extended infinitely)
+  const EMPLOYEE_COLORS = [
+    "bg-red-100 border-red-400",
+    "bg-blue-100 border-blue-400",
+    "bg-green-100 border-green-400",
+    "bg-yellow-100 border-yellow-400",
+    "bg-purple-100 border-purple-400",
+    "bg-pink-100 border-pink-400",
+    "bg-indigo-100 border-indigo-400",
+    "bg-teal-100 border-teal-400",
+    "bg-orange-100 border-orange-400",
+  ];
+
+  // Deterministic hash → color (unlimited employees)
+  function getEmployeeColor(employeeId: string) {
+    let hash = 0;
+    for (let i = 0; i < employeeId.length; i++) {
+      hash = employeeId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % EMPLOYEE_COLORS.length;
+    return EMPLOYEE_COLORS[index];
+  }
+
+  function getEmployeeColorClasses(employeeId: string) {
+    const full = getEmployeeColor(employeeId); // e.g., "bg-red-100 border-red-400"
+    const bg = full.match(/bg-\S+/)?.[0] ?? "bg-gray-100";
+    const border = full.match(/border-\S+/)?.[0] ?? "border-gray-400";
+    const text = border.replace("border", "text"); // "border-red-400" → "text-red-400"
+    return { bg, border, text };
+  }
+
   return (
     <div className="space-y-3">
       {/* WEEK FILTER */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold text-gray-100 bg-teal-950 px-2 py-1 uppercase">
+        <div className="font-semibold text-gray-100 bg-teal-500 px-2 py-1 uppercase">
           Week {weekNumber} · {formatDate(start)} – {formatDate(end)}
         </div>
 
@@ -117,15 +150,20 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
-            <tr className="bg-teal-100">
-              <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
+            <tr className="bg-teal-300">
+              {/*   <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Schedule
-              </th>
+              </th> */}
 
               {daysOfWeek.map((day) => (
-                <th key={formatDate(day)} className="p-3 border text-center w-28">
+                <th
+                  key={formatDate(day)}
+                  className="p-3 border-teal-800 text-center w-28 uppercase"
+                >
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
-                  <p className="text-xs text-gray-600">{formatDate(day)}</p>
+                  <p className="text-xs text-gray-600 uppercase">
+                    {formatDate(day)}
+                  </p>
                 </th>
               ))}
             </tr>
@@ -133,29 +171,52 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
 
           <tbody>
             {employees.map((emp) => (
-              <tr key={emp.id} className="border-t">
-                <td
+              <tr key={emp.id} className="border-t border-teal-100">
+                {/* <td
                   className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
                   title={emp.name}
                 >
                   {emp.name}
-                </td>
+                </td> */}
 
                 {daysOfWeek.map((day) => {
                   const dayKey = formatDate(day);
                   const empSchedules =
-                    schedulesByDay[dayKey]?.filter((s) => s.employee.id === emp.id) || [];
+                    schedulesByDay[dayKey]?.filter(
+                      (s) => s.employee.id === emp.id,
+                    ) || [];
 
                   return (
-                    <td key={dayKey} className="p-3 border text-xs text-center w-28">
+                    <td
+                      key={dayKey}
+                      className="p-2 border border-teal-100 text-xs text-center w-28"
+                    >
                       {empSchedules.length === 0 ? (
                         <span className="text-gray-400">—</span>
                       ) : (
-                        empSchedules.map((sch) => (
-                          <div key={sch.id}>
-                            {formatTime(sch.startTime)} – {formatTime(sch.endTime)}
-                          </div>
-                        ))
+                        empSchedules.map((sch) => {
+                          const colorClass = getEmployeeColor(emp.id);
+                          const { bg, border, text } = getEmployeeColorClasses(
+                            emp.id,
+                          );
+
+                          return (
+                            <div
+                              key={sch.id}
+                              className={`mb-1 rounded px-2 py-3 border-l-6 text-left ${colorClass}`}
+                            >
+                              <div
+                                className={`font-semibold text-[18px] truncate ${text}`}
+                              >
+                                {emp.name}
+                              </div>
+                              <div className={`text-[10px] ${text}`}>
+                                {formatTime(sch.startTime)} –{" "}
+                                {formatTime(sch.endTime)}
+                              </div>
+                            </div>
+                          );
+                        })
                       )}
                     </td>
                   );
