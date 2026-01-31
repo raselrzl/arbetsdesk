@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/app/utils/db";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 // Fetch companyId from cookies
@@ -250,6 +251,6 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
     }),
   ]);
 
-  return true;
+  revalidatePath("/company/schedule");
 }
 
