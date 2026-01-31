@@ -222,3 +222,33 @@ export async function getTimeLogsForCompany() {
     orderBy: { logDate: "asc" },
   });
 }
+
+
+export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
+  const scheduleA = await prisma.schedule.findUnique({ where: { id: scheduleIdA } });
+  const scheduleB = await prisma.schedule.findUnique({ where: { id: scheduleIdB } });
+
+  if (!scheduleA || !scheduleB) throw new Error("One or both schedules not found");
+
+  // Swap date, startTime, endTime
+  await prisma.$transaction([
+    prisma.schedule.update({
+      where: { id: scheduleA.id },
+      data: {
+        date: scheduleB.date,
+        startTime: scheduleB.startTime,
+        endTime: scheduleB.endTime,
+      },
+    }),
+    prisma.schedule.update({
+      where: { id: scheduleB.id },
+      data: {
+        date: scheduleA.date,
+        startTime: scheduleA.startTime,
+        endTime: scheduleA.endTime,
+      },
+    }),
+  ]);
+
+  return true;
+}
