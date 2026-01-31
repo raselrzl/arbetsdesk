@@ -31,7 +31,7 @@ export function FeaturesSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: idx * 0.05 }}
-              className="bg-teal-900 rounded-2xl p-6 flex flex-col justify-between
+              className="bg-[#00687a] rounded-2xl p-6 flex flex-col justify-between
                          transform transition-all duration-300
                          hover:-translate-y-2 hover:shadow-2xl"
             >

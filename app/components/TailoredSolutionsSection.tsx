@@ -9,14 +9,13 @@ export const TailoredSolutionsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Role Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          
           {/* ADMIN */}
-          <div className="relative rounded-xl overflow-hidden bg-teal-500 transition">
+          <div className="relative rounded-xl overflow-hidden bg-[#00687a] transition">
             <div className="p-6">
               <h3 className="text-xl font-medium mb-3">Admin</h3>
               <p className="text-gray-100 mb-5 leading-relaxed">
-                Full system control to manage companies, monitor data,
-                and ensure the platform operates correctly.
+                Full system control to manage companies, monitor data, and
+                ensure the platform operates correctly.
               </p>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -37,12 +36,12 @@ export const TailoredSolutionsSection: React.FC = () => {
           </div>
 
           {/* COMPANY */}
-          <div className="relative rounded-xl overflow-hidden bg-teal-500 transition">
+          <div className="relative rounded-xl overflow-hidden bg-[#00687a] transition">
             <div className="p-6">
               <h3 className="text-xl font-medium mb-3">Company</h3>
               <p className="text-gray-100 mb-5 leading-relaxed">
-                Manage employees, working hours, salaries, expenses,
-                sales, and financial calculations in one system.
+                Manage employees, working hours, salaries, expenses, sales, and
+                financial calculations in one system.
               </p>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -66,12 +65,12 @@ export const TailoredSolutionsSection: React.FC = () => {
           </div>
 
           {/* EMPLOYEE */}
-          <div className="relative rounded-xl overflow-hidden bg-teal-500 transition">
+          <div className="relative rounded-xl overflow-hidden bg-[#00687a] transition">
             <div className="p-6">
               <h3 className="text-xl font-medium mb-3">Employee</h3>
               <p className="text-gray-100 mb-5 leading-relaxed">
-                Simple login-based system where working time is
-                recorded automatically for accurate salary calculation.
+                Simple login-based system where working time is recorded
+                automatically for accurate salary calculation.
               </p>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -92,7 +91,6 @@ export const TailoredSolutionsSection: React.FC = () => {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Bottom Feature Row */}
@@ -106,8 +104,8 @@ export const TailoredSolutionsSection: React.FC = () => {
                 Accurate Calculations
               </h4>
               <p className="text-gray-400 leading-relaxed">
-                Working hours, salaries, VAT, and profit & loss
-                are calculated automatically.
+                Working hours, salaries, VAT, and profit & loss are calculated
+                automatically.
               </p>
             </div>
           </div>
@@ -121,8 +119,8 @@ export const TailoredSolutionsSection: React.FC = () => {
                 Secure & Role-Based
               </h4>
               <p className="text-gray-400 leading-relaxed">
-                Separate access for admin, company, and employees
-                ensures data security and control.
+                Separate access for admin, company, and employees ensures data
+                security and control.
               </p>
             </div>
           </div>
@@ -136,13 +134,12 @@ export const TailoredSolutionsSection: React.FC = () => {
                 Built for Sweden
               </h4>
               <p className="text-gray-400 leading-relaxed">
-                Designed around Swedish work structure, accounting,
-                VAT, and company operations.
+                Designed around Swedish work structure, accounting, VAT, and
+                company operations.
               </p>
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

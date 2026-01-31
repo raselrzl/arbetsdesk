@@ -10,14 +10,9 @@ import { TrustBenefitsSection } from "../components/TrustBenefitsSection";
 export default function HomePage() {
   return (
     <main className="bg-linear-to-b from-slate-50 to-white">
-      {/* ================= HERO ================= */}
       <section className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div>
-          {/*  <span className="inline-flex items-center shadow shadow-teal-200 uppercase rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
-            Workforce Management Platform
-          </span> */}
-
           <h1 className="text-3xl mt-20 font-extrabold text-teal-900 leading-snug mb-6 uppercase text-center">
             Manage your workforce <br />
             <span className="text-teal-600">smarter and faster</span>
@@ -49,16 +44,13 @@ export default function HomePage() {
         <div className="relative flex justify-center mt-20 pb-6">
           <div className="flex justify-center relative">
             <div className="relative w-full max-w-md">
-              {/* Background Circles */}
-             {/*  <div className="absolute -top-10 -left-10 w-48 h-48 bg-teal-100 rounded-full opacity-40"></div>
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-300 rounded-full opacity-30"></div>
- */} <div className="absolute -bottom-10 -right-10 w-48 h-48 opacity-40 pointer-events-none">
-  <img
-    src="/analytics.gif"
-    alt="Analytics animation"
-    className="w-full h-full object-contain"
-  />
-</div>
+              <div className="absolute -bottom-10 -right-10 w-48 h-48 opacity-40 pointer-events-none">
+                <img
+                  src="/analytics.gif"
+                  alt="Analytics animation"
+                  className="w-full h-full object-contain"
+                />
+              </div>
               {/* Card */}
               <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
                 <div className="flex justify-around">
@@ -117,55 +109,37 @@ export default function HomePage() {
       </section>
       <TrustBenefitsSection />
 
-      {/* ================= FEATURES ================= */}
       <FeaturesSection />
 
-      {/* ================= VIDEO ================= */}
-      {/*   <section className="py-10">
-        <div className="max-w-7xl mx-auto px-2">
-          <div className="overflow-hidden bg-white">
-            <video
-              src="/restu1.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              controls
-              className="w-full h-[500px]"
-            />
-          </div>
-        </div>
-      </section> */}
-
-      {/* ================= COMPANY EXPENSES MARKETING ================= */}
       <section
-        className="max-w-4xl mx-auto px-4 bg-cover bg-center bg-no-repeat py-10 rounded-2xl"
-        style={{ backgroundImage: "url('/img.png')" }}
+        className="w-full mx-auto bg-cover bg-center bg-no-repeat py-10"
+        style={{ backgroundImage: "url('/img2.png')" }}
       >
-        <div className="flex justify-center relative">
-          <div className="relative w-full">
-            {/* Card */}
-            <div className="relative p-4 bg-black rounded-2xl shadow-2xl border border-teal-200 space-y-6">
-              <div className="relative overflow-hidden bg-white rounded-xl">
-                {/* TEXT OVERLAY */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-                  <h2 className="text-2xl sm:text-4xl font-extrabold tracking-widest text-white drop-shadow-lg">
-                    ARBERDESK
-                  </h2>
-                </div>
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex justify-center relative">
+            <div className="relative w-full">
+              {/* Card */}
+              <div className="relative p-4 bg-black rounded-2xl shadow-2xl border border-teal-200 space-y-6">
+                <div className="relative overflow-hidden bg-white rounded-xl">
+                  {/* TEXT OVERLAY */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
+                    <h2 className="text-2xl sm:text-4xl font-extrabold tracking-widest text-white drop-shadow-lg">
+                      ARBERDESK
+                    </h2>
+                  </div>
 
-                {/* Video */}
-                <video
-                  src="/restu1.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  controls
-                  className="w-full h-[500px] object-cover"
-                />
+                  {/* Video */}
+                  <video
+                    src="/restu1.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    controls
+                    className="w-full h-[500px] object-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>
