@@ -50,9 +50,15 @@ export default function HomePage() {
           <div className="flex justify-center relative">
             <div className="relative w-full max-w-md">
               {/* Background Circles */}
-              <div className="absolute -top-10 -left-10 w-48 h-48 bg-teal-100 rounded-full opacity-40"></div>
+             {/*  <div className="absolute -top-10 -left-10 w-48 h-48 bg-teal-100 rounded-full opacity-40"></div>
               <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-300 rounded-full opacity-30"></div>
-
+ */} <div className="absolute -bottom-10 -right-10 w-48 h-48 opacity-40 pointer-events-none">
+  <img
+    src="/analytics.gif"
+    alt="Analytics animation"
+    className="w-full h-full object-contain"
+  />
+</div>
               {/* Card */}
               <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
                 <div className="flex justify-around">
@@ -134,38 +140,37 @@ export default function HomePage() {
 
       {/* ================= COMPANY EXPENSES MARKETING ================= */}
       <section
-  className="max-w-4xl mx-auto px-4 bg-cover bg-center bg-no-repeat py-10 rounded-2xl"
-  style={{ backgroundImage: "url('/img.png')" }}
->
-  <div className="flex justify-center relative">
-    <div className="relative w-full">
-      {/* Card */}
-      <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
-        <div className="relative overflow-hidden bg-white rounded-xl">
-          
-          {/* TEXT OVERLAY */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-widest text-white drop-shadow-lg">
-              ARBERDESK
-            </h2>
-          </div>
+        className="max-w-4xl mx-auto px-4 bg-cover bg-center bg-no-repeat py-10 rounded-2xl"
+        style={{ backgroundImage: "url('/img.png')" }}
+      >
+        <div className="flex justify-center relative">
+          <div className="relative w-full">
+            {/* Card */}
+            <div className="relative p-4 bg-black rounded-2xl shadow-2xl border border-teal-200 space-y-6">
+              <div className="relative overflow-hidden bg-white rounded-xl">
+                {/* TEXT OVERLAY */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
+                  <h2 className="text-2xl sm:text-4xl font-extrabold tracking-widest text-white drop-shadow-lg">
+                    ARBERDESK
+                  </h2>
+                </div>
 
-          {/* Video */}
-          <video
-            src="/restu1.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            controls
-            className="w-full h-[500px] object-cover"
-          />
+                {/* Video */}
+                <video
+                  src="/restu1.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  controls
+                  className="w-full h-[500px] object-cover"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
       <TailoredSolutionsSection />
       <BookDemoButton />
