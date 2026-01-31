@@ -1,7 +1,5 @@
-// ProductCostWeeklyComparisonCard.tsx (SERVER COMPONENT)
-
 import { prisma } from "@/app/utils/db";
-import { ArrowUp, ArrowDown, Clock, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import { cookies } from "next/headers";
 
 /* ---------------- Helpers ---------------- */
@@ -13,91 +11,59 @@ function formatNumber(amount: number) {
   }).format(amount);
 }
 
-function getMonday(date: Date) {
+function getStartOfDay(date: Date) {
   const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
   d.setHours(0, 0, 0, 0);
   return d;
 }
 
-function getSunday(monday: Date) {
-  const d = new Date(monday);
-  d.setDate(monday.getDate() + 6);
+function getEndOfDay(date: Date) {
+  const d = new Date(date);
   d.setHours(23, 59, 59, 999);
   return d;
 }
 
-async function getTotalProductCost(
-  companyId: string,
-  start: Date,
-  end: Date
-) {
-  const result = await prisma.cost.aggregate({
+function getYesterdayRange() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  return {
+    start: getStartOfDay(yesterday),
+    end: getEndOfDay(yesterday),
+  };
+}
+
+/* ---------------- Queries ---------------- */
+
+async function getYesterdaySalesByMethod(companyId: string) {
+  const { start, end } = getYesterdayRange();
+
+  const sales = await prisma.sale.groupBy({
+    by: ["method"],
     where: {
       companyId,
-      date: {
-        gte: start,
-        lte: end,
-      },
+      date: { gte: start, lte: end },
     },
     _sum: {
       amount: true,
     },
   });
 
-  return result._sum.amount ?? 0;
+  return {
+    CASH: sales.find((s) => s.method === "CASH")?._sum.amount ?? 0,
+    CARD: sales.find((s) => s.method === "CARD")?._sum.amount ?? 0,
+  };
 }
 
 /* ---------------- Component ---------------- */
 
-export default async function ProductCostWeeklyComparisonCard() {
+export default async function YesterdaySalesCard() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
 
-  const today = new Date();
-
-  // This week
-  const thisWeekStart = getMonday(today);
-  const thisWeekEnd = getSunday(thisWeekStart);
-
-  // Last week
-  const lastWeekStart = new Date(thisWeekStart);
-  lastWeekStart.setDate(thisWeekStart.getDate() - 7);
-  const lastWeekEnd = getSunday(lastWeekStart);
-
-  const thisWeekCost = await getTotalProductCost(
-    companyId,
-    thisWeekStart,
-    thisWeekEnd
-  );
-
-  const lastWeekCost = await getTotalProductCost(
-    companyId,
-    lastWeekStart,
-    lastWeekEnd
-  );
-
-  const diff = thisWeekCost - lastWeekCost;
-
-  const comparison =
-    diff > 0 ? "more" : diff < 0 ? "less" : "equal";
-
-  const Icon =
-    comparison === "more"
-      ? ArrowUp
-      : comparison === "less"
-      ? ArrowDown
-      : Clock;
-
-  const color =
-    comparison === "more"
-      ? "text-red-600"
-      : comparison === "less"
-      ? "text-green-600"
-      : "text-gray-500";
+  const { CASH, CARD } = await getYesterdaySalesByMethod(companyId);
+  const total = CASH + CARD;
 
   return (
     <div className="bg-white p-4 mx-2 py-3 rounded-xs shadow border border-teal-100 max-w-md">
@@ -108,27 +74,30 @@ export default async function ProductCostWeeklyComparisonCard() {
 
         <div>
           <p className="text-sm text-gray-400 font-semibold">
-            Product Costs (this week)
+            Yesterday Sales
           </p>
           <p className="text-2xl font-extrabold">
-            {formatNumber(thisWeekCost)}
+            {formatNumber(total)}
           </p>
+
+          {CASH > 0 && (
+            <p className="mt-1 text-xs text-gray-500">
+              Cash:{" "}
+              <span className="font-semibold text-gray-700">
+                {formatNumber(CASH)}
+              </span>
+            </p>
+          )}
+
+          {CARD > 0 && (
+            <p className="text-xs text-gray-500">
+              Card:{" "}
+              <span className="font-semibold text-gray-700">
+                {formatNumber(CARD)}
+              </span>
+            </p>
+          )}
         </div>
-      </div>
-
-      <div className="mt-3 text-xs text-gray-500">
-        <p>Last week: {formatNumber(lastWeekCost)}</p>
-        <p>
-          Difference: {diff > 0 ? "+" : diff < 0 ? "-" : ""}
-          {formatNumber(Math.abs(diff))}
-        </p>
-      </div>
-
-      <div className={`mt-4 flex items-center text-lg font-bold ${color}`}>
-        <Icon className="w-5 h-5 mr-2" />
-        {comparison === "equal"
-          ? "Same as last week"
-          : `This week is ${comparison}`}
       </div>
     </div>
   );
