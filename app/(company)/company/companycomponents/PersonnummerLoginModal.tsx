@@ -92,7 +92,7 @@ export default function PersonnummerLoginModal({
 
         {/* 🕒 CLOCK */}
         <div className="mb-8 text-center  text-teal-800">
-          <div className="text-3xl sm:text-7xl font-[1000] tracking-widest">
+          <div className="text-3xl sm:text-7xl font-[1000]">
             {clockTime}
           </div>
 

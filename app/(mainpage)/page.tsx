@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <main className="bg-linear-to-b from-slate-50 to-white">
       {/* ================= HERO ================= */}
-      <section className="max-w-7xl mx-auto px-6 pt-10 pb-6 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
+      <section className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div>
           {/*  <span className="inline-flex items-center shadow shadow-teal-200 uppercase rounded-full bg-teal-100 px-4 py-1 text-sm font-semibold text-teal-700 mb-5">
@@ -133,28 +133,40 @@ export default function HomePage() {
       </section> */}
 
       {/* ================= COMPANY EXPENSES MARKETING ================= */}
-      <section className="max-w-3xl mx-auto px-4">
-           <div className="flex justify-center relative">
-            <div className="relative w-full">
-              {/* Card */}
-              <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
-                <div className="overflow-hidden bg-white">
-                  <video
-                    src="/restu1.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    controls
-                    className="w-full h-[500px]"
-                  />
-                </div>
-              </div>
-            </div>
+      <section
+  className="max-w-4xl mx-auto px-4 bg-cover bg-center bg-no-repeat py-10 rounded-2xl"
+  style={{ backgroundImage: "url('/img.png')" }}
+>
+  <div className="flex justify-center relative">
+    <div className="relative w-full">
+      {/* Card */}
+      <div className="relative p-8 bg-white rounded-2xl shadow-2xl border border-teal-200 space-y-6">
+        <div className="relative overflow-hidden bg-white rounded-xl">
+          
+          {/* TEXT OVERLAY */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-widest text-white drop-shadow-lg">
+              ARBERDESK
+            </h2>
           </div>
-        
-      </section>
+
+          {/* Video */}
+          <video
+            src="/restu1.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            controls
+            className="w-full h-[500px] object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
       <TailoredSolutionsSection />
       <BookDemoButton />
     </main>
