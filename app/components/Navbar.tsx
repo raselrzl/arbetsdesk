@@ -19,15 +19,15 @@ export default async function Navbar() {
   }
 
   return (
-    <nav className="w-full bg-white shadow-sm shadow-teal-100 px-4 py-3 fixed top-0 z-50">
+    <nav className="w-full bg-[#00687a] shadow-sm shadow-teal-100 px-4 py-3 fixed top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* LOGO */}
-        <div className="text-xl font-bold uppercase text-teal-900">
+        <div className="text-xl font-bold uppercase text-gray-200">
           <Link href="/">Arbets-desk</Link>
         </div>
 
         {/* DESKTOP NAV */}
-        <div className="hidden md:flex items-center gap-3 text-teal-900">
+        <div className="hidden md:flex items-center gap-3 text-gray-200">
           <Dropdown
             label="Features"
             href="/features"
@@ -54,16 +54,16 @@ export default async function Navbar() {
             ]}
           />
 
-          <Link href="/integrations" className="hover:text-teal-700">
+          <Link href="/integrations" className="hover:text-gray-300">
             Integrations
           </Link>
-          <Link href="/pricing" className="hover:text-teal-700">
+          <Link href="/pricing" className="hover:text-gray-300">
             Pricing
           </Link>
-          <Link href="/analytics" className="hover:text-teal-700">
+          <Link href="/analytics" className="hover:text-gray-300">
             Analytics+
           </Link>
-          <Link href="/contact" className="hover:text-teal-700">
+          <Link href="/contact" className="hover:text-gray-300">
             Contact
           </Link>
           {/* User Menu */}
