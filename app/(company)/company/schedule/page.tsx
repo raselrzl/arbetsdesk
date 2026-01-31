@@ -142,18 +142,18 @@ export default function CompanySchedulePage() {
   const minutes = ["00", "15", "30", "45"];
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4">
+    <div className="p-6 mt-20 max-w-7xl mx-auto mb-20">
+      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4 text-center">
         Working Schedule
       </h1>
 
       <ClockDisplay />
 
-      <div className="bg-white p-6 rounded-xs border border-teal-900 space-y-4">
+      <div className="bg-teal-400 p-6 space-y-4 mb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Employees */}
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
+            <label className="flex items-center gap-2 w-40 bg-teal-400 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
               Select Employees
             </label>
             <div className="flex flex-wrap gap-2">
@@ -217,7 +217,7 @@ export default function CompanySchedulePage() {
 
           {/* Start Time */}
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-teal-600 font-medium">
+            <label className="flex items-center gap-2 text-white uppercase font-bold ">
               <Clock className="w-5 h-5" /> Start Time
             </label>
             <div className="flex gap-2 items-center">
@@ -248,7 +248,7 @@ export default function CompanySchedulePage() {
 
           {/* End Time */}
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-teal-600 font-medium">
+            <label className="flex items-center gap-2 text-white uppercase font-bold ">
               <Clock className="w-5 h-5" /> End Time
             </label>
             <div className="flex gap-2 items-center">

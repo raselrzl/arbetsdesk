@@ -16,9 +16,9 @@ export default function ClockDisplay() {
   if (!time) return null; // Don't render anything on the server
 
   return (
-    <div className="flex justify-between w-64 px-3 py-1.5 
-                    bg-teal-900 border border-neutral-800 
-                    rounded-xs text-sm text-neutral-200 ">
+    <div className="flex justify-between max-w-7xl px-3 py-1.5 
+                    bg-teal-900
+                    rounded-xs text-lg text-neutral-200 font-extrabold">
       <span className="font-mono tabular-nums">
         {time.toLocaleTimeString("en-US", { hour12: false })}
       </span>
