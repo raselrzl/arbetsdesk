@@ -57,7 +57,7 @@ export default function IndustriesPage() {
               <h3 className="text-xl font-bold text-[#00687a] mb-3">
                 {item.title}
               </h3>
-              <p className="text-gray-600 flex-grow">{item.desc}</p>
+              <p className="text-gray-600 grow">{item.desc}</p>
 
               <Link
                 href={item.link}
