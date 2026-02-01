@@ -78,7 +78,7 @@ export default function PersonnummerLoginModal({
   return (
     <>
       <div className="fixed inset-0 z-9999 bg-gray-900 flex flex-col items-center justify-center px-4">
-        {/* CLOSE BUTTON */}
+
         <h1 className="absolute top-4 left-4 text-xl sm:text-2xl uppercase font-bold text-gray-100">
           ARBET-DESK
         </h1>
@@ -90,7 +90,7 @@ export default function PersonnummerLoginModal({
           ×
         </button>
 
-        {/* 🕒 CLOCK */}
+    
         <div className="mb-4 text-center  text-gray-100 pt-16">
           <div className="text-5xl font-bold">{clockTime}</div>
 
@@ -101,7 +101,7 @@ export default function PersonnummerLoginModal({
         </div>
 
         <div className="w-sm shadow-lg shadow-gray-800 mb-20">
-          {/* INPUT */}
+        
           <input
             className="w-full max-w-lg mb-2 bg-white px-3 py-3 h-16 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
             placeholder="YYYYMMDDXXXX"
@@ -109,7 +109,7 @@ export default function PersonnummerLoginModal({
             readOnly
           />
 
-          {/* KEYPAD */}
+          
           <div className="grid grid-cols-3 gap-2 w-full max-w-lg">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
               <button
@@ -153,7 +153,7 @@ export default function PersonnummerLoginModal({
             </button>
           </div>
 
-          {/* ENTER BUTTON */}
+      
           <button
             onClick={submitLogin}
             disabled={loading || personalNumber.length < 12}
@@ -168,7 +168,7 @@ export default function PersonnummerLoginModal({
         </div>
       </div>
 
-      {/* Show Early Login choice only if authResult is null */}
+    
       {earlyLoginData && !authResult && (
         <EarlyLoginChoicePopup
           employeeName={earlyLoginData.employeeName}
@@ -203,7 +203,7 @@ export default function PersonnummerLoginModal({
         />
       )}
 
-      {/* Show AuthStatusPopup only if earlyLoginData is null */}
+    
       {authResult && !earlyLoginData && (
         <AuthStatusPopup
           status={authResult.status}
