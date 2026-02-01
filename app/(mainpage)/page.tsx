@@ -128,7 +128,7 @@ export default function HomePage() {
           <div className="flex justify-center relative">
             <div className="relative w-full">
               {/* Card */}
-              <div className="relative p-4 bg-black rounded-2xl shadow-2xl space-y-6">
+              <div className="relative  bg-[#00687a] rounded-2xl shadow-2xl shadow-[#00687a] space-y-6">
                 <div className="relative overflow-hidden bg-white rounded-xl">
                   {/* TEXT OVERLAY */}
                   <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
