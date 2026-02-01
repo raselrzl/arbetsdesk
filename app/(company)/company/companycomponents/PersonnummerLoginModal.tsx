@@ -77,7 +77,7 @@ export default function PersonnummerLoginModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-9999 bg-gray-900 w-screen flex flex-col items-center px-4">
+      <div className="fixed inset-0 z-9999 bg-gray-900 w-screen h-screen flex flex-col items-center px-4">
         {/* CLOSE BUTTON */}
         <h1 className="absolute top-4 left-4 text-xl sm:text-2xl uppercase font-bold text-gray-100">
           ARBET-DESK
@@ -100,7 +100,7 @@ export default function PersonnummerLoginModal({
           <div className="mt-2 text-xl font-semibold text-center"></div>
         </div>
 
-        <div className="max-w-xl w-sm sm:w-lg shadow-lg shadow-gray-800 p-2">
+        <div className="max-w-xl w-sm sm:w-lg shadow-lg shadow-gray-800 p-2 mb-10">
           {/* INPUT */}
           <input
             className="w-full max-w-lg mb-4 border border-teal-300 bg-white px-3 py-3 h-16 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
