@@ -10,7 +10,7 @@ export function HomeLoginButton() {
   return (
     <Button
       type="submit"
-      className="bg-teal-900 flex items-center justify-center gap-2 h-12 border rounded-xs"
+      className="bg-[#00687a] hover:bg-teal-700 cursor-pointer flex items-center justify-center gap-2 h-12 border rounded-full "
       disabled={pending}
     >
       {pending ? (

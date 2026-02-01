@@ -29,7 +29,7 @@ export default function LoginForm() {
   // shared 4-digit PIN (USER / COMPANY / EMPLOYEE)
   const [pinDigits, setPinDigits] = useState(["", "", "", ""]);
   const pinRefs = Array.from({ length: 4 }, () =>
-    useRef<HTMLInputElement>(null)
+    useRef<HTMLInputElement>(null),
   );
   const pinValue = pinDigits.join("");
 
@@ -65,7 +65,7 @@ export default function LoginForm() {
             value={d}
             maxLength={1}
             onChange={(e) => handlePinChange(i, e.target.value)}
-            className="w-12 h-12 text-center bg-white text-black"
+            className="w-12 h-12 text-center bg-white text-black rounded-xs border-teal-300"
           />
         ))}
       </div>
@@ -73,60 +73,59 @@ export default function LoginForm() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-white">
-      <div className="w-full max-w-md bg-teal-900 p-8 shadow-md rounded-xs">
-        <h1 className="text-4xl font-extrabold uppercase mb-10 text-center text-white">
-          Login
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#00687a]">
+      <div className="w-full max-w-md bg-white p-8 shadow-md rounded-3xl">
+        <h1 className="text-4xl font-extrabold uppercase mb-10 text-center text-[#00687a]">
+          arbets-desk
         </h1>
 
         {/* TABS */}
-       <div className="flex mb-6 rounded overflow-hidden border border-gray-100">
-  {(["ADMIN", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map((t) => (
-    <button
-      key={t}
-      type="button"
-      onClick={() => setTab(t)}
-      className={`flex-1 py-2 text-sm font-bold transition
+        <div className="flex mb-6 rounded-xs overflow-hidden border border-teal-300">
+          {(["ADMIN", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map(
+            (t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={`flex-1 py-2 text-sm font-bold transition
         ${
           tab === t
-            ? "bg-teal-900 text-white"
-            : "bg-teal-600 text-teal-100 hover:bg-teal-700"
+            ? "bg-[#00687a] text-gray-100"
+            : "bg-teal-400 text-teal-100 hover:bg-teal-700"
         }`}
-    >
-      {t}
-    </button>
-  ))}
-</div>
-{!tab && (
-  <p className="text-center text-teal-100 text-sm">
-    Please select a login type above
-  </p>
-)}
-
-
+              >
+                {t}
+              </button>
+            ),
+          )}
+        </div>
+        {!tab && (
+          <p className="text-center text-[#00687a] text-sm">
+            Please select a role.
+          </p>
+        )}
 
         {/* ================= USER LOGIN ================= */}
         {tab === "ADMIN" && (
           <form action={loginUserAction} className="grid gap-6">
             <div>
-              <Label className="text-white mb-2">Personal Number</Label>
+              <Label className="text-[#00687a] mb-2">Personal Number</Label>
               <Input
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-               className="bg-white text-black text-center h-12"
+                className="bg-white text-black text-center h-12 rounded-xs border-teal-300"
                 placeholder="YYYYMMDDXXXX"
-                
               />
             </div>
 
-            <div>
-              <Label className="text-white">PIN</Label>
+            <div className="">
+              <Label className="text-[#00687a]">PIN</Label>
               {PinInput}
-              <input type="hidden" name="pinNumber" value={pinValue} />
+              <input type="hidden" name="pinNumber" value={pinValue}/>
             </div>
 
-            <Button className="bg-teal-900 border h-12">
+            <Button className="bg-[#00687a] border h-12 rounded-full ">
               Login <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </form>
@@ -136,12 +135,12 @@ export default function LoginForm() {
         {tab === "COMPANY" && (
           <form action={loginCompanyAction} className="grid gap-6">
             <div>
-              <Label className="text-white mb-2">Organization Number</Label>
+              <Label className="text-[#00687a] mb-2">Organization Number</Label>
               <Input
                 name="organizationNo"
                 value={organizationNo}
                 onChange={(e) => setOrganizationNo(e.target.value)}
-                className="bg-white text-black text-center h-12"
+                className="bg-white text-black text-center h-12 rounded-xs border-teal-300"
                 placeholder=""
               />
             </div>
@@ -165,7 +164,7 @@ export default function LoginForm() {
                 name="personalNumber"
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
-                className="bg-white text-black text-center h-12"
+                className="bg-white text-black text-center h-12 border border-teal-300 rounded-xs"
                 placeholder="YYYYMMDDXXXX"
               />
             </div>
@@ -173,16 +172,15 @@ export default function LoginForm() {
             <div>
               <Label className="text-white">PIN</Label>
               {PinInput}
-              <input type="hidden" name="pinCode" value={pinValue} />
+              <Input type="hidden" name="pinCode" value={pinValue}/>
             </div>
 
             <HomeLoginButton />
           </form>
         )}
-      </div>
-
-      <div className="w-full max-w-md p-2 mt-6 text-sm text-teal-100 text-center bg-teal-900 rounded-xs ">
-        If you are have problem with login, Contact us
+        <div className="w-full max-w-md p-2 mt-8 text-sm text-teal-800 text-center">
+          If you are have problem with login, Contact us
+        </div>
       </div>
     </div>
   );
