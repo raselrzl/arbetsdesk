@@ -73,7 +73,7 @@ export default function HomePage() {
                         className="object-contain"
                       />
                     </div>
-                    <span className="text-sm text-gray-600 text-center">
+                    <span className="text-sm text-[#00687a] text-center">
                       Daily Expenses
                     </span>
                   </div>
@@ -87,7 +87,7 @@ export default function HomePage() {
                         className="object-contain"
                       />
                     </div>
-                    <span className="text-sm text-gray-600 text-center">
+                    <span className="text-sm text-[#00687a] text-center">
                       Budget Overview
                     </span>
                   </div>
@@ -101,13 +101,13 @@ export default function HomePage() {
                         className="object-contain"
                       />
                     </div>
-                    <span className="text-sm text-gray-600 text-center">
+                    <span className="text-sm text-[#00687a] text-center">
                       Reports & Insights
                     </span>
                   </div>
                 </div>
 
-                <p className="text-center text-gray-500">
+                <p className="text-center text-teal-500">
                   Simplify expense tracking, categorize spending easily, and get
                   instant insights for smarter business decisions.
                 </p>

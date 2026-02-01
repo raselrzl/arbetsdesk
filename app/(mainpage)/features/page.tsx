@@ -65,7 +65,7 @@ export default function FeaturesPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.7 }}
-            className="text-3xl font-extrabold text-teal-900 mb-4 uppercase"
+            className="text-3xl font-extrabold text-[#00687a] mb-4 uppercase"
           >
             Arbetsdesk Features
           </motion.h2>
@@ -75,7 +75,7 @@ export default function FeaturesPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ delay: 0.2, duration: 0.7 }}
-            className="text-lg text-gray-700 mt-2 mb-10"
+            className="text-lg text-teal-700 mt-2 mb-10"
           >
             Discover the tools that power smart workforce management.
           </motion.p>
@@ -94,7 +94,7 @@ export default function FeaturesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.05 }}
-                className="bg-teal-900 border border-teal-950 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition"
+                className="bg-[#00687a] border border-teal-950 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition"
               >
                 <Link
                   href={feature.href}
@@ -130,27 +130,27 @@ export default function FeaturesPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className=" bg-teal-100 px-6 py-14 text-center shadow-lg"
+        className=" bg-[#00687a] px-6 py-14 text-center shadow-lg"
       >
-        <h3 className="text-3xl uppercase font-extrabold text-teal-900 mb-4">
+        <h3 className="text-3xl uppercase font-extrabold text-gray-200 mb-4">
           Ready to simplify your workforce management?
         </h3>
 
         <Link
           href="/book-demo"
-          className="inline-flex items-center gap-2 my-6 bg-white border border-teal-400 text-teal-900 font-semibold px-8 py-4 rounded-full hover:bg-teal-100 transition shadow-md"
+          className="inline-flex items-center gap-2 my-6 bg-gray-100 border border-teal-300 text-teal-900 font-semibold px-8 py-4 rounded-full hover:bg-teal-100 transition shadow-md"
         >
           Book a demo now
           <ChevronRight className="w-5 h-5" />
         </Link>
 
-        <p className="text-teal-800 max-w-2xl mx-auto mb-8 text-lg">
+        <p className="text-gray-100 max-w-2xl mx-auto mb-8 text-lg">
           Arbetsdesk helps you save time, reduce errors, and gain full control
           over scheduling, time tracking, payroll, and communication all in
           one platform. Book a demo and see how it works for your business.
         </p>
 
-        <p className="text-sm text-teal-800 mt-4 border-t">
+        <p className="text-sm text-gray-900 mt-4 border-t">
           No commitment • Free walkthrough • Tailored to your company
         </p>
       </motion.div>
