@@ -40,7 +40,7 @@ export default function EarlyLoginChoicePopup({
 
   return (
     <div className="fixed inset-0 z-9999 bg-black/50 flex items-center justify-center">
-      <div className="relative bg-white max-w-[250px] h-[260px] rounded-xs shadow-xl text-center p-6 border-t-8 border-teal-800">
+      <div className="relative bg-white max-w-[250px] h-[260px] rounded-xl shadow-xl text-center p-6 border-t-12 border-teal-800">
         
         {/* Close button */}
         <button
@@ -51,16 +51,16 @@ export default function EarlyLoginChoicePopup({
           x
         </button>
 
-        <h2 className="text-lg font-bold mb-1 uppercase">Hi, {employeeName}</h2>
+        <h2 className="text-xl font-bold mb-1 uppercase">Hi, {employeeName}</h2>
 
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-teal-600 my-4">
           Your shift starts at <b>{formatTime(schedule.startTime)}</b>
         </p>
 
         <button
           onClick={handleStartNow}
           disabled={!!loading}
-          className={`w-full py-3 font-bold mt-10 mb-2 text-white ${
+          className={`w-full py-2 font-bold mt-10 mb-2 text-white ${
             loading === "now"
               ? "bg-teal-400 cursor-not-allowed"
               : "bg-teal-800 hover:bg-teal-700"
@@ -72,7 +72,7 @@ export default function EarlyLoginChoicePopup({
         <button
           onClick={handleStartAtSchedule}
           disabled={!!loading}
-          className={`w-full py-3 font-bold ${
+          className={`w-full py-2 font-bold ${
             loading === "scheduled"
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-gray-200 hover:bg-gray-300"

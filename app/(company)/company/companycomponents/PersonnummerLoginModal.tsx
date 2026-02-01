@@ -77,10 +77,11 @@ export default function PersonnummerLoginModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-9999 bg-white w-screen h-screen flex flex-col items-center justify-center px-4">
-        
-          {/* CLOSE BUTTON */}
-        <h1 className="absolute top-4 left-4 text-xl sm:text-2xl uppercase font-bold text-teal-800">ARBET-DESK</h1>
+      <div className="fixed inset-0 z-9999 bg-gray-900 w-screen flex flex-col items-center px-4">
+        {/* CLOSE BUTTON */}
+        <h1 className="absolute top-4 left-4 text-xl sm:text-2xl uppercase font-bold text-gray-100">
+          ARBET-DESK
+        </h1>
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-xl font-bold text-gray-300 hover:text-white"
@@ -88,84 +89,83 @@ export default function PersonnummerLoginModal({
         >
           ×
         </button>
-   
 
         {/* 🕒 CLOCK */}
-        <div className="mb-8 text-center  text-teal-800">
-          <div className="text-3xl sm:text-7xl font-[1000]">
-            {clockTime}
-          </div>
+        <div className="mb-8 text-center  text-gray-100 pt-16">
+          <div className="text-6xl sm:text-7xl font-[1000]">{clockTime}</div>
 
-          <div className="text-md text-teal-800 text-right">
+          <div className="text-md text-gray-400 text-center">
             {dayName}, <span className="mr-2">{fullDate}</span>
           </div>
-          <div className="mt-2 text-xl font-semibold text-right"></div>
+          <div className="mt-2 text-xl font-semibold text-center"></div>
         </div>
 
-        {/* INPUT */}
-        <input
-          className="w-full max-w-sm mb-4 border border-teal-300 bg-white px-3 py-3 h-14 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
-          placeholder="YYYYMMDDXXXX"
-          value={personalNumber}
-          readOnly
-        />
+        <div className="max-w-xl w-sm sm:w-lg shadow-lg shadow-gray-800 p-2">
+          {/* INPUT */}
+          <input
+            className="w-full max-w-lg mb-4 border border-teal-300 bg-white px-3 py-3 h-16 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
+            placeholder="YYYYMMDDXXXX"
+            value={personalNumber}
+            readOnly
+          />
 
-        {/* KEYPAD */}
-        <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          {/* KEYPAD */}
+          <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+              <button
+                key={num}
+                disabled={loading}
+                onClick={() => {
+                  if (personalNumber.length < 12)
+                    setPersonalNumber(personalNumber + num);
+                }}
+                className="h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
+              >
+                {num}
+              </button>
+            ))}
+
             <button
-              key={num}
+              disabled={loading}
+              onClick={() => setPersonalNumber("")}
+              className="h-20 bg-red-500 text-xl font-bold text-white hover:bg-red-600 transition flex items-center justify-center disabled:opacity-50"
+            >
+              C
+            </button>
+
+            <button
               disabled={loading}
               onClick={() => {
                 if (personalNumber.length < 12)
-                  setPersonalNumber(personalNumber + num);
+                  setPersonalNumber(personalNumber + "0");
               }}
-              className="h-16 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
+              className="h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
             >
-              {num}
+              0
             </button>
-          ))}
 
-          <button
-            disabled={loading}
-            onClick={() => setPersonalNumber("")}
-            className="h-16 bg-red-500 text-xl font-bold text-white hover:bg-red-600 transition flex items-center justify-center disabled:opacity-50"
-          >
-            C
-          </button>
+            <button
+              disabled={loading}
+              onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
+              className="h-20 bg-yellow-400 text-xl font-bold hover:bg-yellow-500 transition flex items-center justify-center disabled:opacity-50"
+            >
+              ×
+            </button>
+          </div>
 
+          {/* ENTER BUTTON */}
           <button
-            disabled={loading}
-            onClick={() => {
-              if (personalNumber.length < 12)
-                setPersonalNumber(personalNumber + "0");
-            }}
-            className="h-16 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
+            onClick={submitLogin}
+            disabled={loading || personalNumber.length < 12}
+            className="mt-4 bg-teal-600 py-6 text-white text-xl uppercase font-bold hover:bg-teal-700 transition w-full max-w-lg flex items-center justify-center disabled:opacity-70"
           >
-            0
-          </button>
-
-          <button
-            disabled={loading}
-            onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
-            className="h-16 bg-yellow-400 text-xl font-bold hover:bg-yellow-500 transition flex items-center justify-center disabled:opacity-50"
-          >
-            ×
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              "Login / Logout"
+            )}
           </button>
         </div>
-
-        {/* ENTER BUTTON */}
-        <button
-          onClick={submitLogin}
-          disabled={loading || personalNumber.length < 12}
-          className="mt-4 bg-teal-600 py-4 text-white text-xl uppercase font-bold hover:bg-teal-700 transition w-full max-w-sm flex items-center justify-center disabled:opacity-70"
-        >
-          {loading ? (
-            <Loader2 className="w-6 h-6 animate-spin" />
-          ) : (
-            "Login / Logout"
-          )}
-        </button>
       </div>
 
       {/* Show Early Login choice only if authResult is null */}
