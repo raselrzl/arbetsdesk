@@ -14,7 +14,7 @@ export default function MobileMenu({ user }: { user: any }) {
   const handleLinkClick = () => setOpen(false);
 
   return (
-    <div className="md:hidden flex items-center gap-2">
+    <div className="md:hidden flex items-center gap-2 text-gray-100">
       {/* Hamburger Button */}
       <button
         onClick={() => setOpen(!open)}
@@ -25,7 +25,7 @@ export default function MobileMenu({ user }: { user: any }) {
 
       {/* Dropdown Menu */}
       {open && (
-        <div className="fixed top-[60px] left-0 right-0 bg-white shadow-md p-4 flex flex-col gap-2 z-50 max-h-[80vh] overflow-y-auto text-teal-900">
+        <div className="fixed top-[60px] left-0 right-0 bg-[#00687a] shadow-md p-4 flex flex-col gap-2 z-50 max-h-[80vh] overflow-y-auto text-gray-100">
           <Link
             href="/features"
             className="py-2 border-b"
@@ -85,7 +85,7 @@ export default function MobileMenu({ user }: { user: any }) {
             })
           }
           disabled={isPending}
-          className="py-1 px-3 bg-teal-900 text-white rounded-3xl hover:bg-teal-700 text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+          className="py-1 px-4 shadow shadow-teal-100 text-gray-100 uppercase font-semibold rounded-3xl hover:bg-teal-700 text-xs flex items-center justify-center gap-2 disabled:opacity-60"
         >
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Login"}
         </button>

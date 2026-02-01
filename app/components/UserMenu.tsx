@@ -22,7 +22,7 @@ export default function UserMenu({
           })
         }
         disabled={isPending}
-        className="flex items-center justify-center gap-2 w-20 h-8 hover:text-white bg-teal-900 text-white font-bold px-4 py-1 rounded-3xl disabled:opacity-60"
+        className="flex items-center justify-center gap-2 w-24 h-8 hover:shadow-xs cursor-pointer hover:text-gray-300 shadow shadow-teal-100 uppercase text-gray-100 font-bold px-4 py-1 rounded-3xl disabled:opacity-60"
       >
         {isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -41,7 +41,7 @@ export default function UserMenu({
       <form action={logoutUserAction}>
         <button
           type="submit"
-          className="hover:text-white bg-red-600 text-white font-bold px-4 py-1 rounded-2xl"
+          className="hover:text-white bg-red-600 text-white uppercase font-bold px-4 py-1 rounded-2xl"
         >
           Logout
         </button>

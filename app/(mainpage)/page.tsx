@@ -10,30 +10,39 @@ import { TrustBenefitsSection } from "../components/TrustBenefitsSection";
 export default function HomePage() {
   return (
     <main className="bg-linear-to-b from-slate-50 to-white">
-      <section className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
+      <section className="max-w-7xl mx-auto sm:py-16 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
-        <div>
-          <h1 className="text-3xl mt-20 font-extrabold text-teal-900 leading-snug mb-6 uppercase text-center">
+        <div
+          className="
+     py-10 px-4
+    bg-[url('/img5.png')] bg-cover bg-center bg-no-repeat
+    sm:bg-none
+  "
+        >
+          <h1 className="text-3xl mt-10 sm:mt-20 font-extrabold text-[#00687a] leading-snug mb-6 uppercase text-right sm:text-left">
             Manage your workforce <br />
-            <span className="text-teal-600">smarter and faster</span>
+            <span className="text-teal-600">
+              smarter and <br className="block sm:hidden" />
+              faster
+            </span>
           </h1>
 
-          <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-8 text-center">
+          <p className="text-[#00687a] text-base sm:text-lg max-w-xl uppercase font-semibold mb-8 text-right mt-5 sm:text-left mx-auto">
             Arbets-desk helps companies track time, manage schedules, payroll,
             and employees all from one powerful, easy-to-use platform.
           </p>
 
-          <div className="flex flex-wrap gap-4 items-center justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Link
               href="/book-demo"
-              className="bg-teal-900 hover:bg-teal-700 text-white px-6 py-3 rounded-full font-semibold shadow-md transition"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-6 w-48 py-2 sm:py-3 text-center rounded-full font-semibold shadow-md transition"
             >
               Get Started Free
             </Link>
 
             <Link
               href="/features"
-              className="border border-teal-300 hover:border-teal-100 px-6 py-3 rounded-full font-semibold text-gray-700 hover:text-teal-600 transition"
+              className="border border-teal-300 hover:border-teal-100 px-6 py-2 text-center sm:py-3 w-48  rounded-full font-semibold text-gray-700 hover:text-teal-600 transition"
             >
               View Features
             </Link>
@@ -41,7 +50,7 @@ export default function HomePage() {
         </div>
 
         {/* Right */}
-        <div className="relative flex justify-center mt-20 pb-6">
+        <div className="relative flex justify-center mt-20 pb-6 px-3">
           <div className="flex justify-center relative">
             <div className="relative w-full max-w-md">
               <div className="absolute -bottom-10 -right-10 w-48 h-48 opacity-40 pointer-events-none">

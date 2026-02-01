@@ -19,7 +19,7 @@ export default async function Navbar() {
   }
 
   return (
-    <nav className="w-full bg-[#00687a] shadow-sm shadow-teal-100 px-4 py-3 fixed top-0 z-50">
+    <nav className="w-full bg-[#00687a] sm:shadow-md shadow-teal-100 px-4 py-3 fixed top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* LOGO */}
         <div className="text-xl font-bold uppercase text-gray-200">

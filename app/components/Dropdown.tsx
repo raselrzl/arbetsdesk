@@ -29,12 +29,12 @@ export default function Dropdown({ label, href, items }: DropdownProps) {
         {href ? (
           <Link
             href={href}
-            className="hover:text-gray-700 flex items-center gap-1"
+            className="hover:text-gray-300 flex items-center gap-1"
           >
             {label}
           </Link>
         ) : (
-          <span className="hover:text-gray-700 flex items-center gap-1">
+          <span className="hover:text-gray-300 flex items-center gap-1">
             {label}
           </span>
         )}
@@ -55,7 +55,7 @@ export default function Dropdown({ label, href, items }: DropdownProps) {
             <Link
               key={itemHref}
               href={itemHref}
-              className="block px-4 py-2 hover:bg-teal-100"
+              className="block px-4 py-2 hover:bg-teal-100 text-[#00687a]"
               onClick={() => setOpen(false)}
             >
               {itemLabel}
