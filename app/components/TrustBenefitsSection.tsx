@@ -1,17 +1,11 @@
 "use client";
 
 import React from "react";
-import {
-  ShieldCheck,
-  CreditCard,
-  Wrench,
-  LifeBuoy,
-  Clock,
-} from "lucide-react";
+import Image from "next/image";
 
 export const TrustBenefitsSection: React.FC = () => {
   return (
-    <section className="max-w-7xl mx-auto py-16">
+    <section className="max-w-7xl mx-auto py-8 sm:py-16">
       <div
         className="
           max-w-7xl mx-auto px-6 md:px-12
@@ -22,27 +16,27 @@ export const TrustBenefitsSection: React.FC = () => {
       >
         {/* Item */}
         <div className="flex gap-2 items-center whitespace-nowrap text-teal-900">
-          <Clock size={20} />
+          <Image src="/icons/1.png" alt="No Binding Period" width={20} height={20} />
           <h4 className="font-medium">No Binding Period</h4>
         </div>
 
         <div className="flex gap-2 items-center whitespace-nowrap text-teal-900">
-          <ShieldCheck size={20} />
+          <Image src="/icons/2.png" alt="Secure System" width={20} height={20} />
           <h4 className="font-medium">Secure System</h4>
         </div>
 
         <div className="flex gap-2 items-center whitespace-nowrap text-teal-900">
-          <CreditCard size={20} />
+          <Image src="/icons/3.png" alt="No Credit Card Required" width={20} height={20} />
           <h4 className="font-medium">No Credit Card Required</h4>
         </div>
 
         <div className="flex gap-2 items-center whitespace-nowrap text-teal-900">
-          <Wrench size={20} />
+          <Image src="/icons/4.png" alt="Easy Installation" width={20} height={20} />
           <h4 className="font-medium">Easy Installation</h4>
         </div>
 
         <div className="flex gap-2 items-center whitespace-nowrap text-teal-900">
-          <LifeBuoy size={20} />
+          <Image src="/icons/5.png" alt="Free Support" width={20} height={20} />
           <h4 className="font-medium">Free Support</h4>
         </div>
       </div>

@@ -13,7 +13,7 @@ export default function BookDemoButton() {
     >
       <Link
         href="/book-demo"
-        className="bg-teal-400 hover:bg-teal-700 border border-white text-teal-900 px-3 py-2 rounded-full text-xs font-semibold shadow shadow-white transition flex items-center gap-2"
+        className="bg-[#00687a] hover:bg-[#0b8095] text-gray-100 border border-white px-5 py-3 rounded-full text-xs font-semibold shadow shadow-teal-200 transition flex items-center gap-2"
       >
         Book a Demo
       </Link>

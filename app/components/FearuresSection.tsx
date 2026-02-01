@@ -15,7 +15,7 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 px-4 bg-slate-50 border-t border-teal-100">
+    <section className=" px-4 bg-[#00687a]">
       <div className="max-w-7xl mx-auto">
         {/* Grid */}
         <motion.div
@@ -63,7 +63,7 @@ export function FeaturesSection() {
                 className="mt-5 text-center text-sm md:text-base font-semibold
                            text-teal-300 hover:text-white transition-colors"
               >
-                Learn more →
+                Learn more ➠
               </Link>
             </motion.div>
           ))}

@@ -9,8 +9,8 @@ import { TrustBenefitsSection } from "../components/TrustBenefitsSection";
 
 export default function HomePage() {
   return (
-    <main className="bg-linear-to-b from-slate-50 to-white">
-      <section className="max-w-7xl mx-auto sm:py-16 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
+    <main className=" bg-white ">
+      <section className="max-w-7xl mx-auto sm:pt-10 2xl:py-20 grid lg:grid-cols-2 gap-1 md:gap-10 items-center">
         {/* Left */}
         <div
           className="
@@ -19,7 +19,7 @@ export default function HomePage() {
     sm:bg-none
   "
         >
-          <h1 className="text-3xl mt-10 sm:mt-20 font-extrabold text-[#00687a] leading-snug mb-6 uppercase text-right sm:text-left">
+          <h1 className="text-3xl mt-10 sm:mt-20 font-extrabold text-[#00687a] leading-snug mb-6 uppercase text-right sm:text-center">
             Manage your workforce <br />
             <span className="text-teal-600">
               smarter and <br className="block sm:hidden" />
@@ -27,7 +27,7 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <p className="text-[#00687a] text-base sm:text-lg max-w-xl uppercase font-semibold mb-8 text-right mt-5 sm:text-left mx-auto">
+          <p className="text-teal-900 text-base sm:text-lg max-w-xl font-semibold mb-8 text-right mt-5 sm:text-center mx-auto">
             Arbets-desk helps companies track time, manage schedules, payroll,
             and employees all from one powerful, easy-to-use platform.
           </p>
@@ -35,7 +35,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Link
               href="/book-demo"
-              className="bg-teal-600 hover:bg-teal-700 text-white px-6 w-48 py-2 sm:py-3 text-center rounded-full font-semibold shadow-md transition"
+              className="bg-[#00687a] hover:bg-teal-800 text-white px-6 w-48 py-2 sm:py-3 text-center rounded-full font-semibold shadow-md transition"
             >
               Get Started Free
             </Link>
@@ -128,7 +128,7 @@ export default function HomePage() {
           <div className="flex justify-center relative">
             <div className="relative w-full">
               {/* Card */}
-              <div className="relative p-4 bg-black rounded-2xl shadow-2xl border border-teal-200 space-y-6">
+              <div className="relative p-4 bg-black rounded-2xl shadow-2xl space-y-6">
                 <div className="relative overflow-hidden bg-white rounded-xl">
                   {/* TEXT OVERLAY */}
                   <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
