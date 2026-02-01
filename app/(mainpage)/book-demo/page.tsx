@@ -107,10 +107,10 @@ export default function BookDemoPopup() {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 sm:p-6">
+    <div className="fixed inset-0 bg-[#00687a]/80 flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg">
         {/* HEADING */}
-        <div className="w-full bg-teal-600 text-white text-center py-4 sm:py-6 uppercase text-xl sm:text-2xl font-bold">
+        <div className="w-full bg-[#00687a] text-white text-center py-4 sm:py-6 uppercase text-xl sm:text-2xl font-bold">
           ARBET DESK
           <br />
           <span className="text-sm font-normal capitalize border-t border-teal-100 mt-2 block pt-1">
@@ -146,9 +146,9 @@ export default function BookDemoPopup() {
                   disabled={!isCompleted && stepNum !== step}
                   className={`flex-1 px-2 py-1 text-sm sm:text-base font-medium border border-teal-100 ${
                     stepNum === step
-                      ? "bg-teal-600 text-white"
+                      ? "bg-[#00687a] text-gray-100"
                       : isCompleted
-                        ? "bg-teal-100 text-teal-700"
+                        ? "bg-[#00687a] text-teal-200"
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }`}
                 >
@@ -164,7 +164,7 @@ export default function BookDemoPopup() {
               type="text"
               value={trainingType}
               disabled
-              className="border border-teal-100 p-2 w-full font-bold bg-teal-100 text-teal-700 cursor-not-allowed"
+              className="border border-teal-100 p-2 w-full font-bold bg-[#00687a] text-gray-100 cursor-not-allowed"
             />
           )}
 
@@ -203,7 +203,7 @@ export default function BookDemoPopup() {
                       onClick={() => setSelectedTime(time)}
                       className={`px-2 py-1 text-sm sm:text-base border border-teal-100 ${
                         selectedTime === time
-                          ? "bg-teal-600 text-white border-teal-600"
+                          ? "bg-[#00687a] text-white border-teal-600"
                           : disabled
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : "bg-white hover:border-teal-400"
@@ -349,7 +349,7 @@ export default function BookDemoPopup() {
               <button
                 onClick={nextStep}
                 disabled={!isStepValid()}
-                className="px-4 py-2 bg-teal-600 text-white hover:bg-teal-700 w-full sm:w-auto disabled:opacity-50"
+                className="px-4 py-2 bg-[#00687a] text-white hover:bg-[#00687a]/80 w-full sm:w-auto disabled:opacity-50"
               >
                 Next
               </button>
