@@ -30,7 +30,7 @@ export default function MobileBottomNavCompany() {
 
 
   return (
-   <div className="fixed bottom-0 left-0 w-full bg-white border-t border-t-teal-600/20 shadow-md lg:hidden overflow-x-auto scrollbar-hide">
+   <div className="fixed bottom-0 left-0 w-full bg-[#00687a] text-gray-100 border-t border-t-teal-600/20 shadow-md lg:hidden overflow-x-auto scrollbar-hide">
    <div className="flex justify-between min-w-max px-2">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -40,7 +40,7 @@ export default function MobileBottomNavCompany() {
               key={href}
               href={href}
               className={`flex flex-col items-center justify-center flex-1 py-2 px-3 ${
-                active ? "text-teal-600" : "text-gray-600"
+                active ? "text-teal-400" : "text-gray-100"
               }`}
             >
               <Icon className="w-6 h-6" />

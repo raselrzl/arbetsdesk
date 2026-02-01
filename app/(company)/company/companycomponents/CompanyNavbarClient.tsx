@@ -42,7 +42,7 @@ export default function CompanyNavbarClient({
 
   return (
     <>
-      <nav className="w-full bg-teal-900 px-4 fixed top-0 z-50 shadow-md text-white">
+      <nav className="w-full bg-[#00687a] px-4 fixed top-0 z-50 shadow-md text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
           <div className="flex items-center gap-3 h-full">
             <div
@@ -134,7 +134,7 @@ function NavItem({ href, label, icon: Icon, pathname }: NavItemProps) {
     <Link
       href={href}
       className={`flex items-center gap-2 px-3 transition-colors h-14
-        ${isActive ? "bg-teal-700" : "hover:text-gray-300"}`}
+        ${isActive ? "bg-white text-[#00687a]" : "hover:text-gray-300"}`}
     >
       <Icon className="w-4 h-4" /> {label}
     </Link>
