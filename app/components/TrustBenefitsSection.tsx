@@ -9,7 +9,7 @@ export const TrustBenefitsSection: React.FC = () => {
       <div
         className="
           max-w-7xl mx-auto px-6 md:px-12
-          flex flex-col md:flex-row
+          flex flex-col sm:flex-wrap sm:flex-row
           items-center justify-center
           gap-6
         "
