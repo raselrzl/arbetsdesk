@@ -74,13 +74,19 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#00687a]">
-      <div className="w-full max-w-md bg-white p-8 shadow-md rounded-3xl">
-        <h1 className="text-4xl font-extrabold uppercase mb-10 text-center text-[#00687a]">
+      <div
+  className="
+    w-full max-w-md p-16 shadow-md rounded-3xl
+    bg-[url('/img1.png')] bg-cover bg-center bg-no-repeat
+  "
+>
+
+        <h1 className="text-4xl font-extrabold uppercase mb-6 pb-3 text-center text-gray-100">
           arbets-desk
         </h1>
 
         {/* TABS */}
-        <div className="flex mb-6 rounded-xs overflow-hidden border border-teal-300">
+        <div className="flex mb-6 rounded-xs overflow-hidden mt-10">
           {(["ADMIN", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map(
             (t) => (
               <button
