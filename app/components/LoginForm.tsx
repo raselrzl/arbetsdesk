@@ -85,7 +85,7 @@ export default function LoginForm() {
         </h1>
 
         {/* TABS */}
-        <div className="flex mb-6 rounded-xs overflow-hidden mt-10">
+        <div className="flex mb-6 rounded-full overflow-hidden mt-10">
           {(["ADMIN", "COMPANY", "EMPLOYEE"] as Exclude<Tab, null>[]).map(
             (t) => (
               <button
