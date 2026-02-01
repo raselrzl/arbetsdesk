@@ -77,7 +77,7 @@ export default function PersonnummerLoginModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-9999 bg-gray-900 w-screen h-screen flex flex-col items-center px-4">
+      <div className="fixed inset-0 z-9999 bg-gray-900 w-screen h-screen flex flex-col items-center justify-center px-4">
         {/* CLOSE BUTTON */}
         <h1 className="absolute top-4 left-4 text-xl sm:text-2xl uppercase font-bold text-gray-100">
           ARBET-DESK
@@ -100,10 +100,10 @@ export default function PersonnummerLoginModal({
           <div className="mt-2 text-xl font-semibold text-center"></div>
         </div>
 
-        <div className="max-w-xl w-sm sm:w-lg shadow-lg shadow-gray-800 p-2 mb-10">
+        <div className="max-w-xl w-sm sm:w-lg shadow-lg shadow-gray-800 p-2 mb-20">
           {/* INPUT */}
           <input
-            className="w-full max-w-lg mb-4 border border-teal-300 bg-white px-3 py-3 h-16 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
+            className="w-full max-w-lg mb-4 border border-teal-300 bg-white px-3 py-3 h-16 sm:h-20 text-center text-lg font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-teal-400"
             placeholder="YYYYMMDDXXXX"
             value={personalNumber}
             readOnly
@@ -119,7 +119,7 @@ export default function PersonnummerLoginModal({
                   if (personalNumber.length < 12)
                     setPersonalNumber(personalNumber + num);
                 }}
-                className="h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
+                className="h-16 sm:h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
               >
                 {num}
               </button>
@@ -128,7 +128,7 @@ export default function PersonnummerLoginModal({
             <button
               disabled={loading}
               onClick={() => setPersonalNumber("")}
-              className="h-20 bg-red-500 text-xl font-bold text-white hover:bg-red-600 transition flex items-center justify-center disabled:opacity-50"
+              className="h-16 sm:h-20 bg-red-500 text-xl font-bold text-white hover:bg-red-600 transition flex items-center justify-center disabled:opacity-50"
             >
               C
             </button>
@@ -139,7 +139,7 @@ export default function PersonnummerLoginModal({
                 if (personalNumber.length < 12)
                   setPersonalNumber(personalNumber + "0");
               }}
-              className="h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
+              className="h-16 sm:h-20 bg-gray-100 text-xl font-bold hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50"
             >
               0
             </button>
@@ -147,7 +147,7 @@ export default function PersonnummerLoginModal({
             <button
               disabled={loading}
               onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
-              className="h-20 bg-yellow-400 text-xl font-bold hover:bg-yellow-500 transition flex items-center justify-center disabled:opacity-50"
+              className="h-16 sm:h-20 bg-yellow-400 text-xl font-bold hover:bg-yellow-500 transition flex items-center justify-center disabled:opacity-50"
             >
               ×
             </button>
@@ -157,7 +157,7 @@ export default function PersonnummerLoginModal({
           <button
             onClick={submitLogin}
             disabled={loading || personalNumber.length < 12}
-            className="mt-4 bg-teal-600 py-6 text-white text-xl uppercase font-bold hover:bg-teal-700 transition w-full max-w-lg flex items-center justify-center disabled:opacity-70"
+            className="mt-4 bg-teal-600 py-4 sm:py-6 text-white text-xl uppercase font-bold hover:bg-teal-700 transition w-full max-w-lg flex items-center justify-center disabled:opacity-70"
           >
             {loading ? (
               <Loader2 className="w-6 h-6 animate-spin" />
