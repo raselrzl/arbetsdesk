@@ -75,13 +75,12 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#00687a]">
       <div
-  className="
+        className="
     w-full max-w-md p-16 shadow-md rounded-3xl
     bg-[url('/img1.png')] bg-cover bg-center bg-no-repeat
   "
->
-
-        <h1 className="text-4xl font-extrabold uppercase mb-6 pb-3 text-center text-gray-100">
+      >
+        <h1 className="text-4xl font-extrabold uppercase mb-6 pb-6 text-center text-gray-100">
           arbets-desk
         </h1>
 
@@ -128,7 +127,7 @@ export default function LoginForm() {
             <div className="">
               <Label className="text-[#00687a]">PIN</Label>
               {PinInput}
-              <input type="hidden" name="pinNumber" value={pinValue}/>
+              <input type="hidden" name="pinNumber" value={pinValue} />
             </div>
 
             <Button className="bg-[#00687a] border h-12 rounded-full ">
@@ -178,7 +177,7 @@ export default function LoginForm() {
             <div>
               <Label className="text-white">PIN</Label>
               {PinInput}
-              <Input type="hidden" name="pinCode" value={pinValue}/>
+              <Input type="hidden" name="pinCode" value={pinValue} />
             </div>
 
             <HomeLoginButton />
