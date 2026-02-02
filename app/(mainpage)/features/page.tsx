@@ -150,7 +150,7 @@ export default function FeaturesPage() {
         {/* Description */}
         <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-lg">
           Arbetsdesk helps you save time, reduce errors, and gain full control
-          over scheduling, time tracking, payroll, and communication — all in
+          over scheduling, time tracking, payroll, and communication all in
           one platform. Book a demo and see how it works for your business.
         </p>
 
