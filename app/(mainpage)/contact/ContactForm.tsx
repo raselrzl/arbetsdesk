@@ -21,7 +21,7 @@ export default function ContactForm() {
               style={{ backgroundImage: "url('/img6.png')" }}
             />
             <div className="absolute inset-0 bg-[#00687a]/70" />
-            <div className="relative z-10 text-white">
+            <div className="relative z-10 text-white text-center">
               <h2 className="text-3xl font-extrabold mb-4">Curious?</h2>
               <p className="text-lg opacity-95">
                 Fill in the form below and our customer service team will contact
