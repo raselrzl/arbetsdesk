@@ -57,7 +57,7 @@ export default function FeaturesPage() {
 
   return (
     <>
-      <section className="py-16 bg-white border-b">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           {/* Heading */}
           <motion.h2
@@ -125,32 +125,37 @@ export default function FeaturesPage() {
         </div>
       </section>
       {/* Call to Action */}
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className=" bg-[#00687a] px-6 py-14 text-center shadow-lg"
+        className="relative bg-white px-6 py-16 text-center shadow-xl rounded-2xl"
       >
-        <h3 className="text-3xl uppercase font-extrabold text-gray-200 mb-4">
+        {/* Heading */}
+        <h3 className="text-3xl sm:text-4xl uppercase font-extrabold text-[#00687a] mb-6">
           Ready to simplify your workforce management?
         </h3>
 
+        {/* CTA Button */}
         <Link
           href="/book-demo"
-          className="inline-flex items-center gap-2 my-6 bg-gray-100 border border-teal-300 text-teal-900 font-semibold px-8 py-4 rounded-full hover:bg-teal-100 transition shadow-md"
+          className="inline-flex items-center gap-2 my-6 bg-[#00687a] hover:bg-teal-700 text-white font-semibold px-8 py-4 rounded-full transition shadow-md"
         >
           Book a demo now
           <ChevronRight className="w-5 h-5" />
         </Link>
 
-        <p className="text-gray-100 max-w-2xl mx-auto mb-8 text-lg">
+        {/* Description */}
+        <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-lg">
           Arbetsdesk helps you save time, reduce errors, and gain full control
-          over scheduling, time tracking, payroll, and communication all in
+          over scheduling, time tracking, payroll, and communication — all in
           one platform. Book a demo and see how it works for your business.
         </p>
 
-        <p className="text-sm text-gray-900 mt-4 border-t">
+        {/* Footer Note */}
+        <p className="text-gray-500 text-sm mt-4 border-t pt-4">
           No commitment • Free walkthrough • Tailored to your company
         </p>
       </motion.div>

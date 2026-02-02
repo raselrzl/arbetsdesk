@@ -11,29 +11,29 @@ export default function Contact() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-center">
           {/* Demo */}
-<div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center">
-  <h3 className="text-xl font-bold text-[#00687a] mb-3">
-    30-Day Free Demo
-  </h3>
+          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center">
+            <h3 className="text-xl font-bold text-[#00687a] mb-3">
+              30-Day Free Demo
+            </h3>
 
-  <p className="text-gray-600 mb-4">
-    Try Arbets-desk free for 30 days and see how it fits your business.
-  </p>
+            <p className="text-gray-600 mb-4">
+              Try Arbets-desk free for 30 days and see how it fits your
+              business.
+            </p>
 
-  <ul className="text-gray-600 mb-6 space-y-1">
-    <li>✓ No binding period</li>
-    <li>✓ No setup cost</li>
-    <li>✓ Free support included</li>
-  </ul>
+            <ul className="text-gray-600 mb-6 space-y-1">
+              <li>✓ No binding period</li>
+              <li>✓ No setup cost</li>
+              <li>✓ Free support included</li>
+            </ul>
 
-  <Link
-    href="/book-demo"
-    className="inline-block text-teal-600 font-semibold hover:underline"
-  >
-    Book a Free Demo →
-  </Link>
-</div>
-
+            <Link
+              href="/book-demo"
+              className="inline-block text-teal-600 font-semibold hover:underline"
+            >
+              Book a Free Demo →
+            </Link>
+          </div>
 
           {/* Support (BIGGER CARD WITH IMAGE) */}
           <div className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition text-center lg:scale-105">
@@ -50,8 +50,7 @@ export default function Contact() {
 
             <p className="text-gray-600 mb-4 text-base">
               If you are already a customer and anything comes to your mind
-              questions, issues, or just curiosity don’t hesitate to contact
-              us.
+              questions, issues, or just curiosity don’t hesitate to contact us.
             </p>
 
             <p className="text-gray-600 mb-6 text-base">
@@ -101,7 +100,7 @@ export default function Contact() {
             <p className="text-gray-600 mb-6">
               Have a question, feedback, or partnership idea? Let’s talk.
             </p>
-          {/* CONTACT DETAILS */}
+            {/* CONTACT DETAILS */}
             <div className="flex flex-col items-center">
               <a
                 href="mailto:support@arbetdesk.com"
