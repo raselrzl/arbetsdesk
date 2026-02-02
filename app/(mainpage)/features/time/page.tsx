@@ -19,7 +19,7 @@ export default function HoursPage() {
           >
             <div className="w-[460px]">
               <Image
-                src="/time/time1.png"
+                src="/time/time6.png"
                 alt="Employee time reporting dashboard"
                 width={900}
                 height={600}
