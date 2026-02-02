@@ -39,11 +39,10 @@ export default function CompanySchedulePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [timeLogs, setTimeLogs] = useState<any[]>([]);
 
-
   // Toggle employee selection
   const toggleEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
-      prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id],
     );
   };
 
@@ -54,28 +53,27 @@ export default function CompanySchedulePage() {
 
   // Load employees and schedules from backend
   const loadData = async () => {
-  try {
-    const emps = await getCompanyEmployees();
-    setEmployeesFromDB(
-      emps.map((emp: any) => ({
-        id: emp.id,
-        name: emp.name,
-        contractType: emp.contractType,
-        hourlyRate: emp.hourlyRate,
-        monthlySalary: emp.monthlySalary,
-      }))
-    );
+    try {
+      const emps = await getCompanyEmployees();
+      setEmployeesFromDB(
+        emps.map((emp: any) => ({
+          id: emp.id,
+          name: emp.name,
+          contractType: emp.contractType,
+          hourlyRate: emp.hourlyRate,
+          monthlySalary: emp.monthlySalary,
+        })),
+      );
 
-    const schs = await getSchedulesForCompany();
-    setSchedules(schs);
+      const schs = await getSchedulesForCompany();
+      setSchedules(schs);
 
-    const logs = await getTimeLogsForCompany();
-    setTimeLogs(logs); // <- fetch time logs here
-  } catch (err) {
-    console.error("Error loading data:", err);
-  }
-};
-
+      const logs = await getTimeLogsForCompany();
+      setTimeLogs(logs); // <- fetch time logs here
+    } catch (err) {
+      console.error("Error loading data:", err);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -106,8 +104,8 @@ export default function CompanySchedulePage() {
           if (err.message === "OVERLAP_EXISTS") {
             const ok = confirm(
               `One or more employees already have a schedule overlapping this time on ${new Date(
-                date
-              ).toLocaleDateString()}. Replace it?`
+                date,
+              ).toLocaleDateString()}. Replace it?`,
             );
             if (!ok) continue;
 
@@ -138,39 +136,98 @@ export default function CompanySchedulePage() {
     }
   };
 
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"));
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, "0"),
+  );
   const minutes = ["00", "15", "30", "45"];
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto mb-20">
-      <h1 className="text-3xl font-bold uppercase text-teal-950 mb-4 text-center">
-        Working Schedule
-      </h1>
-
-      <ClockDisplay />
-
-      <div className="bg-teal-400 p-6 space-y-4 mb-4">
+      <div className="bg-white p-6 space-y-4 mb-4 shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Employees */}
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 w-40 bg-teal-400 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
-              Select Employees
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {employeesFromDB.map((emp) => (
-                <button
-                  key={emp.id}
-                  type="button"
-                  onClick={() => toggleEmployee(emp.id)}
-                  className={`px-3 py-1 rounded-full border ${
-                    selectedEmployees.includes(emp.id)
-                      ? "bg-teal-600 text-white border-teal-600"
-                      : "bg-white text-teal-600 border-teal-600"
-                  } hover:bg-teal-600 hover:text-white transition`}
-                >
-                  {emp.name}
-                </button>
-              ))}
+          <div>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 w-40 bg-teal-400 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
+                Select Employees
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {employeesFromDB.map((emp) => (
+                  <button
+                    key={emp.id}
+                    type="button"
+                    onClick={() => toggleEmployee(emp.id)}
+                    className={`px-3 py-1 rounded-full border ${
+                      selectedEmployees.includes(emp.id)
+                        ? "bg-teal-600 text-white border-teal-600"
+                        : "bg-white text-teal-600 border-teal-600"
+                    } hover:bg-teal-600 hover:text-white transition`}
+                  >
+                    {emp.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-8 mt-10">
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2 text-teal-900 uppercase font-bold">
+                  Start Time
+                </label>
+
+                <div className="flex gap-2 items-center">
+                  <select
+                    value={startHour}
+                    onChange={(e) => setStartHour(e.target.value)}
+                    className="border py-1 px-3 rounded-xs border-teal-100"
+                  >
+                    {hours.map((h) => (
+                      <option key={h} value={h}>
+                        {h}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={startMinute}
+                    onChange={(e) => setStartMinute(e.target.value)}
+                    className="border py-1 px-3 rounded-xs border-teal-100"
+                  >
+                    {minutes.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2 text-teal-900 uppercase font-bold ">
+                  End Time
+                </label>
+                <div className="flex gap-2 items-center">
+                  <select
+                    value={endHour}
+                    onChange={(e) => setEndHour(e.target.value)}
+                    className="border py-1 px-3 rounded-xs border-teal-100"
+                  >
+                    {hours.map((h) => (
+                      <option key={h} value={h}>
+                        {h}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={endMinute}
+                    onChange={(e) => setEndMinute(e.target.value)}
+                    className="border py-1 px-3 rounded-xs border-teal-100"
+                  >
+                    {minutes.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -214,68 +271,6 @@ export default function CompanySchedulePage() {
               ))}
             </div>
           </div>
-
-          {/* Start Time */}
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-white uppercase font-bold ">
-              <Clock className="w-5 h-5" /> Start Time
-            </label>
-            <div className="flex gap-2 items-center">
-              <select
-                value={startHour}
-                onChange={(e) => setStartHour(e.target.value)}
-                className="border py-1 px-3 rounded-xs border-teal-100"
-              >
-                {hours.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={startMinute}
-                onChange={(e) => setStartMinute(e.target.value)}
-                className="border py-1 px-3 rounded-xs border-teal-100"
-              >
-                {minutes.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* End Time */}
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-white uppercase font-bold ">
-              <Clock className="w-5 h-5" /> End Time
-            </label>
-            <div className="flex gap-2 items-center">
-              <select
-                value={endHour}
-                onChange={(e) => setEndHour(e.target.value)}
-                className="border py-1 px-3 rounded-xs border-teal-100"
-              >
-                {hours.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={endMinute}
-                onChange={(e) => setEndMinute(e.target.value)}
-                className="border py-1 px-3 rounded-xs border-teal-100"
-              >
-                {minutes.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
         </div>
 
         <button
@@ -303,7 +298,11 @@ export default function CompanySchedulePage() {
       {/* ✅ Tables */}
       <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} />
       <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} />
-      <MonthlySummaryTable schedules={schedules} employees={employeesFromDB} timeLogs={timeLogs}/>
+      <MonthlySummaryTable
+        schedules={schedules}
+        employees={employeesFromDB}
+        timeLogs={timeLogs}
+      />
     </div>
   );
 }
