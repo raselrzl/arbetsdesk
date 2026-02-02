@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ContactForm from "./ContactForm";
+import { Mail, Phone } from "lucide-react";
 
 export default function Contact() {
   return (
@@ -7,36 +8,88 @@ export default function Contact() {
       <ContactForm />
 
       {/* CONTACT OPTIONS */}
-      <section className=" py-20">
-        <div className="max-w-7xl mx-auto px-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Sales */}
-          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center">
-            <h3 className="text-xl font-bold text-[#00687a] mb-3">
-              Sales & Demo
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Interested in Arbets-desk? Book a demo and see how it fits your
-              business.
-            </p>
-            <Link
-              href="/book-demo"
-              className="text-teal-600 font-semibold hover:underline"
-            >
-              Book a Demo →
-            </Link>
-          </div>
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-center">
+          {/* Demo */}
+<div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center">
+  <h3 className="text-xl font-bold text-[#00687a] mb-3">
+    30-Day Free Demo
+  </h3>
 
-          {/* Support */}
-          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center">
-            <h3 className="text-xl font-bold text-[#00687a] mb-3">Support</h3>
-            <p className="text-gray-600 mb-6">
-              Already a customer? Our support team is ready to assist you.
+  <p className="text-gray-600 mb-4">
+    Try Arbets-desk free for 30 days and see how it fits your business.
+  </p>
+
+  <ul className="text-gray-600 mb-6 space-y-1">
+    <li>✓ No binding period</li>
+    <li>✓ No setup cost</li>
+    <li>✓ Free support included</li>
+  </ul>
+
+  <Link
+    href="/book-demo"
+    className="inline-block text-teal-600 font-semibold hover:underline"
+  >
+    Book a Free Demo →
+  </Link>
+</div>
+
+
+          {/* Support (BIGGER CARD WITH IMAGE) */}
+          <div className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition text-center lg:scale-105">
+            {/* IMAGE */}
+            <div className="mb-6 flex justify-center">
+              <img
+                src="/img6.png"
+                alt="Support"
+                className="h-20 w-20 object-contain"
+              />
+            </div>
+
+            <h3 className="text-2xl font-bold text-[#00687a] mb-4">Support</h3>
+
+            <p className="text-gray-600 mb-4 text-base">
+              If you are already a customer and anything comes to your mind
+              questions, issues, or just curiosity don’t hesitate to contact
+              us.
             </p>
+
+            <p className="text-gray-600 mb-6 text-base">
+              We’re always happy to help. You can call us or email us anytime.
+            </p>
+
+            {/* CONTACT DETAILS */}
+            <div className="flex flex-col gap-3 items-center mb-4">
+              <a
+                href="mailto:support@arbetdesk.com"
+                className="flex items-center gap-2 text-teal-500 font-semibold hover:underline"
+              >
+                <Mail className="w-4 h-4" />
+                support@arbetdesk.com
+              </a>
+
+              <a
+                href="tel:+46701234567"
+                className="flex items-center gap-2 text-teal-500 font-semibold hover:underline"
+              >
+                <Phone className="w-4 h-4" />
+                +46 70 123 45 67
+              </a>
+            </div>
+
+            {/* AVAILABILITY */}
+            <p className="text-sm text-gray-500 mb-6">
+              Weekdays <span className="font-semibold">09:00 – 17:00</span>{" "}
+              <br />
+              <span className="italic">Closed during lunch</span>
+            </p>
+
+            {/* FAQ LINK */}
             <Link
-              href="/login"
+              href="/faq"
               className="text-teal-600 font-semibold hover:underline"
             >
-              Go to Dashboard →
+              Your answer might already be there →
             </Link>
           </div>
 
@@ -48,12 +101,16 @@ export default function Contact() {
             <p className="text-gray-600 mb-6">
               Have a question, feedback, or partnership idea? Let’s talk.
             </p>
-            <a
-              href="mailto:info@arbets-desk.com"
-              className="text-teal-600 font-semibold hover:underline"
-            >
-              Email Us →
-            </a>
+          {/* CONTACT DETAILS */}
+            <div className="flex flex-col items-center">
+              <a
+                href="mailto:support@arbetdesk.com"
+                className="flex items-center gap-2 text-teal-500 font-semibold hover:underline"
+              >
+                <Mail className="w-4 h-4" />
+                contact@arbetdesk.com
+              </a>
+            </div>
           </div>
         </div>
       </section>

@@ -1,15 +1,12 @@
 export default function ThankYouPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md text-center max-w-md">
-        <h1 className="text-2xl font-bold text-teal-600 mb-4">
-          Thank You!
+    <div className="min-h-screen flex items-center justify-center text-center px-4">
+      <div className="max-w-md">
+        <h1 className="text-3xl font-extrabold text-[#00687a] mb-4">
+          Thank you!
         </h1>
-        <p className="text-gray-700 mb-4">
-          We have received your booking request. 
-        </p>
-        <p className="text-gray-700">
-          Our team will contact you within 24 hours to confirm your demo.
+        <p className="text-gray-600 text-lg">
+          We’ve received your request and will contact you within 24 hours.
         </p>
       </div>
     </div>

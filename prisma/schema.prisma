@@ -399,3 +399,12 @@ enum NotificationType {
   TIMELOG_REJECTED
   SYSTEM
 }
+
+model ContactRequest {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  business  String?
+  phone     String?
+  createdAt DateTime @default(now())
+}
