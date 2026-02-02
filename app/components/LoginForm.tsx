@@ -80,7 +80,7 @@ export default function LoginForm() {
     bg-[url('/img1.png')] bg-cover bg-center bg-no-repeat
   "
       >
-        <h1 className="text-4xl font-extrabold uppercase mb-6 pb-6 text-center text-gray-100">
+        <h1 className="text-3xl font-extrabold uppercase mb-6 pb-6 text-center text-gray-100">
           arbets-desk
         </h1>
 
@@ -95,8 +95,8 @@ export default function LoginForm() {
                 className={`flex-1 py-2 text-sm font-bold transition
         ${
           tab === t
-            ? "bg-[#00687a] text-gray-100"
-            : "bg-teal-400 text-teal-100 hover:bg-teal-700"
+            ? "bg-[#00687a] text-gray-100 text-xs"
+            : "bg-teal-400 text-teal-100 hover:bg-teal-700 text-xs"
         }`}
               >
                 {t}
