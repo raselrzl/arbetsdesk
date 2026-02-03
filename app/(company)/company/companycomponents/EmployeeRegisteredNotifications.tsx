@@ -1,3 +1,5 @@
+import ClientDate from "./ClientDate";
+
 export default function EmployeeRegisteredNotifications({
   notifications,
 }: {
@@ -10,24 +12,17 @@ export default function EmployeeRegisteredNotifications({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-green-900">
-        New Employees
-      </h3>
-
       {notifications.map((n) => (
         <div
           key={n.id}
-          className="bg-white border border-green-200 rounded p-3"
+          className="p-3 shadow rounded-md border-l-6 bg-white border-amber-400"
         >
-          <p className="font-medium">{n.title}</p>
-
-          <p className="text-sm text-gray-600">
-            {n.body}
-          </p>
-
-          <p className="text-xs text-gray-400 mt-1">
-            {new Date(n.createdAt).toLocaleString()}
-          </p>
+          <p className="text-gray-700"> {n.body}</p>
+          <div className="text-[9px] text-gray-800 mt-1 flex justify-end">
+            <div className="bg-amber-300 px-1 py-px rounded-xs text-gray-500">
+              <ClientDate date={n.createdAt} />
+            </div>
+          </div>
         </div>
       ))}
     </div>
