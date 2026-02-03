@@ -143,11 +143,11 @@ export default function CompanySchedulePage() {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto mb-20">
-      <div className="bg-white p-6 space-y-4 mb-4 shadow-lg">
+      <div className="bg-white p-6 space-y-4 mb-4 shadow-lg shadow-[#02505e]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 w-40 bg-teal-400 uppercase text-teal-900 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
+              <label className="flex items-center gap-2 w-40 bg-[#02505e] uppercase text-gray-100 font-medium text-sm border mt-2 px-2 py-1 border-teal-100">
                 Select Employees
               </label>
               <div className="flex flex-wrap gap-2">
@@ -156,10 +156,10 @@ export default function CompanySchedulePage() {
                     key={emp.id}
                     type="button"
                     onClick={() => toggleEmployee(emp.id)}
-                    className={`px-3 py-1 rounded-full border ${
+                    className={`px-3 py-1 rounded-xs border ${
                       selectedEmployees.includes(emp.id)
-                        ? "bg-teal-600 text-white border-teal-600"
-                        : "bg-white text-teal-600 border-teal-600"
+                        ? "bg-[#02505e] text-gray-100 border-[#02505e]"
+                        : "bg-white text-[#02505e] border-[#02505e]"
                     } hover:bg-teal-600 hover:text-white transition`}
                   >
                     {emp.name}
@@ -169,7 +169,7 @@ export default function CompanySchedulePage() {
             </div>
             <div className="flex gap-8 mt-10">
               <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-teal-900 uppercase font-bold">
+                <label className="flex items-center gap-2 text-[#02505e] uppercase font-bold">
                   Start Time
                 </label>
 
@@ -177,7 +177,7 @@ export default function CompanySchedulePage() {
                   <select
                     value={startHour}
                     onChange={(e) => setStartHour(e.target.value)}
-                    className="border py-1 px-3 rounded-xs border-teal-100"
+                    className="border py-1 px-3 rounded-xs border-[#02505e]"
                   >
                     {hours.map((h) => (
                       <option key={h} value={h}>
@@ -185,10 +185,11 @@ export default function CompanySchedulePage() {
                       </option>
                     ))}
                   </select>
+                  :
                   <select
                     value={startMinute}
                     onChange={(e) => setStartMinute(e.target.value)}
-                    className="border py-1 px-3 rounded-xs border-teal-100"
+                    className="border py-1 px-3 rounded-xs border-[#02505e]"
                   >
                     {minutes.map((m) => (
                       <option key={m} value={m}>
@@ -200,14 +201,14 @@ export default function CompanySchedulePage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-teal-900 uppercase font-bold ">
+                <label className="flex items-center gap-2 text-[#02505e] uppercase font-bold ">
                   End Time
                 </label>
                 <div className="flex gap-2 items-center">
                   <select
                     value={endHour}
                     onChange={(e) => setEndHour(e.target.value)}
-                    className="border py-1 px-3 rounded-xs border-teal-100"
+                    className="border py-1 px-3 rounded-xs border-[#02505e]"
                   >
                     {hours.map((h) => (
                       <option key={h} value={h}>
@@ -215,10 +216,11 @@ export default function CompanySchedulePage() {
                       </option>
                     ))}
                   </select>
+                  :
                   <select
                     value={endMinute}
                     onChange={(e) => setEndMinute(e.target.value)}
-                    className="border py-1 px-3 rounded-xs border-teal-100"
+                    className="border py-1 px-3 rounded-xs border-[#02505e]"
                   >
                     {minutes.map((m) => (
                       <option key={m} value={m}>
@@ -243,10 +245,11 @@ export default function CompanySchedulePage() {
               render={(value, openCalendar) => (
                 <div
                   onClick={openCalendar}
-                  className="flex text-[8px] items-center gap-2 px-3 py-1 rounded-xs  border sm:w-80 border-teal-100 cursor-pointer bg-white"
+                  className="flex text-[8px] items-center gap-2 px-3 py-1 rounded-xs  border w-30 border-[#02505e] cursor-pointer bg-[#02505e] text-gray-100"
                 >
-                  <Calendar className="w-5 h-5 text-teal-600" />
-                  <span className="text-teal-600">
+                  <Calendar className="w-5 h-5 text-gray-100" />
+                  Click
+                  <span className="text-[#02505e] hidden">
                     {selectedDates.length > 0
                       ? selectedDates
                           .map((d) => new Date(d).toLocaleDateString())
@@ -261,25 +264,47 @@ export default function CompanySchedulePage() {
               {selectedDates.map((date) => (
                 <div
                   key={date}
-                  className="flex items-center gap-1 bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm"
+                  className="flex items-center gap-1 bg-[#02505e] text-gray-100 px-2 py-1 rounded-xs text-sm w-24"
                 >
                   {new Date(date).toLocaleDateString()}
                   <button onClick={() => removeDate(date)}>
-                    <X className="w-3 h-3" />
+                    <X className="w-3 h-3 cursor-pointer" />
                   </button>
                 </div>
               ))}
             </div>
           </div>
         </div>
+        <div className="flex justify-center">
+          <button
+            onClick={addScheduleHandler}
+            disabled={isCreating}
+            className={`px-10 py-2 rounded-xs flex items-center gap-2 transition cursor-pointer ${
+              isCreating
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#02505e] hover:bg-teal-900 text-gray-100"
+            }`}
+          >
+            {isCreating ? (
+              <>
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                Wait Creating...
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4" /> Add Schedule
+              </>
+            )}
+          </button>
+        </div>
 
-        <button
+        {/*  <button
           onClick={addScheduleHandler}
           disabled={isCreating}
           className={`px-4 py-2 rounded-xs flex items-center gap-2 transition cursor-pointer ${
             isCreating
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-teal-800 hover:bg-teal-900 text-white"
+              : "bg-[#02505e] hover:bg-teal-900 text-gray-100"
           }`}
         >
           {isCreating ? (
@@ -292,7 +317,7 @@ export default function CompanySchedulePage() {
               <Plus className="w-4 h-4" /> Add Schedule
             </>
           )}
-        </button>
+        </button> */}
       </div>
 
       {/* ✅ Tables */}

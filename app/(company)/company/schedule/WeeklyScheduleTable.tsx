@@ -115,31 +115,31 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 mt-20">
       {/* WEEK FILTER */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold text-gray-100 bg-teal-500 px-2 py-1 uppercase">
+        <div className="font-semibold text-gray-100 bg-[#02505e] px-2 py-1 uppercase">
           Week {weekNumber} · {formatDate(start)} – {formatDate(end)}
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             ← Prev
           </button>
 
           <button
             onClick={() => setWeekOffset(0)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             Current
           </button>
 
           <button
             onClick={() => setWeekOffset((w) => w + 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             Next →
           </button>
@@ -150,7 +150,7 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
-            <tr className="bg-teal-300">
+            <tr className="bg-[#02505e] text-gray-100">
               {/*   <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Schedule
               </th> */}
@@ -161,7 +161,7 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                   className="p-3 border-teal-800 text-center w-28 uppercase"
                 >
                   {day.toLocaleDateString(undefined, { weekday: "short" })}
-                  <p className="text-xs text-gray-600 uppercase">
+                  <p className="text-xs text-gray-400 uppercase">
                     {formatDate(day)}
                   </p>
                 </th>

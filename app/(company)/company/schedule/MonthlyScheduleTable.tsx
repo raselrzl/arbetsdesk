@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { swapSchedules, getSchedulesForCompany } from "./schedules";
+import { ArrowLeftRight } from "lucide-react";
 
 type Props = {
   schedules: any[];
@@ -145,7 +146,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
     <div className="space-y-3 mt-10">
       {/* Month Filter */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold text-gray-100 bg-teal-500 px-2 py-1 uppercase">
+        <div className="font-semibold text-gray-100 bg-[#02505e] px-2 py-1 uppercase">
           {start.toLocaleDateString(undefined, {
             month: "long",
             year: "numeric",
@@ -159,19 +160,19 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
         <div className="flex gap-2">
           <button
             onClick={() => setMonthOffset((m) => m - 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             ← Prev
           </button>
           <button
             onClick={() => setMonthOffset(0)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             Current
           </button>
           <button
             onClick={() => setMonthOffset((m) => m + 1)}
-            className="px-2 py-0.5 border border-teal-200 hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             Next →
           </button>
@@ -182,8 +183,8 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
       <div className="overflow-x-auto">
         <table className="min-w-[1200px] border-collapse text-xs">
           <thead>
-            <tr className="bg-teal-300">
-              <th className="p-2 border text-left sticky left-0 bg-teal-300 z-10 w-52">
+            <tr className="bg-[#02505e] text-gray-100">
+              <th className="p-2 border text-left sticky left-0 bg-[#02505e] z-10 w-52">
                 Employee
               </th>
               {daysInMonth.map((day) => (
@@ -192,12 +193,12 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                   className="p-2 border text-center min-w-[60px]"
                 >
                   {day.getDate()}
-                  <p className="text-[10px] text-gray-600">
+                  <p className="text-[10px] text-gray-400">
                     {day.toLocaleDateString(undefined, { weekday: "short" })}
                   </p>
                 </th>
               ))}
-              <th className="p-2 border border-teal-300 text-center text-gray-100 bg-teal-800 w-20">
+              <th className="p-2 border border-[#02505e] text-center text-gray-100 bg-[#02505e] w-20">
                 Total (h)
               </th>
             </tr>
@@ -271,7 +272,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
                       </td>
                     );
                   })}
-                  <td className="p-2 border border-teal-300 text-center font-semibold bg-teal-800 text-gray-100 w-20">
+                  <td className="p-2 border border-teal-300 text-center font-semibold bg-[#02505e] text-gray-100 w-20">
                     {totalHours.toFixed(2)}
                   </td>
                 </tr>
@@ -327,7 +328,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
 
             {/*  <button onClick={handleSwap} className="mt-2 w-full px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Swap Shifts</button>
              */}
-            <button
+            {/* <button
               onClick={handleSwap}
               disabled={selectedSchedules.length !== 2 || isSwapping}
               className={`
@@ -335,12 +336,38 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
     ${
       selectedSchedules.length !== 2 || isSwapping
         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-teal-600 text-white hover:bg-teal-700"
+        : "bg-[#02505e] text-gray-100 uppercase text-sm hover:bg-teal-700"
     }
   `}
             >
               {isSwapping ? "Swapping..." : "Swap Shifts"}
-            </button>
+            </button> */}
+            <button
+  onClick={handleSwap}
+  disabled={selectedSchedules.length !== 2 || isSwapping}
+  className={`
+    mt-2 w-full px-4 py-2 rounded transition
+    flex items-center justify-center gap-2
+    ${
+      selectedSchedules.length !== 2 || isSwapping
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-[#02505e] text-gray-100 uppercase text-sm hover:bg-teal-700"
+    }
+  `}
+>
+  {isSwapping ? (
+    <>
+      <ArrowLeftRight className="w-4 h-4 animate-pulse" />
+      Swapping...
+    </>
+  ) : (
+    <>
+      <ArrowLeftRight className="w-4 h-4" />
+      Swap Shifts
+    </>
+  )}
+</button>
+
           </div>
         </div>
       )}
