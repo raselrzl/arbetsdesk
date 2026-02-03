@@ -16,7 +16,7 @@ export default function AdminSidebar({
   open,
   onClose,
 }: {
-  user: { name: string; email: string };
+  user: { name: string; email: string; role?: string };
   open?: boolean;
   onClose?: () => void;
 }) {
@@ -76,12 +76,16 @@ export default function AdminSidebar({
               <LayoutDashboard className="w-4 h-4" /> Dashboard
             </Link>
 
-            <Link
-              href="/admin/createuser"
-              className={linkClass("/admin/createuser")}
-            >
-              <User className="w-4 h-4" /> Create User
-            </Link>
+           {/* Only show Create User for SUPERADMIN */}
+{user.role === "SUPERADMIN" && (
+  <Link
+    href="/admin/createuser"
+    className={linkClass("/admin/createuser")}
+  >
+    <User className="w-4 h-4" /> Create User
+  </Link>
+)}
+
 
             <Link
               href="/admin/createcompany"

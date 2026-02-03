@@ -8,7 +8,7 @@ export default async function CreateUserPage() {
   const user = await getLoggedInUser();
   
     if (!user) redirect("/login");
-    if (user.role !== "ADMIN") redirect("/unauthorized");
+    if (user.role !== "SUPERADMIN") redirect("/unauthorized");
   return (
     <div>
       <UserRegistrationForm />
