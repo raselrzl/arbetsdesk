@@ -6,9 +6,7 @@ import Image from "next/image";
 export default function HomePage() {
   return (
     <main className="bg-white">
-      {/* HERO SECTION */}
       <section className="max-w-7xl mx-auto px-4 py-24 flex flex-col items-center gap-12">
-        {/* TEXT CONTENT – SAME ANIMATION AS SCHEDULE */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -22,7 +20,7 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold mb-6 text-[#00687a]">
             Designed for both employees and managers
           </h2>
-          <p className="text-[#00687a] text-sm leading-relaxed text-justify">
+          <p className="text-[#00687a] text-sm md:text-lg max-w-3xl leading-relaxed text-justify">
             Our smart time tracking system makes managing staff schedules
             effortless. No clock-ins or outs are missed, and managers can easily
             review and approve schedule adjustments with instant notifications.
@@ -30,8 +28,6 @@ export default function HomePage() {
             workforce management.
           </p>
         </motion.div>
-
-        {/* IMAGE – SAME ANIMATION AS SCHEDULE */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -52,7 +48,6 @@ export default function HomePage() {
       </section>
       <section className="w-full px-4">
         <div className="max-w-3xl mx-auto grid gap-8 md:grid-cols-1 mb-30">
-          {/* BOX 1 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
             <h2 className="text-2xl font-extrabold mb-4 uppercase">
               ID OPTIONS FOR ALL STAFF
@@ -66,7 +61,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* BOX 2 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
             <h2 className="text-2xl font-extrabold mb-4 uppercase">
               SUITABLE FOR EVERY WORK ENVIRONMENT
@@ -79,8 +73,6 @@ export default function HomePage() {
               tracking.
             </p>
           </div>
-
-          {/* BOX 3 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
             <h2 className="text-2xl font-extrabold mb-4 uppercase">
               SIMPLE SETUP AND EMPLOYEE REGISTRATION
@@ -98,7 +90,6 @@ export default function HomePage() {
 
       <section className="mt-20 mb-70 w-full ">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center">
-          {/* RIGHT – VIDEO + FLOATING TEXT */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -106,15 +97,12 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="relative flex justify-center md:justify-end"
           >
-            {/* VIDEO */}
             <div className="w-auto h-[350px] relative">
               <img
                 src="/timelog/timepad1.png"
                 alt=""
                 className="w-auto h-[350px] object-contain shadow-xl shadow-teal-900"
               />
-
-              {/* MOBILE TEXT – bottom 10% overlap */}
               <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 translate-y-[90%] w-[90%] bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-lg text-center z-10">
                 <h1 className="text-xl font-extrabold mb-2 text-[#00687a] uppercase">
                   Time log
@@ -129,9 +117,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-
-            {/* DESKTOP FLOATING TEXT */}
-            <div className="hidden md:block absolute -top-20 right-[-300px] max-w-md bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
+            <div className="hidden md:block absolute top-20 right-[-380px] max-w-xl bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
               <h1 className="text-3xl font-extrabold mb-3 text-[#00687a] uppercase">
                 Time log
               </h1>
@@ -150,7 +136,6 @@ export default function HomePage() {
 
       <section className="mt-20 mb-30 w-full pb-20">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center">
-          {/* RIGHT – VIDEO + FLOATING TEXT */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -158,15 +143,12 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="relative flex justify-center md:justify-end"
           >
-            {/* MAIN IMAGE */}
             <div className="w-auto h-[350px] relative">
               <img
                 src="/timelog/timepad1.png"
                 alt="Main"
                 className="w-auto h-[350px] object-contain shadow-xl shadow-teal-900"
               />
-
-              {/* SMALL CENTERED IMAGE */}
               <div className="absolute top-1/2 left-1/2 md:-left-2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
                 <img
                   src="/timelog/tl3.png"
@@ -174,8 +156,6 @@ export default function HomePage() {
                   className="w-ful h-full rounded-xl shadow-xl shadow-teal-950"
                 />
               </div>
-
-              {/* SMALL CENTERED IMAGE */}
               <div className="absolute top-2 left-1/2 md:-left-2 -translate-x-1 -translate-y-1/2 flex items-center justify-center">
                 <img
                   src="/timelog/tl3.png"
@@ -183,8 +163,6 @@ export default function HomePage() {
                   className="w-ful h-full rounded-xl shadow-xl shadow-teal-950"
                 />
               </div>
-
-              {/* MOBILE TEXT – bottom 10% overlap */}
               <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 translate-y-[90%] w-[90%] bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-lg text-center z-10">
                 <h1 className="text-xl font-extrabold mb-2 text-[#00687a] uppercase">
                   Schedule Login
@@ -201,9 +179,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-
-            {/* DESKTOP FLOATING TEXT */}
-            <div className="hidden md:block absolute -top-20 right-[-300px] max-w-md bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
+            <div className="hidden md:block absolute top-20 right-[-380px] max-w-xl bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
               <h1 className="text-3xl font-extrabold mb-3 text-[#00687a] uppercase">
                 Schedule Login
               </h1>
@@ -221,8 +197,6 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* CTA – unchanged */}
       <section className="relative bg-[#02505e] text-center">
         <svg
           className="absolute -top-px left-0 w-full h-32 sm:h-24 md:h-24"
