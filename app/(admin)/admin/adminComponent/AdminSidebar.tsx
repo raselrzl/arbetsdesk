@@ -42,7 +42,7 @@ export default function AdminSidebar({
 
       <aside
         className={`
-    fixed top-0 left-0 h-screen w-60
+    fixed top-0 left-0 h-screen w-54
     bg-[#00687a] text-gray-100 border-r
     z-50
     transform transition-transform duration-300 ease-in-out
@@ -53,7 +53,7 @@ export default function AdminSidebar({
       >
         {/* Header */}
         <div className="py-3 px-6 border-b flex justify-between items-center md:block">
-          <h1 className="text-lg font-extrabold uppercase text-gray-100">
+          <h1 className="text-md md:text-xl font-extrabold uppercase text-gray-100">
             Admin Panel
           </h1>
           <button

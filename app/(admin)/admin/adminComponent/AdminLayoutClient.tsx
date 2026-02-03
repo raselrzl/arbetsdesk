@@ -34,9 +34,9 @@ export default function AdminLayoutClient({
           min-h-screen
           md:h-screen
           overflow-y-auto
-          pt-14            /* mobile navbar height */
+          pt-14 
           md:pt-0
-          md:ml-60         /* sidebar width */
+          md:ml-60
           p-4
           md:p-8
         "
