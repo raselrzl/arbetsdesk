@@ -18,7 +18,7 @@ export default function CompanyRegisterForm({ user }: { user: any }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+    <div className="max-w-7xl flex items-center justify-center px-4">
       <form
         action={formAction}
         className="

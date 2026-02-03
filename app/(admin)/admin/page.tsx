@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/app/utils/db";
-import AdminPage from "./AdminPageComponent";
 import AdminCompanyList from "./AdminCompanyList";
 
 export default async function AdminPageWrapper() {
@@ -25,8 +24,7 @@ export default async function AdminPageWrapper() {
   }
 
   return (
-    <div className="flex max-w-7xl mx-auto flex-col py-10">
-      <AdminPage user={user} />
+    <div className="flex max-w-7xl flex-col py-20">
       <AdminCompanyList user={user}/>
     </div>
   );
