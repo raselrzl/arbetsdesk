@@ -47,17 +47,17 @@ export default function AdminSidebar({
     z-50
     transform transition-transform duration-300 ease-in-out
     ${open ? "translate-x-0" : "-translate-x-full"}
-    md:translate-x-0
+    lg:translate-x-0
     flex flex-col
   `}
       >
         {/* Header */}
-        <div className="py-3 px-6 border-b flex justify-between items-center md:block">
+        <div className="py-3 px-6 md:px-2 border-b flex justify-between items-center lg:block">
           <h1 className="text-md md:text-xl font-extrabold uppercase text-gray-100">
             Admin Panel
           </h1>
           <button
-            className="md:hidden p-2 rounded-md hover:bg-gray-100 text-gray-100"
+            className="lg:hidden p-2 rounded-md hover:bg-gray-100 text-gray-100"
             onClick={onClose}
           >
             <ChevronLeft />

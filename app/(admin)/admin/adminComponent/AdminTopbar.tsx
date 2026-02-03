@@ -10,7 +10,7 @@ export default function AdminTopbar({
   onHamburgerClick: () => void;
 }) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 md:hidden bg-[#00687a] px-4 py-3 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 lg:hidden bg-[#00687a] px-4 py-3 flex items-center justify-between">
       <button
         onClick={onHamburgerClick}
         className="p-2 rounded-md text-gray-100 hover:bg-white/10"

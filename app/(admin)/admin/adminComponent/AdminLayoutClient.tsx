@@ -36,7 +36,7 @@ export default function AdminLayoutClient({
           overflow-y-auto
           pt-14 
           md:pt-0
-          md:ml-60
+          lg:ml-60
           p-4
           md:p-8
         "
