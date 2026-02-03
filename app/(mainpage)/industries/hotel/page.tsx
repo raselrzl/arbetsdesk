@@ -44,7 +44,7 @@ export default function HotelPage() {
           >
             <div className="w-[460px]">
               <Image
-                src="/hotel/h1.jpeg"
+                src="/hotel/hotel.jpeg"
                 alt="Business analytics dashboard"
                 width={900}
                 height={600}
