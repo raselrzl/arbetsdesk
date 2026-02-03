@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/app/utils/db";
 import AdminLayoutClient from "./adminComponent/AdminLayoutClient";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const jar = await cookies();
   const userId = jar.get("user_session")?.value;
 
@@ -16,5 +20,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!user || user.role !== "ADMIN") redirect("/");
 
-  return <AdminLayoutClient user={user}>{children}</AdminLayoutClient>;
+  return (
+    <div className="py-20">
+      <AdminLayoutClient user={user}>{children}</AdminLayoutClient>
+    </div>
+  );
 }

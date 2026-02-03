@@ -14,7 +14,7 @@ export default function AdminLayoutClient({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="relative bg-gray-50">
+    <div className="relative">
       {/* Mobile topbar (fixed) */}
       <AdminTopbar
         user={user}

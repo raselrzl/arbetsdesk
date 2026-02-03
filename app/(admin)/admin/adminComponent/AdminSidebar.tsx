@@ -52,7 +52,7 @@ export default function AdminSidebar({
   `}
       >
         {/* Header */}
-        <div className="py-3 px-6 md:px-2 border-b flex justify-between items-center lg:block">
+        <div className="py-2.5 px-6 md:px-2 border-b flex justify-between items-center lg:block">
           <h1 className="text-md md:text-xl font-extrabold uppercase text-gray-100">
             Admin Panel
           </h1>
