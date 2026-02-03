@@ -77,28 +77,28 @@ export default function MonthlySummaryTable({
     <div className="mt-12 space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <div className="font-bold text-gray-100 bg-teal-400 px-4 py-2 uppercase rounded-xs">
+        <div className="font-bold text-gray-100 bg-[#02505e] px-4 py-2 uppercase rounded-xs">
           Monthly Summary · {format(start, "yyyy-MM")}
         </div>
           
         <div className="flex gap-2">
           <button
             onClick={() => setMonthOffset((m) => m - 1)}
-            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
           >
             ← Prev
           </button>
 
           <button
             onClick={() => setMonthOffset(0)}
-            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
           >
             Current
           </button>
 
           <button
             onClick={() => setMonthOffset((m) => m + 1)}
-            className="px-3 py-1 border border-teal-200 hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
           >
             Next →
           </button>
@@ -109,8 +109,8 @@ export default function MonthlySummaryTable({
       <div className="overflow-x-auto rounded-xs border border-teal-100">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
-            <tr className="bg-teal-100 shadow-inner">
-              <th className="p-3 border text-left sticky left-0 bg-teal-900 text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
+            <tr className="bg-[#02505e] shadow-inner text-gray-100">
+              <th className="p-3 border text-left sticky left-0 bg-[#02505e] text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Employee
               </th>
               <th className="p-3 border border-teal-100 text-center">Contract</th>
@@ -119,8 +119,8 @@ export default function MonthlySummaryTable({
               <th className="p-3 border text-center">
                 Days
                 <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
-                  <span className="px-2 py-0.5 bg-blue-500 text-white">Scheduled</span>
-                  <span className="px-2 py-0.5 bg-green-500 text-white">Worked</span>
+                  <span className="px-2 py-0.5 bg-blue-800 text-white">Scheduled</span>
+                  <span className="px-2 py-0.5 bg-blue-500 text-white">Worked</span>
                 </div>
               </th>
 
@@ -128,8 +128,8 @@ export default function MonthlySummaryTable({
               <th className="p-3 border border-teal-100 text-center">
                 Hours
                 <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
-                  <span className="px-2 py-0.5 bg-purple-500 text-white">Scheduled</span>
-                  <span className="px-2 py-0.5 bg-orange-500 text-white">Worked</span>
+                  <span className="px-2 py-0.5 bg-green-800 text-white">Scheduled</span>
+                  <span className="px-2 py-0.5 bg-green-500 text-white">Worked</span>
                 </div>
               </th>
 
@@ -180,7 +180,7 @@ export default function MonthlySummaryTable({
                   className={`border-t border-teal-100 hover:bg-teal-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                 >
                   <td
-                    className="p-3 border border-teal-100 font-medium sticky left-0 bg-teal-600 text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
+                    className="p-3 border border-teal-100 font-medium sticky left-0 bg-[#02505e] text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
                     title={emp.name}
                   >
                     {emp.name}
@@ -191,13 +191,13 @@ export default function MonthlySummaryTable({
                   <td className="p-0 border border-teal-100 text-center h-12">
                     <div className="flex flex-col h-full w-full">
                       <div
-                        className="h-1/2 w-full bg-blue-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        className="h-1/2 w-full bg-blue-800 flex items-center justify-start px-1 text-white text-xs font-semibold"
                         style={{ width: `${(scheduledDays / totalDaysInMonth) * 100}%` }}
                       >
                         {scheduledDays}
                       </div>
                       <div
-                        className="h-1/2 w-full bg-green-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        className="h-1/2 w-full bg-blue-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
                         style={{ width: `${(workedDays / totalDaysInMonth) * 100}%` }}
                       >
                         {workedDays}
@@ -209,13 +209,13 @@ export default function MonthlySummaryTable({
                   <td className="p-0 border border-teal-100 text-center h-12">
                     <div className="flex flex-col h-full w-full">
                       <div
-                        className="h-1/2 w-full bg-purple-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        className="h-1/2 w-full bg-green-800 flex items-center justify-start px-1 text-white text-xs font-semibold"
                         style={{ width: `${scheduledHoursPercent}%` }}
                       >
                         {scheduledHours.toFixed(1)}
                       </div>
                       <div
-                        className="h-1/2 w-full bg-orange-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        className="h-1/2 w-full bg-green-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
                         style={{ width: `${workedHoursPercent}%` }}
                       >
                         {workedHours.toFixed(1)}
