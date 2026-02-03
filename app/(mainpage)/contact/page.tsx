@@ -72,7 +72,7 @@ export default function Contact() {
                 className="flex items-center gap-2 text-teal-500 font-semibold hover:underline"
               >
                 <Phone className="w-4 h-4" />
-                +46 70 123 45 67
+                +46 73 875 20 87
               </a>
             </div>
 

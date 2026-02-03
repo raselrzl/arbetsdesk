@@ -60,8 +60,8 @@ export default async function Navbar() {
           <Link href="/pricing" className="hover:text-gray-300">
             Pricing
           </Link>
-          <Link href="/analytics" className="hover:text-gray-300">
-            Analytics+
+          <Link href="/features/analytics" className="hover:text-gray-300">
+            Analytics
           </Link>
           <Link href="/contact" className="hover:text-gray-300">
             Contact

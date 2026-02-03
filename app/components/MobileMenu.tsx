@@ -55,11 +55,11 @@ export default function MobileMenu({ user }: { user: any }) {
             Pricing
           </Link>
           <Link
-            href="/analytics"
+            href="/features/analytics"
             className="py-2 border-b"
             onClick={handleLinkClick}
           >
-            Analytics+
+            Analytics
           </Link>
           <Link
             href="/contact"
@@ -85,7 +85,7 @@ export default function MobileMenu({ user }: { user: any }) {
             })
           }
           disabled={isPending}
-          className="py-1 px-4 shadow shadow-teal-100 text-gray-100 uppercase font-semibold rounded-3xl hover:bg-teal-700 text-xs flex items-center justify-center gap-2 disabled:opacity-60"
+          className="py-1 px-4  shadow-lg bg-[#02505e]  text-gray-100 uppercase font-semibold rounded-3xl hover:bg-teal-700 text-xs flex items-center justify-center gap-2 disabled:opacity-60"
         >
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Login"}
         </button>

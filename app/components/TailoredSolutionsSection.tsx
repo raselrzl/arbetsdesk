@@ -131,10 +131,10 @@ export const TailoredSolutionsSection: React.FC = () => {
             </div>
             <div>
               <h4 className="text-lg font-bold mb-1 text-teal-600">
-                Build for World
+                Build
               </h4>
               <p className="text-[#00687a] leading-relaxed">
-                Designed for international work structure, accounting, VAT, and
+                Designed for easy work structure, accounting, VAT, and
                 company operations.
               </p>
             </div>
