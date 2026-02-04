@@ -49,11 +49,13 @@ function getWeekNumber(date: Date) {
 type Props = {
   schedules: any[];
   employees: { id: string; name: string }[];
+  onScheduleUpdated: () => Promise<void>;
 };
 
 export default function WeeklyScheduleTable({
   schedules,
   employees,
+  onScheduleUpdated,
 }: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
   const { start, end } = getWeekRange(weekOffset);
@@ -151,6 +153,7 @@ export default function WeeklyScheduleTable({
         startTime: `${editStartHour}:${editStartMinute}`,
         endTime: `${editEndHour}:${editEndMinute}`,
       });
+      await onScheduleUpdated();
       setSelectedSchedule(null);
     } catch (err) {
       console.error(err);
