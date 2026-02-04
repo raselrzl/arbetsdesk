@@ -33,7 +33,7 @@ export default function LogoutThankYouPopup({
   return (
     <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
       <div className="bg-white w-full max-w-[250px] h-[260px] rounded-xs shadow-xl text-center relative">
-        <div className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
+        <div className="text-xl font-bold text-gray-200 bg-[#02505e] py-4 uppercase">
           Thank you For Today
           {employeeName && (
             <p className="text-sm mb-2 font-semibold">
@@ -59,7 +59,7 @@ export default function LogoutThankYouPopup({
 
         <button
           onClick={onClose}
-          className="w-full py-4 bg-teal-800 text-white font-semibold"
+          className="w-full py-4 bg-[#02505e] text-white font-semibold"
         >
           OK
         </button>

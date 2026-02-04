@@ -45,10 +45,9 @@ export default function AuthStatusPopup({
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [logoutTime, setLogoutTime] = useState<string | null>(null);
 
- const [currentLoginTime, setCurrentLoginTime] = useState<string | null>(
-  loginTime ?? null
-);
-
+  const [currentLoginTime, setCurrentLoginTime] = useState<string | null>(
+    loginTime ?? null,
+  );
 
   const handleLogout = async () => {
     try {
@@ -72,26 +71,26 @@ export default function AuthStatusPopup({
   };
 
   return (
-    <div className="fixed inset-0 z-9999 bg-black/40 flex items-center justify-center">
-      <div className="bg-white w-full max-w-[250px] h-[260px] rounded-xs shadow-xl text-center relative">
+    <div className="fixed inset-0 z-9999 bg-black/60 flex items-center justify-center">
+      <div className="bg-white w-[260px] h-80 rounded-3xl shadow-xl text-center relative">
         {status === "LOGGED_IN_WITH_SCHEDULE" && schedule && (
-          <div className="">
-            <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
-              Hi, {employeeName}
+          <div className=" flex flex-col justify-between w-[262px] h-80 pr-2 overflow-hidden">
+            <h2 className="text-xl font-bold text-gray-200 bg-[#02505e] py-12 uppercase rounded-t-xl">
+              Welcome, {employeeName}
             </h2>
-            <CheckCircle className="w-10 h-10 text-green-600 mx-auto my-4" />
-            <p className="font-semibold">Schedule time</p>
-            <p className="text-lg font-bold mt-1">
+            <CheckCircle className="w-10 h-10 text-teal-400 mx-auto my-4" />
+            <p className="font-semibold text-[#02505e]">Schedule time</p>
+            <p className="text-lg font-extrabold mt-1 text-[#02505e]">
               {formatTime(schedule.startTime)} – {formatTime(schedule.endTime)}
             </p>
-            {/*   {loginTime && (
+            {/*  {loginTime && (
               <p className="text-sm text-gray-500 mt-2">
                 Logged in at: {formatTime(loginTime)}
               </p>
             )} */}
             <button
               onClick={onClose}
-              className="mt-5 w-full py-4 bg-teal-800 text-white font-bold hover:bg-teal-700"
+              className="mt-5 w-full py-4 bg-[#02505e] text-gray-100 font-bold hover:bg-teal-700 rounded-b-2xl"
             >
               OK
             </button>
@@ -99,8 +98,9 @@ export default function AuthStatusPopup({
         )}
 
         {status === "LOGGED_IN_NO_SCHEDULE" && (
-          <div className="">
-            <h2 className="text-xl font-bold text-gray-200 bg-teal-800 py-4">
+          <div className="relative flex flex-col justify-between w-[260px] h-80 overflow-hidden rounded-2xl">
+          
+            <h2 className="text-xl font-bold text-gray-200 bg-[#02505e] py-4">
               Hi, {employeeName}
             </h2>
             <Info className="w-10 h-10 text-blue-500 mx-auto mb-2" />
@@ -112,7 +112,7 @@ export default function AuthStatusPopup({
             <div className="flex gap-3 mt-5 px-3">
               <button
                 onClick={onConfirmLogin}
-                className="flex-1 py-2 bg-teal-600 text-white font-bold hover:bg-teal-700 rounded"
+                className="flex-1 py-2 bg-bg-[#02505e] text-white font-bold hover:bg-teal-700 rounded"
               >
                 Yes
               </button>
@@ -128,16 +128,16 @@ export default function AuthStatusPopup({
         )}
 
         {status === "ALREADY_LOGGED_IN" && (
-          <div className="relative">
+          <div className="relative flex flex-col justify-between w-[260px] h-80 overflow-hidden rounded-2xl">
             {/* Close (cross) button */}
             <button
               onClick={onClose}
-              className="absolute top-2 right-2 text-gray-300 hover:text-white"
+              className="absolute top-2 right-2 text-gray-800 hover:text-white"
             >
               ✕
             </button>
 
-            <div className="text-xl font-bold text-gray-200 bg-teal-800 py-4 uppercase">
+            <div className="text-xl font-bold text-gray-200 bg-[#02505e] py-4 uppercase">
               <p>Hi, {employeeName}</p>
               <span className="text-xs font-light text-gray-400">
                 id: {personalNumber}
@@ -152,7 +152,7 @@ export default function AuthStatusPopup({
 
             <button
               onClick={handleLogout}
-              className="mt-5 w-full py-4 bg-teal-800 text-white font-bold hover:bg-teal-700"
+              className="mt-5 w-full py-4 bg-[#02505e] text-white font-bold hover:bg-teal-700"
             >
               Yes
             </button>
