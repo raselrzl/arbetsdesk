@@ -817,6 +817,38 @@ export async function getCompanyMessagesForCompany(date: string) {
 
 
 
+
+export async function getEmployeeRegisteredNotificationsForCompany(
+  date: string,
+) {
+  const jar = await cookies();
+  const companyId = jar.get("company_session")?.value;
+
+  if (!companyId) throw new Error("Unauthorized");
+
+  const { start, end } = getDateRangeFromDate(date);
+
+  const notifications = await prisma.notification.findMany({
+    where: {
+      companyId,
+      type: "EMPLOYEE_REGISTERED",
+      createdAt: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return notifications.map((n) => ({
+    id: n.id,
+    body: n.body,
+    createdAt: n.createdAt.toISOString(),
+  }));
+}
+
+
+
 /* export async function fetchMessagesForDate(date: string) {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
