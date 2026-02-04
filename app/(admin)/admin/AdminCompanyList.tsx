@@ -36,13 +36,13 @@ export default async function AdminCompanyList({ user }: AdminCompanyListProps) 
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+    <div className="max-w-7xl px-4 text-gray-100">
      {/*  <h2 className="text-lg font-semibold mb-4">Hi {user.name}, your registered companies:</h2>
  */}
       {/* Large screen table */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-800">
             <tr>
               <th className="border border-gray-300 px-4 py-2 text-left">Company Name</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Organization Number</th>
@@ -53,7 +53,7 @@ export default async function AdminCompanyList({ user }: AdminCompanyListProps) 
           </thead>
           <tbody>
             {companies.map((company) => (
-              <tr key={company.id} className="hover:bg-gray-50">
+              <tr key={company.id} className="hover:bg-gray-700">
                 <td className="border border-gray-300 px-4 py-2">{company.name}</td>
                 <td className="border border-gray-300 px-4 py-2">{company.organizationNo}</td>
                 <td className="border border-gray-300 px-4 py-2">{company.loginCode}</td>
@@ -102,9 +102,9 @@ export default async function AdminCompanyList({ user }: AdminCompanyListProps) 
       {/* Mobile cards */}
       <div className="sm:hidden space-y-4">
         {companies.map((company) => (
-          <div key={company.id} className="border rounded-lg p-4 shadow-sm bg-white">
-            <p>
-              <strong>Company Name:</strong> {company.name}
+          <div key={company.id} className="border rounded-xs p-4 shadow-sm bg-gary-800">
+            <p className="text-xl uppercase mb-4">
+              <strong> {company.name}</strong>
             </p>
             <p>
               <strong>Organization Number:</strong> {company.organizationNo}

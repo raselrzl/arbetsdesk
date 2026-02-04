@@ -24,7 +24,7 @@ export default async function AdminPageWrapper() {
   }
 
   return (
-    <div className="flex max-w-7xl flex-col py-20">
+    <div className="flex max-w-7xl flex-col py-20 ">
       <AdminCompanyList user={user}/>
     </div>
   );
