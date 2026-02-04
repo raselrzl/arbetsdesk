@@ -55,6 +55,11 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   const { start, end } = getWeekRange(weekOffset);
   const weekNumber = getWeekNumber(start);
 
+  const [selectedSchedule, setSelectedSchedule] = useState<null | {
+    employee: { id: string; name: string };
+    schedule: any;
+  }>(null);
+
   // Filter schedules for this week
   const weekSchedules = schedules.filter((sch) => {
     const d = new Date(sch.date);
@@ -203,7 +208,13 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                           return (
                             <div
                               key={sch.id}
-                              className={`mb-1 rounded px-2 py-3 border-l-6 text-left ${colorClass}`}
+                              onClick={() =>
+                                setSelectedSchedule({
+                                  employee: emp,
+                                  schedule: sch,
+                                })
+                              }
+                              className={`mb-1 rounded px-2 py-3 border-l-6 text-left cursor-pointer ${colorClass}`}
                             >
                               <div
                                 className={`font-semibold text-[18px] truncate ${text}`}
@@ -226,6 +237,46 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           </tbody>
         </table>
       </div>
+      {selectedSchedule &&
+        (() => {
+          const { employee, schedule } = selectedSchedule;
+          const { bg, border, text } = getEmployeeColorClasses(employee.id);
+
+          return (
+            <div className="fixed inset-0 bg-black/70 bg-opacity-30 flex items-center justify-center z-50">
+              <div
+                className={`rounded px-4 py-3 border-l-6 ${bg} ${border} w-80 relative`}
+              >
+                <button
+                  className="absolute top-2 right-2 text-gray-500"
+                  onClick={() => setSelectedSchedule(null)}
+                >
+                  ✕
+                </button>
+
+                <h2
+                  className={`font-semibold text-[18px] truncate ${text} mb-2`}
+                >
+                  {employee.name}
+                </h2>
+
+                <p className={`text-[10px] ${text} mb-1`}>
+                  Date: {formatDate(schedule.date)}
+                </p>
+                <p className={`text-[10px] ${text} mb-1`}>
+                  Time: {formatTime(schedule.startTime)} –{" "}
+                  {formatTime(schedule.endTime)}
+                </p>
+
+                {schedule.details && (
+                  <p className={`text-[10px] ${text}`}>
+                    Details: {schedule.details}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })()}
     </div>
   );
 }

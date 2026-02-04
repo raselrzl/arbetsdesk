@@ -280,3 +280,26 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
 
   revalidatePath("/company/schedule");
 }
+
+
+
+export async function updateEachSchedule({
+  id,
+  startTime,
+  endTime,
+}: {
+  id: string;
+  startTime: Date;
+  endTime: Date;
+}) {
+  "use server"; // <-- critical for server action
+
+  // Update schedule in DB
+  return await prisma.schedule.update({
+    where: { id },
+    data: {
+      startTime,
+      endTime,
+    },
+  });
+}
