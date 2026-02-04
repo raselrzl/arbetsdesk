@@ -88,7 +88,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mt-20 mb-70 w-full ">
+      <section className="mt-20 mb-20 w-full ">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -134,7 +134,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mt-20 mb-30 w-full pb-20">
+      <section className=" mb-30 w-full pb-20">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -145,24 +145,24 @@ export default function HomePage() {
           >
             <div className="w-auto h-[350px] relative">
               <img
-                src="/timelog/timepad1.png"
+                src="/timelog/1.png"
                 alt="Main"
-                className="w-auto h-[350px] object-contain shadow-xl shadow-teal-900"
+                className="w-auto h-[350px] object-contain"
               />
-              <div className="absolute top-1/2 left-1/2 md:-left-2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+           {/*    <div className="absolute top-1/2 left-1/2 md:-left-2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
                 <img
-                  src="/timelog/tl3.png"
+                  src="/timelog/2.png"
                   alt="Small Icon"
-                  className="w-ful h-full rounded-xl shadow-xl shadow-teal-950"
+                  className=" rounded-xl shadow-xl shadow-teal-950"
                 />
               </div>
               <div className="absolute top-2 left-1/2 md:-left-2 -translate-x-1 -translate-y-1/2 flex items-center justify-center">
                 <img
-                  src="/timelog/tl3.png"
+                  src="/timelog/1.png"
                   alt="Small Icon"
                   className="w-ful h-full rounded-xl shadow-xl shadow-teal-950"
                 />
-              </div>
+              </div> */}
               <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 translate-y-[90%] w-[90%] bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-lg text-center z-10">
                 <h1 className="text-xl font-extrabold mb-2 text-[#00687a] uppercase">
                   Schedule Login
