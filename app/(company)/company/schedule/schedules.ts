@@ -271,3 +271,20 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
   revalidatePath("/company/schedule");
 }
 
+
+
+// Server Action specifically for popup time update
+export async function updateScheduleTime({
+  scheduleId,
+  startTime,
+  endTime,
+}: {
+  scheduleId: string;
+  startTime: string;
+  endTime: string;
+}) {
+  return updateSchedule(scheduleId, {
+    startTime,
+    endTime,
+  });
+}

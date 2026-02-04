@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { updateSchedule, updateScheduleTime } from "./schedules";
 
 /* ---------------- HELPERS ---------------- */
 function formatDate(d: Date | string) {
@@ -50,7 +51,10 @@ type Props = {
   employees: { id: string; name: string }[];
 };
 
-export default function WeeklyScheduleTable({ schedules, employees }: Props) {
+export default function WeeklyScheduleTable({
+  schedules,
+  employees,
+}: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
   const { start, end } = getWeekRange(weekOffset);
   const weekNumber = getWeekNumber(start);
@@ -87,8 +91,6 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   });
 
   /* ---------------- COLOR HELPERS ---------------- */
-
-  // Tailwind-safe palette (can be extended infinitely)
   const EMPLOYEE_COLORS = [
     "bg-red-100 border-red-400",
     "bg-blue-100 border-blue-400",
@@ -101,7 +103,6 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
     "bg-orange-100 border-orange-400",
   ];
 
-  // Deterministic hash → color (unlimited employees)
   function getEmployeeColor(employeeId: string) {
     let hash = 0;
     for (let i = 0; i < employeeId.length; i++) {
@@ -112,13 +113,54 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
   }
 
   function getEmployeeColorClasses(employeeId: string) {
-    const full = getEmployeeColor(employeeId); // e.g., "bg-red-100 border-red-400"
+    const full = getEmployeeColor(employeeId);
     const bg = full.match(/bg-\S+/)?.[0] ?? "bg-gray-100";
     const border = full.match(/border-\S+/)?.[0] ?? "border-gray-400";
-    const text = border.replace("border", "text"); // "border-red-400" → "text-red-400"
+    const text = border.replace("border", "text");
     return { bg, border, text };
   }
 
+  /* ---------------- POPUP TIME EDIT HELPERS ---------------- */
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, "0")
+  );
+  const minutes = ["00", "15", "30", "45"];
+
+  const [editStartHour, setEditStartHour] = useState("00");
+  const [editStartMinute, setEditStartMinute] = useState("00");
+  const [editEndHour, setEditEndHour] = useState("00");
+  const [editEndMinute, setEditEndMinute] = useState("00");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const openPopup = (emp: { id: string; name: string }, sch: any) => {
+    setSelectedSchedule({ employee: emp, schedule: sch });
+    const startDate = new Date(sch.startTime);
+    const endDate = new Date(sch.endTime);
+    setEditStartHour(startDate.getHours().toString().padStart(2, "0"));
+    setEditStartMinute(startDate.getMinutes().toString().padStart(2, "0"));
+    setEditEndHour(endDate.getHours().toString().padStart(2, "0"));
+    setEditEndMinute(endDate.getMinutes().toString().padStart(2, "0"));
+  };
+
+  const handleUpdateSchedule = async () => {
+    if (!selectedSchedule) return;
+    setIsUpdating(true);
+    try {
+      await updateScheduleTime({
+        scheduleId: selectedSchedule.schedule.id,
+        startTime: `${editStartHour}:${editStartMinute}`,
+        endTime: `${editEndHour}:${editEndMinute}`,
+      });
+      setSelectedSchedule(null);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update schedule.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  /* ---------------- RENDER ---------------- */
   return (
     <div className="space-y-3 mt-20">
       {/* WEEK FILTER */}
@@ -126,7 +168,6 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
         <div className="font-semibold text-gray-100 bg-[#02505e] px-2 py-1 uppercase">
           Week {weekNumber} · {formatDate(start)} – {formatDate(end)}
         </div>
-
         <div className="flex gap-2">
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
@@ -134,14 +175,12 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           >
             ← Prev
           </button>
-
           <button
             onClick={() => setWeekOffset(0)}
             className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
           >
             Current
           </button>
-
           <button
             onClick={() => setWeekOffset((w) => w + 1)}
             className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
@@ -156,10 +195,6 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
             <tr className="bg-[#02505e] text-gray-100">
-              {/*   <th className="p-3 border text-left sticky left-0 bg-teal-100 z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
-                Schedule
-              </th> */}
-
               {daysOfWeek.map((day) => (
                 <th
                   key={formatDate(day)}
@@ -177,18 +212,11 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           <tbody>
             {employees.map((emp) => (
               <tr key={emp.id} className="border-t border-teal-100">
-                {/* <td
-                  className="p-3 border font-medium sticky left-0 bg-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
-                  title={emp.name}
-                >
-                  {emp.name}
-                </td> */}
-
                 {daysOfWeek.map((day) => {
                   const dayKey = formatDate(day);
                   const empSchedules =
                     schedulesByDay[dayKey]?.filter(
-                      (s) => s.employee.id === emp.id,
+                      (s) => s.employee.id === emp.id
                     ) || [];
 
                   return (
@@ -201,19 +229,13 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
                       ) : (
                         empSchedules.map((sch) => {
                           const colorClass = getEmployeeColor(emp.id);
-                          const { bg, border, text } = getEmployeeColorClasses(
-                            emp.id,
-                          );
+                          const { bg, border, text } =
+                            getEmployeeColorClasses(emp.id);
 
                           return (
                             <div
                               key={sch.id}
-                              onClick={() =>
-                                setSelectedSchedule({
-                                  employee: emp,
-                                  schedule: sch,
-                                })
-                              }
+                              onClick={() => openPopup(emp, sch)}
                               className={`mb-1 rounded px-2 py-3 border-l-6 text-left cursor-pointer ${colorClass}`}
                             >
                               <div
@@ -237,46 +259,129 @@ export default function WeeklyScheduleTable({ schedules, employees }: Props) {
           </tbody>
         </table>
       </div>
-      {selectedSchedule &&
-        (() => {
-          const { employee, schedule } = selectedSchedule;
-          const { bg, border, text } = getEmployeeColorClasses(employee.id);
 
-          return (
-            <div className="fixed inset-0 bg-black/70 bg-opacity-30 flex items-center justify-center z-50">
-              <div
-                className={`rounded px-4 py-3 border-l-6 ${bg} ${border} w-80 relative`}
+      {/* POPUP */}
+      {selectedSchedule && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div
+            className={`rounded px-4 py-3 border-l-6 ${
+              getEmployeeColorClasses(selectedSchedule.employee.id).bg
+            } ${
+              getEmployeeColorClasses(selectedSchedule.employee.id).border
+            } w-80 relative`}
+          >
+            <button
+              className="absolute top-2 right-2 text-gray-500"
+              onClick={() => setSelectedSchedule(null)}
+            >
+              ✕
+            </button>
+
+            <h2
+              className={`font-semibold text-[18px] truncate mb-2 ${
+                getEmployeeColorClasses(selectedSchedule.employee.id).text
+              }`}
+            >
+              {selectedSchedule.employee.name}
+            </h2>
+
+            <p
+              className={`text-[10px] mb-2 ${
+                getEmployeeColorClasses(selectedSchedule.employee.id).text
+              }`}
+            >
+              Date: {formatDate(selectedSchedule.schedule.date)}
+            </p>
+
+            {/* Editable Time */}
+            <div className="flex gap-2 text-[10px] mb-2 items-center">
+              <span
+                className={
+                  getEmployeeColorClasses(selectedSchedule.employee.id).text
+                }
               >
-                <button
-                  className="absolute top-2 right-2 text-gray-500"
-                  onClick={() => setSelectedSchedule(null)}
-                >
-                  ✕
-                </button>
+                Start:
+              </span>
+              <select
+                value={editStartHour}
+                onChange={(e) => setEditStartHour(e.target.value)}
+                className="border rounded-xs px-1 py-0.5 text-[10px]"
+              >
+                {hours.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+              :
+              <select
+                value={editStartMinute}
+                onChange={(e) => setEditStartMinute(e.target.value)}
+                className="border rounded-xs px-1 py-0.5 text-[10px]"
+              >
+                {minutes.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
 
-                <h2
-                  className={`font-semibold text-[18px] truncate ${text} mb-2`}
-                >
-                  {employee.name}
-                </h2>
-
-                <p className={`text-[10px] ${text} mb-1`}>
-                  Date: {formatDate(schedule.date)}
-                </p>
-                <p className={`text-[10px] ${text} mb-1`}>
-                  Time: {formatTime(schedule.startTime)} –{" "}
-                  {formatTime(schedule.endTime)}
-                </p>
-
-                {schedule.details && (
-                  <p className={`text-[10px] ${text}`}>
-                    Details: {schedule.details}
-                  </p>
-                )}
-              </div>
+              <span
+                className={
+                  getEmployeeColorClasses(selectedSchedule.employee.id).text
+                }
+              >
+                End:
+              </span>
+              <select
+                value={editEndHour}
+                onChange={(e) => setEditEndHour(e.target.value)}
+                className="border rounded-xs px-1 py-0.5 text-[10px]"
+              >
+                {hours.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+              :
+              <select
+                value={editEndMinute}
+                onChange={(e) => setEditEndMinute(e.target.value)}
+                className="border rounded-xs px-1 py-0.5 text-[10px]"
+              >
+                {minutes.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
             </div>
-          );
-        })()}
+
+            {selectedSchedule.schedule.details && (
+              <p
+                className={`text-[10px] mb-2 ${
+                  getEmployeeColorClasses(selectedSchedule.employee.id).text
+                }`}
+              >
+                Details: {selectedSchedule.schedule.details}
+              </p>
+            )}
+
+            <button
+              onClick={handleUpdateSchedule}
+              disabled={isUpdating}
+              className={`mt-2 w-full px-3 py-1 rounded-xs ${
+                isUpdating
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : `bg-[#02505e] hover:bg-teal-900 text-gray-100`
+              }`}
+            >
+              {isUpdating ? "Updating..." : "Update Schedule"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
