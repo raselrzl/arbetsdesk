@@ -160,8 +160,6 @@ export async function getSchedulesForCompany() {
   });
 }
 
-
-// Server Action to update an existing schedule
 // Server Action to update an existing schedule
 export async function updateSchedule(
   scheduleId: string,
@@ -171,7 +169,6 @@ export async function updateSchedule(
     endTime,
   }: { date?: string; startTime?: string; endTime?: string }
 ) {
-  // Fetch existing schedule to get the original date if needed
   const existing = await prisma.schedule.findUnique({
     where: { id: scheduleId },
   });
@@ -179,21 +176,15 @@ export async function updateSchedule(
 
   const updateData: any = {};
 
-  // Determine which date to use (updated or existing)
   const baseDate = date ?? existing.date.toISOString().slice(0, 10);
 
-  // Build start/end times if provided
   if (startTime) {
     updateData.startTime = new Date(`${baseDate}T${startTime}:00Z`);
   }
 
   if (endTime) {
     let end = new Date(`${baseDate}T${endTime}:00Z`);
-
-    // If startTime is also updated, use it; otherwise fallback to existing startTime
     const start = updateData.startTime ?? existing.startTime;
-
-    // Handle overnight shift
     if (end <= start) {
       end.setUTCDate(end.getUTCDate() + 1);
     }
@@ -201,9 +192,8 @@ export async function updateSchedule(
     updateData.endTime = end;
   }
 
-  // Update the reference date if provided
   if (date) {
-    updateData.date = new Date(date); // For reference only
+    updateData.date = new Date(date);
   }
 
   return prisma.schedule.update({
@@ -281,25 +271,3 @@ export async function swapSchedules(scheduleIdA: string, scheduleIdB: string) {
   revalidatePath("/company/schedule");
 }
 
-
-
-export async function updateEachSchedule({
-  id,
-  startTime,
-  endTime,
-}: {
-  id: string;
-  startTime: Date;
-  endTime: Date;
-}) {
-  "use server"; // <-- critical for server action
-
-  // Update schedule in DB
-  return await prisma.schedule.update({
-    where: { id },
-    data: {
-      startTime,
-      endTime,
-    },
-  });
-}
