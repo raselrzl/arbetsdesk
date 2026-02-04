@@ -99,7 +99,7 @@ export default function HomePage() {
           >
             <div className="w-auto h-[350px] relative">
               <img
-                src="/timelog/timepad1.png"
+                src="/timelog/3.png"
                 alt=""
                 className="w-auto h-[350px] object-contain shadow-xl shadow-teal-900"
               />
@@ -117,7 +117,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="hidden md:block absolute top-20 right-[-380px] max-w-xl bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
+            <div className="hidden md:block absolute top-50 right-[-380px] max-w-xl bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
               <h1 className="text-3xl font-extrabold mb-3 text-[#00687a] uppercase">
                 Time log
               </h1>
