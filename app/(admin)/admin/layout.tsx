@@ -21,7 +21,7 @@ export default async function AdminLayout({
   if (!user || user.role !== "ADMIN") redirect("/");
 
   return (
-    <div className="py-20">
+    <div className="">
       <AdminLayoutClient user={user}>{children}</AdminLayoutClient>
     </div>
   );

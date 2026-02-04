@@ -8,5 +8,9 @@ export default async function CreateCompanyPage() {
   if (!user) redirect("/login");
   if (user.role !== "ADMIN") redirect("/unauthorized");
 
-  return <CompanyRegisterForm user={user} />;
+  return (
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 md:pt-4">
+      <CompanyRegisterForm user={user} />
+    </div>
+  );
 }
