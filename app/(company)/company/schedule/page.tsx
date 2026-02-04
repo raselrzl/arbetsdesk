@@ -245,10 +245,10 @@ export default function CompanySchedulePage() {
               render={(value, openCalendar) => (
                 <div
                   onClick={openCalendar}
-                  className="flex text-[8px] items-center gap-2 px-3 py-1 rounded-xs  border w-30 border-[#02505e] cursor-pointer bg-[#02505e] text-gray-100"
+                  className="flex text-md items-center gap-2 px-3 py-1 rounded-xs  border w-30 border-[#02505e] cursor-pointer bg-[#02505e] text-gray-100"
                 >
-                  <Calendar className="w-5 h-5 text-gray-100" />
-                  Click
+                  <Calendar className="w-5 h-5 text-gray-100 mr-4" />
+                  DATE
                   <span className="text-[#02505e] hidden">
                     {selectedDates.length > 0
                       ? selectedDates
