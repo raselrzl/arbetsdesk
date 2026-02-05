@@ -7,9 +7,10 @@ import { ArrowLeftRight } from "lucide-react";
 type Props = {
   schedules: any[];
   employees: { id: string; name: string }[];
+  onScheduleUpdated: () => Promise<void>;
 };
 
-export default function MonthlyScheduleTable({ schedules, employees }: Props) {
+export default function MonthlyScheduleTable({ schedules, employees, onScheduleUpdated }: Props) {
   // ---------------- State ----------------
   const [schedulesState, setSchedulesState] = useState(schedules); // local reactive schedules
   const [monthOffset, setMonthOffset] = useState(0);
@@ -132,6 +133,7 @@ export default function MonthlyScheduleTable({ schedules, employees }: Props) {
       setSchedulesState(updatedSchedules);
 
       handleClosePopup();
+      await onScheduleUpdated();
       alert("Shifts swapped successfully!");
     } catch (err) {
       console.error(err);

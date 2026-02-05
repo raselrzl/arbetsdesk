@@ -322,7 +322,7 @@ export default function CompanySchedulePage() {
 
       {/* ✅ Tables */}
       <WeeklyScheduleTable schedules={schedules} employees={employeesFromDB} onScheduleUpdated={loadData}/>
-      <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} />
+      <MonthlyScheduleTable schedules={schedules} employees={employeesFromDB} onScheduleUpdated={loadData}/>
       <MonthlySummaryTable
         schedules={schedules}
         employees={employeesFromDB}

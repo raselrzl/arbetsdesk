@@ -9,7 +9,11 @@ import {
   ClockCheck,
 } from "lucide-react";
 
-import { loginEmployeeWithPin, logoutEmployeeWithPin } from "../companyactions";
+import {
+  getEmployeeCurrentLoginTime,
+  loginEmployeeWithPin,
+  logoutEmployeeWithPin,
+} from "../companyactions";
 import Link from "next/link";
 import LogoutThankYouPopup from "./LogoutThankYouPopup";
 import LoginThankYouPopup from "./LoginThankYouPopup";
@@ -75,7 +79,7 @@ export default function CompanyPageClient({ companyData }: any) {
     if (!selectedEmployee) return;
 
     try {
-      if (authMode === "logout") {
+      /*   if (authMode === "logout") {
         await logoutEmployeeWithPin(selectedEmployee.id, personalNumber);
 
         const logs = selectedEmployee.timeLogs ?? [];
@@ -84,6 +88,22 @@ export default function CompanyPageClient({ companyData }: any) {
         setLogoutTimes({
           loginTime: lastLog?.loginTime,
           logoutTime: new Date(),
+        });
+
+        setShowLogoutPopup(true); */
+      if (authMode === "logout") {
+        const currentLoginTime = await getEmployeeCurrentLoginTime(
+          selectedEmployee.id,
+        );
+
+        if (!currentLoginTime) {
+          alert("No active login found for this employee.");
+          return;
+        }
+
+        setLogoutTimes({
+          loginTime: currentLoginTime, // this is already a string
+          logoutTime: new Date().toISOString(),
         });
 
         setShowLogoutPopup(true);
@@ -141,9 +161,7 @@ export default function CompanyPageClient({ companyData }: any) {
                 <div
                   key={emp.id}
                   className={`cursor-pointer flex p-2 relative rounded-xs ${
-                    isLoggedIn
-                      ? "bg-teal-300"
-                      : "bg-gray-100"
+                    isLoggedIn ? "bg-teal-300" : "bg-gray-100"
                   }`}
                 >
                   <div className="flex flex-col gap-1">
@@ -167,10 +185,13 @@ export default function CompanyPageClient({ companyData }: any) {
                           <div key={i} className="flex items-center text-xs">
                             <CalendarDays className="w-3 h-3 text-teal-800" />
                             <span>
-                              {new Date(s.startTime).toLocaleTimeString("en-GB", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}{" "}
+                              {new Date(s.startTime).toLocaleTimeString(
+                                "en-GB",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}{" "}
                               -{" "}
                               {new Date(s.endTime).toLocaleTimeString("en-GB", {
                                 hour: "2-digit",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateSchedule, updateScheduleTime } from "./schedules";
+import { Edit, Pen } from "lucide-react";
 
 /* ---------------- HELPERS ---------------- */
 function formatDate(d: Date | string) {
@@ -124,7 +125,7 @@ export default function WeeklyScheduleTable({
 
   /* ---------------- POPUP TIME EDIT HELPERS ---------------- */
   const hours = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, "0")
+    i.toString().padStart(2, "0"),
   );
   const minutes = ["00", "15", "30", "45"];
 
@@ -219,7 +220,7 @@ export default function WeeklyScheduleTable({
                   const dayKey = formatDate(day);
                   const empSchedules =
                     schedulesByDay[dayKey]?.filter(
-                      (s) => s.employee.id === emp.id
+                      (s) => s.employee.id === emp.id,
                     ) || [];
 
                   return (
@@ -232,20 +233,27 @@ export default function WeeklyScheduleTable({
                       ) : (
                         empSchedules.map((sch) => {
                           const colorClass = getEmployeeColor(emp.id);
-                          const { bg, border, text } =
-                            getEmployeeColorClasses(emp.id);
+                          const { bg, border, text } = getEmployeeColorClasses(
+                            emp.id,
+                          );
 
                           return (
                             <div
                               key={sch.id}
                               onClick={() => openPopup(emp, sch)}
-                              className={`mb-1 rounded px-2 py-3 border-l-6 text-left cursor-pointer ${colorClass}`}
+                              className={`relative mb-1 rounded px-2 py-3 border-l-6 text-left cursor-pointer ${colorClass}`}
                             >
+                              {/* Edit icon – top right */}
+                              <div className="absolute top-1 right-1">
+                                <Pen className="h-2 w-2" />
+                              </div>
+
                               <div
                                 className={`font-semibold text-[18px] truncate ${text}`}
                               >
                                 {emp.name}
                               </div>
+
                               <div className={`text-[10px] ${text}`}>
                                 {formatTime(sch.startTime)} –{" "}
                                 {formatTime(sch.endTime)}
@@ -328,7 +336,6 @@ export default function WeeklyScheduleTable({
                   </option>
                 ))}
               </select>
-
               <span
                 className={
                   getEmployeeColorClasses(selectedSchedule.employee.id).text
