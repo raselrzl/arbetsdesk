@@ -27,6 +27,37 @@ type Props = {
   showVat?: boolean; // toggle VAT display
 };
 
+type TooltipData = {
+  cash: number;
+  card: number;
+  total: number;
+  vat?: number;
+  vatBreakdown?: Record<string, number>;
+};
+
+const renderTooltip = ({ payload, label }: any) => {
+  if (!payload || !payload.length) return null;
+  const data = payload[0].payload as TooltipData;
+  return (
+    <div className="bg-white p-2 border shadow-md text-sm">
+      <strong>{label}</strong>
+      <div>Cash: {data.cash.toFixed(2)}</div>
+      <div>Card: {data.card.toFixed(2)}</div>
+      <div>Total: {data.total.toFixed(2)}</div>
+      {data.vatBreakdown && (
+        <div className="mt-1">
+          <strong>VAT Breakdown:</strong>
+          {Object.entries(data.vatBreakdown).map(([name, value]) => (
+            <div key={name}>
+              {name}: {(value as number).toFixed(2)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function MonthlySalesGraph({ data, showVat = true }: Props) {
   const [activeTab, setActiveTab] = useState<"line" | "bar">("line");
 
@@ -61,9 +92,8 @@ export default function MonthlySalesGraph({ data, showVat = true }: Props) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
-                />
+                <Tooltip content={renderTooltip} />
+
                 <Legend />
                 <Line
                   type="monotone"
@@ -99,9 +129,8 @@ export default function MonthlySalesGraph({ data, showVat = true }: Props) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
-                />
+                <Tooltip content={renderTooltip} />
+
                 <Legend />
                 <Bar dataKey="cash" fill="#4ade80" name="Cash" />
                 <Bar dataKey="card" fill="#3b82f6" name="Card" />

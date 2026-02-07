@@ -71,6 +71,9 @@ export async function getMonthlySalesByCompany(
       },
     },
     orderBy: { date: "asc" },
+    include: { 
+      vatType: true, // <-- include VAT type relation
+    },
   });
 }
 
@@ -84,6 +87,9 @@ export async function getYearlySalesByCompany(companyId: string, year: number) {
       },
     },
     orderBy: { date: "asc" },
+    include: { 
+      vatType: true, // <-- include VAT type relation
+    },
   });
 
   return sales;

@@ -19,6 +19,8 @@ type Sale = {
   vatRate?: number | null;
   vatAmount?: number | null;
   netAmount?: number | null;
+  vatTypeId?: string | null;
+  vatTypeName?: string | null; // optional friendly name
 };
 
 type Props = {
@@ -105,6 +107,8 @@ export default function SalesClient({
           vatRate: s.vatRate,
           vatAmount: s.vatAmount,
           netAmount: s.netAmount,
+          vatTypeId: s.vatTypeId,
+          vatTypeName: s.vatType?.name,
         })),
       );
       setLoadingMonth(false);
@@ -138,6 +142,8 @@ export default function SalesClient({
         vatRate: s.vatRate,
         vatAmount: s.vatAmount,
         netAmount: s.netAmount,
+        vatTypeId: s.vatTypeId,
+        vatTypeName: s.vatType?.name,
       })),
     );
 
@@ -155,40 +161,54 @@ export default function SalesClient({
       if (s.method === "CASH") cash += value;
       if (s.method === "CARD") card += value;
       vat += vatAmount;
+      
     });
     return { cash, card, vat, total: cash + card };
   }, [sales, vatView]);
 
-  /* ---------- Group by date ---------- */
-  const groupedByDate = useMemo(() => {
-    const map: Record<
-      string,
-      { cash: number; card: number; vat: number; total: number }
-    > = {};
-    sales.forEach((s) => {
-      const day = s.date.slice(0, 10);
-      const value = getSaleValue(s, vatView);
-      const vat = getVatAmount(s);
-      if (!map[day]) map[day] = { cash: 0, card: 0, vat: 0, total: 0 };
-      if (s.method === "CASH") map[day].cash += value;
-      if (s.method === "CARD") map[day].card += value;
-      map[day].total += value;
-      map[day].vat += vat;
-    });
-    return map;
-  }, [sales, vatView]);
+/* ---------- Group by date with VAT category ---------- */
+const groupedByDate = useMemo(() => {
+  const map: Record<
+    string,
+    { cash: number; card: number; vat: number; total: number; vatBreakdown: Record<string, number> }
+  > = {};
 
-  const chartData = useMemo(
-    () =>
-      Object.entries(groupedByDate).map(([date, v]) => ({
-        date,
-        cash: v.cash,
-        card: v.card,
-        total: v.total,
-        vat: v.vat, // ✅ use grouped VAT
-      })),
-    [groupedByDate],
-  );
+  sales.forEach((s) => {
+    const day = s.date.slice(0, 10);
+    const value = getSaleValue(s, vatView);
+    const vat = getVatAmount(s);
+    const vatName = s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
+
+    if (!map[day])
+      map[day] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+
+    if (s.method === "CASH") map[day].cash += value;
+    if (s.method === "CARD") map[day].card += value;
+
+    map[day].total += value;
+    map[day].vat += vat;
+
+    map[day].vatBreakdown[vatName] = (map[day].vatBreakdown[vatName] || 0) + vat;
+  });
+
+  return map;
+}, [sales, vatView]);
+
+/* ---------- Chart Data for Monthly Graph ---------- */
+const chartData = useMemo(
+  () =>
+    Object.entries(groupedByDate).map(([date, v]) => ({
+      date,
+      cash: v.cash,
+      card: v.card,
+      total: v.total,
+      vat: v.vat,
+      vatBreakdown: v.vatBreakdown, // ✅ include breakdown for tooltip
+    })),
+  [groupedByDate],
+);
+
+
 
   /* ---------- Load yearly sales ---------- */
   useEffect(() => {
@@ -203,6 +223,8 @@ export default function SalesClient({
           vatRate: s.vatRate,
           vatAmount: s.vatAmount,
           netAmount: s.netAmount,
+          vatTypeId: s.vatTypeId,
+          vatTypeName: s.vatType?.name,
         })),
       );
       setLoadingYear(false);
@@ -210,30 +232,38 @@ export default function SalesClient({
   }, [yearlyYear, companyId]);
 
   /* ---------- Group yearly by month ---------- */
-  const groupedByMonth = useMemo(() => {
-    const map: Record<
-      string,
-      { cash: number; card: number; vat: number; total: number }
-    > = {};
-    yearlySales.forEach((s) => {
-      const d = new Date(s.date);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      const value = getSaleValue(s, vatView);
-      const vat = getVatAmount(s);
-      if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0 };
-      if (s.method === "CASH") map[key].cash += value;
-      if (s.method === "CARD") map[key].card += value;
-      map[key].total += value;
-      map[key].vat += vat;
-    });
+const groupedByMonth = useMemo(() => {
+  const map: Record<
+    string,
+    { cash: number; card: number; vat: number; total: number; vatBreakdown: Record<string, number> }
+  > = {};
 
-    for (let m = 1; m <= 12; m++) {
-      const key = `${yearlyYear}-${String(m).padStart(2, "0")}`;
-      if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0 };
-    }
+  yearlySales.forEach((s) => {
+    const d = new Date(s.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const value = getSaleValue(s, vatView);
+    const vat = getVatAmount(s);
+    const vatName = s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
 
-    return map;
-  }, [yearlySales, yearlyYear, vatView]);
+    if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+
+    if (s.method === "CASH") map[key].cash += value;
+    if (s.method === "CARD") map[key].card += value;
+    map[key].total += value;
+    map[key].vat += vat;
+
+    map[key].vatBreakdown[vatName] = (map[key].vatBreakdown[vatName] || 0) + vat;
+  });
+
+  // fill empty months
+  for (let m = 1; m <= 12; m++) {
+    const key = `${yearlyYear}-${String(m).padStart(2, "0")}`;
+    if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+  }
+
+  return map;
+}, [yearlySales, yearlyYear, vatView]);
+
 
   const yearlySummary = useMemo(() => {
     let cash = 0,
@@ -247,19 +277,21 @@ export default function SalesClient({
     return { cash, card, vat, total: cash + card };
   }, [groupedByMonth]);
 
-  const yearlyChartData = useMemo(
-    () =>
-      Object.entries(groupedByMonth)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([month, v]) => ({
-          month,
-          cash: v.cash,
-          card: v.card,
-          total: v.total,
-          vat: v.vat, // ✅ use grouped VAT
-        })),
-    [groupedByMonth],
-  );
+ const yearlyChartData = useMemo(
+  () =>
+    Object.entries(groupedByMonth)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, v]) => ({
+        month,
+        cash: v.cash,
+        card: v.card,
+        total: v.total,
+        vat: v.vat,
+        vatBreakdown: v.vatBreakdown, // ✅ Include breakdown
+      })),
+  [groupedByMonth],
+);
+
 
   /* ---------- UI ---------- */
   return (
