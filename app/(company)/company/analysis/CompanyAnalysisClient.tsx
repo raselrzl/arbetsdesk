@@ -90,15 +90,15 @@ export default function CompanyAnalysisClient({
 
   const totalHours = useMemo(
     () => dailyData.reduce((sum, d) => sum + d.hours, 0),
-    [dailyData]
+    [dailyData],
   );
   const totalTips = useMemo(
     () => dailyData.reduce((sum, d) => sum + d.tips, 0),
-    [dailyData]
+    [dailyData],
   );
   const totalSalary = useMemo(
     () => salaryData.reduce((sum, s) => sum + s.salary, 0),
-    [salaryData]
+    [salaryData],
   );
 
   const totalSales = useMemo(() => {
@@ -112,7 +112,7 @@ export default function CompanyAnalysisClient({
   const totalAdditionalCost = useMemo(() => {
     return profitRows.reduce((sum, row) => {
       const dailyCost = Object.values(
-        row.costBreakdown?.categories || {}
+        row.costBreakdown?.categories || {},
       ).reduce((s: number, v: any) => s + Number(v), 0);
       return sum + dailyCost;
     }, 0);
@@ -121,6 +121,27 @@ export default function CompanyAnalysisClient({
   const netProfit = useMemo(() => {
     return totalSales - totalSalary - totalAdditionalCost;
   }, [totalSales, totalSalary, totalAdditionalCost]);
+
+  // Total sales (with VAT)
+  const totalSalesWithVAT = useMemo(() => {
+    return profitRows.reduce(
+      (sum, row) => sum + Number(row.salesWithVAT || 0),
+      0,
+    );
+  }, [profitRows]);
+
+  // Total sales (without VAT)
+  const totalSalesWithoutVAT = useMemo(() => {
+    return profitRows.reduce(
+      (sum, row) => sum + Number(row.salesWithoutVAT || 0),
+      0,
+    );
+  }, [profitRows]);
+
+  // Correct Net Profit After VAT
+  const netProfitAfterVAT = useMemo(() => {
+    return totalSalesWithoutVAT - totalSalary - totalAdditionalCost;
+  }, [totalSalesWithoutVAT, totalSalary, totalAdditionalCost]);
 
   return (
     <div className="p-2 sm:p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
@@ -188,8 +209,8 @@ export default function CompanyAnalysisClient({
 
           <KPI
             imageSrc="/icons/6.png"
-            label="Total Sales"
-            value={`${totalSales.toFixed(0)} `}
+            label="Total Sales (Incl. VAT)"
+            value={`${totalSalesWithVAT.toFixed(0)} `}
           />
 
           <KPI
@@ -202,6 +223,15 @@ export default function CompanyAnalysisClient({
             imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
             label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
             value={`${Math.abs(netProfit).toFixed(0)} `}
+          />
+          <KPI
+            imageSrc={netProfitAfterVAT >= 0 ? "/icons/9.png" : "/icons/12.png"}
+            label={
+              netProfitAfterVAT >= 0
+                ? "Net Profit After VAT"
+                : "Net Loss After VAT"
+            }
+            value={`${Math.abs(netProfitAfterVAT).toFixed(0)} `}
           />
         </div>
       </div>
@@ -330,7 +360,7 @@ export default function CompanyAnalysisClient({
                     formatter={(value: number) => `${value.toFixed(0)} `}
                   />
 
-                 {/*  <Bar
+                  {/*  <Bar
                     dataKey="salesBreakdown.cash"
                     name="Cash"
                     fill="#22c55e"
@@ -379,7 +409,7 @@ export default function CompanyAnalysisClient({
                   data={profitRows.map((row) => {
                     const categories = row.costBreakdown?.categories || {};
                     const dailyAdditionalCost = Object.values(
-                      categories
+                      categories,
                     ).reduce((sum: number, v: any) => sum + Number(v), 0);
 
                     return {
