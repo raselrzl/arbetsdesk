@@ -143,6 +143,15 @@ export default function CompanyAnalysisClient({
     return totalSalesWithoutVAT - totalSalary - totalAdditionalCost;
   }, [totalSalesWithoutVAT, totalSalary, totalAdditionalCost]);
 
+  // Total VAT amount (salesWithVAT - salesWithoutVAT)
+  const totalVAT = useMemo(() => {
+    return profitRows.reduce((sum, row) => {
+      const withVAT = Number(row.salesWithVAT || 0);
+      const withoutVAT = Number(row.salesWithoutVAT || 0);
+      return sum + (withVAT - withoutVAT);
+    }, 0);
+  }, [profitRows]);
+
   return (
     <div className="p-2 sm:p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       {/* HEADER */}
@@ -215,15 +224,22 @@ export default function CompanyAnalysisClient({
 
           <KPI
             imageSrc="/icons/8.png"
-            label="Additional Costs"
+            label="Utility Costs"
             value={`${totalAdditionalCost.toFixed(0)} `}
           />
 
-          <KPI
+          {/*    <KPI
             imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
             label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
             value={`${Math.abs(netProfit).toFixed(0)} `}
+          /> */}
+
+          <KPI
+            imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
+            label="Total VAT"
+            value={`${totalVAT.toFixed(0)} `}
           />
+
           <KPI
             imageSrc={netProfitAfterVAT >= 0 ? "/icons/9.png" : "/icons/12.png"}
             label={
