@@ -55,7 +55,7 @@ export default function MonthlyProfitTable({
   const [openRow, setOpenRow] = useState<string | null>(null);
   const [showVAT, setShowVAT] = useState(false); // ✅ VAT toggle
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (!month) return;
     setLoading(true);
     getMonthlyProfitability(companyId, month).then((res) => {
@@ -67,7 +67,35 @@ export default function MonthlyProfitTable({
       });
       setLoading(false);
     });
-  }, [companyId, month]);
+  }, [companyId, month]); */
+
+  useEffect(() => {
+  if (!month) return;
+  setLoading(true);
+  getMonthlyProfitability(companyId, month).then((res) => {
+    // Calculate result as sales minus VAT minus cost
+    const updatedRows = res.rows.map((r) => {
+      const salesMinusVAT = r.salesWithoutVAT ?? r.sales; // fallback if salesWithoutVAT missing
+      return {
+        ...r,
+        result: salesMinusVAT - r.cost,
+      };
+    });
+
+    setRows(updatedRows);
+
+    const salesWithoutVATTotal = res.totals.salesWithoutVAT ?? res.totals.sales;
+    setTotals({
+      ...res.totals,
+      salesWithVAT: res.totals.salesWithVAT,
+      salesWithoutVAT: salesWithoutVATTotal,
+      result: salesWithoutVATTotal - res.totals.cost, // recalc total result
+    });
+
+    setLoading(false);
+  });
+}, [companyId, month]);
+
 
   const handleSort = (key: "sales" | "cost" | "result" | "margin") => {
     if (sortKey === key) {

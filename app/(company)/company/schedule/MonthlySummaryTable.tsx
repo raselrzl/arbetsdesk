@@ -263,7 +263,7 @@ export default function MonthlySummaryTable({
                         salaryEarned,
                       })
                     }
-                    className="relative p-3 border border-teal-100 font-medium sticky left-0 
+                    className="relative p-3 border border-teal-100 font-medium left-0 
              bg-[#02505e] text-white z-10 w-52 cursor-pointer 
              hover:bg-teal-700 transition group"
                   >

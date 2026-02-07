@@ -18,7 +18,7 @@ interface MonthlyProfitGraphProps {
 }
 
 // Custom tooltip showing sales/cost breakdown like the table
-function CustomTooltip({
+/* function CustomTooltip({
   active,
   payload,
   label,
@@ -39,7 +39,7 @@ function CustomTooltip({
           })}
         </div>
 
-        {/* Sales breakdown */}
+      
         <div className="font-semibold text-teal-600 mb-1">Sales</div>
         <div className="flex justify-between pl-2">
           <span>Cash:</span>
@@ -52,6 +52,60 @@ function CustomTooltip({
         <div className="flex justify-between font-semibold border-t border-teal-200 pt-1 mb-2">
           <span>Total:</span>
           <span>{row.sales.toLocaleString()}</span>
+        </div>
+
+        <div className="font-semibold text-gray-600 mb-1">Cost</div>
+        <div className="flex justify-between pl-2">
+          <span>Salary:</span>
+          <span>{row.costBreakdown.salary.toLocaleString()}</span>
+        </div>
+        {Object.entries(row.costBreakdown.categories).map(([name, value]) => (
+          <div key={name} className="flex justify-between pl-2">
+            <span>{name}:</span>
+            <span>{value.toLocaleString()}</span>
+          </div>
+        ))}
+        <div className="flex justify-between font-semibold border-t border-gray-200 pt-1">
+          <span>Total:</span>
+          <span>{row.cost.toLocaleString()}</span>
+        </div>
+
+   
+        <div className={`flex justify-between font-semibold mt-2 ${row.result >= 0 ? "text-green-600" : "text-red-600"}`}>
+          <span>Result:</span>
+          <span>{row.result >= 0 ? `+${row.result.toLocaleString()}` : row.result.toLocaleString()}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+} */
+
+// Updated CustomTooltip with VAT details
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) {
+  if (active && payload && payload.length) {
+    const row: ProfitRow = payload[0].payload;
+
+    return (
+      <div className="bg-white border border-teal-100 p-3 shadow-lg text-sm rounded w-56">
+        <div className="font-semibold mb-2">
+          {new Date(row.date).toLocaleDateString(undefined, { day: "2-digit", month: "short" })}
+        </div>
+
+        {/* Sales breakdown */}
+        <div className="font-semibold text-teal-600 mb-1">Sales</div>
+        <div className="flex justify-between pl-2">
+          <span>Excl. VAT:</span>
+          <span>{row.salesWithoutVAT?.toLocaleString() ?? 0}</span>
+        </div>
+        <div className="flex justify-between pl-2">
+          <span>VAT:</span>
+          <span>{row.vatAmount?.toLocaleString() ?? ((row.salesWithVAT ?? row.sales) - (row.salesWithoutVAT ?? row.sales))}</span>
+        </div>
+        <div className="flex justify-between font-semibold border-t border-teal-200 pt-1 mb-2">
+          <span>Total:</span>
+          <span>{row.salesWithVAT?.toLocaleString() ?? row.sales.toLocaleString()}</span>
         </div>
 
         {/* Cost breakdown */}
@@ -82,6 +136,7 @@ function CustomTooltip({
 
   return null;
 }
+
 
 export default function MonthlyProfitGraph({ rows }: MonthlyProfitGraphProps) {
   const maxValue = Math.max(...rows.flatMap((r: ProfitRow) => [r.sales, r.cost, r.result]));
