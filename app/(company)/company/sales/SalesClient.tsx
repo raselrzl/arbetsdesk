@@ -51,8 +51,18 @@ function formatNumber(value: number) {
 }
 
 const MONTH_NAMES = [
-  "Jan","Feb","Mar","Apr","May","Jun",
-  "Jul","Aug","Sep","Oct","Nov","Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 export default function SalesClient({
@@ -95,7 +105,7 @@ export default function SalesClient({
           vatRate: s.vatRate,
           vatAmount: s.vatAmount,
           netAmount: s.netAmount,
-        }))
+        })),
       );
       setLoadingMonth(false);
     });
@@ -128,7 +138,7 @@ export default function SalesClient({
         vatRate: s.vatRate,
         vatAmount: s.vatAmount,
         netAmount: s.netAmount,
-      }))
+      })),
     );
 
     setAddingSale(false);
@@ -136,7 +146,9 @@ export default function SalesClient({
 
   /* ---------- Monthly summary ---------- */
   const summary = useMemo(() => {
-    let cash = 0, card = 0, vat = 0;
+    let cash = 0,
+      card = 0,
+      vat = 0;
     sales.forEach((s) => {
       const value = getSaleValue(s, vatView);
       const vatAmount = getVatAmount(s);
@@ -149,7 +161,10 @@ export default function SalesClient({
 
   /* ---------- Group by date ---------- */
   const groupedByDate = useMemo(() => {
-    const map: Record<string, { cash: number; card: number; vat: number; total: number }> = {};
+    const map: Record<
+      string,
+      { cash: number; card: number; vat: number; total: number }
+    > = {};
     sales.forEach((s) => {
       const day = s.date.slice(0, 10);
       const value = getSaleValue(s, vatView);
@@ -163,18 +178,17 @@ export default function SalesClient({
     return map;
   }, [sales, vatView]);
 
- const chartData = useMemo(
-  () =>
-    Object.entries(groupedByDate).map(([date, v]) => ({
-      date,
-      cash: v.cash,
-      card: v.card,
-      total: v.total,
-      vat: v.vat, // ✅ use grouped VAT
-    })),
-  [groupedByDate]
-);
-
+  const chartData = useMemo(
+    () =>
+      Object.entries(groupedByDate).map(([date, v]) => ({
+        date,
+        cash: v.cash,
+        card: v.card,
+        total: v.total,
+        vat: v.vat, // ✅ use grouped VAT
+      })),
+    [groupedByDate],
+  );
 
   /* ---------- Load yearly sales ---------- */
   useEffect(() => {
@@ -189,7 +203,7 @@ export default function SalesClient({
           vatRate: s.vatRate,
           vatAmount: s.vatAmount,
           netAmount: s.netAmount,
-        }))
+        })),
       );
       setLoadingYear(false);
     });
@@ -197,7 +211,10 @@ export default function SalesClient({
 
   /* ---------- Group yearly by month ---------- */
   const groupedByMonth = useMemo(() => {
-    const map: Record<string, { cash: number; card: number; vat: number; total: number }> = {};
+    const map: Record<
+      string,
+      { cash: number; card: number; vat: number; total: number }
+    > = {};
     yearlySales.forEach((s) => {
       const d = new Date(s.date);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -219,7 +236,9 @@ export default function SalesClient({
   }, [yearlySales, yearlyYear, vatView]);
 
   const yearlySummary = useMemo(() => {
-    let cash = 0, card = 0, vat = 0;
+    let cash = 0,
+      card = 0,
+      vat = 0;
     Object.values(groupedByMonth).forEach((v) => {
       cash += v.cash;
       card += v.card;
@@ -228,39 +247,61 @@ export default function SalesClient({
     return { cash, card, vat, total: cash + card };
   }, [groupedByMonth]);
 
-const yearlyChartData = useMemo(
-  () =>
-    Object.entries(groupedByMonth)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([month, v]) => ({
-        month,
-        cash: v.cash,
-        card: v.card,
-        total: v.total,
-        vat: v.vat, // ✅ use grouped VAT
-      })),
-  [groupedByMonth]
-);
-
+  const yearlyChartData = useMemo(
+    () =>
+      Object.entries(groupedByMonth)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([month, v]) => ({
+          month,
+          cash: v.cash,
+          card: v.card,
+          total: v.total,
+          vat: v.vat, // ✅ use grouped VAT
+        })),
+    [groupedByMonth],
+  );
 
   /* ---------- UI ---------- */
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-6 my-20">
       {/* Add Sale */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2 bg-gray-50 p-3 border rounded-xs">
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="border p-2" />
-        <select value={method} onChange={(e) => setMethod(e.target.value as "CASH"|"CARD")} className="border p-2">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="border p-2"
+        />
+        <select
+          value={method}
+          onChange={(e) => setMethod(e.target.value as "CASH" | "CARD")}
+          className="border p-2"
+        >
           <option value="">Payment</option>
           <option value="CASH">Cash</option>
           <option value="CARD">Card</option>
         </select>
-        <select value={vatRate} onChange={(e) => setVatRate(Number(e.target.value))} className="border p-2">
+        <select
+          value={vatRate}
+          onChange={(e) => setVatRate(Number(e.target.value))}
+          className="border p-2"
+        >
           <option value={0}>No VAT</option>
           <option value={0.12}>Food VAT 12%</option>
           <option value={0.25}>Alcohol VAT 25%</option>
         </select>
-        <input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="border p-2" />
-        <button onClick={addSale} disabled={addingSale} className="bg-black text-white px-4 py-2 disabled:opacity-50">
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="border p-2"
+        />
+        <button
+          onClick={addSale}
+          disabled={addingSale}
+          className="bg-black text-white px-4 py-2 disabled:opacity-50"
+        >
           {addingSale ? "Saving…" : "Add Sale"}
         </button>
       </div>
@@ -268,19 +309,47 @@ const yearlyChartData = useMemo(
       {/* Month selector + VAT toggle */}
       <div className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-xs border">
         <div className="flex gap-2">
-          <Link href="/company/analysis" className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition">Go to Analysis ➠</Link>
-          <Link href="/company/additionalcost" className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition">Go to Cost ➠</Link>
+          <Link
+            href="/company/analysis"
+            className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+          >
+            Go to Analysis ➠
+          </Link>
+          <Link
+            href="/company/additionalcost"
+            className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+          >
+            Go to Cost ➠
+          </Link>
         </div>
 
         <div className="flex gap-2">
-          <button onClick={() => setVatView("INCLUDE")} className={`px-4 py-2 border ${vatView==="INCLUDE"?"bg-black text-white":"bg-white text-black"}`}>Including VAT</button>
-          <button onClick={() => setVatView("EXCLUDE")} className={`px-4 py-2 border ${vatView==="EXCLUDE"?"bg-black text-white":"bg-white text-black"}`}>Excluding VAT</button>
+          <button
+            onClick={() => setVatView("INCLUDE")}
+            className={`px-4 py-2 border ${vatView === "INCLUDE" ? "bg-black text-white" : "bg-white text-black"}`}
+          >
+            Including VAT
+          </button>
+          <button
+            onClick={() => setVatView("EXCLUDE")}
+            className={`px-4 py-2 border ${vatView === "EXCLUDE" ? "bg-black text-white" : "bg-white text-black"}`}
+          >
+            Excluding VAT
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
           <Calendar className="text-black" />
-          <select value={month} onChange={(e) => setMonth(e.target.value)} className="border p-2">
-            {months.map((m) => <option key={m} value={m}>{m}</option>)}
+          <select
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            className="border p-2"
+          >
+            {months.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
           </select>
           {loadingMonth && <span className="text-gray-500 ml-2">Loading…</span>}
         </div>
@@ -302,10 +371,16 @@ const yearlyChartData = useMemo(
             {Object.entries(groupedByDate).map(([day, v]) => (
               <tr key={day}>
                 <td className="p-2 border">{day}</td>
-                <td className="p-2 border text-right">{formatNumber(v.cash)}</td>
-                <td className="p-2 border text-right">{formatNumber(v.card)}</td>
+                <td className="p-2 border text-right">
+                  {formatNumber(v.cash)}
+                </td>
+                <td className="p-2 border text-right">
+                  {formatNumber(v.card)}
+                </td>
                 <td className="p-2 border text-right">{formatNumber(v.vat)}</td>
-                <td className="p-2 border text-right font-semibold">{formatNumber(v.total)}</td>
+                <td className="p-2 border text-right font-semibold">
+                  {formatNumber(v.total)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -314,10 +389,22 @@ const yearlyChartData = useMemo(
 
       {/* Monthly summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <div className="p-4 bg-gray-50 border text-center"><strong>Cash</strong><div>{formatNumber(summary.cash)}</div></div>
-        <div className="p-4 bg-gray-50 border text-center"><strong>Card</strong><div>{formatNumber(summary.card)}</div></div>
-        <div className="p-4 bg-gray-50 border text-center"><strong>VAT</strong><div>{formatNumber(summary.vat)}</div></div>
-        <div className="p-4 bg-gray-50 border text-center font-bold"><strong>Total</strong><div>{formatNumber(summary.total)}</div></div>
+        <div className="p-4 bg-gray-50 border text-center">
+          <strong>Cash</strong>
+          <div>{formatNumber(summary.cash)}</div>
+        </div>
+        <div className="p-4 bg-gray-50 border text-center">
+          <strong>Card</strong>
+          <div>{formatNumber(summary.card)}</div>
+        </div>
+        <div className="p-4 bg-gray-50 border text-center">
+          <strong>VAT</strong>
+          <div>{formatNumber(summary.vat)}</div>
+        </div>
+        <div className="p-4 bg-gray-50 border text-center font-bold">
+          <strong>Total</strong>
+          <div>{formatNumber(summary.total)}</div>
+        </div>
       </div>
 
       <MonthlySalesGraph data={chartData} />
@@ -327,8 +414,16 @@ const yearlyChartData = useMemo(
         <h2 className="text-xl font-semibold">Yearly Sales</h2>
         <div className="flex items-center gap-2 mb-4">
           <span>Year:</span>
-          <select value={yearlyYear} onChange={(e) => setYearlyYear(Number(e.target.value))} className="border p-2">
-            {filteredYears.map((y) => <option key={y} value={y}>{y}</option>)}
+          <select
+            value={yearlyYear}
+            onChange={(e) => setYearlyYear(Number(e.target.value))}
+            className="border p-2"
+          >
+            {filteredYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
           </select>
           {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
         </div>
@@ -347,15 +442,28 @@ const yearlyChartData = useMemo(
             </thead>
             <tbody>
               {Array.from({ length: 12 }).map((_, i) => {
-                const key = `${yearlyYear}-${String(i + 1).padStart(2,"0")}`;
-                const v = groupedByMonth[key] || { cash:0, card:0, vat:0, total:0 };
+                const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
+                const v = groupedByMonth[key] || {
+                  cash: 0,
+                  card: 0,
+                  vat: 0,
+                  total: 0,
+                };
                 return (
                   <tr key={key}>
                     <td className="p-2 border">{MONTH_NAMES[i]}</td>
-                    <td className="p-2 border text-right">{formatNumber(v.cash)}</td>
-                    <td className="p-2 border text-right">{formatNumber(v.card)}</td>
-                    <td className="p-2 border text-right">{formatNumber(v.vat)}</td>
-                    <td className="p-2 border text-right font-semibold">{formatNumber(v.total)}</td>
+                    <td className="p-2 border text-right">
+                      {formatNumber(v.cash)}
+                    </td>
+                    <td className="p-2 border text-right">
+                      {formatNumber(v.card)}
+                    </td>
+                    <td className="p-2 border text-right">
+                      {formatNumber(v.vat)}
+                    </td>
+                    <td className="p-2 border text-right font-semibold">
+                      {formatNumber(v.total)}
+                    </td>
                   </tr>
                 );
               })}
@@ -365,10 +473,22 @@ const yearlyChartData = useMemo(
 
         {/* Yearly Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-          <div className="p-4 bg-gray-50 border text-center"><strong>Cash</strong><div>{formatNumber(yearlySummary.cash)}</div></div>
-          <div className="p-4 bg-gray-50 border text-center"><strong>Card</strong><div>{formatNumber(yearlySummary.card)}</div></div>
-          <div className="p-4 bg-gray-50 border text-center"><strong>VAT</strong><div>{formatNumber(yearlySummary.vat)}</div></div>
-          <div className="p-4 bg-gray-50 border text-center font-bold"><strong>Total</strong><div>{formatNumber(yearlySummary.total)}</div></div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Cash</strong>
+            <div>{formatNumber(yearlySummary.cash)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Card</strong>
+            <div>{formatNumber(yearlySummary.card)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>VAT</strong>
+            <div>{formatNumber(yearlySummary.vat)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center font-bold">
+            <strong>Total</strong>
+            <div>{formatNumber(yearlySummary.total)}</div>
+          </div>
         </div>
 
         <YearlySalesGraph data={yearlyChartData} />
