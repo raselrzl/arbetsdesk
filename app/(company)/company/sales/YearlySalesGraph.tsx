@@ -19,13 +19,15 @@ type GraphData = {
   cash: number;
   card: number;
   total: number;
+  vat?: number;
 };
 
 type Props = {
   data: GraphData[];
+  showVat?: boolean;
 };
 
-export default function YearlySalesGraph({ data }: Props) {
+export default function YearlySalesGraph({ data, showVat = true }: Props) {
   const [activeTab, setActiveTab] = useState<"line" | "bar">("line");
 
   return (
@@ -59,11 +61,36 @@ export default function YearlySalesGraph({ data }: Props) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Tooltip
+                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                />
                 <Legend />
-                <Line type="monotone" dataKey="cash" stroke="#4ade80" name="Cash" />
-                <Line type="monotone" dataKey="card" stroke="#3b82f6" name="Card" />
-                <Line type="monotone" dataKey="total" stroke="#facc15" name="Total" />
+                <Line
+                  type="monotone"
+                  dataKey="cash"
+                  stroke="#4ade80"
+                  name="Cash"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="card"
+                  stroke="#3b82f6"
+                  name="Card"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke="#facc15"
+                  name="Total"
+                />
+                {showVat && (
+                  <Line
+                    type="monotone"
+                    dataKey="vat"
+                    stroke="#f87171"
+                    name="VAT"
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           ) : (
@@ -72,11 +99,14 @@ export default function YearlySalesGraph({ data }: Props) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Tooltip
+                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                />
                 <Legend />
                 <Bar dataKey="cash" fill="#4ade80" name="Cash" />
                 <Bar dataKey="card" fill="#3b82f6" name="Card" />
                 <Bar dataKey="total" fill="#facc15" name="Total" />
+                {showVat && <Bar dataKey="vat" fill="#f87171" name="VAT" />}
               </BarChart>
             </ResponsiveContainer>
           )}

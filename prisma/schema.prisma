@@ -296,10 +296,28 @@ model Sale {
   amount Float
   method SaleMethod
 
+  vatTypeId String?
+  vatType   VatType? @relation(fields: [vatTypeId], references: [id])
+  vatRate   Float?
+  vatAmount Float?
+  netAmount Float?
+
   createdAt DateTime @default(now())
 
   @@unique([companyId, date, method])
 }
+
+
+model VatType {
+  id        String   @id @default(cuid())
+  name      String
+  rate      Float
+  createdAt DateTime @default(now())
+
+  sales Sale[]
+}
+
+
 
 enum SaleMethod {
   CASH
