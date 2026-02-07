@@ -80,7 +80,6 @@ export default function MonthlySummaryTable({
         <div className="font-bold text-gray-100 bg-[#02505e] px-4 py-2 uppercase rounded-xs">
           Monthly Summary · {format(start, "yyyy-MM")}
         </div>
-          
         <div className="flex gap-2">
           <button
             onClick={() => setMonthOffset((m) => m - 1)}
@@ -113,53 +112,73 @@ export default function MonthlySummaryTable({
               <th className="p-3 border text-left sticky left-0 bg-[#02505e] text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis">
                 Employee
               </th>
-              <th className="p-3 border border-teal-100 text-center">Contract</th>
+              <th className="p-3 border border-teal-100 text-center">
+                Contract
+              </th>
 
-              {/* Days column */}
+              {/* Days */}
               <th className="p-3 border text-center">
                 Days
                 <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
-                  <span className="px-2 py-0.5 bg-blue-800 text-white">Scheduled</span>
-                  <span className="px-2 py-0.5 bg-blue-500 text-white">Worked</span>
+                  <span className="px-2 py-0.5 bg-teal-800 text-white">
+                    Scheduled
+                  </span>
+                  <span className="px-2 py-0.5 bg-teal-600 text-white">
+                    Worked
+                  </span>
                 </div>
               </th>
 
-              {/* Hours column */}
+              {/* Hourly Rate */}
+              <th className="p-3 border border-teal-100 text-center">
+                Hourly Rate
+              </th>
+
+              {/* Scheduled Salary (NEW COLUMN) */}
+              <th className="p-3 border border-teal-100 text-center">
+                Scheduled Salary
+              </th>
+              {/* Hours */}
               <th className="p-3 border border-teal-100 text-center">
                 Hours
                 <div className="flex justify-center gap-1 mt-1 text-xs font-medium">
-                  <span className="px-2 py-0.5 bg-green-800 text-white">Scheduled</span>
-                  <span className="px-2 py-0.5 bg-green-500 text-white">Worked</span>
+                  <span className="px-2 py-0.5 bg-green-800 text-white">
+                    Scheduled
+                  </span>
+                  <span className="px-2 py-0.5 bg-green-500 text-white">
+                    Worked
+                  </span>
                 </div>
               </th>
-
-              <th className="p-3 border border-teal-100 text-center">Hourly Rate</th>
-              <th className="p-3 border border-teal-100 text-center">Salary Earned</th>
+              {/* Salary Earned */}
+              <th className="p-3 border border-teal-100 text-center">
+                Salary Earned
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {employees.map((emp, idx) => {
               const empSchedules = monthSchedules.filter(
-                (s) => s.employee.id === emp.id
+                (s) => s.employee.id === emp.id,
               );
               const scheduledDays = new Set(
-                empSchedules.map((s) => new Date(s.date).toDateString())
+                empSchedules.map((s) => new Date(s.date).toDateString()),
               ).size;
               const scheduledHours = empSchedules.reduce(
                 (sum, s) => sum + diffHours(s.startTime, s.endTime),
-                0
+                0,
               );
 
               const empTimeLogs = monthTimeLogs.filter(
-                (t) => t.employee.id === emp.id
+                (t) => t.employee.id === emp.id,
               );
               const workedDays = new Set(
-                empTimeLogs.map((t) => new Date(t.logDate).toDateString())
+                empTimeLogs.map((t) => new Date(t.logDate).toDateString()),
               ).size;
               const workedHours = empTimeLogs.reduce(
                 (sum, t) => sum + diffHours(t.loginTime, t.logoutTime),
-                0
+                0,
               );
 
               let hourlyRate = 0;
@@ -169,15 +188,29 @@ export default function MonthlySummaryTable({
                 hourlyRate = emp.hourlyRate;
               }
 
+              // New Scheduled Salary column
+              const scheduledSalary =
+                emp.contractType === "HOURLY"
+                  ? scheduledHours * hourlyRate
+                  : emp.monthlySalary || 0;
+
               const salaryEarned = workedHours * hourlyRate;
 
-              const scheduledHoursPercent = Math.min((scheduledHours / STANDARD_MONTHLY_HOURS) * 100, 100);
-              const workedHoursPercent = Math.min((workedHours / STANDARD_MONTHLY_HOURS) * 100, 100);
+              const scheduledHoursPercent = Math.min(
+                (scheduledHours / STANDARD_MONTHLY_HOURS) * 100,
+                100,
+              );
+              const workedHoursPercent = Math.min(
+                (workedHours / STANDARD_MONTHLY_HOURS) * 100,
+                100,
+              );
 
               return (
                 <tr
                   key={emp.id}
-                  className={`border-t border-teal-100 hover:bg-teal-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  className={`border-t border-teal-100 hover:bg-teal-50 transition-colors ${
+                    idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
                 >
                   <td
                     className="p-3 border border-teal-100 font-medium sticky left-0 bg-[#02505e] text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
@@ -185,27 +218,42 @@ export default function MonthlySummaryTable({
                   >
                     {emp.name}
                   </td>
-                  <td className="p-3 border border-teal-100 text-center">{emp.contractType}</td>
+                  <td className="p-3 border border-teal-100 text-center">
+                    {emp.contractType}
+                  </td>
 
-                  {/* Days column */}
+                  {/* Days */}
                   <td className="p-0 border border-teal-100 text-center h-12">
                     <div className="flex flex-col h-full w-full">
                       <div
-                        className="h-1/2 w-full bg-blue-800 flex items-center justify-start px-1 text-white text-xs font-semibold"
-                        style={{ width: `${(scheduledDays / totalDaysInMonth) * 100}%` }}
+                        className="h-1/2 w-full bg-teal-800 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{
+                          width: `${(scheduledDays / totalDaysInMonth) * 100}%`,
+                        }}
                       >
                         {scheduledDays}
                       </div>
                       <div
-                        className="h-1/2 w-full bg-blue-500 flex items-center justify-start px-1 text-white text-xs font-semibold"
-                        style={{ width: `${(workedDays / totalDaysInMonth) * 100}%` }}
+                        className="h-1/2 w-full bg-teal-600 flex items-center justify-start px-1 text-white text-xs font-semibold"
+                        style={{
+                          width: `${(workedDays / totalDaysInMonth) * 100}%`,
+                        }}
                       >
                         {workedDays}
                       </div>
                     </div>
                   </td>
 
-                  {/* Hours column */}
+                  <td className="p-3 border border-teal-100 text-center font-medium">
+                    {hourlyRate.toFixed(2)}
+                  </td>
+
+                  {/* Scheduled Salary */}
+                  <td className="p-3 border border-teal-100 text-center font-semibold">
+                    {scheduledSalary.toFixed(2)}
+                  </td>
+
+                  {/* Hours */}
                   <td className="p-0 border border-teal-100 text-center h-12">
                     <div className="flex flex-col h-full w-full">
                       <div
@@ -223,8 +271,9 @@ export default function MonthlySummaryTable({
                     </div>
                   </td>
 
-                  <td className="p-3 border border-teal-100 text-center font-medium">{hourlyRate.toFixed(2)}</td>
-                  <td className="p-3 border border-teal-100 text-center font-semibold">{salaryEarned.toFixed(2)}</td>
+                  <td className="p-3 border border-teal-100 text-center font-semibold">
+                    {salaryEarned.toFixed(2)}
+                  </td>
                 </tr>
               );
             })}
