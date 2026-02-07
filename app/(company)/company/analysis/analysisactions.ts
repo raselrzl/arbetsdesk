@@ -414,7 +414,7 @@ export async function getMonthlyProfitability(
   const monthStart = startOfMonth(new Date(year, monthNum - 1));
   const monthEnd = endOfMonth(monthStart);
 
-  /* ---------- 1️⃣ FETCH SALES ---------- */
+ 
   const salesRecords = await prisma.sale.findMany({
     where: { companyId, date: { gte: monthStart, lte: monthEnd } },
   });
@@ -438,7 +438,7 @@ export async function getMonthlyProfitability(
     salesMap[day].withoutVAT += s.amount / (1 + (s.vatRate || 0));
   });
 
-  /* ---------- 2️⃣ FETCH COSTS ---------- */
+ 
   const costRecords = await prisma.cost.findMany({
     where: { companyId, date: { gte: monthStart, lte: monthEnd } },
     include: { costType: true },
@@ -456,7 +456,7 @@ export async function getMonthlyProfitability(
       (costBreakdownMap[day][c.costType.name] || 0) + c.amount;
   });
 
-  /* ---------- 3️⃣ FETCH EMPLOYEE SALARIES ---------- */
+
   const employees = await prisma.employee.findMany({
     where: { companyId },
     include: {
@@ -488,7 +488,6 @@ export async function getMonthlyProfitability(
     });
   });
 
-  /* ---------- 4️⃣ MERGE DAYS ---------- */
   const availableDays = new Set<number>([
     ...Object.keys(salesMap).map(Number),
     ...Object.keys(costMap).map(Number),
@@ -523,7 +522,7 @@ export async function getMonthlyProfitability(
       };
     });
 
-  /* ---------- 5️⃣ TOTALS ---------- */
+ 
   const totalSales = rows.reduce((sum, r) => sum + r.sales, 0);
   const totalSalesWithVAT = rows.reduce((sum, r) => sum + r.salesWithVAT, 0);
   const totalSalesWithoutVAT = rows.reduce((sum, r) => sum + r.salesWithoutVAT, 0);
