@@ -283,7 +283,7 @@ export async function getAvailableMonths(companyId: string) {
   return { rows, totals };
 } */
 
-export async function getMonthlyProfitability(
+/* export async function getMonthlyProfitability(
   companyId: string,
   month: string,
 ) {
@@ -291,7 +291,7 @@ export async function getMonthlyProfitability(
   const monthStart = startOfMonth(new Date(year, monthNum - 1));
   const monthEnd = endOfMonth(monthStart);
 
-  /* ---------- 1️⃣ FETCH SALES ---------- */
+
   const salesRecords = await prisma.sale.findMany({
     where: { companyId, date: { gte: monthStart, lte: monthEnd } },
   });
@@ -305,6 +305,137 @@ export async function getMonthlyProfitability(
 
     if (s.method === "CASH") salesMap[day].cash += s.amount;
     else if (s.method === "CARD") salesMap[day].card += s.amount;
+  });
+
+ 
+  const costRecords = await prisma.cost.findMany({
+    where: { companyId, date: { gte: monthStart, lte: monthEnd } },
+    include: { costType: true },
+  });
+
+  const costMap: Record<number, number> = {};
+  const costBreakdownMap: Record<number, Record<string, number>> = {};
+
+  costRecords.forEach((c) => {
+    const day = c.date.getDate();
+    costMap[day] = (costMap[day] || 0) + c.amount;
+
+    if (!costBreakdownMap[day]) costBreakdownMap[day] = {};
+    costBreakdownMap[day][c.costType.name] =
+      (costBreakdownMap[day][c.costType.name] || 0) + c.amount;
+  });
+
+  
+  const employees = await prisma.employee.findMany({
+    where: { companyId },
+    include: {
+      timeLogs: {
+        where: {
+          logDate: { gte: monthStart, lte: monthEnd },
+          logoutTime: { not: null },
+          totalMinutes: { not: null },
+        },
+      },
+    },
+  });
+
+  const salaryMap: Record<number, number> = {};
+
+  employees.forEach((emp) => {
+    emp.timeLogs.forEach((log) => {
+      const day = log.logDate.getDate();
+      const hours = log.totalMinutes! / 60;
+
+      let salary = 0;
+      if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
+        salary = (hours / 160) * emp.monthlySalary;
+      } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
+        salary = hours * emp.hourlyRate;
+      }
+
+      salaryMap[day] = (salaryMap[day] || 0) + salary;
+    });
+  });
+
+
+  const availableDays = new Set<number>([
+    ...Object.keys(salesMap).map(Number),
+    ...Object.keys(costMap).map(Number),
+    ...Object.keys(salaryMap).map(Number),
+  ]);
+
+  const rows = Array.from(availableDays)
+    .sort((a, b) => a - b)
+    .map((day) => {
+      const salesBreakdown = salesMap[day] || { cash: 0, card: 0 };
+      const sales = salesBreakdown.cash + salesBreakdown.card;
+
+      const salary = salaryMap[day] || 0;
+      const otherCosts = costMap[day] || 0;
+      const cost = salary + otherCosts;
+      const result = sales - cost;
+      const margin = sales > 0 ? (result / sales) * 100 : 0;
+
+      return {
+        date: `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+        sales,
+        salesBreakdown,
+        cost,
+        result,
+        margin,
+        costBreakdown: {
+          salary,
+          categories: costBreakdownMap[day] || {},
+        },
+      };
+    });
+
+
+  const totalSales = rows.reduce((sum, r) => sum + r.sales, 0);
+  const totalCost = rows.reduce((sum, r) => sum + r.cost, 0);
+  const totalResult = totalSales - totalCost;
+  const totalMargin = totalSales > 0 ? (totalResult / totalSales) * 100 : 0;
+
+  return {
+    rows,
+    totals: {
+      sales: totalSales,
+      cost: totalCost,
+      result: totalResult,
+      margin: totalMargin,
+    },
+  };
+} */
+export async function getMonthlyProfitability(
+  companyId: string,
+  month: string,
+) {
+  const [year, monthNum] = month.split("-").map(Number);
+  const monthStart = startOfMonth(new Date(year, monthNum - 1));
+  const monthEnd = endOfMonth(monthStart);
+
+  /* ---------- 1️⃣ FETCH SALES ---------- */
+  const salesRecords = await prisma.sale.findMany({
+    where: { companyId, date: { gte: monthStart, lte: monthEnd } },
+  });
+
+  // Group sales by day and method (CASH or CARD) and VAT
+  const salesMap: Record<number, {
+    cash: number;
+    card: number;
+    withVAT: number;
+    withoutVAT: number;
+  }> = {};
+
+  salesRecords.forEach((s) => {
+    const day = s.date.getDate();
+    if (!salesMap[day]) salesMap[day] = { cash: 0, card: 0, withVAT: 0, withoutVAT: 0 };
+
+    if (s.method === "CASH") salesMap[day].cash += s.amount;
+    else if (s.method === "CARD") salesMap[day].card += s.amount;
+
+    salesMap[day].withVAT += s.amount;
+    salesMap[day].withoutVAT += s.amount / (1 + (s.vatRate || 0));
   });
 
   /* ---------- 2️⃣ FETCH COSTS ---------- */
@@ -367,7 +498,7 @@ export async function getMonthlyProfitability(
   const rows = Array.from(availableDays)
     .sort((a, b) => a - b)
     .map((day) => {
-      const salesBreakdown = salesMap[day] || { cash: 0, card: 0 };
+      const salesBreakdown = salesMap[day] || { cash: 0, card: 0, withVAT: 0, withoutVAT: 0 };
       const sales = salesBreakdown.cash + salesBreakdown.card;
 
       const salary = salaryMap[day] || 0;
@@ -378,8 +509,10 @@ export async function getMonthlyProfitability(
 
       return {
         date: `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
-        sales,
-        salesBreakdown,
+        sales, // total sales (cash + card)
+        salesWithVAT: salesBreakdown.withVAT,
+        salesWithoutVAT: salesBreakdown.withoutVAT,
+        salesBreakdown, // cash/card breakdown
         cost,
         result,
         margin,
@@ -392,6 +525,8 @@ export async function getMonthlyProfitability(
 
   /* ---------- 5️⃣ TOTALS ---------- */
   const totalSales = rows.reduce((sum, r) => sum + r.sales, 0);
+  const totalSalesWithVAT = rows.reduce((sum, r) => sum + r.salesWithVAT, 0);
+  const totalSalesWithoutVAT = rows.reduce((sum, r) => sum + r.salesWithoutVAT, 0);
   const totalCost = rows.reduce((sum, r) => sum + r.cost, 0);
   const totalResult = totalSales - totalCost;
   const totalMargin = totalSales > 0 ? (totalResult / totalSales) * 100 : 0;
@@ -400,6 +535,8 @@ export async function getMonthlyProfitability(
     rows,
     totals: {
       sales: totalSales,
+      salesWithVAT: totalSalesWithVAT,
+      salesWithoutVAT: totalSalesWithoutVAT,
       cost: totalCost,
       result: totalResult,
       margin: totalMargin,
