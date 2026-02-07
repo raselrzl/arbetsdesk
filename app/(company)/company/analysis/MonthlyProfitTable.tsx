@@ -310,7 +310,7 @@ export default function MonthlyProfitTable({
               </td>
               <td className="border border-teal-100 p-2 text-right">
                 {totals.margin.toFixed(2)}%
-              </td>
+              </td> 
             </tr>
           )}
         </tbody>
