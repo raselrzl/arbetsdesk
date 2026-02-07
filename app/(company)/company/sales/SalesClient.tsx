@@ -91,6 +91,7 @@ export default function SalesClient({
   const [addingSale, setAddingSale] = useState(false);
 
   const [vatView, setVatView] = useState<VatView>("INCLUDE");
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   /* ---------- Load monthly sales ---------- */
   useEffect(() => {
@@ -161,54 +162,59 @@ export default function SalesClient({
       if (s.method === "CASH") cash += value;
       if (s.method === "CARD") card += value;
       vat += vatAmount;
-      
     });
     return { cash, card, vat, total: cash + card };
   }, [sales, vatView]);
 
-/* ---------- Group by date with VAT category ---------- */
-const groupedByDate = useMemo(() => {
-  const map: Record<
-    string,
-    { cash: number; card: number; vat: number; total: number; vatBreakdown: Record<string, number> }
-  > = {};
+  /* ---------- Group by date with VAT category ---------- */
+  const groupedByDate = useMemo(() => {
+    const map: Record<
+      string,
+      {
+        cash: number;
+        card: number;
+        vat: number;
+        total: number;
+        vatBreakdown: Record<string, number>;
+      }
+    > = {};
 
-  sales.forEach((s) => {
-    const day = s.date.slice(0, 10);
-    const value = getSaleValue(s, vatView);
-    const vat = getVatAmount(s);
-    const vatName = s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
+    sales.forEach((s) => {
+      const day = s.date.slice(0, 10);
+      const value = getSaleValue(s, vatView);
+      const vat = getVatAmount(s);
+      const vatName =
+        s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
 
-    if (!map[day])
-      map[day] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+      if (!map[day])
+        map[day] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
 
-    if (s.method === "CASH") map[day].cash += value;
-    if (s.method === "CARD") map[day].card += value;
+      if (s.method === "CASH") map[day].cash += value;
+      if (s.method === "CARD") map[day].card += value;
 
-    map[day].total += value;
-    map[day].vat += vat;
+      map[day].total += value;
+      map[day].vat += vat;
 
-    map[day].vatBreakdown[vatName] = (map[day].vatBreakdown[vatName] || 0) + vat;
-  });
+      map[day].vatBreakdown[vatName] =
+        (map[day].vatBreakdown[vatName] || 0) + vat;
+    });
 
-  return map;
-}, [sales, vatView]);
+    return map;
+  }, [sales, vatView]);
 
-/* ---------- Chart Data for Monthly Graph ---------- */
-const chartData = useMemo(
-  () =>
-    Object.entries(groupedByDate).map(([date, v]) => ({
-      date,
-      cash: v.cash,
-      card: v.card,
-      total: v.total,
-      vat: v.vat,
-      vatBreakdown: v.vatBreakdown, // ✅ include breakdown for tooltip
-    })),
-  [groupedByDate],
-);
-
-
+  /* ---------- Chart Data for Monthly Graph ---------- */
+  const chartData = useMemo(
+    () =>
+      Object.entries(groupedByDate).map(([date, v]) => ({
+        date,
+        cash: v.cash,
+        card: v.card,
+        total: v.total,
+        vat: v.vat,
+        vatBreakdown: v.vatBreakdown, // ✅ include breakdown for tooltip
+      })),
+    [groupedByDate],
+  );
 
   /* ---------- Load yearly sales ---------- */
   useEffect(() => {
@@ -232,38 +238,47 @@ const chartData = useMemo(
   }, [yearlyYear, companyId]);
 
   /* ---------- Group yearly by month ---------- */
-const groupedByMonth = useMemo(() => {
-  const map: Record<
-    string,
-    { cash: number; card: number; vat: number; total: number; vatBreakdown: Record<string, number> }
-  > = {};
+  const groupedByMonth = useMemo(() => {
+    const map: Record<
+      string,
+      {
+        cash: number;
+        card: number;
+        vat: number;
+        total: number;
+        vatBreakdown: Record<string, number>;
+      }
+    > = {};
 
-  yearlySales.forEach((s) => {
-    const d = new Date(s.date);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const value = getSaleValue(s, vatView);
-    const vat = getVatAmount(s);
-    const vatName = s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
+    yearlySales.forEach((s) => {
+      const d = new Date(s.date);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const value = getSaleValue(s, vatView);
+      const vat = getVatAmount(s);
+      const vatName =
+        s.vatTypeName || `VAT ${s.vatRate ? s.vatRate * 100 : 0}%`;
 
-    if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+      if (!map[key])
+        map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
 
-    if (s.method === "CASH") map[key].cash += value;
-    if (s.method === "CARD") map[key].card += value;
-    map[key].total += value;
-    map[key].vat += vat;
+      if (s.method === "CASH") map[key].cash += value;
+      if (s.method === "CARD") map[key].card += value;
+      map[key].total += value;
+      map[key].vat += vat;
 
-    map[key].vatBreakdown[vatName] = (map[key].vatBreakdown[vatName] || 0) + vat;
-  });
+      map[key].vatBreakdown[vatName] =
+        (map[key].vatBreakdown[vatName] || 0) + vat;
+    });
 
-  // fill empty months
-  for (let m = 1; m <= 12; m++) {
-    const key = `${yearlyYear}-${String(m).padStart(2, "0")}`;
-    if (!map[key]) map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
-  }
+    // fill empty months
+    for (let m = 1; m <= 12; m++) {
+      const key = `${yearlyYear}-${String(m).padStart(2, "0")}`;
+      if (!map[key])
+        map[key] = { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+    }
 
-  return map;
-}, [yearlySales, yearlyYear, vatView]);
-
+    return map;
+  }, [yearlySales, yearlyYear, vatView]);
 
   const yearlySummary = useMemo(() => {
     let cash = 0,
@@ -277,21 +292,20 @@ const groupedByMonth = useMemo(() => {
     return { cash, card, vat, total: cash + card };
   }, [groupedByMonth]);
 
- const yearlyChartData = useMemo(
-  () =>
-    Object.entries(groupedByMonth)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([month, v]) => ({
-        month,
-        cash: v.cash,
-        card: v.card,
-        total: v.total,
-        vat: v.vat,
-        vatBreakdown: v.vatBreakdown, // ✅ Include breakdown
-      })),
-  [groupedByMonth],
-);
-
+  const yearlyChartData = useMemo(
+    () =>
+      Object.entries(groupedByMonth)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([month, v]) => ({
+          month,
+          cash: v.cash,
+          card: v.card,
+          total: v.total,
+          vat: v.vat,
+          vatBreakdown: v.vatBreakdown, // ✅ Include breakdown
+        })),
+    [groupedByMonth],
+  );
 
   /* ---------- UI ---------- */
   return (
@@ -387,37 +401,83 @@ const groupedByMonth = useMemo(() => {
         </div>
       </div>
 
-      {/* Monthly Sales Table */}
-      <div className="overflow-x-auto border rounded-xs">
-        <table className="min-w-[700px] w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border text-left">Date</th>
-              <th className="p-2 border text-right">Cash</th>
-              <th className="p-2 border text-right">Card</th>
-              <th className="p-2 border text-right">VAT</th>
-              <th className="p-2 border text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(groupedByDate).map(([day, v]) => (
-              <tr key={day}>
-                <td className="p-2 border">{day}</td>
-                <td className="p-2 border text-right">
-                  {formatNumber(v.cash)}
-                </td>
-                <td className="p-2 border text-right">
-                  {formatNumber(v.card)}
-                </td>
-                <td className="p-2 border text-right">{formatNumber(v.vat)}</td>
-                <td className="p-2 border text-right font-semibold">
-                  {formatNumber(v.total)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+     {/* Monthly Sales Table */}
+<div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
+  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
+    <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
+    Monthly Sales
+  </h2>
+
+  <table className="w-full text-sm border-collapse min-w-[600px]">
+    <thead className="bg-teal-800 text-white">
+      <tr>
+        <th className="border p-2 text-left text-gray-400">Date</th>
+        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Cash</th>
+        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Card</th>
+        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">VAT</th>
+        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {Object.entries(groupedByDate).map(([day, v]) => (
+        <tr key={day} className="relative group">
+          {/* Date */}
+          <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
+            {new Date(day).toLocaleDateString(undefined, { day: "2-digit", month: "short" })}
+          </td>
+
+          {/* Cash */}
+          <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
+            {formatNumber(v.cash)}
+            <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
+              <Calendar className="w-3 h-3 text-gray-200" />
+            </div>
+          </td>
+
+          {/* Card */}
+          <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
+            {formatNumber(v.card)}
+          </td>
+
+          {/* VAT with tooltip */}
+          <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
+            {formatNumber(v.vat)}
+            {v.vatBreakdown && Object.keys(v.vatBreakdown).length > 0 && (
+              <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
+                <div className="font-semibold mb-1">VAT Breakdown</div>
+                {Object.entries(v.vatBreakdown).map(([name, value]) => (
+                  <div key={name} className="flex justify-between">
+                    <span>{name}</span>
+                    <span>{formatNumber(value)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </td>
+
+          {/* Total */}
+          <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
+            {formatNumber(v.total)}
+          </td>
+        </tr>
+      ))}
+
+      {/* Totals row */}
+      <tr className="font-bold bg-teal-800 text-gray-50">
+        <td className="border border-teal-100 p-2 text-gray-100">TOTAL</td>
+        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(summary.cash)}</td>
+        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(summary.card)}</td>
+        <td className="border border-teal-100 p-2 text-right text-gray-100">{formatNumber(summary.vat)}</td>
+        <td className="border border-teal-100 p-2 text-right text-green-100">{formatNumber(summary.total)}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  {/* Graph */}
+  {chartData.length > 0 && <MonthlySalesGraph data={chartData} />}
+</div>
+
 
       {/* Monthly summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -460,48 +520,95 @@ const groupedByMonth = useMemo(() => {
           {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
         </div>
 
-        {/* Yearly Table */}
-        <div className="overflow-x-auto border rounded-xs">
-          <table className="min-w-[700px] w-full border">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-2 border text-left">Month</th>
-                <th className="p-2 border text-right">Cash</th>
-                <th className="p-2 border text-right">Card</th>
-                <th className="p-2 border text-right">VAT</th>
-                <th className="p-2 border text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.from({ length: 12 }).map((_, i) => {
-                const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
-                const v = groupedByMonth[key] || {
-                  cash: 0,
-                  card: 0,
-                  vat: 0,
-                  total: 0,
-                };
-                return (
-                  <tr key={key}>
-                    <td className="p-2 border">{MONTH_NAMES[i]}</td>
-                    <td className="p-2 border text-right">
-                      {formatNumber(v.cash)}
-                    </td>
-                    <td className="p-2 border text-right">
-                      {formatNumber(v.card)}
-                    </td>
-                    <td className="p-2 border text-right">
-                      {formatNumber(v.vat)}
-                    </td>
-                    <td className="p-2 border text-right font-semibold">
-                      {formatNumber(v.total)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+       {/* Yearly Sales Table */}
+<div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
+  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
+    <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
+    Yearly Sales
+  </h2>
+
+  <div className="flex items-center gap-2 mb-4">
+    <span className="text-gray-600">Year:</span>
+    <select
+      value={yearlyYear}
+      onChange={(e) => setYearlyYear(Number(e.target.value))}
+      className="border p-2 rounded-xs"
+    >
+      {filteredYears.map((y) => (
+        <option key={y} value={y}>
+          {y}
+        </option>
+      ))}
+    </select>
+    {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
+  </div>
+
+  <table className="w-full text-sm border-collapse min-w-[600px]">
+    <thead className="bg-teal-800 text-white">
+      <tr>
+        <th className="border p-2 text-left text-gray-200">Month</th>
+        <th className="border p-2 text-right cursor-pointer text-gray-200">Cash</th>
+        <th className="border p-2 text-right cursor-pointer text-gray-200">Card</th>
+        <th className="border p-2 text-right cursor-pointer text-gray-200">VAT</th>
+        <th className="border p-2 text-right cursor-pointer text-gray-200">Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {Array.from({ length: 12 }).map((_, i) => {
+        const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
+        const v = groupedByMonth[key] || { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
+
+        return (
+          <tr key={key} className="relative group">
+            <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
+              {MONTH_NAMES[i]}
+            </td>
+            <td className="border border-teal-100 p-2 text-right text-teal-600">
+              {formatNumber(v.cash)}
+            </td>
+            <td className="border border-teal-100 p-2 text-right text-teal-600">
+              {formatNumber(v.card)}
+            </td>
+
+            {/* VAT with tooltip */}
+            <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
+              {formatNumber(v.vat)}
+              {v.vatBreakdown && Object.keys(v.vatBreakdown).length > 0 && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
+                  <div className="font-semibold mb-1">VAT Breakdown</div>
+                  {Object.entries(v.vatBreakdown).map(([name, value]) => (
+                    <div key={name} className="flex justify-between">
+                      <span>{name}</span>
+                      <span>{formatNumber(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </td>
+
+            <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
+              {formatNumber(v.total)}
+            </td>
+          </tr>
+        );
+      })}
+
+      {/* Totals row */}
+      <tr className="font-bold bg-teal-800 text-gray-50">
+        <td className="border border-teal-100 p-2 text-gray-100">TOTAL</td>
+        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(yearlySummary.cash)}</td>
+        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(yearlySummary.card)}</td>
+        <td className="border border-teal-100 p-2 text-right text-gray-100">{formatNumber(yearlySummary.vat)}</td>
+        <td className="border border-teal-100 p-2 text-right text-green-100">{formatNumber(yearlySummary.total)}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  {/* Yearly Graph */}
+  {yearlyChartData.length > 0 && <YearlySalesGraph data={yearlyChartData} />}
+</div>
+
 
         {/* Yearly Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
