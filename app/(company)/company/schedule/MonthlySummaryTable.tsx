@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
+import { ArrowUpRight } from "lucide-react";
 
 type Props = {
   schedules?: {
@@ -73,31 +74,45 @@ export default function MonthlySummaryTable({
   const STANDARD_MONTHLY_HOURS = 160;
   const totalDaysInMonth = end.getDate();
 
+  const [selectedEmployee, setSelectedEmployee] = useState<null | {
+    id: string;
+    name: string;
+    contractType: "HOURLY" | "MONTHLY";
+    hourlyRate: number;
+    monthlySalary?: number;
+    scheduledDays: number;
+    workedDays: number;
+    scheduledHours: number;
+    workedHours: number;
+    scheduledSalary: number;
+    salaryEarned: number;
+  }>(null);
+
   return (
-    <div className="mt-12 space-y-4">
+    <div className="mt-12 bg-[#02505e]">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-2">
         <div className="font-bold text-gray-100 bg-[#02505e] px-4 py-2 uppercase rounded-xs">
           Monthly Summary · {format(start, "yyyy-MM")}
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setMonthOffset((m) => m - 1)}
-            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-teal-400 hover:bg-teal-400 text-teal-400 text-xs font-medium"
           >
             ← Prev
           </button>
 
           <button
             onClick={() => setMonthOffset(0)}
-            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-teal-400 hover:bg-teal-400 text-teal-400 text-xs font-medium"
           >
             Current
           </button>
 
           <button
             onClick={() => setMonthOffset((m) => m + 1)}
-            className="px-3 py-1 border border-[#02505e] hover:bg-teal-100 rounded-xs text-xs font-medium"
+            className="px-3 py-1 border border-teal-400 hover:bg-teal-400 text-teal-400 text-xs font-medium"
           >
             Next →
           </button>
@@ -212,12 +227,62 @@ export default function MonthlySummaryTable({
                     idx % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
-                  <td
-                    className="p-3 border border-teal-100 font-medium sticky left-0 bg-[#02505e] text-white z-10 w-52 whitespace-nowrap overflow-hidden text-ellipsis"
-                    title={emp.name}
+                  {/* <td
+                    onClick={() =>
+                      setSelectedEmployee({
+                        id: emp.id,
+                        name: emp.name,
+                        contractType: emp.contractType,
+                        hourlyRate,
+                        monthlySalary: emp.monthlySalary,
+                        scheduledDays,
+                        workedDays,
+                        scheduledHours,
+                        workedHours,
+                        scheduledSalary,
+                        salaryEarned,
+                      })
+                    }
+                    className="p-3 border border-teal-100 font-medium sticky left-0 bg-[#02505e] text-white z-10 w-52 cursor-pointer hover:bg-teal-700 transition"
                   >
                     {emp.name}
+                  </td> */}
+                  <td
+                    onClick={() =>
+                      setSelectedEmployee({
+                        id: emp.id,
+                        name: emp.name,
+                        contractType: emp.contractType,
+                        hourlyRate,
+                        monthlySalary: emp.monthlySalary,
+                        scheduledDays,
+                        workedDays,
+                        scheduledHours,
+                        workedHours,
+                        scheduledSalary,
+                        salaryEarned,
+                      })
+                    }
+                    className="relative p-3 border border-teal-100 font-medium sticky left-0 
+             bg-[#02505e] text-white z-10 w-52 cursor-pointer 
+             hover:bg-teal-700 transition group"
+                  >
+                    {emp.name}
+
+                    {/* Top-right action box */}
+                    <div
+                      className="absolute top-0 right-0 w-4 h-4
+               bg-white/15
+                flex items-center justify-center
+               text-white/80 text-xs
+               group-hover:bg-white/25 
+               group-hover:text-white
+               transition"
+                    >
+                      <ArrowUpRight />
+                    </div>
                   </td>
+
                   <td className="p-3 border border-teal-100 text-center">
                     {emp.contractType}
                   </td>
@@ -280,6 +345,113 @@ export default function MonthlySummaryTable({
           </tbody>
         </table>
       </div>
+      {selectedEmployee && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-[#02505e] text-white px-6 py-5 flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-extrabold uppercase">
+                  {selectedEmployee.name}
+                </h2>
+                <p className="text-sm opacity-80">
+                  {selectedEmployee.contractType} · Monthly Summary
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedEmployee(null)}
+                className="text-white text-xl hover:opacity-70"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-6">
+              {/* Days + Hours */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-teal-50 rounded-xl p-4">
+                  <p className="text-xs uppercase font-semibold text-teal-700">
+                    Days
+                  </p>
+                  <p className="text-sm mt-2">
+                    Scheduled:{" "}
+                    <span className="font-bold">
+                      {selectedEmployee.scheduledDays}
+                    </span>
+                  </p>
+                  <p className="text-sm">
+                    Worked:{" "}
+                    <span className="font-bold">
+                      {selectedEmployee.workedDays}
+                    </span>
+                  </p>
+                </div>
+
+                <div className="bg-green-50 rounded-xl p-4">
+                  <p className="text-xs uppercase font-semibold text-green-700">
+                    Hours
+                  </p>
+                  <p className="text-sm mt-2">
+                    Scheduled:{" "}
+                    <span className="font-bold">
+                      {selectedEmployee.scheduledHours.toFixed(1)}
+                    </span>
+                  </p>
+                  <p className="text-sm">
+                    Worked:{" "}
+                    <span className="font-bold">
+                      {selectedEmployee.workedHours.toFixed(1)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Money */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <p className="text-xs uppercase font-semibold text-gray-600">
+                    Hourly Rate
+                  </p>
+                  <p className="text-lg font-extrabold mt-1">
+                    {selectedEmployee.hourlyRate.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 rounded-xl p-4">
+                  <p className="text-xs uppercase font-semibold text-blue-700">
+                    Scheduled Salary
+                  </p>
+                  <p className="text-lg font-extrabold mt-1">
+                    {selectedEmployee.scheduledSalary.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="col-span-2 bg-green-100 rounded-xl p-4 flex justify-between items-center">
+                  <p className="text-sm font-semibold text-green-800 uppercase">
+                    Salary Earned
+                  </p>
+                  <p className="text-2xl font-extrabold text-green-800">
+                    {selectedEmployee.salaryEarned.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Monthly salary (only if monthly) */}
+              {selectedEmployee.contractType === "MONTHLY" && (
+                <div className="bg-indigo-50 rounded-xl p-4">
+                  <p className="text-xs uppercase font-semibold text-indigo-700">
+                    Monthly Salary
+                  </p>
+                  <p className="text-lg font-extrabold mt-1">
+                    {selectedEmployee.monthlySalary?.toFixed(2)}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
