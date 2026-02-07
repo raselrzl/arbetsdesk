@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function SchedulePage() {
   const features = [
     {
-      title: "One-Click Schedule Creation",
+      title: "One Click Schedule Creation",
       description:
         "Create schedules for your entire team in just one click. Save hours every week!",
       image: "/schedule/scheduling.png",
