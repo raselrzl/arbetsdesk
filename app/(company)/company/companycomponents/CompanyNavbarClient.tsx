@@ -2,23 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Calendar,
-  Clock,
-  Wallet,
-  BarChart,
-  Users,
-  MessageSquare,
-  LucideIcon,
-} from "lucide-react";
 import CompanyUserMenu from "./CompanyUserMenu";
 import MobileBottomNavCompany from "./MobileBottomNavCompany";
 import { useState } from "react";
 import PersonnummerLoginModal from "./PersonnummerLoginModal";
 
 type CompanySession = {
-  id:string,
+  id: string;
   name: string;
   email: string;
   organizationNo: string;
@@ -35,9 +25,6 @@ export default function CompanyNavbarClient({
   company,
 }: CompanyNavbarClientProps) {
   const pathname = usePathname();
-
-  const employees = []; // placeholder if needed
-
   const [showLogin, setShowLogin] = useState(false);
 
   return (
@@ -56,49 +43,49 @@ export default function CompanyNavbarClient({
               <NavItem
                 href="/company"
                 label="Start"
-                icon={Home}
+                icon="home.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/schedule"
                 label="Schedule"
-                icon={Calendar}
+                icon="schedule.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/time"
                 label="Time"
-                icon={Clock}
+                icon="time.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/salary"
                 label="Salary"
-                icon={Wallet}
+                icon="salary.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/tips"
                 label="Tips"
-                icon={Wallet}
+                icon="4.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/analysis"
                 label="Analysis"
-                icon={BarChart}
+                icon="analysis.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/employee"
                 label="Employee"
-                icon={Users}
+                icon="emplyee.png"
                 pathname={pathname}
               />
               <NavItem
                 href="/company/message"
                 label="Message"
-                icon={MessageSquare}
+                icon="2.png"
                 pathname={pathname}
               />
             </div>
@@ -109,12 +96,11 @@ export default function CompanyNavbarClient({
       </nav>
 
       <MobileBottomNavCompany />
+
       <PersonnummerLoginModal
         open={showLogin}
         onClose={() => setShowLogin(false)}
-        company={
-          company ? { id: company.id, name: company.name } : null
-        }
+        company={company ? { id: company.id, name: company.name } : null}
       />
     </>
   );
@@ -123,20 +109,25 @@ export default function CompanyNavbarClient({
 interface NavItemProps {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: string;
   pathname?: string;
 }
 
-function NavItem({ href, label, icon: Icon, pathname }: NavItemProps) {
+function NavItem({ href, label, icon, pathname }: NavItemProps) {
   const isActive = pathname === href;
 
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 px-3 transition-colors h-14
+      className={`flex items-center px-3 transition-colors h-14 uppercase text-xs
         ${isActive ? "bg-white text-[#00687a]" : "hover:text-gray-300"}`}
     >
-      <Icon className="w-4 h-4" /> {label}
+      <img
+        src={`/icons/${icon}`}
+        alt={label}
+        className="w-4 h-4 object-contain"
+      />
+      {label}
     </Link>
   );
 }
