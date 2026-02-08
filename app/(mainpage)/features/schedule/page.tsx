@@ -20,7 +20,7 @@ export default function SchedulePage() {
       alt: "Edit schedule in one click",
     },
     {
-      title: "Real-Time Schedule Swaps",
+      title: "Real Time Schedule Swaps",
       description:
         "Swap shifts between employees in real time. Everyone stays in sync effortlessly!",
       image: "/schedule/swap.png",
