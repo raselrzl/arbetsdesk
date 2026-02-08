@@ -164,11 +164,12 @@ export default function MonthlyProfitTable({
         Daily Profitability
       </h2>
 
-      {/* VAT toggle button */}
+     <div className="flex justify-between">
+       {/* VAT toggle button */}
       <div className="mb-4">
         <button
           onClick={() => setShowVAT(!showVAT)}
-          className="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 transition"
+          className="bg-teal-800 text-white px-3 py-1 -xs hover:bg-teal-700 transition"
         >
           {showVAT ? "Hide VAT Details" : "Show VAT Details"}
         </button>
@@ -176,10 +177,10 @@ export default function MonthlyProfitTable({
 
       {/* Incl/Excl VAT switch */}
       <div className="mb-3 flex items-center gap-3">
-        <span className="text-sm text-gray-600">Excl. VAT</span>
+        <span className="text-sm text-teal-600">Excl. VAT</span>
         <button
           onClick={() => setVatMode(vatMode === "excl" ? "incl" : "excl")}
-          className={`relative w-12 h-6 rounded-full transition ${vatMode === "incl" ? "bg-teal-600" : "bg-gray-300"}`}
+          className={`relative w-12 h-6 rounded-full transition ${vatMode === "incl" ? "bg-teal-800" : "bg-gray-400"}`}
         >
           <span
             className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
@@ -187,8 +188,9 @@ export default function MonthlyProfitTable({
             }`}
           />
         </button>
-        <span className="text-sm text-gray-600">Incl. VAT</span>
+        <span className="text-sm text-teal-600">Incl. VAT</span>
       </div>
+     </div>
 
       <table className="w-full text-sm border-collapse min-w-[600px]">
         <thead className="bg-teal-800 text-white">

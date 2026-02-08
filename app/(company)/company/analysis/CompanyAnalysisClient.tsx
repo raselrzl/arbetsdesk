@@ -228,11 +228,11 @@ export default function CompanyAnalysisClient({
             value={`${totalAdditionalCost.toFixed(0)} `}
           />
 
-          {/*    <KPI
+             <KPI
             imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
             label={netProfit >= 0 ? "Net Profit" : "Net Loss"}
             value={`${Math.abs(netProfit).toFixed(0)} `}
-          /> */}
+          />
 
           <KPI
             imageSrc={netProfit >= 0 ? "/icons/9.png" : "/icons/12.png"}
@@ -363,7 +363,7 @@ export default function CompanyAnalysisClient({
         <TabsContent value="monthly-sales">
           <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
-              <CardTitle>Daily Sales (Cash & Card)</CardTitle>
+              <CardTitle>Daily Sales (Cash & Card) Incl. VAT</CardTitle>
             </CardHeader>
 
             <CardContent className="h-80 flex flex-col">
@@ -375,12 +375,6 @@ export default function CompanyAnalysisClient({
                   <Tooltip
                     formatter={(value: number) => `${value.toFixed(0)} `}
                   />
-
-                  {/*  <Bar
-                    dataKey="salesBreakdown.cash"
-                    name="Cash"
-                    fill="#22c55e"
-                  /> */}
                   <Bar dataKey="salesBreakdown.cash" name="Cash" fill="#22c55e">
                     <LabelList
                       dataKey="salesBreakdown.cash"
@@ -416,7 +410,7 @@ export default function CompanyAnalysisClient({
         <TabsContent value="monthly-costs">
           <Card className="rounded-xs shadow-teal-100 border-teal-100">
             <CardHeader>
-              <CardTitle>Daily Additional Costs</CardTitle>
+              <CardTitle>Daily Costs</CardTitle>
             </CardHeader>
 
             <CardContent className="h-80 flex flex-col">
