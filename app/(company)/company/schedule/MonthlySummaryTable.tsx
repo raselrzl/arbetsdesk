@@ -88,6 +88,53 @@ export default function MonthlySummaryTable({
     salaryEarned: number;
   }>(null);
 
+
+  const totalScheduledSalary = employees.reduce((sum, emp) => {
+  const empSchedules = monthSchedules.filter(
+    (s) => s.employee.id === emp.id,
+  );
+
+  const scheduledHours = empSchedules.reduce(
+    (s, sch) => s + diffHours(sch.startTime, sch.endTime),
+    0,
+  );
+
+  let hourlyRate = 0;
+  if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
+    hourlyRate = emp.monthlySalary / STANDARD_MONTHLY_HOURS;
+  } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
+    hourlyRate = emp.hourlyRate;
+  }
+
+  const scheduledSalary =
+    emp.contractType === "HOURLY"
+      ? scheduledHours * hourlyRate
+      : emp.monthlySalary || 0;
+
+  return sum + scheduledSalary;
+}, 0);
+
+const totalSalaryEarned = employees.reduce((sum, emp) => {
+  const empTimeLogs = monthTimeLogs.filter(
+    (t) => t.employee.id === emp.id,
+  );
+
+  const workedHours = empTimeLogs.reduce(
+    (s, t) => s + diffHours(t.loginTime, t.logoutTime),
+    0,
+  );
+
+  let hourlyRate = 0;
+  if (emp.contractType === "MONTHLY" && emp.monthlySalary) {
+    hourlyRate = emp.monthlySalary / STANDARD_MONTHLY_HOURS;
+  } else if (emp.contractType === "HOURLY" && emp.hourlyRate) {
+    hourlyRate = emp.hourlyRate;
+  }
+
+  return sum + workedHours * hourlyRate;
+}, 0);
+
+
   return (
     <div className="mt-12 bg-[#02505e] shadow shadow-[#02505e]">
       {/* HEADER */}
@@ -325,6 +372,37 @@ export default function MonthlySummaryTable({
               );
             })}
           </tbody>
+          <tfoot>
+  <tr className="bg-[#013a45] text-white font-bold border-t border-teal-300">
+    {/* Employee */}
+    <td className="p-3 sticky left-0 z-10 bg-[#013a45]">
+      TOTAL
+    </td>
+
+    {/* Contract */}
+    <td className="p-3 text-center">—</td>
+
+    {/* Days */}
+    <td className="p-3 text-center">—</td>
+
+    {/* Hourly Rate */}
+    <td className="p-3 text-center">—</td>
+
+    {/* Scheduled Salary TOTAL */}
+    <td className="p-3 text-center text-teal-200">
+      {totalScheduledSalary.toFixed(2)}
+    </td>
+
+    {/* Hours */}
+    <td className="p-3 text-center">—</td>
+
+    {/* Salary Earned TOTAL */}
+    <td className="p-3 text-center text-green-300">
+      {totalSalaryEarned.toFixed(2)}
+    </td>
+  </tr>
+</tfoot>
+
         </table>
       </div>
       {selectedEmployee && (
