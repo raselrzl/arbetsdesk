@@ -166,28 +166,29 @@ export default function WeeklyScheduleTable({
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="space-y-3 mt-20">
+    <div className="mt-20 bg-[#02505e] shadow-[#02505e] shadow mb-30">
       {/* WEEK FILTER */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold text-gray-100 bg-[#02505e] px-2 py-1 uppercase">
+        <div className="font-semibold text-gray-100  px-2 py-1 uppercase">
           Week {weekNumber} · {formatDate(start)} – {formatDate(end)}
         </div>
-        <div className="flex gap-2">
+        <h2 className="text-yellow-400 uppercase font-semibold"> Click on any Schedule to update or chnage</h2>
+        <div className="flex gap-2 px-2">
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
-            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-teal-500 hover:bg-gray-100 text-xs text-gray-100"
           >
             ← Prev
           </button>
           <button
             onClick={() => setWeekOffset(0)}
-            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-teal-500 hover:bg-gray-100 text-xs text-gray-100"
           >
             Current
           </button>
           <button
             onClick={() => setWeekOffset((w) => w + 1)}
-            className="px-2 py-0.5 border border-[#02505e] hover:bg-gray-100 text-xs"
+            className="px-2 py-0.5 border border-teal-500 hover:bg-gray-100 text-xs text-gray-100"
           >
             Next →
           </button>
@@ -273,7 +274,7 @@ export default function WeeklyScheduleTable({
 
       {/* POPUP */}
       {selectedSchedule && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-md">
           <div
             className={`rounded px-4 py-3 border-l-6 ${
               getEmployeeColorClasses(selectedSchedule.employee.id).bg

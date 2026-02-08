@@ -142,7 +142,7 @@ export default function CompanySchedulePage() {
   const minutes = ["00", "15", "30", "45"];
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto mb-20">
+    <div className="p-2 mt-20 max-w-7xl mx-auto mb-20">
       <div className="bg-white p-6 space-y-4 mb-4 shadow-lg shadow-[#02505e]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

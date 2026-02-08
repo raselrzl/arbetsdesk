@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, User } from "lucide-react";
 
 type Props = {
   schedules?: {
@@ -89,9 +89,9 @@ export default function MonthlySummaryTable({
   }>(null);
 
   return (
-    <div className="mt-12 bg-[#02505e]">
+    <div className="mt-12 bg-[#02505e] shadow shadow-[#02505e]">
       {/* HEADER */}
-      <div className="flex items-center justify-between px-2 border border-teal-100">
+      <div className="flex items-center justify-between px-2">
         <div className="font-bold text-gray-100 bg-[#02505e] px-4 py-2 uppercase rounded-xs">
           Monthly Summary · {format(start, "yyyy-MM")}
         </div>
@@ -120,7 +120,7 @@ export default function MonthlySummaryTable({
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto rounded-xs border border-teal-100">
+      <div className="overflow-x-auto rounded-xs">
         <table className="w-full border-collapse text-sm min-w-max">
           <thead>
             <tr className="bg-[#02505e] shadow-inner text-gray-100">
@@ -227,26 +227,6 @@ export default function MonthlySummaryTable({
                     idx % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
-                  {/* <td
-                    onClick={() =>
-                      setSelectedEmployee({
-                        id: emp.id,
-                        name: emp.name,
-                        contractType: emp.contractType,
-                        hourlyRate,
-                        monthlySalary: emp.monthlySalary,
-                        scheduledDays,
-                        workedDays,
-                        scheduledHours,
-                        workedHours,
-                        scheduledSalary,
-                        salaryEarned,
-                      })
-                    }
-                    className="p-3 border border-teal-100 font-medium sticky left-0 bg-[#02505e] text-white z-10 w-52 cursor-pointer hover:bg-teal-700 transition"
-                  >
-                    {emp.name}
-                  </td> */}
                   <td
                     onClick={() =>
                       setSelectedEmployee({
@@ -265,10 +245,12 @@ export default function MonthlySummaryTable({
                     }
                     className="relative p-3 border border-teal-100 font-medium left-0 
              bg-[#02505e] text-white z-10 w-52 cursor-pointer 
-             hover:bg-teal-700 transition group"
+             hover:bg-teal-900 transition group flex items-center gap-2"
                   >
-                    {emp.name}
-
+                    <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white">
+                      <User className="w-4 h-4" />
+                    </div>{" "}
+                    <span className="uppercase">{emp.name}</span>
                     {/* Top-right action box */}
                     <div
                       className="absolute top-0 right-0 w-4 h-4
@@ -346,7 +328,7 @@ export default function MonthlySummaryTable({
         </table>
       </div>
       {selectedEmployee && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 backdrop-blur-lg">
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden">
             {/* Header */}
             <div className="bg-[#02505e] text-white px-6 py-5 flex justify-between items-center">
