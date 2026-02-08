@@ -316,12 +316,12 @@ export default function SalesClient({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border p-2"
+          className="border p-2 w-full"
         />
         <select
           value={method}
           onChange={(e) => setMethod(e.target.value as "CASH" | "CARD")}
-          className="border p-2"
+          className="border p-2 w-full"
         >
           <option value="">Payment</option>
           <option value="CASH">Cash</option>
@@ -330,7 +330,7 @@ export default function SalesClient({
         <select
           value={vatRate}
           onChange={(e) => setVatRate(Number(e.target.value))}
-          className="border p-2"
+          className="border p-2 w-full"
         >
           <option value={0}>No VAT</option>
           <option value={0.12}>Food VAT 12%</option>
@@ -341,29 +341,29 @@ export default function SalesClient({
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border p-2"
+          className="border p-2 w-full"
         />
         <button
           onClick={addSale}
           disabled={addingSale}
-          className="bg-teal-900 text-white px-4 py-2 disabled:opacity-50"
+          className="bg-teal-900 text-white px-4 py-2 w-full md:w-auto"
         >
           {addingSale ? "Saving…" : "Add Sale"}
         </button>
       </div>
 
       {/* Month selector + VAT toggle */}
-      <div className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-xs border">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 bg-gray-50 p-3 rounded-xs border">
         <div className="flex gap-2">
           <Link
             href="/company/analysis"
-            className="bg-teal-800 text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+            className="bg-teal-800 text-white px-4 py-2 text-xs rounded-xs hover:bg-gray-800 transition"
           >
             Go to Analysis ➠
           </Link>
           <Link
             href="/company/additionalcost"
-            className="bg-teal-800 text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+            className="bg-teal-800 text-white px-4 text-xs py-2 rounded-xs hover:bg-gray-800 transition"
           >
             Go to Cost ➠
           </Link>
@@ -372,19 +372,19 @@ export default function SalesClient({
         <div className="flex gap-2">
           <button
             onClick={() => setVatView("INCLUDE")}
-            className={`px-4 py-2 border ${vatView === "INCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
+            className={`px-4 py-2 text-xs border ${vatView === "INCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
           >
-            Including VAT
+            In. VAT
           </button>
           <button
             onClick={() => setVatView("EXCLUDE")}
-            className={`px-4 py-2 border ${vatView === "EXCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
+            className={`px-4 py-2 text-xs border ${vatView === "EXCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
           >
-            Excluding VAT
+            Ex. VAT
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-xs">
           <Calendar className="text-black" />
           <select
             value={month}
