@@ -26,6 +26,14 @@ export default function SchedulePage() {
       image: "/schedule/swap.png",
       alt: "Swap shifts instantly",
     },
+    {
+  title: "Schedule With Confidence",
+  description:
+    "Every schedule shows its real cost as you build it. Stay in control of labor expenses from the first shift to the last.",
+  image: "/schedule/s6.png",
+  alt: "Confident scheduling with cost control",
+},
+
   ];
 
   return (
@@ -63,7 +71,7 @@ export default function SchedulePage() {
         >
           <div className="w-full max-w-[460px] rounded-xl shadow-lg overflow-hidden relative">
             <Image
-              src="/schedule/s1.gif"
+              src="/schedule/s7.png"
               alt="Staff scheduling dashboard"
               width={900}
               height={600}
