@@ -80,7 +80,7 @@ export default function PersonnummerLoginModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-9999 grid grid-rows-[30%_70%] h-screen">
+      <div className="fixed inset-0 z-9999 grid grid-rows-[35%_65%] h-screen">
         {/* HEADER 30% */}
         <div className="bg-[#00687a] relative flex flex-col justify-center items-center text-center p-4">
           <div className="flex justify-between w-full px-4 absolute top-4 left-0 right-0">
@@ -108,11 +108,11 @@ export default function PersonnummerLoginModal({
         </div>
 
         {/* BODY 70% */}
-        <div className="bg-white flex flex-col">
+        <div className="bg-gray-200 flex flex-col">
           {/* Input, Keypad and Login button */}
           <div className="flex flex-col flex-1">
             {/* Personal Number Input */}
-            <div className="flex-1">
+            <div className="flex-1 bg-white border-y-2 border-gray-200">
               <input
                 className="w-full h-full text-center text-2xl sm:text-3xl font-mono tracking-widest bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
                 placeholder="YYYYMMDDXXXX"
@@ -121,46 +121,47 @@ export default function PersonnummerLoginModal({
               />
             </div>
 
-            {/* Keypad */}
-            <div className="flex-4 grid grid-rows-4 grid-cols-3 gap-0.5">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <div className="flex-3 flex justify-center bg-gary-100">
+              <div className="grid grid-rows-4 grid-cols-3 gap-0.5 w-full max-w-5xl bg-white shadow-lg shadow-gray-700">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                  <button
+                    key={num}
+                    disabled={loading}
+                    onClick={() => {
+                      if (personalNumber.length < 12)
+                        setPersonalNumber(personalNumber + num);
+                    }}
+                    className="w-full h-full bg-gray-100 text-4xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
+                  >
+                    {num}
+                  </button>
+                ))}
+
                 <button
-                  key={num}
+                  disabled={loading}
+                  onClick={() => setPersonalNumber("")}
+                  className="w-full h-full bg-red-500 text-3xl font-bold text-white hover:bg-red-600 active:bg-red-700 transition-colors flex items-center justify-center disabled:opacity-50"
+                >
+                  C
+                </button>
+                <button
                   disabled={loading}
                   onClick={() => {
                     if (personalNumber.length < 12)
-                      setPersonalNumber(personalNumber + num);
+                      setPersonalNumber(personalNumber + "0");
                   }}
-                  className="w-full h-full bg-gray-100 text-4xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
+                  className="w-full h-full bg-gray-100 text-3xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
                 >
-                  {num}
+                  0
                 </button>
-              ))}
-
-              <button
-                disabled={loading}
-                onClick={() => setPersonalNumber("")}
-                className="w-full h-full bg-red-500 text-3xl font-bold text-white hover:bg-red-600 active:bg-red-700 transition-colors flex items-center justify-center disabled:opacity-50"
-              >
-                C
-              </button>
-              <button
-                disabled={loading}
-                onClick={() => {
-                  if (personalNumber.length < 12)
-                    setPersonalNumber(personalNumber + "0");
-                }}
-                className="w-full h-full bg-gray-100 text-3xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
-              >
-                0
-              </button>
-              <button
-                disabled={loading}
-                onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
-                className="w-full h-full bg-yellow-400 text-3xl font-bold hover:bg-yellow-500 active:bg-yellow-600 transition-colors flex items-center justify-center disabled:opacity-50"
-              >
-                ×
-              </button>
+                <button
+                  disabled={loading}
+                  onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
+                  className="w-full h-full bg-yellow-400 text-3xl font-bold hover:bg-yellow-500 active:bg-yellow-600 transition-colors flex items-center justify-center disabled:opacity-50"
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
             {/* Login Button */}
