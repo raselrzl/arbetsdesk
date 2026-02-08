@@ -323,18 +323,18 @@ export default function SalesClient({
           onChange={(e) => setMethod(e.target.value as "CASH" | "CARD")}
           className="border p-2 w-full"
         >
-          <option value="">Payment</option>
-          <option value="CASH">Cash</option>
-          <option value="CARD">Card</option>
+          <option value="" className="bg-teal-100 text-teal-800 border-t">Payment</option>
+          <option value="CASH" className="bg-teal-100 text-teal-800 border-t">Cash</option>
+          <option value="CARD" className="bg-teal-100 text-teal-800 border-t">Card</option>
         </select>
         <select
           value={vatRate}
           onChange={(e) => setVatRate(Number(e.target.value))}
           className="border p-2 w-full"
         >
-          <option value={0}>No VAT</option>
-          <option value={0.12}>Food VAT 12%</option>
-          <option value={0.25}>Alcohol VAT 25%</option>
+          <option value={0} className="bg-teal-100 text-teal-800 border-t">No VAT</option>
+          <option value={0.12} className="bg-teal-100 text-teal-800 border-t">Food VAT 12%</option>
+          <option value={0.25} className="bg-teal-100 text-teal-800 border-t">Alcohol VAT 25%</option>
         </select>
         <input
           type="number"
