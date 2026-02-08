@@ -311,7 +311,7 @@ export default function SalesClient({
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-6 my-20">
       {/* Add Sale */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 bg-gray-50 p-3 border rounded-xs">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 bg-teal-800 text-gray-100 p-3 border rounded-xs">
         <input
           type="date"
           value={date}
@@ -346,7 +346,7 @@ export default function SalesClient({
         <button
           onClick={addSale}
           disabled={addingSale}
-          className="bg-black text-white px-4 py-2 disabled:opacity-50"
+          className="bg-teal-900 text-white px-4 py-2 disabled:opacity-50"
         >
           {addingSale ? "Saving…" : "Add Sale"}
         </button>
@@ -357,13 +357,13 @@ export default function SalesClient({
         <div className="flex gap-2">
           <Link
             href="/company/analysis"
-            className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+            className="bg-teal-800 text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
           >
             Go to Analysis ➠
           </Link>
           <Link
             href="/company/additionalcost"
-            className="bg-black text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
+            className="bg-teal-800 text-white px-4 py-2 rounded-xs hover:bg-gray-800 transition"
           >
             Go to Cost ➠
           </Link>
@@ -372,13 +372,13 @@ export default function SalesClient({
         <div className="flex gap-2">
           <button
             onClick={() => setVatView("INCLUDE")}
-            className={`px-4 py-2 border ${vatView === "INCLUDE" ? "bg-black text-white" : "bg-white text-black"}`}
+            className={`px-4 py-2 border ${vatView === "INCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
           >
             Including VAT
           </button>
           <button
             onClick={() => setVatView("EXCLUDE")}
-            className={`px-4 py-2 border ${vatView === "EXCLUDE" ? "bg-black text-white" : "bg-white text-black"}`}
+            className={`px-4 py-2 border ${vatView === "EXCLUDE" ? "bg-teal-800 text-white" : "bg-white text-teal-800"}`}
           >
             Excluding VAT
           </button>
@@ -401,109 +401,130 @@ export default function SalesClient({
         </div>
       </div>
 
-     {/* Monthly Sales Table */}
-<div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
-  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
-    <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
-    Monthly Sales
-  </h2>
+      {/* Monthly Sales Table */}
+      <div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
+          <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
+          Monthly Sales
+        </h2>
 
-  <table className="w-full text-sm border-collapse min-w-[600px]">
-    <thead className="bg-teal-800 text-white">
-      <tr>
-        <th className="border p-2 text-left text-gray-400">Date</th>
-        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Cash</th>
-        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Card</th>
-        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">VAT</th>
-        <th className="border p-2 text-right cursor-pointer select-none text-gray-200">Total</th>
-      </tr>
-    </thead>
+        <table className="w-full text-sm border-collapse min-w-[600px]">
+          <thead className="bg-teal-800 text-white">
+            <tr>
+              <th className="border p-2 text-left text-gray-400">Date</th>
+              <th className="border p-2 text-right cursor-pointer select-none text-gray-200">
+                Cash
+              </th>
+              <th className="border p-2 text-right cursor-pointer select-none text-gray-200">
+                Card
+              </th>
+              <th className="border p-2 text-right cursor-pointer select-none text-gray-200">
+                VAT
+              </th>
+              <th className="border p-2 text-right cursor-pointer select-none text-gray-200">
+                Total
+              </th>
+            </tr>
+          </thead>
 
-    <tbody>
-      {Object.entries(groupedByDate).map(([day, v]) => (
-        <tr key={day} className="relative group">
-          {/* Date */}
-          <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
-            {new Date(day).toLocaleDateString(undefined, { day: "2-digit", month: "short" })}
-          </td>
+          <tbody>
+            {Object.entries(groupedByDate).map(([day, v]) => (
+              <tr key={day} className="relative group">
+                {/* Date */}
+                <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
+                  {new Date(day).toLocaleDateString(undefined, {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </td>
 
-          {/* Cash */}
-          <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
-            {formatNumber(v.cash)}
-            <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
-              <Calendar className="w-3 h-3 text-gray-200" />
-            </div>
-          </td>
-
-          {/* Card */}
-          <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
-            {formatNumber(v.card)}
-          </td>
-
-          {/* VAT with tooltip */}
-          <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
-            {formatNumber(v.vat)}
-            {v.vatBreakdown && Object.keys(v.vatBreakdown).length > 0 && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
-                <div className="font-semibold mb-1">VAT Breakdown</div>
-                {Object.entries(v.vatBreakdown).map(([name, value]) => (
-                  <div key={name} className="flex justify-between">
-                    <span>{name}</span>
-                    <span>{formatNumber(value)}</span>
+                {/* Cash */}
+                <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
+                  {formatNumber(v.cash)}
+                  <div className="absolute top-0 left-0 bg-teal-300 w-3 h-3 flex items-center justify-center shadow-sm z-10">
+                    <Calendar className="w-3 h-3 text-gray-200" />
                   </div>
-                ))}
-              </div>
-            )}
-          </td>
+                </td>
 
-          {/* Total */}
-          <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
-            {formatNumber(v.total)}
-          </td>
-        </tr>
-      ))}
+                {/* Card */}
+                <td className="border border-teal-100 p-2 text-right text-teal-600 relative cursor-pointer">
+                  {formatNumber(v.card)}
+                </td>
 
-      {/* Totals row */}
-      <tr className="font-bold bg-teal-800 text-gray-50">
-        <td className="border border-teal-100 p-2 text-gray-100">TOTAL</td>
-        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(summary.cash)}</td>
-        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(summary.card)}</td>
-        <td className="border border-teal-100 p-2 text-right text-gray-100">{formatNumber(summary.vat)}</td>
-        <td className="border border-teal-100 p-2 text-right text-green-100">{formatNumber(summary.total)}</td>
-      </tr>
-    </tbody>
-  </table>
+                {/* VAT with tooltip */}
+                <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
+                  {formatNumber(v.vat)}
+                  {v.vatBreakdown && Object.keys(v.vatBreakdown).length > 0 && (
+                    <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
+                      <div className="font-semibold mb-1">VAT Breakdown</div>
+                      {Object.entries(v.vatBreakdown).map(([name, value]) => (
+                        <div key={name} className="flex justify-between">
+                          <span>{name}</span>
+                          <span>{formatNumber(value)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </td>
 
-  {/* Graph */}
-  {chartData.length > 0 && <MonthlySalesGraph data={chartData} />}
-</div>
+                {/* Total */}
+                <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
+                  {formatNumber(v.total)}
+                </td>
+              </tr>
+            ))}
 
+            {/* Totals row */}
+            <tr className="font-bold bg-teal-800 text-gray-50">
+              <td className="border border-teal-100 p-2 text-gray-100">
+                TOTAL
+              </td>
+              <td className="border border-teal-100 p-2 text-right text-teal-100">
+                {formatNumber(summary.cash)}
+              </td>
+              <td className="border border-teal-100 p-2 text-right text-teal-100">
+                {formatNumber(summary.card)}
+              </td>
+              <td className="border border-teal-100 p-2 text-right text-gray-100">
+                {formatNumber(summary.vat)}
+              </td>
+              <td className="border border-teal-100 p-2 text-right text-green-100">
+                {formatNumber(summary.total)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      {/* Monthly summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <div className="p-4 bg-gray-50 border text-center">
-          <strong>Cash</strong>
-          <div>{formatNumber(summary.cash)}</div>
-        </div>
-        <div className="p-4 bg-gray-50 border text-center">
-          <strong>Card</strong>
-          <div>{formatNumber(summary.card)}</div>
-        </div>
-        <div className="p-4 bg-gray-50 border text-center">
-          <strong>VAT</strong>
-          <div>{formatNumber(summary.vat)}</div>
-        </div>
-        <div className="p-4 bg-gray-50 border text-center font-bold">
-          <strong>Total</strong>
-          <div>{formatNumber(summary.total)}</div>
+        {/* Graph */}
+        {chartData.length > 0 && <MonthlySalesGraph data={chartData} />}
+
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-20">
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Cash</strong>
+            <div>{formatNumber(summary.cash)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>Card</strong>
+            <div>{formatNumber(summary.card)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center">
+            <strong>VAT</strong>
+            <div>{formatNumber(summary.vat)}</div>
+          </div>
+          <div className="p-4 bg-gray-50 border text-center font-bold">
+            <strong>Total</strong>
+            <div>{formatNumber(summary.total)}</div>
+          </div>
         </div>
       </div>
 
-      <MonthlySalesGraph data={chartData} />
+      {/* Monthly summary */}
+
+      {/*   <MonthlySalesGraph data={chartData} /> */}
 
       {/* Yearly Section */}
       <div className="space-y-6 mt-10">
-        <h2 className="text-xl font-semibold">Yearly Sales</h2>
+        {/*  <h2 className="text-xl font-semibold">Yearly Sales</h2>
         <div className="flex items-center gap-2 mb-4">
           <span>Year:</span>
           <select
@@ -518,119 +539,157 @@ export default function SalesClient({
             ))}
           </select>
           {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
-        </div>
+        </div> */}
 
-       {/* Yearly Sales Table */}
-<div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
-  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
-    <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
-    Yearly Sales
-  </h2>
+        {/* Yearly Sales Table */}
+        <div className="bg-white shadow-lg shadow-teal-800 border border-teal-100 rounded-xs p-4 mt-8 overflow-x-auto">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase text-teal-900">
+              <img src="/icons/3.png" alt="icon" className="w-10 h-10" />
+              Yearly Sales
+            </h2>
 
-  <div className="flex items-center gap-2 mb-4">
-    <span className="text-gray-600">Year:</span>
-    <select
-      value={yearlyYear}
-      onChange={(e) => setYearlyYear(Number(e.target.value))}
-      className="border p-2 rounded-xs"
-    >
-      {filteredYears.map((y) => (
-        <option key={y} value={y}>
-          {y}
-        </option>
-      ))}
-    </select>
-    {loadingYear && <span className="text-gray-500 ml-2">Loading…</span>}
-  </div>
-
-  <table className="w-full text-sm border-collapse min-w-[600px]">
-    <thead className="bg-teal-800 text-white">
-      <tr>
-        <th className="border p-2 text-left text-gray-200">Month</th>
-        <th className="border p-2 text-right cursor-pointer text-gray-200">Cash</th>
-        <th className="border p-2 text-right cursor-pointer text-gray-200">Card</th>
-        <th className="border p-2 text-right cursor-pointer text-gray-200">VAT</th>
-        <th className="border p-2 text-right cursor-pointer text-gray-200">Total</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {Array.from({ length: 12 }).map((_, i) => {
-        const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
-        const v = groupedByMonth[key] || { cash: 0, card: 0, vat: 0, total: 0, vatBreakdown: {} };
-
-        return (
-          <tr key={key} className="relative group">
-            <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
-              {MONTH_NAMES[i]}
-            </td>
-            <td className="border border-teal-100 p-2 text-right text-teal-600">
-              {formatNumber(v.cash)}
-            </td>
-            <td className="border border-teal-100 p-2 text-right text-teal-600">
-              {formatNumber(v.card)}
-            </td>
-
-            {/* VAT with tooltip */}
-            <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
-              {formatNumber(v.vat)}
-              {v.vatBreakdown && Object.keys(v.vatBreakdown).length > 0 && (
-                <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
-                  <div className="font-semibold mb-1">VAT Breakdown</div>
-                  {Object.entries(v.vatBreakdown).map(([name, value]) => (
-                    <div key={name} className="flex justify-between">
-                      <span>{name}</span>
-                      <span>{formatNumber(value)}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-gray-600">Year:</span>
+              <select
+                value={yearlyYear}
+                onChange={(e) => setYearlyYear(Number(e.target.value))}
+                className="border p-2 rounded-xs"
+              >
+                {filteredYears.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+              {loadingYear && (
+                <span className="text-gray-500 ml-2">Loading…</span>
               )}
-            </td>
+            </div>
+          </div>
 
-            <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
-              {formatNumber(v.total)}
-            </td>
-          </tr>
-        );
-      })}
+          <table className="w-full text-sm border-collapse min-w-[600px]">
+            <thead className="bg-teal-800 text-white">
+              <tr>
+                <th className="border p-2 text-left text-gray-200">Month</th>
+                <th className="border p-2 text-right cursor-pointer text-gray-200">
+                  Cash
+                </th>
+                <th className="border p-2 text-right cursor-pointer text-gray-200">
+                  Card
+                </th>
+                <th className="border p-2 text-right cursor-pointer text-gray-200">
+                  VAT
+                </th>
+                <th className="border p-2 text-right cursor-pointer text-gray-200">
+                  Total
+                </th>
+              </tr>
+            </thead>
 
-      {/* Totals row */}
-      <tr className="font-bold bg-teal-800 text-gray-50">
-        <td className="border border-teal-100 p-2 text-gray-100">TOTAL</td>
-        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(yearlySummary.cash)}</td>
-        <td className="border border-teal-100 p-2 text-right text-teal-100">{formatNumber(yearlySummary.card)}</td>
-        <td className="border border-teal-100 p-2 text-right text-gray-100">{formatNumber(yearlySummary.vat)}</td>
-        <td className="border border-teal-100 p-2 text-right text-green-100">{formatNumber(yearlySummary.total)}</td>
-      </tr>
-    </tbody>
-  </table>
+            <tbody>
+              {Array.from({ length: 12 }).map((_, i) => {
+                const key = `${yearlyYear}-${String(i + 1).padStart(2, "0")}`;
+                const v = groupedByMonth[key] || {
+                  cash: 0,
+                  card: 0,
+                  vat: 0,
+                  total: 0,
+                  vatBreakdown: {},
+                };
 
-  {/* Yearly Graph */}
-  {yearlyChartData.length > 0 && <YearlySalesGraph data={yearlyChartData} />}
-</div>
+                return (
+                  <tr key={key} className="relative group">
+                    <td className="border border-teal-100 p-2 text-gray-500 whitespace-nowrap">
+                      {MONTH_NAMES[i]}
+                    </td>
+                    <td className="border border-teal-100 p-2 text-right text-teal-600">
+                      {formatNumber(v.cash)}
+                    </td>
+                    <td className="border border-teal-100 p-2 text-right text-teal-600">
+                      {formatNumber(v.card)}
+                    </td>
 
+                    {/* VAT with tooltip */}
+                    <td className="border border-teal-100 p-2 text-right text-gray-600 relative cursor-pointer group">
+                      {formatNumber(v.vat)}
+                      {v.vatBreakdown &&
+                        Object.keys(v.vatBreakdown).length > 0 && (
+                          <div className="absolute right-0 top-full mt-1 bg-white border border-teal-100 shadow-lg p-3 text-xs z-20 w-32 hidden group-hover:block">
+                            <div className="font-semibold mb-1">
+                              VAT Breakdown
+                            </div>
+                            {Object.entries(v.vatBreakdown).map(
+                              ([name, value]) => (
+                                <div
+                                  key={name}
+                                  className="flex justify-between"
+                                >
+                                  <span>{name}</span>
+                                  <span>{formatNumber(value)}</span>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
+                    </td>
+
+                    <td className="border border-teal-100 p-2 text-right font-semibold text-green-600">
+                      {formatNumber(v.total)}
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {/* Totals row */}
+              <tr className="font-bold bg-teal-800 text-gray-50">
+                <td className="border border-teal-100 p-2 text-gray-100">
+                  TOTAL
+                </td>
+                <td className="border border-teal-100 p-2 text-right text-teal-100">
+                  {formatNumber(yearlySummary.cash)}
+                </td>
+                <td className="border border-teal-100 p-2 text-right text-teal-100">
+                  {formatNumber(yearlySummary.card)}
+                </td>
+                <td className="border border-teal-100 p-2 text-right text-gray-100">
+                  {formatNumber(yearlySummary.vat)}
+                </td>
+                <td className="border border-teal-100 p-2 text-right text-green-100">
+                  {formatNumber(yearlySummary.total)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Yearly Graph */}
+          {yearlyChartData.length > 0 && (
+            <YearlySalesGraph data={yearlyChartData} />
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-20">
+            <div className="p-4 bg-gray-50 border text-center">
+              <strong>Cash</strong>
+              <div>{formatNumber(yearlySummary.cash)}</div>
+            </div>
+            <div className="p-4 bg-gray-50 border text-center">
+              <strong>Card</strong>
+              <div>{formatNumber(yearlySummary.card)}</div>
+            </div>
+            <div className="p-4 bg-gray-50 border text-center">
+              <strong>VAT</strong>
+              <div>{formatNumber(yearlySummary.vat)}</div>
+            </div>
+            <div className="p-4 bg-gray-50 border text-center font-bold">
+              <strong>Total</strong>
+              <div>{formatNumber(yearlySummary.total)}</div>
+            </div>
+          </div>
+        </div>
 
         {/* Yearly Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-          <div className="p-4 bg-gray-50 border text-center">
-            <strong>Cash</strong>
-            <div>{formatNumber(yearlySummary.cash)}</div>
-          </div>
-          <div className="p-4 bg-gray-50 border text-center">
-            <strong>Card</strong>
-            <div>{formatNumber(yearlySummary.card)}</div>
-          </div>
-          <div className="p-4 bg-gray-50 border text-center">
-            <strong>VAT</strong>
-            <div>{formatNumber(yearlySummary.vat)}</div>
-          </div>
-          <div className="p-4 bg-gray-50 border text-center font-bold">
-            <strong>Total</strong>
-            <div>{formatNumber(yearlySummary.total)}</div>
-          </div>
-        </div>
 
-        <YearlySalesGraph data={yearlyChartData} />
+        {/* 
+        <YearlySalesGraph data={yearlyChartData} /> */}
       </div>
     </div>
   );
