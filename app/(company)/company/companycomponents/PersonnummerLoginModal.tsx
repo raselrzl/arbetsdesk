@@ -17,6 +17,7 @@ import {
   confirmLoginWithoutSchedule,
   loginEmployeeWithPinByNumber,
 } from "../timelogaction";
+import Image from "next/image";
 
 export default function PersonnummerLoginModal({
   open,
@@ -82,7 +83,7 @@ export default function PersonnummerLoginModal({
     <>
       <div className="fixed inset-0 z-9999 grid grid-rows-[35%_65%] h-screen">
         {/* HEADER 30% */}
-        <div className="bg-[#00687a] relative flex flex-col justify-center items-center text-center p-4">
+        <div className="bg-[#024a57] relative flex flex-col justify-center items-center text-center p-4">
           <div className="flex justify-between w-full px-4 absolute top-4 left-0 right-0">
             <h1 className="text-2xl sm:text-3xl uppercase font-bold text-gray-100">
               ARBET-DESK
@@ -112,7 +113,7 @@ export default function PersonnummerLoginModal({
           {/* Input, Keypad and Login button */}
           <div className="flex flex-col flex-1">
             {/* Personal Number Input */}
-            <div className="flex-1 bg-white border-y-2 border-gray-200">
+            <div className="flex-1 bg-white border-b-2">
               <input
                 className="w-full h-full text-center text-2xl sm:text-3xl font-mono tracking-widest bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
                 placeholder="YYYYMMDDXXXX"
@@ -131,9 +132,15 @@ export default function PersonnummerLoginModal({
                       if (personalNumber.length < 12)
                         setPersonalNumber(personalNumber + num);
                     }}
-                    className="w-full h-full bg-gray-100 text-4xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
+                    className="w-full h-full bg-gray-100 hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
                   >
-                    {num}
+                    <Image
+                      src={`/k/${num}.png`}
+                      alt={`${num}`}
+                      width={48}
+                      height={48}
+                      className="object-contain"
+                    />
                   </button>
                 ))}
 
@@ -142,7 +149,13 @@ export default function PersonnummerLoginModal({
                   onClick={() => setPersonalNumber("")}
                   className="w-full h-full bg-red-500 text-3xl font-bold text-white hover:bg-red-600 active:bg-red-700 transition-colors flex items-center justify-center disabled:opacity-50"
                 >
-                  C
+                  <Image
+                    src="/k/c.png"
+                    alt="c"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </button>
                 <button
                   disabled={loading}
@@ -152,14 +165,26 @@ export default function PersonnummerLoginModal({
                   }}
                   className="w-full h-full bg-gray-100 text-3xl font-bold hover:bg-gray-200 active:bg-gray-200 transition-colors flex items-center justify-center disabled:opacity-50"
                 >
-                  0
+                  <Image
+                    src="/k/0.png"
+                    alt="0"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </button>
                 <button
                   disabled={loading}
                   onClick={() => setPersonalNumber(personalNumber.slice(0, -1))}
                   className="w-full h-full bg-yellow-400 text-3xl font-bold hover:bg-yellow-500 active:bg-yellow-600 transition-colors flex items-center justify-center disabled:opacity-50"
                 >
-                  ×
+                 <Image
+                    src="/k/x.png"
+                    alt="X"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </button>
               </div>
             </div>
@@ -169,7 +194,7 @@ export default function PersonnummerLoginModal({
               <button
                 onClick={submitLogin}
                 disabled={loading || personalNumber.length < 12}
-                className="w-full h-full text-2xl uppercase font-bold text-white bg-[#00687a] hover:bg-teal-700 active:bg-teal-800 transition-colors disabled:opacity-70"
+                className="w-full h-full text-2xl uppercase font-bold text-white bg-[#024a57] transition-colors"
               >
                 {loading ? (
                   <Loader2 className="w-6 h-6 animate-spin mx-auto" />
