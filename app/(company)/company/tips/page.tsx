@@ -50,19 +50,19 @@ function MonthSelector({
   if (!months.length) return null;
 
   return (
-    <div className="bg-white p-4 rounded-xs shadow flex items-center gap-3 mb-4 border border-teal-100">
-      <Calendar className="w-5 h-5 text-teal-600" />
+    <div className="flex items-center gap-3 mb-4 rounded-xs border bg-[#00687a] text-gray-100 border-[#00687a]">
+      <Calendar className="w-5 h-5 pl-2" />
       <select
         value={month}
         onChange={(e) => setMonth(e.target.value)}
-        className="border p-2 rounded-xs border-teal-100"
+        className="border px-2 h-10 text-sm border-[#00687a]"
       >
         {months.map((m) => (
-          <option key={m} value={m}>
+          <option key={m} value={m} className="bg-[#00687a] text-gray-100">
             {m}
           </option>
         ))}
-      </select>
+      </select> 
     </div>
   );
 }
@@ -83,23 +83,23 @@ function AddTipForm({
   onAddTip: () => void;
 }) {
   return (
-    <div className="bg-white p-4 rounded-xs shadow flex flex-wrap gap-2 items-center border border-teal-100">
+    <div className="bg-white p-4 shadow flex flex-wrap gap-2 items-center border border-[#00687a] shadow-[#00687a]">
       <input
         type="date"
         value={newDate}
         onChange={(e) => setNewDate(e.target.value)}
-        className="border p-2 rounded-xs border-teal-100"
+        className="border p-2 rounded-xs border-[#00687a] text-[#00687a]"
       />
       <input
         type="number"
         placeholder="Tip amount"
         value={newAmount}
         onChange={(e) => setNewAmount(e.target.value)}
-        className="border p-2 rounded-xs border-teal-100"
+        className="border p-2 rounded-xs border-[#00687a] text-[#00687a]"
       />
       <button
         onClick={onAddTip}
-        className="bg-teal-600 text-white px-4 py-2 rounded-xs hover:bg-teal-700"
+        className="bg-[#00687a] text-white px-4 py-2 rounded-xs hover:bg-teal-700"
       >
         Add Tip
       </button>
@@ -116,12 +116,21 @@ function TipsCalendar({
   dailyTipsForMonth: DailyTip[];
   daysInMonth: number;
 }) {
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const yearMonth = dailyTipsForMonth[0]?.date.slice(0, 7); // YYYY-MM
+
   return (
-    <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
-      <h2 className="text-xl font-semibold mb-2 text-teal-900">Tips Calendar</h2>
+    <div className="bg-[#00687a] rounded-xs shadow p-4">
+      <h2 className="text-xl font-semibold mb-2 text-gray-100 uppercase">
+        Tips Calendar
+      </h2>
+
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = String(i + 1).padStart(2, "0");
+          const dateObj = new Date(`${yearMonth}-${day}`);
+          const dayName = weekDays[dateObj.getDay()];
+
           const tipForDay = dailyTipsForMonth.find((t) =>
             t.date.endsWith(`-${day}`)
           );
@@ -131,10 +140,17 @@ function TipsCalendar({
               key={i}
               className="h-20 border border-teal-100 rounded p-2 flex flex-col justify-between bg-teal-50"
             >
-              <span className="font-semibold">{day}</span>
+              <span className="font-semibold text-sm">
+                {dayName} {day}
+              </span>
+
               {tipForDay && (
                 <span className="text-sm flex items-center gap-1">
-                  <Wallet className="w-4 h-4 text-teal-600" />
+                  <img
+                    src="/icons/1.png"
+                    alt="Tip"
+                    className="w-4 h-4"
+                  />
                   {tipForDay.totalTip}
                 </span>
               )}
@@ -145,6 +161,7 @@ function TipsCalendar({
     </div>
   );
 }
+
 
 /* ---------------- DAILY DISTRIBUTION ---------------- */
 
@@ -161,7 +178,7 @@ function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
 
   return (
     <div className="bg-white rounded-xs shadow p-4 mb-4 border border-teal-100">
-      <h2 className="text-xl font-semibold mb-2 text-teal-900">
+      <h2 className="text-xl font-semibold mb-2 text-[#00687a] uppercase">
         Tip Distribution – {dailyTip.date}
       </h2>
 
@@ -222,18 +239,18 @@ function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
 
   return (
     <div className="bg-white rounded-xs w-full">
-      <h2 className="text-xl font-semibold mb-3 text-teal-900">
+      <h2 className="text-xl font-bold mb-3 text-[#00687a] uppercase">
         Monthly Tip Distribution (Per Employee)
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
         {monthlyTotals.map((emp) => (
           <div
             key={emp.id}
-            className="border border-teal-200 rounded p-4 bg-teal-50 flex flex-col items-center"
+            className="p-4 bg-[#00687a] flex flex-col items-center"
           >
-            <span className="font-semibold">{emp.name}</span>
-            <span className="text-lg font-bold text-teal-700">
+            <span className="font-semibold uppercase">{emp.name}</span>
+            <span className="text-lg font-bold text-gray-100">
               {emp.totalTip.toFixed(2)}
             </span>
           </div>
@@ -410,26 +427,26 @@ export default function CompanyTipsPage() {
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-teal-800 uppercase">Tips Distribution</h1>
+        <h1 className="text-3xl font-bold text-[#00687a] uppercase">Tips Distribution</h1>
 
         <div className="flex gap-3">
           <a
             href="/company/analysis"
-            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+            className="px-4 py-2 text-sm font-medium border border-[#00687a] text-[#00687a] rounded-xs hover:bg-teal-50"
           >
             Analysis ➠
           </a>
 
           <a
             href="/company/additionalcost"
-            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+            className="px-4 py-2 text-sm font-medium border border-[#00687a] text-[#00687a] rounded-xs hover:bg-teal-50"
           >
             Cost ➠
           </a>
 
           <a
             href="/company/sales"
-            className="px-4 py-2 text-sm font-medium border border-teal-600 text-teal-600 rounded-xs hover:bg-teal-50"
+            className="px-4 py-2 text-sm font-medium border border-[#00687a] text-[#00687a] rounded-xs hover:bg-teal-50"
           >
             Sales ➠
           </a>
@@ -444,17 +461,17 @@ export default function CompanyTipsPage() {
         onAddTip={addTipHandler}
       />
 
-      <div className="flex flex-col bg-white text-teal-800 p-4 rounded-xs shadow border border-teal-100 gap-3">
-        <div className="flex gap-2 text-3xl mb-10">
-          {" "}
-          <Wallet className="w-10 h-10 " />
-          <span className="font-semibold">
-            Total Tips: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
+      <div className="flex flex-col bg-white text-[#00687a] p-4 rounded-xs shadow shadow-[#00687a] gap-3 border border-[#00687a]">
+        <div className="flex gap-2 text-3xl mb-10 text-[#00687a] justify-between">
+          <span className="font-semibold uppercase">
+            Total Amount: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
           </span>
+
+           <MonthSelector month={month} setMonth={setMonth} months={months} />
         </div>
         <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
       </div>
-      <MonthSelector month={month} setMonth={setMonth} months={months} />
+     
       <MonthlyTipPivotTable dailyTips={dailyTipsForMonth} />
       <TipsCalendar
         dailyTipsForMonth={dailyTipsForMonth}
