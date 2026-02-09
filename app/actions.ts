@@ -582,7 +582,7 @@ export async function getCompanyEmployees() {
   });
 }
 
-/* export async function addDailyTip({
+export async function addDailyTip({
   date,
   amount,
 }: {
@@ -607,10 +607,10 @@ export async function getCompanyEmployees() {
     update: { amount },
     create: { companyId, date: parsedDate, amount },
   });
-} */
+}
 
 // app/actions/getAvailableTipMonths.ts
-/* export async function getAvailableTipMonths() {
+export async function getAvailableTipMonths() {
   const jar = await cookies();
   const companyId = jar.get("company_session")?.value;
   if (!companyId) throw new Error("Unauthorized");
@@ -632,7 +632,7 @@ export async function getCompanyEmployees() {
   );
 
   return months;
-} */
+}
 
 /* export async function getMonthlyTips(companyId: string, month: string) {
   const start = new Date(`${month}-01`);
@@ -659,7 +659,7 @@ export async function getCompanyEmployees() {
   return { tips, timeLogs };
 } */
 //latest
-/* export async function getMonthlyTips(companyId: string, month: string) {
+export async function getMonthlyTips(companyId: string, month: string) {
   const start = new Date(`${month}-01`);
   const end = new Date(start);
   end.setMonth(end.getMonth() + 1);
@@ -690,7 +690,7 @@ export async function getCompanyEmployees() {
   });
 
   return { tips, timeLogs };
-} */
+}
 
 export async function getCompanyTimeReports() {
   const jar = await cookies();

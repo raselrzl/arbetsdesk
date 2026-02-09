@@ -3,12 +3,14 @@
 import { useState, useMemo, useEffect } from "react";
 import { Calendar, Wallet } from "lucide-react";
 import {
+  getMonthlyTips,
+  addDailyTip,
   getCompanyEmployees,
+  getAvailableTipMonths,
 } from "@/app/actions";
 import { DailyTipsChart } from "./DailyTipsChart";
 import { EmployeeTipsChart } from "./EmployeeTipsChart";
 import { MonthlyTipPivotTable } from "./MonthlyTipPivotTable";
-import { addDailyTip, getAvailableTipMonths, getMonthlyTips } from "./tipsAction";
 
 /* ---------------- TYPES ---------------- */
 
