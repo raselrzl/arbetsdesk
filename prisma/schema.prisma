@@ -70,6 +70,7 @@ model Company {
   employeeMessages EmployeeMessage[]
   notifications Notification[]
 
+  employeeMonthlyTipPayments EmployeeMonthlyTipPayment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -140,6 +141,8 @@ model Employee {
   messages         Message[]
   employeeMessages EmployeeMessage[]
   notifications Notification[]
+  monthlyTipPayments EmployeeMonthlyTipPayment[]
+
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -213,6 +216,8 @@ model TimeLog {
   createdAt DateTime @default(now())
   updatedAt  DateTime? @updatedAt
 
+
+
   @@index([companyId, logDate])
 }
 
@@ -262,6 +267,26 @@ model DailyTip {
 
   @@unique([companyId, date])
 }
+
+
+model EmployeeMonthlyTipPayment {
+  id         String   @id @default(cuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  month      String   // "YYYY-MM"
+  amount     Float
+  paid       Boolean  @default(false)
+  paidAt     DateTime?
+
+  createdAt  DateTime @default(now())
+
+  @@unique([employeeId, month])
+}
+
 
 model CostType {
   id        String   @id @default(cuid())

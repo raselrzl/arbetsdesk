@@ -3,14 +3,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { Calendar, Wallet } from "lucide-react";
 import {
-  getMonthlyTips,
-  addDailyTip,
   getCompanyEmployees,
-  getAvailableTipMonths,
 } from "@/app/actions";
 import { DailyTipsChart } from "./DailyTipsChart";
 import { EmployeeTipsChart } from "./EmployeeTipsChart";
 import { MonthlyTipPivotTable } from "./MonthlyTipPivotTable";
+import { addDailyTip, getAvailableTipMonths, getMonthlyTips } from "./tipsAction";
 
 /* ---------------- TYPES ---------------- */
 
@@ -62,7 +60,7 @@ function MonthSelector({
             {m}
           </option>
         ))}
-      </select> 
+      </select>
     </div>
   );
 }
@@ -132,7 +130,7 @@ function TipsCalendar({
           const dayName = weekDays[dateObj.getDay()];
 
           const tipForDay = dailyTipsForMonth.find((t) =>
-            t.date.endsWith(`-${day}`)
+            t.date.endsWith(`-${day}`),
           );
 
           return (
@@ -146,11 +144,7 @@ function TipsCalendar({
 
               {tipForDay && (
                 <span className="text-sm flex items-center gap-1">
-                  <img
-                    src="/icons/1.png"
-                    alt="Tip"
-                    className="w-4 h-4"
-                  />
+                  <img src="/icons/1.png" alt="Tip" className="w-4 h-4" />
                   {tipForDay.totalTip}
                 </span>
               )}
@@ -162,12 +156,11 @@ function TipsCalendar({
   );
 }
 
-
 /* ---------------- DAILY DISTRIBUTION ---------------- */
 
 function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
   const finishedEmployees = dailyTip.employees.filter(
-    (e) => e.loggedOutTime && e.hours > 0
+    (e) => e.loggedOutTime && e.hours > 0,
   );
 
   if (!finishedEmployees.length) return null;
@@ -207,7 +200,7 @@ function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
 
     for (const day of dailyTips) {
       const finished = day.employees.filter(
-        (e) => e.loggedOutTime && e.hours > 0
+        (e) => e.loggedOutTime && e.hours > 0,
       );
 
       if (!finished.length) continue;
@@ -298,7 +291,7 @@ export default function CompanyTipsPage() {
         const logsForDay = data.timeLogs.filter(
           (l: any) =>
             l.logDate.toISOString().slice(0, 10) ===
-            tip.date.toISOString().slice(0, 10)
+            tip.date.toISOString().slice(0, 10),
         );
 
         return {
@@ -328,7 +321,7 @@ export default function CompanyTipsPage() {
                 }
 
                 return acc;
-              }, {})
+              }, {}),
           ),
         };
       });
@@ -341,81 +334,80 @@ export default function CompanyTipsPage() {
 
   /* -------- Add tip -------- */
   const addTipHandler = async () => {
-  if (!newDate || !newAmount) return;
+    if (!newDate || !newAmount) return;
 
-  try {
-    await addDailyTip({
-      date: newDate,
-      amount: Number(newAmount),
-    });
+    try {
+      await addDailyTip({
+        date: newDate,
+        amount: Number(newAmount),
+      });
 
-    alert("Tip added successfully!"); // ✅ show success alert
+      alert("Tip added successfully!"); // ✅ show success alert
 
-    // Clear input fields
-    setNewDate("");
-    setNewAmount("");
+      // Clear input fields
+      setNewDate("");
+      setNewAmount("");
 
-    // Refetch tips for the current month
-    if (!month) return;
+      // Refetch tips for the current month
+      if (!month) return;
 
-    const employees = await getCompanyEmployees();
-    setEmployeesList(employees);
-    if (!employees.length) return;
+      const employees = await getCompanyEmployees();
+      setEmployeesList(employees);
+      if (!employees.length) return;
 
-    const companyId = employees[0].companyId;
-    const data = await getMonthlyTips(companyId, month);
+      const companyId = employees[0].companyId;
+      const data = await getMonthlyTips(companyId, month);
 
-    const daily: DailyTip[] = data.tips.map((tip: any) => {
-      const logsForDay = data.timeLogs.filter(
-        (l: any) =>
-          l.logDate.toISOString().slice(0, 10) ===
-          tip.date.toISOString().slice(0, 10)
-      );
+      const daily: DailyTip[] = data.tips.map((tip: any) => {
+        const logsForDay = data.timeLogs.filter(
+          (l: any) =>
+            l.logDate.toISOString().slice(0, 10) ===
+            tip.date.toISOString().slice(0, 10),
+        );
 
-      return {
-        date: tip.date.toISOString().slice(0, 10),
-        totalTip: tip.amount,
-        employees: Object.values(
-          logsForDay
-            .filter((l: any) => l.logoutTime && l.totalMinutes)
-            .reduce((acc: any, log: any) => {
-              const empId = log.employee.id;
+        return {
+          date: tip.date.toISOString().slice(0, 10),
+          totalTip: tip.amount,
+          employees: Object.values(
+            logsForDay
+              .filter((l: any) => l.logoutTime && l.totalMinutes)
+              .reduce((acc: any, log: any) => {
+                const empId = log.employee.id;
 
-              if (!acc[empId]) {
-                acc[empId] = {
-                  id: empId,
-                  name: log.employee.name,
-                  hours: 0,
-                  loggedOutTime: log.logoutTime,
-                  status: log.employee.status,
-                };
-              }
+                if (!acc[empId]) {
+                  acc[empId] = {
+                    id: empId,
+                    name: log.employee.name,
+                    hours: 0,
+                    loggedOutTime: log.logoutTime,
+                    status: log.employee.status,
+                  };
+                }
 
-              acc[empId].hours += log.totalMinutes / 60;
+                acc[empId].hours += log.totalMinutes / 60;
 
-              // keep latest logout time
-              if (acc[empId].loggedOutTime < log.logoutTime) {
-                acc[empId].loggedOutTime = log.logoutTime;
-              }
+                // keep latest logout time
+                if (acc[empId].loggedOutTime < log.logoutTime) {
+                  acc[empId].loggedOutTime = log.logoutTime;
+                }
 
-              return acc;
-            }, {})
-        ),
-      };
-    });
+                return acc;
+              }, {}),
+          ),
+        };
+      });
 
-    setDailyTips(daily); // ✅ update calendar
-  } catch (error) {
-    console.error(error);
-    alert("Failed to add tip. Please try again.");
-  }
-};
-
+      setDailyTips(daily); // ✅ update calendar
+    } catch (error) {
+      console.error(error);
+      alert("Failed to add tip. Please try again.");
+    }
+  };
 
   /* -------- Derived -------- */
   const dailyTipsForMonth = useMemo(
     () => dailyTips.filter((t) => t.date.startsWith(month)),
-    [dailyTips, month]
+    [dailyTips, month],
   );
 
   const daysInMonth = useMemo(() => {
@@ -427,7 +419,9 @@ export default function CompanyTipsPage() {
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-[#00687a] uppercase">Tips Distribution</h1>
+        <h1 className="text-3xl font-bold text-[#00687a] uppercase">
+          Tips Distribution
+        </h1>
 
         <div className="flex gap-3">
           <a
@@ -464,14 +458,15 @@ export default function CompanyTipsPage() {
       <div className="flex flex-col bg-white text-[#00687a] p-4 rounded-xs shadow shadow-[#00687a] gap-3 border border-[#00687a]">
         <div className="flex gap-2 text-3xl mb-10 text-[#00687a] justify-between">
           <span className="font-semibold uppercase">
-            Total Amount: {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
+            Total Amount:{" "}
+            {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
           </span>
 
-           <MonthSelector month={month} setMonth={setMonth} months={months} />
+          <MonthSelector month={month} setMonth={setMonth} months={months} />
         </div>
         <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
       </div>
-     
+
       <MonthlyTipPivotTable dailyTips={dailyTipsForMonth} />
       <TipsCalendar
         dailyTipsForMonth={dailyTipsForMonth}
