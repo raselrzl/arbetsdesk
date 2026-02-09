@@ -46,8 +46,8 @@ export function EmployeeTipsChart({
   if (!data.length) return null;
 
   return (
-    <div className="bg-white rounded-xs shadow p-4 border border-teal-100">
-      <h2 className="text-lg md:text-xl font-semibold mb-3 text-teal-900">
+    <div className="bg-white rounded-xs shadow-lg shadow-[#00687a] p-4 border border-[#00687a]">
+      <h2 className="text-lg md:text-xl font-semibold mb-3 text-[#00687a] uppercase">
         Monthly Tips by Employee
       </h2>
 
@@ -66,7 +66,7 @@ export function EmployeeTipsChart({
               />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip />
-              <Bar dataKey="tip" fill="#14b8a6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="tip" fill="#00687a" radius={[0, 0, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
