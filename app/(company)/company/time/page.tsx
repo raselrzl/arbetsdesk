@@ -194,6 +194,8 @@ export default function CompanyTimePage() {
 </div>
 
         ${printContents}
+
+        <div>Time Report</div>
         <div style="
   font-weight: 900; 
   font-size: 2.5rem; 
