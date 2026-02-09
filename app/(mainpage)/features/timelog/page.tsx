@@ -37,11 +37,11 @@ export default function HomePage() {
         >
           <div className="w-[360px] md:w-[450px] bg-white rounded-xl relative">
             <Image
-              src="/timelog/timelog1.gif"
+              src="/timelog/timelogh.png"
               alt="Time Clock Step 1"
               width={550}
               height={350}
-              className="object-contain w-full h-auto"
+              className="object-contain"
             />
           </div>
         </motion.div>
