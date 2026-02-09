@@ -240,103 +240,106 @@ export default function CompanyTimePage({ company }: { company: Company }) {
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
-      {/* Header + Clock */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <h1 className="text-2xl font-semibold uppercase">Recorded Hours</h1>
-
-        <div className="flex items-center gap-2 text-teal-600 font-semibold">
-          <Clock className="w-5 h-5" />
-          <span>
-            {currentTime.toLocaleTimeString("en-US", { hour12: false })} |{" "}
-            {currentTime.toLocaleDateString()}
-          </span>
-        </div>
-      </div>
-
       {/* FILTERS */}
-      <div className="flex flex-wrap gap-3 bg-white p-4 rounded-xs shadow border border-teal-100">
-        <div className="flex flex-col">
-          <label>Search by name</label>
-          <input
-            placeholder="Employee Name"
-            className="border p-2 rounded-xs border-teal-100 w-36"
-            value={nameFilter}
-            onChange={(e) => setNameFilter(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label>Status</label>
-          <select
-            className="border p-2 rounded-xs border-teal-100 w-36"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-          >
-            <option value="ALL">All</option>
-            <option value="Working">Working</option>
-            <option value="Not working">Not working</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label>Month</label>
-          <select
-            className="border p-2 rounded-xs border-teal-100 w-36"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-          >
-            {availableMonths.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label>Specific Date</label>
-          <input
-            type="date"
-            className="border p-2 rounded-xs border-teal-100 w-36"
-            value={singleDate}
-            onChange={(e) => setSingleDate(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label>From / To</label>
-          <div className="flex gap-1">
+      <div className=" bg-[#00687a] p-4 rounded-xs shadow border border-[#00687a] text-gray-100">
+        <h1 className="text-2xl font-bold uppercase mb-4">Time Report</h1>
+        <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col">
+            <label>Search by name</label>
             <input
-              type="date"
+              placeholder="Employee Name"
               className="border p-2 rounded-xs border-teal-100 w-36"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-            />
-            <input
-              type="date"
-              className="border p-2 rounded-xs border-teal-100 w-36"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
             />
           </div>
-        </div>
 
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={clearFilters}
-            className="bg-amber-300 h-10 mt-3.5 w-24 hover:bg-teal-200 text-teal-800 font-medium px-4 py-2 rounded-xs cursor-pointer"
-          >
-            Clear
-          </button>
+          <div className="flex flex-col">
+            <label>Status</label>
+            <select
+              className="border p-2 rounded-xs border-teal-100 w-36"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+            >
+              <option value="ALL" className="bg-teal-100 text-[#00687a]">
+                All
+              </option>
+              <option value="Working " className="bg-teal-100 text-[#00687a]">
+                Working
+              </option>
+              <option
+                value="Not working"
+                className="bg-teal-100 text-[#00687a]"
+              >
+                Not working
+              </option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label>Month</label>
+            <select
+              className="border p-2 rounded-xs border-teal-100 w-36"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            >
+              {availableMonths.map((m) => (
+                <option
+                  key={m}
+                  value={m}
+                  className="bg-teal-100 text-[#00687a]"
+                >
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label>Specific Date</label>
+            <input
+              type="date"
+              className="border p-2 rounded-xs border-teal-100 w-36"
+              value={singleDate}
+              onChange={(e) => setSingleDate(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label>From / To</label>
+            <div className="flex gap-1">
+              <input
+                type="date"
+                className="border p-2 rounded-xs border-teal-100 w-36"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+              <input
+                type="date"
+                className="border p-2 rounded-xs border-teal-100 w-36"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={clearFilters}
+              className="bg-amber-300 h-10 mt-3.5 w-24 hover:bg-teal-200 text-teal-800 font-medium px-4 py-2 rounded-xs cursor-pointer"
+            >
+              Clear
+            </button>
+          </div>
         </div>
       </div>
 
       {/* MONTH SUMMARY */}
       <div className="border border-teal-100 shadow-lg shadow-teal-800 p-4 my-12">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold text-teal-900">Hours Completed</h1>
+          <h1 className="text-xl font-bold text-[#00687a]">Hours Completed</h1>
           {selectedMonth && (
-            <span className="text-sm text-teal-700 font-medium">
+            <span className="text-sm text-[#00687a] font-medium">
               {new Date(selectedMonth + "-01").toLocaleString("en-US", {
                 month: "long",
                 year: "numeric",
@@ -349,7 +352,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
             {Object.entries(totals).map(([name, minutes]) => (
               <div
                 key={name}
-                className="bg-white border border-teal-100 rounded shadow p-4 flex items-center gap-3 hover:shadow-md transition-shadow"
+                className="bg-white border border-teal-100 rounded-xs shadow p-4 flex items-center gap-3 hover:shadow-md transition-shadow"
               >
                 {/* Icon on the left */}
                 <div className="w-8 h-8 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 font-bold">
@@ -359,7 +362,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
                 {/* Name + Time */}
                 <div className="flex flex-col">
                   <p className="font-semibold">{name}</p>
-                  <p className="text-sm text-teal-700 font-bold">
+                  <p className="text-sm text-[#00687a] font-bold">
                     {formatMinutes(minutes)}
                   </p>
                 </div>
@@ -372,7 +375,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setShowPopup(true)}
-          className="bg-teal-800 text-white font-semibold px-4 py-2 rounded-xs hover:bg-teal-700"
+          className="bg-[#00687a] text-white font-semibold px-4 py-2 rounded-xs hover:bg-teal-700"
         >
           Print Time Report
         </button>
@@ -382,7 +385,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
       <div className="bg-white rounded-xs shadow border border-teal-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
-            <thead className="bg-teal-200">
+            <thead className="bg-[#00687a] text-gray-100">
               <tr>
                 <th className="p-3 text-left w-28">Date</th>
                 <th className="p-3 text-left">Personnummer</th>
@@ -402,7 +405,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
                     {index === 0 && (
                       <td
                         rowSpan={group.rows.length}
-                        className="p-3 font-semibold text-teal-900 align-top bg-teal-50"
+                        className="p-3 font-semibold text-[#00687a] align-top bg-teal-50"
                       >
                         {group.date}
                       </td>
@@ -441,14 +444,14 @@ export default function CompanyTimePage({ company }: { company: Company }) {
 
               {/* TABLE TOTAL ROW */}
               {groupedRows.length > 0 && (
-                <tr className="border-t-2 border-teal-300 bg-teal-50">
+                <tr className=" bg-[#00687a]">
                   <td
                     colSpan={3}
-                    className="p-4 text-right font-semibold text-teal-900"
+                    className="p-4 text-right font-semibold text-gray-100"
                   >
                     Total worked hours
                   </td>
-                  <td className="p-4 text-right font-bold text-teal-900">
+                  <td className="p-4 text-right font-bold text-gray-100">
                     {formatMinutes(tableTotalMinutes)}
                   </td>
                 </tr>
@@ -471,13 +474,13 @@ export default function CompanyTimePage({ company }: { company: Company }) {
             <div className="flex justify-end mt-4 mr-6">
               <button
                 onClick={handlePrint}
-                className="bg-teal-800 text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
+                className="bg-[#00687a] text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
               >
                 Print
               </button>
             </div>
 
-            <div className="mb-4 flex justify-between items-start px-10 pt-5">
+            <div className="mb-4 flex justify-between items-start px-6 pt-10 text-[#00687a] uppercase">
               {/* LEFT: Company info */}
               <div>
                 <div className="font-semibold text-lg">{company?.name}</div>
@@ -498,11 +501,11 @@ export default function CompanyTimePage({ company }: { company: Company }) {
 
             <div
               ref={printRef}
-              className="bg-white p-6 rounded-xs shadow-lg w-full max-w-3xl my-10"
+              className="bg-white p-6 rounded-xs w-full max-w-3xl"
             >
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
-                  <thead className="bg-teal-200">
+                  <thead className="bg-[#00687a] text-gray-100">
                     <tr>
                       <th className="border p-2 text-left">Date</th>
                       <th className="border p-2 text-left">Employees</th>
@@ -533,7 +536,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
             <div className="flex justify-end mt-4">
               <button
                 onClick={handlePrint}
-                className="bg-teal-800 text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
+                className="bg-[#00687a] text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
               >
                 Print
               </button>
