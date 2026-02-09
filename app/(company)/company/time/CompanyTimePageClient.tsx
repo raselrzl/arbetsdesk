@@ -197,7 +197,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
   align-items: flex-start;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #ddd;
-  padding: 2rem;
+  padding: 0.75rem;
   font-size: 0.95rem;
 ">
   <!-- LEFT: Company info -->
