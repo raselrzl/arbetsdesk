@@ -436,7 +436,7 @@ export default function CompanyTimePage() {
 
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-auto">
-          <div className="bg-white rounded shadow-lg w-full max-w-3xl my-10 p-6 relative">
+          <div className="bg-white w-full max-w-3xl my-10 p-6 relative">
             <button
               onClick={() => setShowPopup(false)}
               className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold"
