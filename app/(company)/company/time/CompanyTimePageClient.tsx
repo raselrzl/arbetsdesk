@@ -197,7 +197,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
   align-items: flex-start;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 0.75rem;
+  padding: 2rem;
   font-size: 0.95rem;
 ">
   <!-- LEFT: Company info -->
@@ -416,7 +416,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
                     {/* TIME */}
                     <td className="p-3 text-center whitespace-nowrap">
                       <span>{row.startTime}</span>
-                      <span className="mx-2 text-gray-400">→</span>
+                      <span className="mx-2 text-gray-400">-</span>
                       <span>{row.endTime}</span>
                     </td>
 
@@ -477,7 +477,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
               </button>
             </div>
 
-            <div className="mb-4 flex justify-between items-start px-6 pt-5">
+            <div className="mb-4 flex justify-between items-start px-10 pt-5">
               {/* LEFT: Company info */}
               <div>
                 <div className="font-semibold text-lg">{company?.name}</div>
@@ -521,7 +521,7 @@ export default function CompanyTimePage({ company }: { company: Company }) {
                             {row.personalNumber}-{row.name}
                           </td>
                           <td className="border p-2">
-                            {row.startTime} → {row.endTime}
+                            {row.startTime} - {row.endTime}
                           </td>
                         </tr>
                       )),
