@@ -98,21 +98,23 @@ export default function AuthStatusPopup({
         )}
 
         {status === "LOGGED_IN_NO_SCHEDULE" && (
-          <div className="relative flex flex-col justify-between w-[260px] h-80 overflow-hidden rounded-2xl">
+          <div className="bg-[#02505e] text-gray-100 rounded-t-xl p-8">
           
             <h2 className="text-xl font-bold text-gray-200 bg-[#02505e] py-4">
               Hi, {employeeName}
             </h2>
-            <Info className="w-10 h-10 text-blue-500 mx-auto mb-2" />
-            <p className="font-semibold">You don’t have a schedule today</p>
-            <p className="text-sm text-gray-600 mt-1">
+            <div className=" text-black">
+              <Info className="w-10 h-10 text-teal-500 mx-auto mb-2" />
+            <p className="font-semibold text-teal-400">You don’t have a schedule today</p>
+            <p className="text-sm text-gray-100 mt-1">
               Do you want to log in anyway?
             </p>
+            </div>
 
             <div className="flex gap-3 mt-5 px-3">
               <button
                 onClick={onConfirmLogin}
-                className="flex-1 py-2 bg-bg-[#02505e] text-white font-bold hover:bg-teal-700 rounded"
+                className="flex-1 py-2 bg-bg-[#02505e] text-white font-bold bg-teal-700 rounded"
               >
                 Yes
               </button>
