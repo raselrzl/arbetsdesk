@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Clock } from "lucide-react";
 import { getCompanyTimeReports, getAvailableTipMonths } from "@/app/actions";
 
@@ -30,6 +30,7 @@ function formatMinutes(min: number) {
 /* ---------------- PAGE ---------------- */
 
 export default function CompanyTimePage() {
+  const printRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [reports, setReports] = useState<DayReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ export default function CompanyTimePage() {
   const [toDate, setToDate] = useState("");
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   /* REAL-TIME CLOCK */
   useEffect(() => {
@@ -111,7 +113,7 @@ export default function CompanyTimePage() {
       day.employees.forEach((e) => {
         if (e.status !== "Working" && e.totalMinutes === 0) return;
         map[e.name] = (map[e.name] || 0) + (e.totalMinutes ?? 0);
-      })
+      }),
     );
     return map;
   }, [filteredReports]);
@@ -138,7 +140,7 @@ export default function CompanyTimePage() {
     filteredReports.forEach((day) =>
       day.employees.forEach((e) => {
         total += e.totalMinutes ?? 0;
-      })
+      }),
     );
 
     return total;
@@ -152,6 +154,63 @@ export default function CompanyTimePage() {
       </div>
     );
   }
+
+  const handlePrint = () => {
+    if (!printRef.current) return;
+
+    const printContents = printRef.current.innerHTML;
+    const printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) return;
+
+    const now = new Date();
+    const printTime = now.toLocaleString("en-US", { hour12: false });
+
+    // Replace with your actual company name
+    const companyName = "Company Name";
+    const softwareName = "ARBET-DESK";
+
+    printWindow.document.write(`
+    <html>
+      <head>
+        <title>Time Report</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+        <style>
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #ddd; padding: 8px; }
+          .print-header { margin-bottom: 1rem; font-weight: bold; }
+          .print-header div { margin-bottom: 0.25rem; }
+        </style>
+      </head>
+      <body class="p-6">
+        <div class="print-header flex justify-between items-start">
+  <div>
+    <div style="font-weight: bold; margin-bottom: 1rem;">
+  ${companyName}
+</div>
+
+    <div>Printed: ${printTime}</div>
+  </div>
+  
+</div>
+
+        ${printContents}
+        <div style="
+  font-weight: 900; 
+  font-size: 2.5rem; 
+  text-align: center;  
+  margin-top: 4rem;
+">
+  ARBET-DESK
+</div>
+
+      </body>
+    </html>
+  `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
 
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
@@ -284,6 +343,15 @@ export default function CompanyTimePage() {
         )}
       </div>
 
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setShowPopup(true)}
+          className="bg-teal-800 text-white font-semibold px-4 py-2 rounded-xs hover:bg-teal-700"
+        >
+          Print Time Report
+        </button>
+      </div>
+
       {/* SINGLE TABLE */}
       <div className="bg-white rounded-xs shadow border border-teal-100 overflow-hidden">
         <div className="overflow-x-auto">
@@ -333,7 +401,7 @@ export default function CompanyTimePage() {
                         : "—"}
                     </td>
                   </tr>
-                ))
+                )),
               )}
 
               {/* EMPTY STATE */}
@@ -363,6 +431,73 @@ export default function CompanyTimePage() {
           </table>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-auto">
+          <div className="bg-white rounded shadow-lg w-full max-w-3xl my-10 p-6 relative">
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-xl font-bold mb-4 text-teal-900">
+              Time Report
+            </h2>
+            <div className="flex justify-end mt-4 mr-6">
+              <button
+                onClick={handlePrint}
+                className="bg-teal-800 text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
+              >
+                Print
+              </button>
+            </div>
+            <div
+              ref={printRef}
+              className="bg-white p-6 rounded shadow-lg w-full max-w-3xl my-10"
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-sm">
+                  <thead className="bg-teal-200">
+                    <tr>
+                      <th className="border p-2 text-left">Date</th>
+                      <th className="border p-2 text-left">Employees</th>
+                      <th className="border p-2 text-left">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {groupedRows.map((group) =>
+                      group.rows.map((row, index) => (
+                        <tr
+                          key={`${group.date}-${index}`}
+                          className="border-b hover:bg-teal-50"
+                        >
+                          <td className="border p-2">{group.date}</td>
+                          <td className="border p-2">
+                            {row.personalNumber}-{row.name}
+                          </td>
+                          <td className="border p-2">
+                            {row.startTime} → {row.endTime}
+                          </td>
+                        </tr>
+                      )),
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handlePrint}
+                className="bg-teal-800 text-white font-semibold px-8 py-1 rounded-xs hover:bg-teal-700"
+              >
+                Print
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

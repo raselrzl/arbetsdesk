@@ -162,3 +162,14 @@
     display: none !important;
   }
 }
+
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+
+  .modal-overlay {
+    display: none !important;
+  }
+}
