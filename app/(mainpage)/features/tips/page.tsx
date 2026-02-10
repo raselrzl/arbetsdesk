@@ -163,7 +163,7 @@ export default function TipsPage() {
           </h2>
 
           <p className="mt-4 text-teal-300 max-w-xl mx-auto">
-            Fair payouts, zero disputes, full transparency — all in one system.
+            Fair payouts, zero disputes, full transparency all in one system.
           </p>
 
           <a
