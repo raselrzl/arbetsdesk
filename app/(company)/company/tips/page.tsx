@@ -276,13 +276,13 @@ function MonthlyEmployeeTipSummary({
                   onChange={(e) =>
                     handleStatusChange(emp.id, e.target.value as "PAID" | "REJECTED")
                   }
-                  className="mt-2 p-1 text-sm rounded border border-gray-300 text-gray-800"
+                  className="mt-2 p-1 text-sm rounded-xs border border-teal-300 text-gray-800 bg-gray-100"
                 >
-                  <option value="FINALIZED" disabled>
+                  <option value="FINALIZED" disabled className="bg-teal-200">
                     Finalized
                   </option>
-                  <option value="PAID">PAID</option>
-                  <option value="REJECTED">REJECTED</option>
+                  <option value="PAID" className="bg-teal-200">PAID</option>
+                  <option value="REJECTED" className="bg-teal-200">REJECTED</option>
                 </select>
               </>
             )}
