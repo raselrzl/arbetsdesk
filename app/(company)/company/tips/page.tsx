@@ -10,6 +10,8 @@ import {
   saveMonthlyTipDistribution,
   getMonthlyTipStatus,
   getMonthlyFinalizedTips,
+  payEmployeeMonthlyTip,
+  rejectEmployeeMonthlyTip,
 } from "@/app/actions";
 import { DailyTipsChart } from "./DailyTipsChart";
 import { EmployeeTipsChart } from "./EmployeeTipsChart";
@@ -206,7 +208,45 @@ function MonthlyEmployeeTipSummary({
     return Object.values(acc).sort((a, b) => b.totalTip - a.totalTip);
   }, [dailyTips]);
 
+  // ✅ Move state here BEFORE any early return
+  const [employeeStatus, setEmployeeStatus] = useState<
+    Record<string, "FINALIZED" | "PAID" | "REJECTED">
+  >({});
+
+  // initialize employeeStatus whenever monthlyTotals or tipStatus changes
+  useEffect(() => {
+    const initial: Record<string, "FINALIZED" | "PAID" | "REJECTED"> = {};
+    for (const emp of monthlyTotals) {
+      initial[emp.id] = tipStatus === "PAID" ? "PAID" : "FINALIZED";
+    }
+    setEmployeeStatus(initial);
+  }, [monthlyTotals, tipStatus]);
+
   if (!monthlyTotals.length) return null;
+
+  const handleStatusChange = async (empId: string, status: "PAID" | "REJECTED") => {
+    const confirmed = confirm(`Mark ${monthlyTotals.find(e => e.id === empId)?.name} as ${status}?`);
+    if (!confirmed) return;
+
+    try {
+      const employees = await getCompanyEmployees();
+      const companyId = employees[0].companyId;
+      const month = dailyTips[0]?.date.slice(0, 7);
+      if (!month) return;
+
+      if (status === "PAID") {
+        await payEmployeeMonthlyTip(empId, companyId, month, "admin-id");
+      } else if (status === "REJECTED") {
+        await rejectEmployeeMonthlyTip(empId, companyId, month, "admin-id");
+      }
+
+      setEmployeeStatus((prev) => ({ ...prev, [empId]: status }));
+      alert(`Employee tip marked as ${status}`);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Failed to update status: ${err.message}`);
+    }
+  };
 
   return (
     <div className="bg-white rounded-xs w-full">
@@ -214,19 +254,6 @@ function MonthlyEmployeeTipSummary({
         Monthly Tip Distribution (Per Employee)
       </h2>
 
-      {/*  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
-        {monthlyTotals.map((emp) => (
-          <div
-            key={emp.id}
-            className="p-4 bg-[#00687a] flex flex-col items-center"
-          >
-            <span className="font-semibold uppercase">{emp.name}</span>
-            <span className="text-lg font-bold text-gray-100">
-              {emp.totalTip.toFixed(2)}
-            </span>
-          </div>
-        ))}
-      </div> */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
         {monthlyTotals.map((emp) => (
           <div
@@ -243,9 +270,20 @@ function MonthlyEmployeeTipSummary({
                 <span className="text-sm mt-1">
                   Finalized: {finalizedTips[emp.id]?.toFixed(2) || 0}
                 </span>
-                <span className="text-xs mt-1 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 uppercase">
-                  {tipStatus}
-                </span>
+
+                <select
+                  value={employeeStatus[emp.id] || "FINALIZED"}
+                  onChange={(e) =>
+                    handleStatusChange(emp.id, e.target.value as "PAID" | "REJECTED")
+                  }
+                  className="mt-2 p-1 text-sm rounded border border-gray-300 text-gray-800"
+                >
+                  <option value="FINALIZED" disabled>
+                    Finalized
+                  </option>
+                  <option value="PAID">PAID</option>
+                  <option value="REJECTED">REJECTED</option>
+                </select>
               </>
             )}
           </div>
@@ -254,6 +292,8 @@ function MonthlyEmployeeTipSummary({
     </div>
   );
 }
+
+
 
 function TipStatusBadge({
   status,
