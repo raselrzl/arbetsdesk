@@ -73,7 +73,7 @@ export default function TipsPage() {
               alt="Tips dashboard"
               width={900}
               height={600}
-              className="w-full w-[460px] object-contain"
+              className="w-[460px] object-contain"
             />
           </motion.div>
         </div>
