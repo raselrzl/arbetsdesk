@@ -7,6 +7,9 @@ import {
   addDailyTip,
   getCompanyEmployees,
   getAvailableTipMonths,
+  saveMonthlyTipDistribution,
+  getMonthlyTipStatus,
+  getMonthlyFinalizedTips,
 } from "@/app/actions";
 import { DailyTipsChart } from "./DailyTipsChart";
 import { EmployeeTipsChart } from "./EmployeeTipsChart";
@@ -158,44 +161,17 @@ function TipsCalendar({
   );
 }
 
-/* ---------------- DAILY DISTRIBUTION ---------------- */
-
-function DailyDistribution({ dailyTip }: { dailyTip: DailyTip }) {
-  const finishedEmployees = dailyTip.employees.filter(
-    (e) => e.loggedOutTime && e.hours > 0,
-  );
-
-  if (!finishedEmployees.length) return null;
-
-  const totalHours = finishedEmployees.reduce((acc, e) => acc + e.hours, 0);
-
-  const tipPerHour = dailyTip.totalTip / totalHours;
-
-  return (
-    <div className="bg-white rounded-xs shadow p-4 mb-4 border border-teal-100">
-      <h2 className="text-xl font-semibold mb-2 text-[#00687a] uppercase">
-        Tip Distribution – {dailyTip.date}
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-        {finishedEmployees.map((emp) => (
-          <div
-            key={emp.id}
-            className="border rounded p-3 flex flex-col items-center bg-teal-50"
-          >
-            <span className="font-semibold">{emp.name}</span>
-            <span>Hours: {emp.hours.toFixed(2)}</span>
-            <span>Tip: {(emp.hours * tipPerHour).toFixed(2)} </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ---------------- MONTHLY EMPLOYEE SUMMARY ---------------- */
 
-function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
+function MonthlyEmployeeTipSummary({
+  dailyTips,
+  tipStatus,
+  finalizedTips,
+}: {
+  dailyTips: DailyTip[];
+  tipStatus: "DRAFT" | "FINALIZED" | "PAID";
+  finalizedTips: Record<string, number>;
+}) {
   const monthlyTotals = useMemo(() => {
     const acc: Record<string, { id: string; name: string; totalTip: number }> =
       {};
@@ -238,7 +214,7 @@ function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
         Monthly Tip Distribution (Per Employee)
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
+      {/*  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
         {monthlyTotals.map((emp) => (
           <div
             key={emp.id}
@@ -250,8 +226,58 @@ function MonthlyEmployeeTipSummary({ dailyTips }: { dailyTips: DailyTip[] }) {
             </span>
           </div>
         ))}
+      </div> */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-gray-100">
+        {monthlyTotals.map((emp) => (
+          <div
+            key={emp.id}
+            className="p-4 bg-[#00687a] flex flex-col items-center"
+          >
+            <span className="font-semibold uppercase">{emp.name}</span>
+            <span className="text-lg font-bold text-gray-100">
+              {emp.totalTip.toFixed(2)}
+            </span>
+
+            {(tipStatus === "FINALIZED" || tipStatus === "PAID") && (
+              <>
+                <span className="text-sm mt-1">
+                  Finalized: {finalizedTips[emp.id]?.toFixed(2) || 0}
+                </span>
+                <span className="text-xs mt-1 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 uppercase">
+                  {tipStatus}
+                </span>
+              </>
+            )}
+          </div>
+        ))}
       </div>
     </div>
+  );
+}
+
+function TipStatusBadge({
+  status,
+}: {
+  status: "DRAFT" | "FINALIZED" | "PAID";
+}) {
+  const styles = {
+    DRAFT: "bg-gray-200 text-gray-700",
+    FINALIZED: "bg-yellow-100 text-yellow-800",
+    PAID: "bg-green-100 text-green-800",
+  };
+
+  const labels = {
+    DRAFT: "Not finalized",
+    FINALIZED: "Not paid",
+    PAID: "Paid",
+  };
+
+  return (
+    <span
+      className={`px-3 py-1 text-xs font-semibold uppercase rounded-full ${styles[status]}`}
+    >
+      {labels[status]}
+    </span>
   );
 }
 
@@ -264,6 +290,13 @@ export default function CompanyTipsPage() {
   const [employeesList, setEmployeesList] = useState<Employee[]>([]);
   const [newDate, setNewDate] = useState("");
   const [newAmount, setNewAmount] = useState("");
+  const [tipStatus, setTipStatus] = useState<"DRAFT" | "FINALIZED" | "PAID">(
+    "DRAFT",
+  );
+
+  const [finalizedTips, setFinalizedTips] = useState<Record<string, number>>(
+    {},
+  );
 
   /* -------- Load available months -------- */
   useEffect(() => {
@@ -418,6 +451,30 @@ export default function CompanyTipsPage() {
     return new Date(y, m, 0).getDate();
   }, [month]);
 
+  useEffect(() => {
+    if (!month || !employeesList.length) return;
+
+    async function loadStatus() {
+      const companyId = employeesList[0].companyId;
+      const res = await getMonthlyTipStatus(companyId, month);
+      setTipStatus(res.status as "DRAFT" | "FINALIZED" | "PAID");
+    }
+
+    loadStatus();
+  }, [month, employeesList]);
+
+  useEffect(() => {
+    if (tipStatus === "FINALIZED" || tipStatus === "PAID") {
+      const loadFinalizedTips = async () => {
+        const employees = await getCompanyEmployees();
+        const companyId = employees[0].companyId;
+        const data = await getMonthlyFinalizedTips(companyId, month);
+        setFinalizedTips(data);
+      };
+      loadFinalizedTips();
+    }
+  }, [month, tipStatus]);
+
   return (
     <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6 mb-20">
       <div className="flex items-center justify-between mb-6">
@@ -464,9 +521,57 @@ export default function CompanyTipsPage() {
             {dailyTipsForMonth.reduce((a, b) => a + b.totalTip, 0)}{" "}
           </span>
 
-          <MonthSelector month={month} setMonth={setMonth} months={months} />
+          <div className="flex items-center gap-3">
+            <MonthSelector month={month} setMonth={setMonth} months={months} />
+            <TipStatusBadge status={tipStatus} />
+          </div>
+
+          <button
+            onClick={async () => {
+              if (
+                !confirm(
+                  `Finalize tips for ${month}?\nThis will lock the distribution and prevent changes.`,
+                )
+              ) {
+                return;
+              }
+
+              try {
+                const employees = await getCompanyEmployees();
+                const companyId = employees[0].companyId;
+
+                await saveMonthlyTipDistribution(companyId, month);
+
+                // ✅ Update the status in the UI
+                setTipStatus("FINALIZED");
+
+                alert("Monthly tips finalized and locked successfully!");
+              } catch (e: any) {
+                alert(e.message);
+              }
+            }}
+            className="
+    h-10 px-5
+    flex items-center gap-2
+    bg-gradient-to-r from-emerald-600 to-green-600
+    text-white text-sm font-semibold uppercase
+    rounded-xs
+    shadow-md shadow-green-600/30
+    hover:from-emerald-700 hover:to-green-700
+    hover:shadow-lg hover:shadow-green-600/40
+    transition-all duration-200
+    active:scale-95
+  "
+          >
+            <Wallet className="w-4 h-4" />
+            Finalize Tips
+          </button>
         </div>
-        <MonthlyEmployeeTipSummary dailyTips={dailyTipsForMonth} />
+        <MonthlyEmployeeTipSummary
+          dailyTips={dailyTipsForMonth}
+          tipStatus={tipStatus}
+          finalizedTips={finalizedTips}
+        />
       </div>
 
       <MonthlyTipPivotTable dailyTips={dailyTipsForMonth} />
@@ -477,10 +582,6 @@ export default function CompanyTipsPage() {
       <DailyTipsChart dailyTips={dailyTipsForMonth} />
 
       <EmployeeTipsChart dailyTips={dailyTipsForMonth} />
-
-      {/* {dailyTipsForMonth.map((d) => (
-        <DailyDistribution key={d.date} dailyTip={d} />
-      ))} */}
     </div>
   );
 }

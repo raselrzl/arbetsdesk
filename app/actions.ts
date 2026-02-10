@@ -956,3 +956,182 @@ export async function getCompanyMonthlySalary(
 
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+
+
+
+export async function saveMonthlyTipDistribution(
+  companyId: string,
+  month: string, // "YYYY-MM"
+) {
+  const startDate = new Date(`${month}-01`);
+  const endDate = new Date(startDate);
+  endDate.setMonth(endDate.getMonth() + 1);
+
+  /* ---------------- SAFETY: DO NOT OVERWRITE PAID ---------------- */
+
+  const paidAlready = await prisma.employeeMonthlyTipPayment.findFirst({
+    where: {
+      companyId,
+      month,
+      paid: true,
+    },
+  });
+
+  if (paidAlready) {
+    throw new Error("Monthly tips already paid and locked.");
+  }
+
+  /* ---------------- FETCH DATA ---------------- */
+
+  const dailyTips = await prisma.dailyTip.findMany({
+    where: {
+      companyId,
+      date: {
+        gte: startDate,
+        lt: endDate,
+      },
+    },
+  });
+
+  const timeLogs = await prisma.timeLog.findMany({
+    where: {
+      companyId,
+      logDate: {
+        gte: startDate,
+        lt: endDate,
+      },
+      logoutTime: { not: null },
+      totalMinutes: { gt: 0 },
+    },
+    include: {
+      employee: {
+        include: {
+          person: true,
+        },
+      },
+    },
+  });
+
+  /* ---------------- DISTRIBUTION ---------------- */
+
+  const monthlyTotals: Record<string, number> = {};
+
+  for (const tip of dailyTips) {
+    const day = tip.date.toISOString().slice(0, 10);
+
+    const logsForDay = timeLogs.filter(
+      (l) => l.logDate.toISOString().slice(0, 10) === day,
+    );
+
+    if (!logsForDay.length) continue;
+
+    const totalHours =
+      logsForDay.reduce((a, l) => a + l.totalMinutes!, 0) / 60;
+
+    if (totalHours === 0) continue;
+
+    const tipPerHour = tip.amount / totalHours;
+
+    for (const log of logsForDay) {
+      const hours = log.totalMinutes! / 60;
+      const amount = hours * tipPerHour;
+
+      monthlyTotals[log.employeeId] =
+        (monthlyTotals[log.employeeId] || 0) + amount;
+    }
+  }
+
+  /* ---------------- SAVE (UPSERT) ---------------- */
+
+  const operations = Object.entries(monthlyTotals).map(
+    ([employeeId, amount]) =>
+      prisma.employeeMonthlyTipPayment.upsert({
+        where: {
+          employeeId_month: {
+            employeeId,
+            month,
+          },
+        },
+        update: {
+          amount,
+        },
+        create: {
+          companyId,
+          employeeId,
+          month,
+          amount,
+        },
+      }),
+  );
+
+  await prisma.$transaction(operations);
+
+  return {
+    success: true,
+    employees: operations.length,
+  };
+}
+
+
+export async function getMonthlyTipStatus(
+  companyId: string,
+  month: string,
+) {
+  const records = await prisma.employeeMonthlyTipPayment.findMany({
+    where: {
+      companyId,
+      month,
+    },
+    select: {
+      paid: true,
+    },
+  });
+
+  if (!records.length) {
+    return {
+      status: "DRAFT", // not finalized
+    };
+  }
+
+  const allPaid = records.every((r) => r.paid);
+
+  return {
+    status: allPaid ? "PAID" : "FINALIZED",
+  };
+}
+
+
+export async function getMonthlyFinalizedTips(
+  companyId: string,
+  month: string
+) {
+  const records = await prisma.employeeMonthlyTipPayment.findMany({
+    where: { companyId, month },
+    select: {
+      employeeId: true,
+      amount: true,
+    },
+  });
+
+  const result: Record<string, number> = {};
+  records.forEach((r) => {
+    result[r.employeeId] = r.amount;
+  });
+
+  return result;
+}
+
+
+export async function updateEmployeeTipStatus(
+  employeeId: string,
+  month: string,
+  status: string
+) {
+  // Call your backend API to update the individual tip status
+  await fetch("/api/updateEmployeeTipStatus", {
+    method: "POST",
+    body: JSON.stringify({ employeeId, month, status }),
+    headers: { "Content-Type": "application/json" },
+  });
+}
