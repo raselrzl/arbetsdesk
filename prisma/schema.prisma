@@ -279,13 +279,23 @@ model EmployeeMonthlyTipPayment {
 
   month      String   // "YYYY-MM"
   amount     Float
-  paid       Boolean  @default(false)
-  paidAt     DateTime?
+
+  status     MonthlyTipStatus @default(FINALIZED)
+  decidedAt  DateTime?        // paid / rejected timestamp
+  decidedBy  String?          // optional (admin/user id)
 
   createdAt  DateTime @default(now())
 
   @@unique([employeeId, month])
 }
+
+enum MonthlyTipStatus {
+  FINALIZED
+  PAID
+  REJECTED
+}
+
+
 
 
 model CostType {

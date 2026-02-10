@@ -553,7 +553,7 @@ export default function CompanyTipsPage() {
             className="
     h-10 px-5
     flex items-center gap-2
-    bg-gradient-to-r from-emerald-600 to-green-600
+    bg-linear-to-r from-emerald-600 to-green-600
     text-white text-sm font-semibold uppercase
     rounded-xs
     shadow-md shadow-green-600/30
