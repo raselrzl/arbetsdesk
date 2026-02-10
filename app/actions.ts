@@ -1122,16 +1122,3 @@ export async function getMonthlyFinalizedTips(
   return result;
 }
 
-
-export async function updateEmployeeTipStatus(
-  employeeId: string,
-  month: string,
-  status: string
-) {
-  // Call your backend API to update the individual tip status
-  await fetch("/api/updateEmployeeTipStatus", {
-    method: "POST",
-    body: JSON.stringify({ employeeId, month, status }),
-    headers: { "Content-Type": "application/json" },
-  });
-}
