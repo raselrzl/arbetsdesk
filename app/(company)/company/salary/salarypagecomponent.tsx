@@ -121,14 +121,16 @@ export default function CompanySalaryPageComponent({
                       {/* Employee Name */}
                       <span>{row.name}</span>
                     </div>
-                   <span
-  className={`text-[10px] py-0.5 px-3 rounded-full ${
-    row.contractType === "HOURLY" ? "bg-teal-400 text-white" : "bg-teal-700 text-white"
-  }`}
->
-  {row.contractType}
-</span>
-  </td>
+                    <span
+                      className={`text-[10px] py-0.5 px-3 rounded-full ${
+                        row.contractType === "HOURLY"
+                          ? "bg-teal-400 text-white"
+                          : "bg-teal-700 text-white"
+                      }`}
+                    >
+                      {row.contractType}
+                    </span>
+                  </td>
 
                   {/* Personal Number */}
                   <td className="p-3">{row.personalNumber}</td>
