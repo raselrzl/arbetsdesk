@@ -121,18 +121,14 @@ export default function CompanySalaryPageComponent({
                       {/* Employee Name */}
                       <span>{row.name}</span>
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        row.totalMinutes && row.totalMinutes > 0
-                          ? statusColors[row.status] // normal status
-                          : "bg-gray-600 text-gray-400" // not worked style
-                      }`}
-                    >
-                      {row.totalMinutes && row.totalMinutes > 0
-                        ? row.status
-                        : "Not Worked"}
-                    </span>
-                  </td>
+                   <span
+  className={`text-[10px] py-0.5 px-3 rounded-full ${
+    row.contractType === "HOURLY" ? "bg-teal-400 text-white" : "bg-teal-700 text-white"
+  }`}
+>
+  {row.contractType}
+</span>
+  </td>
 
                   {/* Personal Number */}
                   <td className="p-3">{row.personalNumber}</td>
@@ -166,8 +162,20 @@ export default function CompanySalaryPageComponent({
                     )}
                   </td>
 
-                  {/* Contract Type */}
-                  <td className="p-3">{row.contractType}</td>
+                  <td className="p-3">
+                    {" "}
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        row.totalMinutes && row.totalMinutes > 0
+                          ? statusColors[row.status] // normal status
+                          : "bg-gray-600 text-gray-400" // not worked style
+                      }`}
+                    >
+                      {row.totalMinutes && row.totalMinutes > 0
+                        ? row.status
+                        : "Not Worked"}
+                    </span>
+                  </td>
 
                   {/* View Details */}
                   <td className="p-3">
@@ -198,46 +206,38 @@ export default function CompanySalaryPageComponent({
                       </button>
 
                       {openRowId === row.employeeId && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-xs z-50">
+                        <div className="absolute right-0 mt-2 w-40 bg-teal-100 border border-teal-100 shadow-lg rounded-xs z-50">
                           <ul className="flex flex-col">
                             <li>
                               <a
                                 href={`/company/salary/salary-slip/${row.employeeId}?month=${monthNumber}&year=${year}`}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                                className="px-4 py-2 text-sm hover:bg-[#02505e] hover:text-gray-100 block"
                               >
-                                View Salary Slip
+                                View
                               </a>
                             </li>
                             <li>
                               <a
                                 href={`/company/salary/salary-slip/download/${row.employeeId}?month=${monthNumber}&year=${year}`}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                                className="px-4 py-2 text-sm hover:bg-[#02505e] hover:text-gray-100 block"
                               >
-                                Download Slip
+                                Download
                               </a>
                             </li>
                             <li>
                               <a
                                 href={`/company/salary/salary-slip/send-email/${row.employeeId}?month=${monthNumber}&year=${year}`}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                                className="px-4 py-2 text-sm hover:bg-[#02505e] hover:text-gray-100 block"
                               >
-                                Send Slip to Email
+                                Send to email
                               </a>
                             </li>
                             <li>
                               <a
                                 href={`/company/salary/salary-slip/update/${row.employeeId}?month=${monthNumber}&year=${year}`}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
+                                className="px-4 py-2 text-sm hover:bg-[#02505e] hover:text-gray-100 block"
                               >
-                                Update Slip
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                href={`/company/salary/salary-slip/send-employee/${row.employeeId}?month=${monthNumber}&year=${year}`}
-                                className="px-4 py-2 text-sm hover:bg-gray-100 block"
-                              >
-                                Send to Employee
+                                Update
                               </a>
                             </li>
                           </ul>
