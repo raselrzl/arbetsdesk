@@ -282,3 +282,26 @@ export async function getLatestSalarySlipForEmployee(employeeId: string) {
 }
 
 
+// Get all salary slips for a specific employee, sorted newest first
+export async function getAllSalarySlipsForEmployee(employeeId: string) {
+  return prisma.salarySlip.findMany({
+    where: { employeeId },
+    orderBy: [{ year: "desc" }, { month: "desc" }],
+    include: {
+      employee: { include: { person: true } },
+      company: { include: { user: true } },
+    },
+  });
+}
+
+// Get a single salary slip for a specific month/year
+export async function getSalarySlipByMonth(employeeId: string, year: number, month: number) {
+  return prisma.salarySlip.findFirst({
+    where: { employeeId, year, month },
+    include: {
+      employee: { include: { person: true } },
+      company: { include: { user: true } },
+    },
+  });
+}
+

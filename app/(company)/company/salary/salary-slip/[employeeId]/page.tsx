@@ -1,4 +1,5 @@
 import { getLatestSalarySlipForEmployee } from "../../salaryActions";
+import EmployeeSalarySlips from "./EmployeeSalarySlips";
 
 /* ---------------- TYPES ---------------- */
 interface PageProps {
@@ -265,6 +266,7 @@ export default async function SalarySlipPage({ params }: PageProps) {
           </div>
         </section>
       </div>
+      <EmployeeSalarySlips employeeId={employeeId} />
     </div>
   );
 }
