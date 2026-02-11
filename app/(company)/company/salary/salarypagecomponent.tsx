@@ -121,6 +121,11 @@ export default function CompanySalaryPageComponent({
                       {/* Employee Name */}
                       <span>{row.name}</span>
                     </div>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[row.status]}`}
+                    >
+                      {row.status}
+                    </span>
                   </td>
 
                   {/* Personal Number */}
@@ -170,6 +175,7 @@ export default function CompanySalaryPageComponent({
                     </button>
                   </td>
 
+                  {/* Status */}
                   <td className="relative">
                     <div className="relative">
                       <button
