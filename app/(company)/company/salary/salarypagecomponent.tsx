@@ -70,35 +70,32 @@ export default function CompanySalaryPageComponent({
   }
 
   return (
-    <div className="p-6 mt-20 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold uppercase">Salary Overview</h1>
-      <p className="text-gray-600">
-        View all employee salaries calculated from reported working hours. Track
-        monthly earnings, contract types, and payment status at a glance.
-      </p>
-
+    <div className="p-6 mt-20 max-w-7xl mx-auto">
       {/* ---------------- MONTH SELECTOR ---------------- */}
-      <div className="bg-white p-4 rounded-xs shadow border border-teal-100 flex items-center gap-3">
-        <Calendar className="w-5 h-5 text-teal-600" />
-        {availableMonths.length > 0 ? (
-          <select
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="border p-2 rounded-xs border-teal-100"
-          >
-            {availableMonths.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span className="text-gray-500">No salary data available</span>
-        )}
+      <div className="p-4 shadow border border-[#02505e] bg-[#02505e] flex items-center gap-3 justify-between text-gray-100">
+        <h1 className="text-xl font-bold uppercase">Salary Overview</h1>
+        <div className="flex items-center bg-[#02505e] text-gray-100">
+          <Calendar className="w-5 h-5 text-gray-100" />
+          {availableMonths.length > 0 ? (
+            <select
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="border p-2 rounded-xs border-teal-100"
+            >
+              {availableMonths.map((m) => (
+                <option key={m} value={m} className="bg-teal-100 text-[#02505e]">
+                  {m}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-gray-500">No salary data available</span>
+          )}
+        </div>
       </div>
 
       {/* ---------------- SALARY TABLE ---------------- */}
-      <div className="bg-white rounded-xs shadow border border-teal-100 overflow-x-auto">
+      <div className="bg-white rounded-xs shadow border border-[#02505e] overflow-x-auto">
         <table className="w-full text-sm min-w-[600px] table-fixed">
           <tbody>
             {rows.map((row) => {
@@ -106,7 +103,7 @@ export default function CompanySalaryPageComponent({
               return (
                 <tr
                   key={row.employeeId}
-                  className="border-t border-teal-100 hover:bg-teal-50"
+                  className="border-t border-[#02505e] hover:bg-teal-50"
                 >
                   {/* Employee Name */}
                   <td className="p-3">
@@ -155,8 +152,9 @@ export default function CompanySalaryPageComponent({
                   <td className="p-3">
                     <button
                       onClick={() =>
-                        (window.location.href = `/company/salary/${row.personalNumber}`)
-                      }
+  (window.location.href = `/company/salary/${row.personalNumber}?month=${monthNumber}&year=${year}`)
+}
+
                       className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
                     >
                       Create Salary

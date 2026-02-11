@@ -3,16 +3,41 @@ import { prisma } from "@/app/utils/db";
 import { notFound } from "next/navigation";
 import EmployeeScheduleTable from "../EmployeeScheduleTable";
 
-type Params = { id: string };
+async function getEmployeeData(
+  personalNumber: string,
+  month: number,
+  year: number
+) {
+  const startOfMonth = new Date(year, month - 1, 1);
+  const startOfNextMonth = new Date(year, month, 1);
 
-async function getEmployeeData(personalNumber: string) {
   const employee = await prisma.employee.findFirst({
     where: { person: { personalNumber } },
     select: {
       id: true,
       person: { select: { name: true, personalNumber: true } },
-      schedules: { select: { date: true, startTime: true, endTime: true } },
+
+      schedules: {
+        where: {
+          date: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+        },
+        select: {
+          date: true,
+          startTime: true,
+          endTime: true,
+        },
+      },
+
       timeLogs: {
+        where: {
+          logDate: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+        },
         select: {
           id: true,
           logDate: true,
@@ -21,42 +46,45 @@ async function getEmployeeData(personalNumber: string) {
           status: true,
           updatedAt: true,
         },
+        orderBy: {
+          logDate: "asc",
+        },
       },
     },
   });
 
   if (!employee || !employee.person) notFound();
 
-  return {
-    employeeId: employee.id,
-    name: employee.person.name,
-    personalNumber: employee.person.personalNumber!,
-    schedules: employee.schedules || [],
-    timeLogs: employee.timeLogs || [],
-  };
+  return employee;
 }
 
 export default async function EmployeeSchedulePage({
   params,
+  searchParams,
 }: {
-  params: Promise<Params>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ month?: string; year?: string }>;
 }) {
-  // Await params because App Router now gives a Promise
+  // ✅ MUST await params in your Next version
   const { id } = await params;
+  const { month, year } = await searchParams;
 
-  const employeeData = await getEmployeeData(id);
+  const monthNumber = Number(month);
+  const yearNumber = Number(year);
 
-  // Convert all dates to Date objects for client component
-  const schedulesFormatted = employeeData.schedules.map((s) => ({
+  if (!monthNumber || !yearNumber) {
+    notFound();
+  }
+
+  const employee = await getEmployeeData(id, monthNumber, yearNumber);
+
+  const schedulesFormatted = employee.schedules.map((s) => ({
     date: new Date(s.date),
     startTime: new Date(s.startTime),
     endTime: new Date(s.endTime),
   }));
-  const today = new Date();
-  const monthIndex = today.getMonth() + 1; // JS months: 0-11
-  const year = today.getFullYear();
 
-  const timeLogsFormatted = employeeData.timeLogs.map((t) => ({
+  const timeLogsFormatted = employee.timeLogs.map((t) => ({
     id: t.id,
     logDate: new Date(t.logDate),
     loginTime: t.loginTime ? new Date(t.loginTime) : undefined,
@@ -67,13 +95,13 @@ export default async function EmployeeSchedulePage({
 
   return (
     <EmployeeScheduleTable
-      name={employeeData.name}
-      personalNumber={employeeData.personalNumber}
+      name={employee.person!.name}
+      personalNumber={employee.person!.personalNumber!}
       schedules={schedulesFormatted}
       timeLogs={timeLogsFormatted}
-      employeeId={employeeData.employeeId} // add employeeId
-      month={monthIndex} // month number
-      year={year}
+      employeeId={employee.id}
+      month={monthNumber}
+      year={yearNumber}
     />
   );
 }

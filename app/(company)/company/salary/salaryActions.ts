@@ -14,14 +14,15 @@ export async function getCompanyMonthlySalary(
   if (!companyId) throw new Error("Unauthorized");
 
   const [year, monthNum] = month.split("-").map(Number);
-  const startOfMonth = new Date(year, monthNum - 1, 1);
-  const endOfMonth = new Date(year, monthNum, 0, 23, 59, 59); // last day of month
 
-  // 1️⃣ Fetch employees hired on or before end of month
+  const startOfMonth = new Date(year, monthNum - 1, 1);
+  const startOfNextMonth = new Date(year, monthNum, 1);
+
+  // 1️⃣ Employees hired before this month ends
   const employees = await prisma.employee.findMany({
     where: {
       companyId,
-      createdAt: { lte: endOfMonth }, // only include employees hired before month ends
+      createdAt: { lt: startOfNextMonth },
     },
     select: {
       id: true,
@@ -38,44 +39,33 @@ export async function getCompanyMonthlySalary(
     },
   });
 
+  // 2️⃣ Fetch ONLY approved logs for selected month
   const timeLogs = await prisma.timeLog.findMany({
     where: {
       companyId,
-      loginTime: { gte: startOfMonth, lte: endOfMonth },
-      logoutTime: { not: null },
-      totalMinutes: { not: null },
+      status: "APPROVED",
+      logDate: {
+        gte: startOfMonth,
+        lt: startOfNextMonth,
+      },
     },
     select: {
       employeeId: true,
-      loginTime: true,
-      logoutTime: true,
       totalMinutes: true,
     },
   });
 
-  // 3️⃣ Aggregate total minutes
+  // 3️⃣ Aggregate minutes
   const minutesMap: Record<string, number> = {};
-  const now = new Date();
 
   timeLogs.forEach((log) => {
-    if (!minutesMap[log.employeeId]) minutesMap[log.employeeId] = 0;
-
-    if (log.totalMinutes != null) {
-      minutesMap[log.employeeId] += log.totalMinutes;
-    } else if (log.loginTime && log.logoutTime) {
-      const diff = Math.floor(
-        (log.logoutTime.getTime() - log.loginTime.getTime()) / 60000,
-      );
-      minutesMap[log.employeeId] += diff;
-    } else if (log.loginTime && !log.logoutTime) {
-      const diff = Math.floor(
-        (now.getTime() - log.loginTime.getTime()) / 60000,
-      );
-      minutesMap[log.employeeId] += diff;
+    if (!minutesMap[log.employeeId]) {
+      minutesMap[log.employeeId] = 0;
     }
+    minutesMap[log.employeeId] += log.totalMinutes || 0;
   });
 
-  // 4️⃣ Fetch salary slips for this month
+  // 4️⃣ Get salary slips for this month
   const salarySlips = await prisma.salarySlip.findMany({
     where: { companyId, month: monthNum, year },
     select: { employeeId: true, status: true },
@@ -86,14 +76,16 @@ export async function getCompanyMonthlySalary(
     statusMap[s.employeeId] = s.status;
   });
 
-  // 5️⃣ Build final rows
+  // 5️⃣ Build rows
   const rows: SalaryRow[] = employees.map((e) => {
     const totalMinutes = minutesMap[e.id] || 0;
-    let salary = 0;
 
-    if (e.contractType === "HOURLY")
+    let salary = 0;
+    if (e.contractType === "HOURLY") {
       salary = (totalMinutes / 60) * (e.hourlyRate || 0);
-    else salary = e.monthlySalary || 0;
+    } else {
+      salary = e.monthlySalary || 0;
+    }
 
     return {
       employeeId: e.id,
@@ -104,13 +96,14 @@ export async function getCompanyMonthlySalary(
       totalMinutes,
       hourlyRate: e.hourlyRate,
       monthlySalary: e.monthlySalary,
-      salary: Math.round(salary),
+      salary: parseFloat(salary.toFixed(2)),
       status: statusMap[e.id] || "PENDING",
     };
   });
 
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 }
+
 
 /* ---------------- Available Months ---------------- */
 export async function getAvailableSalaryMonths(): Promise<string[]> {
@@ -158,14 +151,6 @@ export async function getAvailableSalaryMonths(): Promise<string[]> {
 
 
 
-/* export async function updateTimeLogStatus(timeLogId: string, newStatus: "PENDING" | "APPROVED" | "REJECTED") {
-  return prisma.timeLog.update({
-    where: { id: timeLogId },
-    data: { status: newStatus },
-  });
-} */
-
-
 export async function updateTimeLogStatus(
   timeLogId: string,
   newStatus: "PENDING" | "APPROVED" | "REJECTED"
@@ -181,174 +166,6 @@ export async function updateTimeLogStatus(
   return updated;
 }
 
-/* export async function createSalarySlipForEmployee(employeeId: string, month: number, year: number) {
-  const employee = await prisma.employee.findUnique({
-    where: { id: employeeId },
-    include: { timeLogs: true },
-  });
-
-  if (!employee) throw new Error("Employee not found");
-
-  // Filter logs for given month/year and approved only
-  const logs = employee.timeLogs.filter(log => 
-    log.status === "APPROVED" &&
-    log.logDate.getMonth() + 1 === month &&
-    log.logDate.getFullYear() === year
-  );
-
-  // Calculate total time in hours
-  const totalMinutes = logs.reduce((acc, log) => {
-    if (log.loginTime && log.logoutTime) {
-      return acc + (log.logoutTime.getTime() - log.loginTime.getTime()) / (1000 * 60);
-    }
-    return acc;
-  }, 0);
-
-  const totalHours = totalMinutes / 60;
-
-  // Compute total pay
-  const totalPay = employee.contractType === "HOURLY"
-    ? (employee.hourlyRate || 0) * totalHours
-    : employee.monthlySalary || 0;
-
-  return prisma.salarySlip.create({
-    data: {
-      employeeId: employee.id,
-      companyId: employee.companyId,
-      month,
-      year,
-      totalHours,
-      totalPay,
-      tax: 0, // optional, can be updated later
-      status: "DRAFT",
-    },
-  });
-} */
-
-
-/*   export async function createSalarySlipForEmployee(
-  employeeId: string,
-  month: number,
-  year: number
-) {
-  const employee = await prisma.employee.findUnique({
-    where: { id: employeeId },
-    include: { timeLogs: true },
-  });
-
-  if (!employee) throw new Error("Employee not found");
-
-  // ---------------- HERE ----------------
-  // Currently you are recalculating totalMinutes from loginTime/logoutTime
-  // Instead, use the stored shift totalMinutes and shift salary
-  const logs = employee.timeLogs.filter(
-    log =>
-      log.status === "APPROVED" &&
-      log.logDate.getMonth() + 1 === month &&
-      log.logDate.getFullYear() === year
-  );
-
-  // ✅ Update this part:
-  // Instead of recalculating from timestamps, sum shift totalMinutes
-  const totalMinutes = logs.reduce((acc, log) => acc + (log.totalMinutes || 0), 0);
-
-  // For HOURLY, calculate totalPay exactly as frontend does:
-  let totalPay = 0;
-  if (employee.contractType === "HOURLY") {
-    const hourlyRate = employee.hourlyRate || 0;
-    const totalHours = totalMinutes / 60; // e.g., 1h37m → 1.616667
-    totalPay = hourlyRate * totalHours; // same as frontend
-  } else if (employee.contractType === "MONTHLY") {
-    totalPay = employee.monthlySalary || 0;
-  }
-
-  return prisma.salarySlip.create({
-    data: {
-      employeeId: employee.id,
-      companyId: employee.companyId,
-      month,
-      year,
-      totalMinutes,                    // exact minutes from shifts
-      totalHours: totalMinutes / 60,   // exact hours
-      totalPay: parseFloat(totalPay.toFixed(2)), // round only for money
-      tax: 0,
-      status: "DRAFT",
-    },
-  });
-} */
-
-//latest with yes and no
-/* export async function createSalarySlipForEmployee(
-  employeeId: string,
-  month: number,
-  year: number,
-  forceUpdate = false // 👈 NEW
-) {
-  const existingSlip = await prisma.salarySlip.findUnique({
-    where: {
-      employeeId_month_year: {
-        employeeId,
-        month,
-        year,
-      },
-    },
-  });
-
-  // 🚫 Salary already exists
-  if (existingSlip && !forceUpdate) {
-    throw new Error("SALARY_EXISTS");
-  }
-
-  const employee = await prisma.employee.findUnique({
-    where: { id: employeeId },
-    include: { timeLogs: true },
-  }); 
-
-  if (!employee) throw new Error("Employee not found");
-
-  const logs = employee.timeLogs.filter(
-    (log) =>
-      log.status === "APPROVED" &&
-      log.logDate.getMonth() + 1 === month &&
-      log.logDate.getFullYear() === year
-  );
-
-  const totalMinutes = logs.reduce(
-    (acc, log) => acc + (log.totalMinutes || 0),
-    0
-  );
-
-  let totalPay = 0;
-  if (employee.contractType === "HOURLY") {
-    const hourlyRate = employee.hourlyRate || 0;
-    totalPay = (totalMinutes / 60) * hourlyRate;
-  } else if (employee.contractType === "MONTHLY") {
-    totalPay = employee.monthlySalary || 0;
-  }
-
-  const data = {
-    employeeId: employee.id,
-    companyId: employee.companyId,
-    month,
-    year,
-    totalMinutes,
-    totalHours: totalMinutes / 60,
-    totalPay: parseFloat(totalPay.toFixed(2)),
-    tax: 0,
-    status: "DRAFT" as const,
-  };
-
-  // 🔁 UPDATE
-  if (existingSlip) {
-    return prisma.salarySlip.update({
-      where: { id: existingSlip.id },
-      data,
-    });
-  }
-
-  // 🆕 CREATE
-  return prisma.salarySlip.create({ data });
-} */
 type CreateSalaryResult =
   | { status: "OK"; slip: any }
   | { status: "EXISTS" }
@@ -361,6 +178,7 @@ export async function createSalarySlipForEmployee(
   forceUpdate = false
 ): Promise<CreateSalaryResult> {
   try {
+    // 🔎 Check if salary slip already exists
     const existingSlip = await prisma.salarySlip.findUnique({
       where: {
         employeeId_month_year: {
@@ -371,68 +189,81 @@ export async function createSalarySlipForEmployee(
       },
     });
 
-    // 🚫 Already exists
     if (existingSlip && !forceUpdate) {
       return { status: "EXISTS" };
     }
 
+    // 📅 Define month boundaries (SAFE & CONSISTENT)
+    const startOfMonth = new Date(year, month - 1, 1);
+    const startOfNextMonth = new Date(year, month, 1);
+
+    // 👤 Fetch employee + ONLY approved logs for this month
     const employee = await prisma.employee.findUnique({
       where: { id: employeeId },
-      include: { timeLogs: true },
+      include: {
+        timeLogs: {
+          where: {
+            status: "APPROVED",
+            logDate: {
+              gte: startOfMonth,
+              lt: startOfNextMonth,
+            },
+          },
+          select: {
+            totalMinutes: true,
+          },
+        },
+      },
     });
 
     if (!employee) {
       return { status: "ERROR", message: "Employee not found" };
     }
 
-    // ✅ PROD-SAFE date filtering (no getMonth bugs)
-    const start = new Date(Date.UTC(year, month - 1, 1));
-    const end = new Date(Date.UTC(year, month, 1));
-
-    const logs = employee.timeLogs.filter(
-      (log) =>
-        log.status === "APPROVED" &&
-        log.logDate >= start &&
-        log.logDate < end
-    );
-
-    const totalMinutes = logs.reduce(
+    // 🧮 Calculate total worked minutes
+    const totalMinutes = employee.timeLogs.reduce(
       (acc, log) => acc + (log.totalMinutes || 0),
       0
     );
 
+    // 💰 Calculate salary
     let totalPay = 0;
+
     if (employee.contractType === "HOURLY") {
       totalPay = (totalMinutes / 60) * (employee.hourlyRate || 0);
-    } else {
+    } else if (employee.contractType === "MONTHLY") {
       totalPay = employee.monthlySalary || 0;
     }
 
-    const data = {
+    const salaryData = {
       employeeId: employee.id,
       companyId: employee.companyId,
       month,
       year,
       totalMinutes,
       totalHours: totalMinutes / 60,
-      totalPay: parseFloat(totalPay.toFixed(2)),
+      totalPay: parseFloat(totalPay.toFixed(2)), // round only money
       tax: 0,
       status: "DRAFT" as const,
     };
 
+    // 🔁 Update or Create
     const slip = existingSlip
       ? await prisma.salarySlip.update({
           where: { id: existingSlip.id },
-          data,
+          data: salaryData,
         })
-      : await prisma.salarySlip.create({ data });
+      : await prisma.salarySlip.create({
+          data: salaryData,
+        });
 
     return { status: "OK", slip };
-  } catch (err) {
-    console.error("CREATE SALARY FAILED:", err);
+  } catch (error) {
+    console.error("CREATE SALARY FAILED:", error);
     return { status: "ERROR", message: "Internal server error" };
   }
 }
+
 
 
 export async function getLatestSalarySlipForEmployee(employeeId: string) {
