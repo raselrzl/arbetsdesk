@@ -122,9 +122,15 @@ export default function CompanySalaryPageComponent({
                       <span>{row.name}</span>
                     </div>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[row.status]}`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        row.totalMinutes && row.totalMinutes > 0
+                          ? statusColors[row.status] // normal status
+                          : "bg-gray-600 text-gray-400" // not worked style
+                      }`}
                     >
-                      {row.status}
+                      {row.totalMinutes && row.totalMinutes > 0
+                        ? row.status
+                        : "Not Worked"}
                     </span>
                   </td>
 
