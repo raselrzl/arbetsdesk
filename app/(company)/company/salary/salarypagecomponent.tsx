@@ -83,7 +83,11 @@ export default function CompanySalaryPageComponent({
               className="border p-2 rounded-xs border-teal-100"
             >
               {availableMonths.map((m) => (
-                <option key={m} value={m} className="bg-teal-100 text-[#02505e]">
+                <option
+                  key={m}
+                  value={m}
+                  className="bg-teal-100 text-[#02505e]"
+                >
                   {m}
                 </option>
               ))}
@@ -152,9 +156,8 @@ export default function CompanySalaryPageComponent({
                   <td className="p-3">
                     <button
                       onClick={() =>
-  (window.location.href = `/company/salary/${row.personalNumber}?month=${monthNumber}&year=${year}`)
-}
-
+                        (window.location.href = `/company/salary/${row.personalNumber}?month=${monthNumber}&year=${year}`)
+                      }
                       className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
                     >
                       Create Salary
