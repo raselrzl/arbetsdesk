@@ -109,10 +109,16 @@ export default function CompanySalaryPageComponent({
                   key={row.employeeId}
                   className="border-t border-[#02505e] hover:bg-teal-50"
                 >
-                  {/* Employee Name */}
+                  {/* Employee Name with Picture */}
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-teal-600" />
+                      {/* Employee Picture */}
+                      <img
+                        src="/user.png" // Placeholder if no photo
+                        alt={row.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      {/* Employee Name */}
                       <span>{row.name}</span>
                     </div>
                   </td>
@@ -158,7 +164,7 @@ export default function CompanySalaryPageComponent({
                       onClick={() =>
                         (window.location.href = `/company/salary/${row.personalNumber}?month=${monthNumber}&year=${year}`)
                       }
-                      className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                      className="bg-[#02505e] text-white px-2 py-1 rounded-xs hover:bg-teal-700 text-xs cursor-pointer"
                     >
                       Create Salary
                     </button>
@@ -234,7 +240,7 @@ export default function CompanySalaryPageComponent({
 
           {/* ---------------- TOTALS ROW ---------------- */}
           {rows.length > 0 && (
-            <tfoot className="bg-teal-50 font-semibold">
+            <tfoot className="bg-[#02505e] font-semibold text-gray-100">
               <tr>
                 <td className="p-3">Totals</td>
                 <td className="p-3"></td>
