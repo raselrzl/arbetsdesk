@@ -305,3 +305,25 @@ export async function getSalarySlipByMonth(employeeId: string, year: number, mon
   });
 }
 
+
+export async function updateSalaryStatus(
+  employeeId: string,
+  month: number,
+  year: number,
+  status: "DRAFT" | "PENDING" | "APPROVED" | "PAID" | "REJECTED"
+) {
+  await prisma.salarySlip.update({
+    where: {
+      employeeId_month_year: {
+        employeeId,
+        month,
+        year,
+      },
+    },
+    data: {
+      status,
+    },
+  });
+
+  return { success: true };
+}

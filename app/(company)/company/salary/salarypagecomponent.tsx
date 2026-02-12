@@ -3,6 +3,7 @@
 import { getCompanyMonthlySalary, SalaryRow } from "@/app/actions";
 import { Wallet, User, Clock, Calendar, MoreVertical } from "lucide-react";
 import { useEffect, useState } from "react";
+import { updateSalaryStatus } from "./salaryActions";
 
 /* ---------------- TYPES ---------------- */
 type ContractType = "HOURLY" | "MONTHLY";
@@ -164,7 +165,7 @@ export default function CompanySalaryPageComponent({
                     )}
                   </td>
 
-                  <td className="p-3">
+                  {/*   <td className="p-3">
                     {" "}
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -177,6 +178,45 @@ export default function CompanySalaryPageComponent({
                         ? row.status
                         : "Not Worked"}
                     </span>
+                  </td> */}
+
+                  <td className="p-3">
+                    {row.totalMinutes && row.totalMinutes > 0 ? (
+                      <select
+                        value={row.status}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value as SalaryStatus;
+
+                          // Update DB
+                          await updateSalaryStatus(
+                            row.employeeId,
+                            monthNumber,
+                            year,
+                            newStatus,
+                          );
+
+                          // Update UI instantly
+                          setRows((prev) =>
+                            prev.map((r) =>
+                              r.employeeId === row.employeeId
+                                ? { ...r, status: newStatus }
+                                : r,
+                            ),
+                          );
+                        }}
+                        className={`px-2 py-1 rounded-xs text-xs font-medium border border-[#02505e] ${statusColors[row.status]}`}
+                      >
+                        <option value="DRAFT" className="bg-[#02505e] text-gray-100">DRAFT</option>
+                        <option value="PENDING" className="bg-[#02505e] text-gray-100">PENDING</option>
+                        <option value="APPROVED" className="bg-[#02505e] text-gray-100">APPROVED</option>
+                        <option value="PAID" className="bg-[#02505e] text-gray-100">PAID</option>
+                        <option value="REJECTED" className="bg-[#02505e] text-gray-100">REJECTED</option>
+                      </select>
+                    ) : (
+                      <span className="bg-gray-600 text-gray-400 px-2 py-1 rounded-full text-xs">
+                        Not Worked
+                      </span>
+                    )}
                   </td>
 
                   {/* View Details */}
