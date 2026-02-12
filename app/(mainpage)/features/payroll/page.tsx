@@ -37,15 +37,15 @@ export default function PayrollPage() {
             transition={{ duration: 0.5 }}
             className="max-w-2xl text-left"
           >
-            <h1 className="text-3xl font-extrabold mb-4 text-[#00687a] uppercase">
+            <h1 className="text-2xl font-extrabold mb-4 text-[#00687a] uppercase">
               Smart Payroll Management
             </h1>
 
-            <h2 className="text-xl font-semibold mb-4 text-teal-800">
+            <h2 className="text-lg font-semibold mb-4 text-[#00687a]">
               From Time Logs to Payment Fully Automated
             </h2>
 
-            <p className="text-teal-700 text-lg leading-relaxed">
+            <p className="text-[#00687a] text-md leading-relaxed">
               Arbetsdesk transforms approved work hours into accurate salaries automatically.
               Review employee payroll, update status in real time, and generate professional
               payslips with just one click. No spreadsheets, no manual calculations, and no errors.
@@ -60,7 +60,7 @@ export default function PayrollPage() {
           
           {/* Feature 1 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-extrabold mb-4 uppercase">
+            <h2 className="text-xl font-extrabold mb-4 uppercase">
               Automatic Salary Calculation
             </h2>
             <p className="text-sm leading-relaxed text-justify">
@@ -72,7 +72,7 @@ export default function PayrollPage() {
 
           {/* Feature 2 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-extrabold mb-4 uppercase">
+            <h2 className="text-xl font-extrabold mb-4 uppercase">
               Live Status Updates
             </h2>
             <p className="text-sm leading-relaxed text-justify">
@@ -84,7 +84,7 @@ export default function PayrollPage() {
 
           {/* Feature 3 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-extrabold mb-4 uppercase">
+            <h2 className="text-xl font-extrabold mb-4 uppercase">
               Manager Approval Workflow
             </h2>
             <p className="text-sm leading-relaxed text-justify">
@@ -95,7 +95,7 @@ export default function PayrollPage() {
 
           {/* Feature 4 */}
           <div className="bg-white text-[#00687a] p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-extrabold mb-4 uppercase">
+            <h2 className="text-xl font-extrabold mb-4 uppercase">
               Instant Payslips & Email Delivery
             </h2>
             <p className="text-sm leading-relaxed text-justify">
@@ -129,7 +129,7 @@ export default function PayrollPage() {
           </motion.div>
 
           <div className="max-w-xl">
-            <h1 className="text-3xl font-extrabold mb-3 text-[#00687a] uppercase">
+            <h1 className="text-xl font-extrabold mb-3 text-[#00687a] uppercase">
               Full Payroll Control
             </h1>
             <h2 className="text-lg font-semibold mb-3 text-gray-800">
