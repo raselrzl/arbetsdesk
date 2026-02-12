@@ -75,13 +75,13 @@ export default function CompanySalaryPageComponent({
       {/* ---------------- MONTH SELECTOR ---------------- */}
       <div className="p-4 shadow border border-[#02505e] bg-[#02505e] flex items-center gap-3 justify-between text-gray-100">
         <h1 className="text-xl font-bold uppercase">Salary Overview</h1>
-        <div className="flex items-center bg-[#02505e] text-gray-100">
-          <Calendar className="w-5 h-5 text-gray-100" />
+        <div className="flex items-center bg-[#02505e] text-gray-100 border px-2 py-1 rounded-xs border-teal-100">
+          <Calendar className="w-4 h-4 text-gray-100" />
           {availableMonths.length > 0 ? (
             <select
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              className="border p-2 rounded-xs border-teal-100"
+              className=""
             >
               {availableMonths.map((m) => (
                 <option
