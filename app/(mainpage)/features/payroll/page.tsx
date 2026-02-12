@@ -98,7 +98,7 @@ export default function PayrollPage() {
             <h2 className="text-xl font-extrabold mb-4 uppercase">
               Instant Payslips & Email Delivery
             </h2>
-            <p className="text-sm leading-relaxed text-justify">
+            <p className="text-sm leading-relaxed text-justify text-[#00687a]">
               Generate professional payslips with one click and send them directly to employees
               via email. No paperwork, no manual distribution.
             </p>
@@ -128,14 +128,14 @@ export default function PayrollPage() {
             </div>
           </motion.div>
 
-          <div className="max-w-xl">
+          <div className="max-w-xl m-6">
             <h1 className="text-xl font-extrabold mb-3 text-[#00687a] uppercase">
               Full Payroll Control
             </h1>
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">
+            <h2 className="text-lg font-semibold mb-3 text-[#00687a]">
               Review, Approve and Mark as Paid
             </h2>
-            <p className="text-gray-700 text-sm leading-relaxed">
+            <p className="text-[#00687a] text-sm leading-relaxed">
               Easily manage the entire payroll process in one place. Review employee
               salaries, update status with color-coded indicators, and track payment
               progress from draft to completed.
