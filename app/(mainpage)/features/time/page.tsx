@@ -137,7 +137,7 @@ export default function HoursPage() {
             Simplify Time Reporting
           </h2>
           <p className="text-teal-500 mb-8 max-w-xl mx-auto">
-            Automate time tracking, approvals, and reporting — all powered by
+            Automate time tracking, approvals, and reporting all powered by
             real time-log data.
           </p>
 
