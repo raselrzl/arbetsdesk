@@ -28,7 +28,7 @@ export default function HoursPage() {
             Arbetsdesk automatically generates time reports based on real
             time-log data. Every login, logout, break, and schedule deviation
             is recorded without manual input. Managers get full visibility
-            into worked hours, approvals, absences, and overtime — all in one
+            into worked hours, approvals, absences, and overtime all in one
             place.
           </p>
         </motion.div>
